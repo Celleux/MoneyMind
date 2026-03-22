@@ -107,6 +107,8 @@ final class QuestEngine {
         player.totalXP += xp
         player.totalQuestsCompleted += 1
 
+        syncXPToUserProfile(xp: xp)
+
         updateStreak(player: player)
 
         let didLevelUp = checkAndApplyLevelUp(player: player)
@@ -131,6 +133,11 @@ final class QuestEngine {
 
         let essence = quest.essenceReward + (isLucky ? 5 : 0)
         addEssence(essence)
+
+        if let amount = quest.estimatedSavingsAmount {
+            player.totalMoneySaved += amount
+            syncSavingsToUserProfile(amount: amount)
+        }
 
         let progress = getOrCreateProgress(for: questID)
         progress.questStatus = .completed
@@ -501,6 +508,32 @@ final class QuestEngine {
             modelContext.insert(state)
         }
         gachaEngine.saveToState(state)
+    }
+
+    private func syncXPToUserProfile(xp: Int) {
+        let descriptor = FetchDescriptor<UserProfile>()
+        guard let profile = try? modelContext.fetch(descriptor).first else { return }
+        profile.xpPoints += xp
+    }
+
+    private func syncSavingsToUserProfile(amount: Double) {
+        let descriptor = FetchDescriptor<UserProfile>()
+        guard let profile = try? modelContext.fetch(descriptor).first else { return }
+        profile.totalSaved += amount
+    }
+
+    func luckyQuestForToday() -> QuestDefinition? {
+        let slots = todaysDailySlots()
+        guard let luckySlot = slots.first(where: { $0.isLuckyQuest }) else {
+            return slots.first.flatMap { slot in questDB.first { $0.id == slot.questID } }
+        }
+        return questDB.first { $0.id == luckySlot.questID }
+    }
+
+    func allDailyQuestsComplete() -> Bool {
+        let slots = todaysDailySlots()
+        guard !slots.isEmpty else { return false }
+        return slots.allSatisfy { isQuestCompleted($0.questID) }
     }
 
     private func cleanupExpiredSlots() {

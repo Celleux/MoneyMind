@@ -198,6 +198,8 @@ struct HomeView: View {
                     VibeCheckAnalyticsView()
                 } else if value == "vaultGame" {
                     VaultGameView()
+                } else if value == "questHub" {
+                    QuestHubView()
                 }
             }
             .onAppear {
@@ -299,6 +301,8 @@ struct HomeView: View {
             trialBanner
             greetingHeader
             pendingScratchCardsPrompt
+            QuestOfTheDayCard()
+                .staggerIn(appeared: appeared, delay: 0.06)
             heroSavedCard
             quickActionsGrid
             budgetBarsSection

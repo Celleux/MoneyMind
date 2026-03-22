@@ -56,6 +56,7 @@ struct ContentView: View {
         .fullScreenCover(isPresented: $showSiriCheckIn) {
             SiriCheckInView()
         }
+        .syncWidgetData()
         .onReceive(NotificationCenter.default.publisher(for: .siriUrgeDetected)) { _ in
             showSiriUrgeSurf = true
         }

@@ -1,29 +1,33 @@
-# Premium Paywall Screen with Personality Theming
+# iOS Widgets for MoneyMind — Home Screen & Lock Screen
 
 ## Features
 
-- **Full-screen paywall** that appears when tapping premium features, presented as a cover that can only be closed via the X button
-- **Personality-aware design** — colors, icon, and messaging adapt to the user's Money Personality (e.g. "As a Builder, you need these tools")
-- **Animated feature list** — 5 premium features stagger in from the left with icons in the user's personality color
-- **Social proof section** — overlapping avatar circles, "10,000+ members" text, and a 4.8-star rating display
-- **Two pricing cards side by side** — Monthly ($4.99) and Annual ($39.99/yr) with a gold "BEST VALUE" badge on annual
-- **"Start 7-Day Free Trial" call-to-action** button in the user's personality color with compliance text below
-- **Restore Purchases and legal links** at the bottom (Terms, Privacy)
-- **Premium state tracking** — a simple flag so the app knows if the user is premium (no real payments yet — RevenueCat will be connected later)
+- **Small Widget**: Shows daily budget remaining with a mini progress ring and personality color accent
+- **Medium Widget**: Left side shows remaining budget + progress ring; right side lists top 3 spending categories with mini bars; bottom hint text
+- **Large Widget**: Hero balance at top, weekly spending bar chart (7 days, today highlighted), top 3 categories with progress bars
+- **Lock Screen Circular Widget**: Budget ring showing percentage used with remaining amount
+- **Lock Screen Rectangular Widget**: No-spend streak counter with flame emoji
+- **Lock Screen Inline Widget**: "Budget: $X remaining" text
+- **Data Sharing**: App writes budget/spending data to a shared App Group so widgets can read it
+- **Deep Linking**: Tapping any widget opens the relevant screen in the app
+- **Personality Theming**: Widgets use the user's Money Personality accent color
+- **Privacy Redaction**: Amounts show placeholder when widget is redacted
 
 ## Design
 
-- **Dark OLED background** (#0A0F1E) consistent with the rest of the app
-- **Top area**: Close (X) button top-right in muted gray. MoneyMind icon with a glowing pulse animation in the user's personality color. Bold headline and personality-referenced subtext
-- **Feature list**: Each row has an SF Symbol icon in personality color, feature name in white, and a one-line description in gray. Items animate in with a staggered slide-from-left effect
-- **Social proof**: Five small overlapping colored circles simulating avatars, star rating in gold, member count
-- **Pricing cards**: Two dark cards (#111827) side by side. Annual card is slightly taller with a gold "BEST VALUE" badge and a green "Save 33%" pill. Selected card gets a glowing personality-color border
-- **CTA button**: Full-width, personality-colored, with bold white text. Subtle compliance text ("Then $X/month. Cancel anytime.") below in small muted text
-- **Bottom links**: "Restore Purchases", "Terms", "Privacy" in small muted text
-- **Haptic feedback** on plan selection and CTA tap
-- **Spring animations** throughout, matching the app's existing motion language
+- Dark background (#111827) matching the app's card color for all Home Screen widgets
+- Personality-colored accent dot and progress ring gradients (purple → cyan by default)
+- SF Pro Rounded typography consistent with the main app
+- Progress rings use the same gradient stroke as the app (accent → secondary)
+- Lock Screen widgets use the system accessory widget styling (automatic)
+- Over-budget state turns amounts and rings red (#FF5252)
+- Clean, minimal layouts — no clutter, just key numbers at a glance
+- Weekly bar chart in the large widget mirrors the dashboard style
 
-## Screens
+## Screens / Components
 
-- **PaywallView** — the full-screen premium paywall described above. Scrollable if content overflows. Reads the user's personality from SwiftData to theme everything dynamically
-- **Trigger points wired in** — a "show paywall" state added to the main content area so any screen can present it (initially triggered from Profile and anywhere premium features are gated)
+- **Widget Extension Target**: New "MoneyMindWidgets" extension added to the project
+- **App Group**: Shared data container (`group.app.rork.moneymind.shared`) for app↔widget communication
+- **Shared Data Writer** (in main app): Writes budget totals, category spending, streak info, and personality color to the shared container whenever data changes
+- **Timeline Provider**: Refreshes widget data every 30 minutes; also refreshes on-demand when the app updates data
+- **Widget Bundle**: Groups all widget families (small, medium, large, lock screen variants) into one extension

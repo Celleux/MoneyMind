@@ -57,6 +57,15 @@ class UserProfile {
     var lastOpenDate: Date
     var hasShownNotificationPrompt: Bool
     var lastCurriculumReminderDate: Date?
+    var defaultCurrency: String
+    var defaultBudgetMethod: String
+    var firstDayOfMonth: Int
+    var billRemindersEnabled: Bool
+    var budgetAlert50: Bool
+    var budgetAlert80: Bool
+    var budgetAlert100: Bool
+    var dailyCheckInNotif: Bool
+    var weeklyDigestNotif: Bool
 
     init(
         name: String,
@@ -118,6 +127,15 @@ class UserProfile {
         self.lastOpenDate = Date()
         self.hasShownNotificationPrompt = false
         self.lastCurriculumReminderDate = nil
+        self.defaultCurrency = "USD"
+        self.defaultBudgetMethod = "50/30/20"
+        self.firstDayOfMonth = 1
+        self.billRemindersEnabled = true
+        self.budgetAlert50 = true
+        self.budgetAlert80 = true
+        self.budgetAlert100 = true
+        self.dailyCheckInNotif = true
+        self.weeklyDigestNotif = true
     }
 
     private static func generateReferralCode() -> String {

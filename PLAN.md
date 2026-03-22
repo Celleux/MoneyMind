@@ -1,48 +1,43 @@
-# Personality-Themed Empty States for All Screens
+# Redesigned Settings & Profile Screen
 
 
-## Overview
-Replace all existing generic empty states and add new ones across 9 screens. Each empty state features a unique personality-themed illustration built from SF Symbols, a gentle floating animation, and a clear call-to-action button.
+## Features
 
----
+- **Personality hero card** at the top showing your personality icon, name, type, trait tags, and a "Retake Quiz" link — styled like the quiz result card
+- **Member since date** displayed beneath the personality card
+- **Appearance settings** — Dark Only theme badge, personality color preview swatch, and app icon selector with 5 personality-themed icons
+- **Notification settings** — Bill reminders toggle, budget alert thresholds (50%/80%/100%), daily check-in toggle, weekly digest toggle — all persisted
+- **Budget settings** — Default currency picker, default budget method (50/30/20, Zero-Based, Envelope), first day of month picker
+- **Data management** — Export Transactions as CSV, Export Monthly Report as PDF, Import Transactions, Clear All Data with double-confirmation dialog
+- **Premium section** — Shows current plan status, Manage Subscription button, Restore Purchases link
+- **About section** — App version, Rate on App Store, Share MoneyMind, Privacy Policy, Terms, Contact Support
+- **Danger Zone** — Red-bordered card with Delete Account and Clear All Data buttons, each requiring a double-confirmation alert
+- **All toggles persist** their state through the user profile model
+- **Smooth scrolling** with grouped card sections and subtle dividers
 
-### **Features**
+## Design
 
-- Each empty state shows a unique character illustration using SF Symbols, tinted with the user's Money Personality color (Saver = green, Builder = purple, Hustler = orange, Minimalist = cyan, Generous = gold)
-- Personality-specific character variations: Saver sees a piggy bank, Builder sees a growth chart, Hustler sees flames, Minimalist sees a meditation figure, Generous sees a sharing/heart figure
-- Every illustration gently floats up and down in a subtle looping animation to feel alive
-- Each screen has a unique headline, supporting text, and action button that navigates to the right creation flow
-- All 9 empty states follow a consistent visual structure but with distinct content per screen
+- Dark OLED background (#0A0F1E) consistent with the app's design system
+- **Personality hero card**: large card at the top with the personality icon (e.g. flame for Hustler) in a glowing circle using the personality accent color, personality name in bold white, trait tags as small capsule pills in the personality color
+- **Grouped settings sections**: each group is an elevated dark card (#111827) with rounded corners, a section header with an SF Symbol icon and title, and rows separated by subtle dividers
+- **Settings rows**: each row has a colored icon badge (SF Symbol in a rounded square), title text, and either a toggle, chevron, or value indicator on the right
+- **Danger Zone card**: distinguished by a red (#FF5252) border stroke, with destructive-styled buttons inside
+- **Animations**: staggered fade-in on appear for each section; haptic feedback on toggle changes
+- **Typography**: section headers in semibold, row titles in regular weight, subtitles in secondary gray (#94A3B8)
 
----
+## Screens
 
-### **Design**
-
-- Dark background (#0A0F1E) matching the app's existing theme
-- Centered layout with personality-colored accent circles behind the illustration
-- Illustration: layered SF Symbols composing a character scene (40–60pt), personality color accented
-- Headline: bold white text, one line
-- Subtext: muted gray (#94A3B8), up to two lines, centered
-- CTA button: full-width purple (#6C5CE7) rounded button with action-specific label
-- Floating animation: smooth 2-second up/down cycle, 4pt travel range
-
----
-
-### **Screens Getting Empty States**
-
-1. **Dashboard** (no transactions) — Character with a rocket/sparkle. "Start Your Journey" → "Add Your First Transaction"
-2. **Budget** (no budgets set) — Character with pie chart. "Set Your First Budget" → "Create a Budget" (keeps existing 50/30/20 template)
-3. **Analytics** (no data) — Character with magnifying glass on chart. "Nothing to Analyze Yet" → "Add a Transaction"
-4. **Wallet / Transactions List** (empty) — Character with empty wallet. "Your Wallet Awaits" → "Log a Win"
-5. **Savings Goals** (none created in Challenges Hub) — Character with target/flag. "Ready to Challenge Yourself?" → "Start a Challenge"
-6. **Challenges Hub** (none active) — Character with trophy. "No Active Challenges" → "Browse Challenges"
-7. **Community** (no posts in feed) — Character with speech bubbles. "Be the First to Share" → "Create a Post"
-8. **Money Wrapped** (first month not complete) — Character with calendar/clock. "Your First Wrapped Is Coming" → informational, no destructive action
-9. **Ghost Budget** (no data) — Character with ghost/parallel lines. "Not Enough Data Yet" → "Add Transactions"
-
----
-
-### **Shared Component**
-
-- A reusable empty state component that all 9 screens use, accepting: illustration icon, personality color, headline, subtext, button label, and button action
-- This keeps the design perfectly consistent while allowing unique content per screen
+- **Settings & Profile** (replaces the current Profile tab) — single scrollable screen with sections:
+  1. Personality hero card with avatar, name, type, traits, "Retake Quiz" link, member since date
+  2. Stats grid (streak, total saved, wins) — kept from current design
+  3. Character companion card — kept from current design
+  4. Appearance settings group
+  5. Notifications settings group (with inline toggles, links to detailed notification settings)
+  6. Budget preferences group
+  7. Data management group
+  8. Premium status group
+  9. About group
+  10. Danger Zone group
+- **Export flow**: tapping Export CSV or Export PDF generates and presents a share sheet
+- **Delete confirmations**: first tap shows an alert, confirming shows a second "Are you sure?" alert before executing
+- Existing sections (referral, badges, sharing, PGSI, goals) are preserved and reorganized within the flow

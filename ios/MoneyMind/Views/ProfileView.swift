@@ -13,6 +13,8 @@ struct ProfileView: View {
     @State private var showWeeklySummary = false
     @State private var showMoneyWrapped = false
     @State private var showAnnualWrapped = false
+    @State private var showPaywall = false
+    @Environment(PremiumManager.self) private var premiumManager
 
     private var profile: UserProfile? { profiles.first }
 
@@ -43,6 +45,9 @@ struct ProfileView: View {
                     PGSITrendChart(assessments: pgsiAssessments)
                     pgsiPromptCard
                     BadgeGalleryView()
+                    if !premiumManager.isPremium {
+                        premiumUpgradeCard
+                    }
                     sharingSection
                     goalsSection
                     preferencesSection
@@ -76,6 +81,9 @@ struct ProfileView: View {
             }
             .fullScreenCover(isPresented: $showAnnualWrapped) {
                 MoneyWrappedView(data: annualWrappedData)
+            }
+            .fullScreenCover(isPresented: $showPaywall) {
+                PaywallView()
             }
         }
     }
@@ -562,6 +570,55 @@ struct ProfileView: View {
             ProfileSettingsRow(icon: "info.circle.fill", title: "About MoneyMind", color: Theme.textSecondary)
         }
         .clipShape(.rect(cornerRadius: 16))
+    }
+
+    private var premiumUpgradeCard: some View {
+        Button {
+            showPaywall = true
+        } label: {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .fill(Theme.gold.opacity(0.15))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "crown.fill")
+                        .font(.title3)
+                        .foregroundStyle(Theme.gold)
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Upgrade to Premium")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Theme.textPrimary)
+                    Text("Unlock all features & analytics")
+                        .font(.caption)
+                        .foregroundStyle(Theme.textSecondary)
+                }
+
+                Spacer()
+
+                Text("PRO")
+                    .font(.system(size: 10, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.black)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Theme.goldGradient, in: .capsule)
+            }
+            .padding(16)
+            .background(
+                LinearGradient(
+                    colors: [Theme.gold.opacity(0.06), Theme.cardSurface],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                in: .rect(cornerRadius: 16)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(Theme.gold.opacity(0.15), lineWidth: 1)
+            )
+        }
+        .buttonStyle(PressableButtonStyle())
     }
 
     private var dangerZone: some View {

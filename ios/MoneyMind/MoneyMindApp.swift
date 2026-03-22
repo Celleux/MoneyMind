@@ -4,6 +4,7 @@ import SwiftData
 @main
 struct MoneyMindApp: App {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @State private var premiumManager = PremiumManager()
 
     var body: some Scene {
         WindowGroup {
@@ -18,6 +19,7 @@ struct MoneyMindApp: App {
                     }
                 }
             }
+            .environment(premiumManager)
             .preferredColorScheme(.dark)
         }
         .modelContainer(for: [

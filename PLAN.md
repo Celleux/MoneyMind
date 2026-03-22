@@ -1,35 +1,33 @@
-# Create Quest Database with 110+ Quest Definitions
+# Build the Quest Engine — Selection, Rotation, Rewards, and Level-Up Logic
 
-## What Will Be Built
 
-A single new file (`QuestDatabase.swift`) containing the complete static quest library — the data that powers the entire quest engine.
+## What's Being Built
+
+The Quest Engine is the brain behind the quest system — it selects which quests to show each day/week, handles quest completion with XP and rewards, manages leveling up, and connects to the existing gacha/scratch card system.
+
+---
 
 ### Features
 
-- **55 standalone quests** across 6 categories:
-  - 10 Money Recovery quests (cancel subs, negotiate bills, reverse fees, etc.)
-  - 11 Spending Defense quests (no-spend days, cooking challenges, app purges, etc.)
-  - 10 Income & Earning quests (sell items, raise conversations, freelancing, etc.)
-  - 11 Financial Literacy quests (credit checks, budgeting, savings automation, etc.)
-  - 8 Social & Accountability quests (loud budgeting, partner talks, buddy check-ins)
-  - 5 Generosity quests (paying it forward, volunteering, teaching)
+- **Daily quest rotation**: Each morning (or on first app open), 3 daily quests are selected based on the player's level and zone, with one marked as "lucky" for bonus rewards
+- **Weekly quest rotation**: Every Monday, 2 harder weekly quests appear — these always guarantee a scratch card
+- **Smart quest selection**: Quests are chosen based on the player's current zone, avoiding already-completed quests and respecting seasonal availability
+- **Sawtooth difficulty**: After completing a hard quest, the engine favors easier quests next — creating a satisfying challenge rhythm
+- **Quest completion with rewards**: Completing a quest awards XP (with streak and lucky bonuses), essence, boss damage, and a chance at a scratch card
+- **Level-up system**: XP accumulates and triggers level-ups (50 levels across 5 zones), with avatar evolution every 10 levels
+- **Streak tracking**: Consecutive days of completing at least one quest are tracked, with bonus multipliers at 7-day and 30-day streaks
+- **Boss damage integration**: Every quest deals damage to the current zone's boss (XP ÷ 10 = damage)
+- **Gacha integration**: Scratch cards are created through the existing gacha engine when earned from quests
+- **Quest step progression**: Multi-step quests can be advanced one step at a time
+- **Quest archiving**: The "Write-Off Decision" — users can gracefully archive a quest without penalty
+- **Expired quest cleanup**: Daily/weekly quests that weren't completed are automatically marked as expired
 
-- **6 seasonal quests** that appear only in specific months (January sub audit, tax season, Black Friday, etc.)
+---
 
-- **50 chain quests** (5 story chains × 10 sequential quests each):
-  - The Saver's Journey — from $0 saved to emergency fund
-  - The Compound Path — from understanding interest to investing
-  - The Budget Battle — from tracking expenses to zero-based budgeting
-  - Debt Freedom Road — from listing debts to first debt payoff
-  - Impulse Mastery — from identifying triggers to 30-day streak
+### How It Works
 
-- Each chain quest has proper `chainID`, `chainIndex`, and `prerequisiteQuestID` linking
-- Each quest includes RPG-flavored title, difficulty, XP rewards, scratch card chances, zone assignment, multi-step instructions, and estimated real-world financial impact
-- A static helper method to look up quests by ID, category, zone, chain, or cadence
-- A `totalQuests` count property for UI display
-
-### Design
-
-- Pure data file — no UI, no views
-- All quests follow the progressive difficulty curve within chains (awareness → action → sustained behavior → social → milestone)
-- Matches existing `QuestDefinition` struct exactly (uses `nonisolated` pattern)
+- A new `QuestEngine` service file handles all quest logic
+- A `QuestReward` data type captures everything earned from completing a quest (XP, scratch card, essence, level-up info, boss damage, shareable moment)
+- The engine reads from the existing quest database (110+ quests already created) and player profile
+- It writes to existing models: `DailyQuestSlot`, `QuestProgress`, `PlayerProfile`, `ScratchCard`, `GachaState`
+- The engine is created with a SwiftData model context so it can read and write data directly

@@ -1,41 +1,36 @@
-# Recurring Expense Tracker with Detection, Calendar & Notifications
+# Budget Templates Screen with 5 Template Options & Setup Flow
 
 ## Features
 
-- **Automatic Detection**: Scans your transaction history for repeating patterns — same merchant, similar amount, regular intervals (weekly, biweekly, monthly, quarterly, yearly). Flags as "possible recurring" after 2 occurrences and shows a confirmation card
-- **Recurring Expenses Screen**: Accessible from the Budget Analytics screen. Shows total monthly recurring cost prominently, with a scrollable list of all recurring items — each showing merchant name, amount, next due date, category color, and frequency
-- **Sortable List**: Sort recurring expenses by next due date (default), amount, or category
-- **Calendar View**: Month calendar with color-coded category dots on due dates. Tap any date to see all expenses due that day. Current week is highlighted
-- **Bill Reminder Notifications**: Configurable reminders — 1 day, 3 days, or 1 week before a bill is due. Plus a monthly summary notification: "You have X recurring expenses totaling $Y this month"
-- **Usage-Based Suggestions**: Flags items you haven't logged a transaction for in 30+ days with a "Consider cancelling?" suggestion
-- **Quick Actions**: Swipe left on any recurring item to Mark as Paid, Skip This Month, or Remove. Tap to see full payment history for that item
-- **Empty State**: Personality-themed empty state when no recurring expenses are detected yet
+- **Template Selection Screen** — A scrollable list of 5 beautifully designed budget template cards, each with a unique visual preview
+- **Personality Recommendations** — Each template shows a colored pill tag like "Recommended for Savers" based on the user's money personality
+- **50/30/20 Rule Template** — Enter income, auto-splits into Needs (50%), Wants (30%), Savings (20%) with a 3-ring visual display
+- **Zero-Based Template** — Assign every dollar to a category; a live "Unassigned" counter counts down to $0
+- **Envelope Method Template** — Digital envelopes for each category with visual envelope icons that show fill levels
+- **Pay Yourself First Template** — Set a savings percentage first, then budget the remainder; savings ring shown prominently
+- **Custom Template** — Blank slate where all categories and amounts are set manually
+- **Setup Flow** — Select template → Enter monthly income → Review auto-generated categories → Adjust amounts → Confirm & create budgets
+- **Animated Transitions** — Smooth spring animations between setup steps with staggered card entry
 
 ## Design
 
-- **Dark theme** consistent with the existing MoneyMind design system (#0A0F1E background, #111827 cards)
-- **Header area** with a large total monthly recurring amount in personality color, with a subtitle showing what percentage of income this represents
-- **Segmented control** at the top to switch between List view and Calendar view
-- **Each recurring item card** styled as an MMCard with category color dot, merchant name, amount in bold rounded font, frequency pill badge, and next due date in muted text
-- **Calendar** uses a clean grid layout with small colored dots for each due date, matching the category color. Today highlighted with accent ring. Tapping a date slides up a detail panel
-- **Confirmation cards** for newly detected recurring expenses appear as a compact banner with Accept/Dismiss actions
-- **Swipe actions** use the standard iOS swipe-to-reveal pattern with green (Paid), orange (Skip), and red (Remove) actions
-- **Stagger-in animations** on appear, consistent with other screens
+- **Dark theme** matching the existing MoneyMind design system (#0A0F1E background, #111827 cards)
+- Each template card has a large header area with a unique visual preview illustration using SF Symbols
+- Template name in 22pt Semibold rounded white, description in 13pt muted gray
+- Personality recommendation pill in the personality's accent color (green for Saver, purple for Builder, etc.)
+- Income input uses a large bold rounded number style with the personality accent color
+- Category allocation rows with colored dots, editable amounts, and progress indicators
+- The Zero-Based template features a prominent "Unassigned: $X" counter that animates down to $0
+- The 50/30/20 template shows three concentric rings for Needs/Wants/Savings
+- The Pay Yourself First template has a large savings goal ring above the remaining budget breakdown
+- The Envelope template shows mini envelope icons with fill-level indicators
+- Confirm button uses the accent gradient (purple → cyan) in capsule style
 
-## Screens / Sections
+## Screens
 
-- **Recurring Expenses Screen** — Main screen with segmented List/Calendar toggle, total header, detection banners, and the recurring items list or calendar view
-- **Recurring Detail Sheet** — Bottom sheet showing full history of a single recurring expense: all past payments, average amount, total spent to date, and edit options
-- **Detection Banner** — Inline card that appears when a new recurring pattern is detected, asking the user to confirm
-- **Calendar Day Detail** — Expandable section showing all expenses due on a tapped calendar date
+1. **Template Selection Screen** — Full-screen with "Budget Templates" header. 5 vertical cards, each showing template name, brief description, visual preview, and personality recommendation tag. Tapping a card opens the setup flow.
+2. **Income Entry Step** — Large centered income input field with the template's visual style shown above. "Next" button at the bottom.
+3. **Category Review Step** — Shows auto-generated budget categories with amounts. Each row is editable. For Zero-Based, a live unassigned counter is shown. For 50/30/20, the three rings update in real-time. Adjust amounts with inline text fields.
+4. **Confirmation Step** — Summary of all categories and amounts with the template's signature visual. "Create Budget" button saves all categories to SwiftData and dismisses the flow.
 
-## New Files
-
-- **RecurringExpense model** — SwiftData model storing merchant, amount, frequency, category, next due date, reminder preference, active status, and payment history
-- **RecurringExpenseDetector service** — Scans transactions to find recurring patterns, generates suggestions
-- **RecurringExpenseViewModel** — Business logic for the screen, sorting, filtering, calendar data
-- **RecurringExpensesView** — Main screen with list and calendar views
-- **RecurringDetailSheet** — Detail sheet for individual recurring expenses
-- Model container updated to include the new RecurringExpense model
-- Notification scheduling extended for bill reminders
-- Navigation link added from Budget Analytics screen
+The screen is accessible from the Budget Analytics empty state and from the Profile/Settings budget method selector.

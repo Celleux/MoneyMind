@@ -6,6 +6,7 @@ struct BudgetAnalyticsView: View {
     @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
     @Query private var quizResults: [QuizResult]
     @State private var vm = BudgetAnalyticsViewModel()
+    @State private var showTemplates = false
     @Environment(\.modelContext) private var modelContext
 
     private var personality: MoneyPersonality {
@@ -85,6 +86,10 @@ struct BudgetAnalyticsView: View {
         .sheet(isPresented: $vm.showAddBudget) {
             AddBudgetSheet()
                 .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $showTemplates) {
+            BudgetTemplateSelectionView()
                 .presentationDragIndicator(.visible)
         }
         .navigationDestination(for: String.self) { value in
@@ -369,6 +374,16 @@ struct BudgetAnalyticsView: View {
                     .font(.system(.headline, design: .rounded, weight: .semibold))
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
+
+                Button {
+                    showTemplates = true
+                } label: {
+                    Image(systemName: "rectangle.grid.1x2.fill")
+                        .font(.system(size: 16))
+                        .foregroundStyle(Theme.accent)
+                }
+                .buttonStyle(PressableButtonStyle())
+
                 Button {
                     vm.showAddBudget = true
                 } label: {
@@ -474,11 +489,11 @@ struct BudgetAnalyticsView: View {
                 icon: "chart.pie.fill",
                 secondaryIcon: "percent",
                 headline: "Set Your First Budget",
-                subtext: "Track spending by category with\nthe popular 50/30/20 rule",
-                buttonLabel: "Use 50/30/20 Template",
-                buttonIcon: "sparkles"
+                subtext: "Choose from popular templates or\nbuild your own budget from scratch",
+                buttonLabel: "Browse Templates",
+                buttonIcon: "rectangle.grid.1x2.fill"
             ) {
-                createDefaultBudgets()
+                showTemplates = true
             }
 
             Button {
@@ -497,11 +512,6 @@ struct BudgetAnalyticsView: View {
             }
             .buttonStyle(PressableButtonStyle())
             .padding(.horizontal, 24)
-        }
-        .sheet(isPresented: $vm.showAddBudget) {
-            AddBudgetSheet()
-                .presentationDetents([.large])
-                .presentationDragIndicator(.visible)
         }
     }
 

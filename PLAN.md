@@ -1,43 +1,33 @@
-# Add Games Tab + Games Hub Screen
+# Phase 2: Card System — Enums, Database, Art View & Gacha Engine
 
-## What's changing
+## What's Being Built
 
-Adding a new **Games** tab to the main navigation bar, positioned between Wallet and Tools (center of the tab bar). This tab leads to a **Games Hub** screen that showcases "The Vault" game and teases upcoming games.
+The complete card system data layer for The Vault game — rarity tiers, themed card sets, a database of 50 financial literacy cards, the visual card art component, and the gacha pull engine with pity system.
 
----
+### New Files
 
-### **Features**
+**Models:**
+- **CardRarity** — 5 rarity tiers (Common → Legendary) with colors, glow effects, and star labels
+- **CardSet** — 5 themed collections (Savers Guild, Compound Interest, Budget Warriors, Debt Slayers, Impulse Defenders) with icons and accent colors
+- **CardDefinition** — Data structure for each card (name, financial tip, set, rarity)
+- **CardDatabase** — Master database of all 50 cards across 5 sets, with lookup helpers
 
-- New "Games" tab with a game controller icon in the main tab bar
-- Games Hub screen showing available games as cards
-- "The Vault" card navigates to the Vault game screen (placeholder for now — built in Phase 2+)
-- Two "Coming Soon" locked game cards: Savings Roulette and Battle Pass
-- Stats bar at top showing pending scratch cards count and collection count
-- Reusable GameCard and StatPill components for consistent styling
+**Services:**
+- **GachaEngine** — Pull mechanics with soft/hard pity system (guaranteed Epic every 20 pulls, guaranteed Legendary every 50 pulls), syncs with the existing GachaState SwiftData model
 
----
+**Components:**
+- **CardArtView** — Beautiful card rendering with rarity-based gradient backgrounds, glow borders, SF Symbol set icons, holographic overlay for Legendaries, and card info text
 
-### **Design**
+### Card Distribution (per set)
+- 4 Common (★) — gray, no glow
+- 3 Uncommon (★★) — emerald glow border
+- 2 Rare (★★★) — blue glow border
+- 1 Epic (★★★★) — purple glow border with pulse
+- 1 Legendary (★★★★★) — gold animated border with holographic shimmer
 
-- Tab bar goes from 5 tabs to 6: Home / Wallet / **Games** / Tools / Community / Profile
-- Games icon: game controller SF Symbol, emerald tint when active
-- Games Hub uses the dark luxury palette with glass-material cards
-- Game cards have icon circles, badge counts, gradient stroke borders
-- Locked "Coming Soon" cards appear dimmed with a lock icon
-- StatPill components use ultra-thin material capsules with colored icons
-- All text follows the existing 4-level text hierarchy (primary → muted)
-
----
-
-### **Screens**
-
-- **Games Hub** — scrollable list with stats bar at top, The Vault game card (tappable), and two locked placeholder game cards
-- **Vault Game View** — a minimal placeholder screen for now (will be fully built in Phase 2+)
-
----
-
-### **Data**
-
-- New SwiftData models: `ScratchCard` and `CollectedCard` (registered in the app's model container) — these are created now so the Games Hub can query them for stats, even though they'll be empty until Phase 2+
-- New `GachaState` model to persist pity counters
-- New `AppTab` case `.games` added to the tab enum
+### Design
+- Card art uses the dark luxury palette (deep blues/blacks) with rarity-colored gradients
+- Higher rarity = stronger glow, richer colors, more visual effects
+- Legendary cards get a holographic angular gradient overlay
+- All text uses the existing Splurj typography and color hierarchy
+- Cards render entirely in SwiftUI — no external image assets needed

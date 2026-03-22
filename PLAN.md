@@ -1,96 +1,47 @@
-# Apply Glassmorphism Cards + Depth Across the Entire App
+# Home Screen Cleanup — Focused Dashboard with Glass Cards
 
 ## What's Changing
 
-The glass card modifier and premium button style already exist — this update applies them across every screen so all flat dark cards become glass-style cards with depth, light refraction borders, and subtle shadows.
-
-**Note:** The `PressableButtonStyle` already has the premium depth effect (shadow, scale, brightness spring) — no button style changes needed.
+The Home screen is being simplified from a cluttered feature menu into a clean, focused dashboard with only the essentials: stats, quick actions, spending chart, and recent activity.
 
 ---
 
-## Cards Being Upgraded (~80+ card instances)
+### **Features**
 
-Every card that currently has a flat dark background + thin border will get the glass treatment with gradient highlights, refraction border, and drop shadow.
+- **Personalized greeting** at the top — "Good evening, [Name]" with personality emoji and level
+- **Total Saved This Month** hero card — large emerald number with comparison to last month
+- **2×2 Quick Actions grid** — Log Save, Budget Check, Wrapped, Coach — all in emerald (monochrome icons)
+- **"Wrapped" hides automatically** if the user has less than 7 days of data
+- **Budget progress bars** replace the old ring charts — slim horizontal bars inside glass cards, easier to read
+- **Weekly spending chart** stays with accent-colored bars
+- **Recent Activity** shows last 3 transactions (down from 5)
+- **Daily Pledge** card stays on the home screen
 
-### Reusable Component
-- **MMCard** — updated to use glass style instead of flat background
+### **What's Removed from Home**
 
-### Home Screen (4 cards)
-- Quick Actions grid card
-- Spending Timeline card  
-- Budget summary card
-- Stats card
+- ❌ "Breathe" quick action → moved to Tools tab
+- ❌ Day Streak card → moved to Profile tab
+- ❌ Vibe Check card → moved to Tools tab
+- ❌ Ghost Budget card → moved to Tools tab
+- ❌ Money Challenges card → moved to Tools tab
+- ❌ Splurj Coach shortcut card → replaced by Coach quick action button
+- ❌ Daily Insight quote → removed from home entirely
 
-### Wallet Screen (6+ cards)
-- Savings summary cards
-- Period stat cards
-- Transaction list cards
-- Action buttons
+### **Design**
 
-### Tools / Toolkit Screen (7+ cards)
-- All tool cards (Urge Surf, HALT Check, Cooling Off, etc.)
-- Section containers
+- Greeting + personality type in a single compact header row
+- Hero "Total Saved" in a glass card with large emerald amount and a small "▲ $XX from last month" comparison line
+- Quick actions in a tight 2×2 grid — all icons use the emerald accent color (no multicolor)
+- Budget section uses slim horizontal progress bars with emerald fill, inside a glass card
+- Spending chart bars all use the emerald accent gradient
+- Recent transactions limited to 3 items for a cleaner scroll
+- All cards use the existing `.glassCard()` modifier for consistent depth
+- Staggered spring entrance animations preserved
+- Haptic feedback on all interactive elements
 
-### Community Screen (5+ cards)
-- Post cards
-- Filter pills
-- New post card
-- Guidelines card
+### **Screens Affected**
 
-### Profile Screen (5+ cards)
-- Stats hero card
-- Settings section cards
-- Character card
-- Recovery section
-
-### Budget & Analytics (15+ cards)
-- Budget category cards
-- Analytics chart containers
-- Template selection cards
-- Budget detail cards
-
-### Challenges (6+ cards)
-- Challenge hub cards
-- No-Spend challenge cards
-- Round-up race cards
-- Envelope challenge cards
-- Week savings cards
-
-### Ghost Budget (5 cards)
-- Scenario cards
-- Comparison cards
-- Share card
-
-### Vibe Check Analytics (6 cards)
-- Mood distribution card
-- Trend cards
-- Transaction grid cards
-
-### Other Screens
-- Recurring expenses cards
-- Recurring detail cards
-- Notification settings cards
-- Curriculum section/session cards
-- DNS Blocking wizard cards
-- Breathing guide cards
-- Referral cards
-- Badge gallery cards
-- Coach chat input area
-- Money Wrapped cards
-- Spending trend chart container
-- Donut chart container
-- Dashboard skeleton cards
-- Onboarding cards (quiz, social proof, loss visualization, personality reveal, first win, intention)
-
-### What Won't Change
-- Small UI elements (capsule pills, circle badges, toggle backgrounds, text field backgrounds) keep their current flat style — glass is for **card containers** only
-- The `PressableButtonStyle` already has the premium shadow + spring effect — no changes needed
-- Sheet/modal backgrounds stay as-is (system-provided)
-
----
-
-## Design Result
-- Every card gets a frosted glass look with a subtle top-edge light gradient
-- Thin gradient border (bright top-left → dim bottom-right) replaces flat borders  
-- Drop shadow adds perceived depth
-- The overall feel shifts from "flat dark developer project" to "premium fintech glass UI"
+- **Home screen** — complete restructure of the dashboard layout
+- **Skeleton loading view** — updated to match the new simpler layout (no rings, fewer cards)
+- **Quick action component** — updated to use 2×2 grid with uniform emerald color
+- **Budget section** — rings replaced with horizontal progress bars

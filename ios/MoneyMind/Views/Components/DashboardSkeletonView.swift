@@ -39,55 +39,76 @@ struct DashboardSkeletonView: View {
     var body: some View {
         VStack(spacing: 20) {
             HStack {
-                skeletonBlock(width: 120, height: 20)
+                VStack(alignment: .leading, spacing: 6) {
+                    skeletonBlock(width: 180, height: 20)
+                    skeletonBlock(width: 140, height: 14)
+                }
                 Spacer()
-                skeletonCircle(size: 32)
+                skeletonCircle(size: 36)
             }
             .padding(.top, 16)
 
-            VStack(spacing: 8) {
-                skeletonBlock(width: 100, height: 14)
-                skeletonBlock(width: 200, height: 48)
-                skeletonBlock(width: 80, height: 16)
+            VStack(spacing: 10) {
+                skeletonBlock(width: 140, height: 14)
+                skeletonBlock(width: 180, height: 48)
+                skeletonBlock(width: 120, height: 14)
             }
+            .padding(.vertical, 24)
+            .frame(maxWidth: .infinity)
+            .glassCard(cornerRadius: 20)
 
-            HStack(spacing: 16) {
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
                 ForEach(0..<4, id: \.self) { _ in
-                    VStack(spacing: 8) {
-                        skeletonCircle(size: 56)
-                        skeletonBlock(width: 50, height: 12)
+                    HStack(spacing: 10) {
+                        skeletonCircle(size: 40)
+                        skeletonBlock(width: 70, height: 14)
+                        Spacer()
                     }
+                    .padding(14)
+                    .glassCard(cornerRadius: 14)
                 }
             }
 
-            HStack(spacing: 20) {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack {
+                    skeletonBlock(width: 80, height: 16)
+                    Spacer()
+                    skeletonBlock(width: 50, height: 14)
+                }
                 ForEach(0..<3, id: \.self) { _ in
-                    VStack(spacing: 8) {
-                        skeletonCircle(size: 80)
-                        skeletonBlock(width: 60, height: 12)
-                        skeletonBlock(width: 50, height: 10)
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            skeletonBlock(width: 80, height: 14)
+                            Spacer()
+                            skeletonBlock(width: 60, height: 12)
+                        }
+                        skeletonBlock(width: .infinity, height: 6)
                     }
-                    .frame(maxWidth: .infinity)
                 }
             }
             .padding(20)
             .glassCard(cornerRadius: 20)
 
             skeletonBlock(width: .infinity, height: 180)
+                .glassCard(cornerRadius: 20)
 
-            ForEach(0..<3, id: \.self) { _ in
-                HStack(spacing: 12) {
-                    skeletonCircle(size: 10)
-                    VStack(alignment: .leading, spacing: 4) {
-                        skeletonBlock(width: 120, height: 14)
-                        skeletonBlock(width: 80, height: 10)
+            VStack(alignment: .leading, spacing: 14) {
+                skeletonBlock(width: 60, height: 16)
+                ForEach(0..<3, id: \.self) { _ in
+                    HStack(spacing: 12) {
+                        skeletonCircle(size: 10)
+                        VStack(alignment: .leading, spacing: 4) {
+                            skeletonBlock(width: 120, height: 14)
+                            skeletonBlock(width: 60, height: 10)
+                        }
+                        Spacer()
+                        skeletonBlock(width: 60, height: 16)
                     }
-                    Spacer()
-                    skeletonBlock(width: 60, height: 16)
+                    .padding(.vertical, 6)
                 }
-                .padding(16)
-                .glassCard()
             }
+            .padding(20)
+            .glassCard(cornerRadius: 20)
         }
     }
 

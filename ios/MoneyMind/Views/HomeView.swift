@@ -12,11 +12,8 @@ struct HomeView: View {
     @State private var showAddExpense = false
     @State private var showAddIncome = false
     @State private var showCoach = false
-    @State private var showUrgeSurf = false
-    @State private var showChallengesHub = false
     @State private var showNotificationCenter = false
     @State private var appeared = false
-    @State private var streakBounce = 0
     @State private var bellBounce = 0
     @State private var characterVM = CharacterViewModel()
     @State private var selectedBudget: BudgetCategory?
@@ -33,24 +30,27 @@ struct HomeView: View {
         quizResults.first?.personality ?? .builder
     }
 
-    private var totalBalance: Double {
-        let income = transactions.filter { $0.transactionType == .income }.reduce(0) { $0 + $1.amount }
-        let expenses = transactions.filter { $0.transactionType == .expense }.reduce(0) { $0 + $1.amount }
-        let saved = profile?.totalSaved ?? 0
-        return income - expenses + saved
+    private var characterLevel: Int {
+        CharacterStage.level(from: profile?.xpPoints ?? 0)
     }
 
-    private var lastWeekBalance: Double {
-        let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
-        let oldTransactions = transactions.filter { $0.date < weekAgo }
-        let income = oldTransactions.filter { $0.transactionType == .income }.reduce(0) { $0 + $1.amount }
-        let expenses = oldTransactions.filter { $0.transactionType == .expense }.reduce(0) { $0 + $1.amount }
-        return income - expenses + (profile?.totalSaved ?? 0)
+    private var totalSavedThisMonth: Double {
+        let calendar = Calendar.current
+        let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: Date()))!
+        let monthLogs = impulseLogs.filter { $0.date >= startOfMonth }
+        return monthLogs.reduce(0) { $0 + $1.amount }
     }
 
-    private var trendPercentage: Double {
-        guard lastWeekBalance != 0 else { return 0 }
-        return ((totalBalance - lastWeekBalance) / abs(lastWeekBalance)) * 100
+    private var totalSavedLastMonth: Double {
+        let calendar = Calendar.current
+        let startOfThisMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: Date()))!
+        let startOfLastMonth = calendar.date(byAdding: .month, value: -1, to: startOfThisMonth)!
+        let lastMonthLogs = impulseLogs.filter { $0.date >= startOfLastMonth && $0.date < startOfThisMonth }
+        return lastMonthLogs.reduce(0) { $0 + $1.amount }
+    }
+
+    private var savedDifference: Double {
+        totalSavedThisMonth - totalSavedLastMonth
     }
 
     private var recentItems: [DashboardTransaction] {
@@ -81,7 +81,7 @@ struct HomeView: View {
 
         return (expenseItems + resistedItems)
             .sorted { $0.date > $1.date }
-            .prefix(5)
+            .prefix(3)
             .map { $0 }
     }
 
@@ -108,6 +108,22 @@ struct HomeView: View {
 
         let currentIndex = calendar.dateComponents([.day], from: monday, to: today).day ?? 0
         return (amounts, labels, min(currentIndex, 6))
+    }
+
+    private var hasEnoughDataForWrapped: Bool {
+        guard let start = profile?.startDate else { return false }
+        let days = Calendar.current.dateComponents([.day], from: start, to: Date()).day ?? 0
+        return days >= 7
+    }
+
+    private var greetingText: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        switch hour {
+        case 5..<12: return "Good morning"
+        case 12..<17: return "Good afternoon"
+        case 17..<22: return "Good evening"
+        default: return "Good night"
+        }
     }
 
     var body: some View {
@@ -152,15 +168,8 @@ struct HomeView: View {
                     .presentationDetents([.medium])
                     .presentationDragIndicator(.visible)
             }
-            .sheet(isPresented: $showUrgeSurf) {
-                UrgeSurfView()
-                    .presentationDragIndicator(.visible)
-            }
             .fullScreenCover(isPresented: $showCoach) {
                 CoachChatView()
-            }
-            .fullScreenCover(isPresented: $showChallengesHub) {
-                ChallengesHubView()
             }
             .sheet(isPresented: $showNotificationCenter) {
                 NotificationCenterView { link in
@@ -218,20 +227,14 @@ struct HomeView: View {
 
     private var dashboardContent: some View {
         VStack(spacing: 20) {
-            topBar
-            heroBalance
-            quickActionsRow
-            budgetRingsSection
+            greetingHeader
+            heroSavedCard
+            quickActionsGrid
+            budgetBarsSection
             spendingTimeline
             recentTransactionsSection
-            streakCard
             DailyPledgeCard()
                 .staggerIn(appeared: appeared, delay: 0.42)
-            vibeCheckCard
-            ghostBudgetCard
-            challengesCard
-            coachShortcutCard
-            dailyInsightCard
         }
         .padding(.horizontal)
         .padding(.bottom, 80)
@@ -246,7 +249,7 @@ struct HomeView: View {
 
     private var emptyState: some View {
         VStack(spacing: 0) {
-            topBar
+            greetingHeader
                 .padding(.horizontal)
 
             PersonalityEmptyStateView(
@@ -264,13 +267,29 @@ struct HomeView: View {
         .padding(.top, 16)
     }
 
-    // MARK: - Top Bar
+    // MARK: - Greeting Header
 
-    private var topBar: some View {
+    private var greetingHeader: some View {
         HStack {
-            Text("Splurj")
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
-                .foregroundStyle(Theme.textPrimary)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("\(greetingText), \(profile?.name ?? "Friend")")
+                    .font(.system(size: 20, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Theme.textPrimary)
+
+                HStack(spacing: 6) {
+                    Image(systemName: personality.icon)
+                        .font(.system(size: 12))
+                        .foregroundStyle(Theme.accent)
+                    Text("\(personality.rawValue)")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(Theme.textSecondary)
+                    Text("•")
+                        .foregroundStyle(Theme.textMuted)
+                    Text("Level \(characterLevel)")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(Theme.textSecondary)
+                }
+            }
 
             Spacer()
 
@@ -281,7 +300,7 @@ struct HomeView: View {
                 ZStack(alignment: .topTrailing) {
                     ZStack {
                         Circle()
-                            .fill(Theme.card)
+                            .fill(Theme.elevated)
                             .frame(width: 36, height: 36)
                         Image(systemName: "bell.fill")
                             .font(.system(size: 15, weight: .semibold))
@@ -303,78 +322,73 @@ struct HomeView: View {
             }
             .buttonStyle(.plain)
             .sensoryFeedback(.impact(weight: .light), trigger: bellBounce)
-
-            ZStack {
-                Circle()
-                    .fill(personality.color.opacity(0.12))
-                    .frame(width: 36, height: 36)
-                Image(systemName: personality.icon)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(personality.color)
-            }
         }
         .padding(.top, 12)
         .staggerIn(appeared: appeared, delay: 0.0)
     }
 
-    // MARK: - Hero Balance
+    // MARK: - Hero Saved Card
 
-    private var heroBalance: some View {
-        VStack(spacing: 8) {
-            Text("Total Balance")
-                .font(.system(size: 13, weight: .regular))
-                .foregroundStyle(Theme.textMuted)
+    private var heroSavedCard: some View {
+        VStack(spacing: 10) {
+            Text("Total Saved This Month")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(Theme.textSecondary)
 
-            ZStack {
-                Circle()
-                    .fill(personality.color.opacity(0.05))
-                    .frame(width: 220, height: 220)
-                    .blur(radius: 40)
+            MMAmountDisplay(amount: totalSavedThisMonth, font: Theme.amountXL, color: Theme.accent)
 
-                VStack(spacing: 6) {
-                    MMAmountDisplay(amount: totalBalance, font: Theme.amountXL)
-
-                    HStack(spacing: 4) {
-                        Image(systemName: trendPercentage >= 0 ? "arrow.up.right" : "arrow.down.right")
-                            .font(.system(size: 12, weight: .bold))
-                        Text("\(abs(trendPercentage), specifier: "%.1f")%")
-                            .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    }
-                    .foregroundStyle(trendPercentage >= 0 ? Theme.accentGreen : Theme.danger)
-                }
+            HStack(spacing: 4) {
+                Image(systemName: savedDifference >= 0 ? "arrow.up.right" : "arrow.down.right")
+                    .font(.system(size: 11, weight: .bold))
+                Text("$\(abs(savedDifference), specifier: "%.0f") from last month")
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
             }
+            .foregroundStyle(savedDifference >= 0 ? Theme.accent : Theme.danger)
         }
         .frame(maxWidth: .infinity)
+        .padding(.vertical, 24)
+        .glassCard(cornerRadius: 20)
         .staggerIn(appeared: appeared, delay: 0.05)
     }
 
-    // MARK: - Quick Actions
+    // MARK: - Quick Actions 2×2 Grid
 
-    private var quickActionsRow: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 20) {
-                DashboardQuickAction(icon: "star.fill", label: "Log a Win", color: Theme.accentGreen) {
-                    showLogWin = true
+    private var quickActionsGrid: some View {
+        let columns = [
+            GridItem(.flexible(), spacing: 12),
+            GridItem(.flexible(), spacing: 12)
+        ]
+
+        return LazyVGrid(columns: columns, spacing: 12) {
+            HomeQuickAction(icon: "star.fill", label: "Log Save") {
+                showLogWin = true
+            }
+            NavigationLink(value: "budgetAnalytics") {
+                HomeQuickActionLabel(icon: "chart.bar.fill", label: "Budget Check")
+            }
+            .buttonStyle(PressableButtonStyle())
+
+            if hasEnoughDataForWrapped {
+                NavigationLink(value: "wrapped") {
+                    HomeQuickActionLabel(icon: "chart.pie.fill", label: "Wrapped")
                 }
-                DashboardQuickAction(icon: "arrow.down.circle.fill", label: "Expense", color: Theme.danger) {
+                .buttonStyle(PressableButtonStyle())
+            } else {
+                HomeQuickAction(icon: "arrow.down.circle.fill", label: "Expense") {
                     showAddExpense = true
                 }
-                DashboardQuickAction(icon: "wind", label: "Breathe", color: Color(hex: 0x6699FF)) {
-                    showUrgeSurf = true
-                }
-                DashboardQuickAction(icon: "brain.head.profile", label: "Coach", color: Theme.teal) {
-                    showCoach = true
-                }
             }
-            .padding(.horizontal, 4)
+
+            HomeQuickAction(icon: "brain.head.profile", label: "Coach") {
+                showCoach = true
+            }
         }
-        .contentMargins(.horizontal, 0)
         .staggerIn(appeared: appeared, delay: 0.1)
     }
 
-    // MARK: - Budget Rings
+    // MARK: - Budget Bars
 
-    private var budgetRingsSection: some View {
+    private var budgetBarsSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("Budgets")
@@ -385,39 +399,60 @@ struct HomeView: View {
                 NavigationLink(value: "budgetAnalytics") {
                     Text("See All")
                         .font(.subheadline.weight(.medium))
-                        .foregroundStyle(Theme.secondary)
+                        .foregroundStyle(Theme.accent)
                 }
             }
 
-            HStack(spacing: 0) {
-                ForEach(budgets.prefix(3)) { budget in
-                    let spent = spentForBudget(budget)
-                    let progress = budget.monthlyLimit > 0 ? spent / budget.monthlyLimit : 0
+            if budgets.isEmpty {
+                HStack {
+                    Spacer()
+                    Text("No budgets set up yet")
+                        .font(.subheadline)
+                        .foregroundStyle(Theme.textMuted)
+                    Spacer()
+                }
+                .padding(.vertical, 12)
+            } else {
+                VStack(spacing: 16) {
+                    ForEach(budgets.prefix(3)) { budget in
+                        let spent = spentForBudget(budget)
+                        let progress = budget.monthlyLimit > 0 ? min(spent / budget.monthlyLimit, 1.0) : 0
 
-                    Button {
-                        selectedBudgetSpent = spent
-                        selectedBudget = budget
-                    } label: {
-                        VStack(spacing: 10) {
-                            ZStack {
-                                MMProgressRing(progress: min(progress, 1.0), lineWidth: 6, size: 64)
+                        Button {
+                            selectedBudgetSpent = spent
+                            selectedBudget = budget
+                        } label: {
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Image(systemName: budget.icon)
+                                        .font(.system(size: 14))
+                                        .foregroundStyle(Theme.accent)
+                                    Text(budget.name)
+                                        .font(.system(size: 14, weight: .medium))
+                                        .foregroundStyle(Theme.textPrimary)
+                                    Spacer()
+                                    Text("$\(Int(spent)) / $\(Int(budget.monthlyLimit))")
+                                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                                        .foregroundStyle(Theme.textSecondary)
+                                }
 
-                                Image(systemName: budget.icon)
-                                    .font(.system(size: 18))
-                                    .foregroundStyle(Color(hex: UInt(budget.colorHex, radix: 16) ?? 0x6C5CE7))
+                                GeometryReader { geo in
+                                    ZStack(alignment: .leading) {
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .fill(Theme.border)
+                                            .frame(height: 6)
+
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .fill(progress > 0.9 ? Theme.warning : Theme.accent)
+                                            .frame(width: geo.size.width * progress, height: 6)
+                                    }
+                                }
+                                .frame(height: 6)
                             }
-
-                            Text(budget.name)
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundStyle(Theme.textPrimary)
-
-                            Text("\(Int(spent))/\(Int(budget.monthlyLimit))")
-                                .font(.system(size: 11, weight: .regular, design: .rounded))
-                                .foregroundStyle(Theme.textMuted)
                         }
-                        .frame(maxWidth: .infinity)
+                        .buttonStyle(.plain)
+                        .sensoryFeedback(.impact(weight: .light), trigger: selectedBudget)
                     }
-                    .buttonStyle(PressableButtonStyle())
                 }
             }
         }
@@ -447,9 +482,6 @@ struct HomeView: View {
                     .font(.system(.headline, design: .rounded, weight: .semibold))
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
-                Text("See All")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(Theme.secondary)
             }
 
             if recentItems.isEmpty {
@@ -482,7 +514,7 @@ struct HomeView: View {
     private func transactionRow(_ item: DashboardTransaction) -> some View {
         HStack(spacing: 12) {
             Circle()
-                .fill(Color(hex: UInt(item.category.color, radix: 16) ?? 0x64748B))
+                .fill(Theme.accent.opacity(0.15))
                 .frame(width: 10, height: 10)
 
             VStack(alignment: .leading, spacing: 2) {
@@ -494,7 +526,7 @@ struct HomeView: View {
                     if item.isResisted {
                         Image(systemName: "checkmark.shield.fill")
                             .font(.system(size: 10))
-                            .foregroundStyle(Theme.accentGreen)
+                            .foregroundStyle(Theme.accent)
                     }
                     if !item.moodEmoji.isEmpty {
                         Text(item.moodEmoji)
@@ -513,262 +545,12 @@ struct HomeView: View {
                     "-$\(item.amount, specifier: "%.0f")")
                 .font(.system(size: 17, weight: .semibold, design: .rounded))
                 .foregroundStyle(
-                    item.isIncome ? Theme.accentGreen :
-                        item.isResisted ? Theme.teal :
+                    item.isIncome ? Theme.accent :
+                        item.isResisted ? Theme.accent :
                         Theme.textPrimary
                 )
         }
         .padding(.vertical, 10)
-    }
-
-    // MARK: - Streak Card
-
-    private var flameSize: CGFloat {
-        let streak = profile?.currentStreak ?? 0
-        switch streak {
-        case 90...: return 52
-        case 60..<90: return 48
-        case 30..<60: return 44
-        case 14..<30: return 40
-        case 7..<14: return 38
-        default: return 36
-        }
-    }
-
-    private var streakCard: some View {
-        HStack(spacing: 16) {
-            VStack(spacing: 4) {
-                Text("\(profile?.currentStreak ?? 0)")
-                    .font(.system(size: 48, weight: .bold, design: .rounded))
-                    .foregroundStyle(Theme.accentGradient)
-                    .contentTransition(.numericText())
-                Text("Day Streak")
-                    .font(.subheadline)
-                    .foregroundStyle(Theme.textSecondary)
-            }
-
-            Spacer()
-
-            VStack(alignment: .trailing, spacing: 8) {
-                Label("Best: \(profile?.longestStreak ?? 0) days", systemImage: "trophy.fill")
-                    .font(.caption)
-                    .foregroundStyle(Theme.gold)
-
-                if let profile, characterVM.canUseGrace(profile) {
-                    Label("Grace available", systemImage: "shield.fill")
-                        .font(.caption2)
-                        .foregroundStyle(Theme.teal.opacity(0.7))
-                }
-
-                Image(systemName: "flame.fill")
-                    .font(.system(size: flameSize))
-                    .foregroundStyle(Theme.accentGradient)
-                    .symbolEffect(.bounce, value: streakBounce)
-                    .onAppear {
-                        if (profile?.currentStreak ?? 0) > 0 {
-                            streakBounce += 1
-                        }
-                    }
-            }
-        }
-        .padding(20)
-        .glassCard(cornerRadius: 20)
-        .staggerIn(appeared: appeared, delay: 0.36)
-    }
-
-    // MARK: - Vibe Check Card
-
-    private var vibeCheckCard: some View {
-        NavigationLink(value: "vibeCheck") {
-            HStack(spacing: 14) {
-                ZStack {
-                    Circle()
-                        .fill(Theme.gold.opacity(0.1))
-                        .frame(width: 48, height: 48)
-                    Text("\u{1F60E}")
-                        .font(.system(size: 22))
-                }
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("Vibe Check")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(Theme.textPrimary)
-                    Text("Your spending moods & insights")
-                        .font(.caption)
-                        .foregroundStyle(Theme.textSecondary)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(Theme.textSecondary.opacity(0.4))
-            }
-            .padding(16)
-            .glassCard()
-        }
-        .buttonStyle(PressableButtonStyle())
-        .staggerIn(appeared: appeared, delay: 0.42)
-    }
-
-    // MARK: - Ghost Budget Card
-
-    private var ghostBudgetCard: some View {
-        NavigationLink(value: "ghostBudget") {
-            HStack(spacing: 14) {
-                ZStack {
-                    Circle()
-                        .fill(Theme.success.opacity(0.1))
-                        .frame(width: 48, height: 48)
-                    Text("\u{1F47B}")
-                        .font(.system(size: 22))
-                }
-
-                VStack(alignment: .leading, spacing: 3) {
-                    HStack(spacing: 6) {
-                        Text("Ghost Budget")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(Theme.textPrimary)
-                        Label("PRO", systemImage: "crown.fill")
-                            .font(.system(size: 9, weight: .bold, design: .rounded))
-                            .foregroundStyle(Theme.gold)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Theme.gold.opacity(0.12), in: .capsule)
-                    }
-                    Text("What if you changed your habits?")
-                        .font(.caption)
-                        .foregroundStyle(Theme.textSecondary)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(Theme.textSecondary.opacity(0.4))
-            }
-            .padding(16)
-            .glassCard()
-        }
-        .buttonStyle(PressableButtonStyle())
-        .staggerIn(appeared: appeared, delay: 0.43)
-    }
-
-    // MARK: - Challenges Card
-
-    private var challengesCard: some View {
-        Button {
-            showChallengesHub = true
-        } label: {
-            HStack(spacing: 14) {
-                ZStack {
-                    Circle()
-                        .fill(Theme.accent.opacity(0.1))
-                        .frame(width: 48, height: 48)
-                    Image(systemName: "trophy.fill")
-                        .font(.title2)
-                        .foregroundStyle(Theme.accent)
-                }
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("Money Challenges")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(Theme.textPrimary)
-                    Text("Gamified savings goals & streaks")
-                        .font(.caption)
-                        .foregroundStyle(Theme.textSecondary)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(Theme.textSecondary.opacity(0.4))
-            }
-            .padding(16)
-            .glassCard()
-        }
-        .buttonStyle(PressableButtonStyle())
-        .sensoryFeedback(.impact(weight: .medium), trigger: showChallengesHub)
-        .staggerIn(appeared: appeared, delay: 0.45)
-    }
-
-    // MARK: - Coach Shortcut
-
-    private var coachShortcutCard: some View {
-        Button {
-            showCoach = true
-        } label: {
-            HStack(spacing: 14) {
-                ZStack {
-                    Circle()
-                        .fill(Theme.teal.opacity(0.1))
-                        .frame(width: 48, height: 48)
-                    Image(systemName: "brain.head.profile")
-                        .font(.title2)
-                        .foregroundStyle(Theme.teal)
-                }
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("Splurj Coach")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(Theme.textPrimary)
-                    Text("Talk through what you're feeling")
-                        .font(.caption)
-                        .foregroundStyle(Theme.textSecondary)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(Theme.textSecondary.opacity(0.4))
-            }
-            .padding(16)
-            .glassCard()
-        }
-        .buttonStyle(PressableButtonStyle())
-        .sensoryFeedback(.impact(weight: .medium), trigger: showCoach)
-        .staggerIn(appeared: appeared, delay: 0.48)
-    }
-
-    // MARK: - Daily Insight
-
-    private let insights: [(String, String)] = [
-        ("The urge to spend impulsively is like a wave — it rises, peaks, and falls. You don't have to act on it.", "Cognitive Behavioral Therapy"),
-        ("Between stimulus and response there is a space. In that space lies our freedom and power to choose.", "Viktor Frankl"),
-        ("It's not about perfect control — it's about conscious choices, one at a time.", "Mindful Spending"),
-        ("Every dollar you don't spend impulsively is a vote for the person you want to become.", "Financial Wellness"),
-        ("The feeling will pass. It always does. Your future self will thank you for waiting.", "Urge Surfing"),
-    ]
-
-    private var todayInsight: (String, String) {
-        let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
-        return insights[dayOfYear % insights.count]
-    }
-
-    private var dailyInsightCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: "lightbulb.fill")
-                    .foregroundStyle(Theme.gold)
-                Text("Daily Insight")
-                    .font(.headline)
-                    .foregroundStyle(Theme.textPrimary)
-            }
-
-            Text("\"\(todayInsight.0)\"")
-                .font(.subheadline)
-                .foregroundStyle(Theme.textPrimary.opacity(0.75))
-                .lineSpacing(4)
-
-            Text("— \(todayInsight.1)")
-                .font(.caption)
-                .foregroundStyle(Theme.teal)
-        }
-        .padding(20)
-        .glassCard(cornerRadius: 20)
-        .staggerIn(appeared: appeared, delay: 0.54)
     }
 
     // MARK: - Helpers
@@ -802,7 +584,7 @@ struct HomeView: View {
         case .wallet:
             break
         case .challenges:
-            showChallengesHub = true
+            break
         case .ghostBudget:
             break
         case .eveningReflection:
@@ -813,12 +595,11 @@ struct HomeView: View {
     }
 }
 
-// MARK: - Dashboard Quick Action Button
+// MARK: - Home Quick Action Button
 
-struct DashboardQuickAction: View {
+struct HomeQuickAction: View {
     let icon: String
     let label: String
-    let color: Color
     let action: () -> Void
 
     @State private var hapticTrigger = false
@@ -828,27 +609,34 @@ struct DashboardQuickAction: View {
             hapticTrigger.toggle()
             action()
         } label: {
-            VStack(spacing: 8) {
-                ZStack {
-                    Circle()
-                        .fill(.ultraThinMaterial.opacity(0.3))
-                        .frame(width: 56, height: 56)
-                        .overlay(
-                            Circle()
-                                .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5)
-                        )
-                        .shadow(color: .black.opacity(0.2), radius: 8, y: 3)
-                    Image(systemName: icon)
-                        .font(.system(size: 20))
-                        .foregroundStyle(color)
-                }
-                Text(label)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(Theme.textPrimary.opacity(0.8))
-            }
+            HomeQuickActionLabel(icon: icon, label: label)
         }
         .buttonStyle(PressableButtonStyle())
         .sensoryFeedback(.impact(weight: .light), trigger: hapticTrigger)
+    }
+}
+
+struct HomeQuickActionLabel: View {
+    let icon: String
+    let label: String
+
+    var body: some View {
+        HStack(spacing: 10) {
+            ZStack {
+                Circle()
+                    .fill(Theme.accent.opacity(0.12))
+                    .frame(width: 40, height: 40)
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(Theme.accent)
+            }
+            Text(label)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(Theme.textPrimary)
+            Spacer()
+        }
+        .padding(14)
+        .glassCard(cornerRadius: 14)
     }
 }
 
@@ -876,7 +664,7 @@ extension View {
     }
 }
 
-// MARK: - LogWinSheet (kept)
+// MARK: - LogWinSheet
 
 struct LogWinSheet: View {
     @Environment(\.dismiss) private var dismiss
@@ -897,7 +685,7 @@ struct LogWinSheet: View {
                         .keyboardType(.decimalPad)
                         .font(.system(.title, design: .rounded, weight: .bold))
                         .multilineTextAlignment(.center)
-                        .tint(Theme.accentGreen)
+                        .tint(Theme.accent)
 
                     TextField("What was the temptation?", text: $note)
                         .font(.body)

@@ -8,6 +8,7 @@ struct HomeView: View {
     @Query private var budgets: [BudgetCategory]
     @Query private var quizResults: [QuizResult]
     @Query(filter: #Predicate<InAppNotification> { !$0.isDismissed && !$0.isRead }) private var unreadNotifications: [InAppNotification]
+    @Query(filter: #Predicate<ScratchCard> { $0.scratchedAt == nil }) private var pendingScratchCards: [ScratchCard]
     @State private var showLogWin = false
     @State private var showAddExpense = false
     @State private var showAddIncome = false
@@ -195,6 +196,8 @@ struct HomeView: View {
                     GhostBudgetView()
                 } else if value == "vibeCheck" {
                     VibeCheckAnalyticsView()
+                } else if value == "vaultGame" {
+                    VaultGameView()
                 }
             }
             .onAppear {
@@ -266,10 +269,36 @@ struct HomeView: View {
         }
     }
 
+    private var pendingScratchCardsPrompt: some View {
+        Group {
+            if !pendingScratchCards.isEmpty {
+                NavigationLink(value: "vaultGame") {
+                    HStack(spacing: 10) {
+                        Image(systemName: "sparkles.rectangle.stack")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(Theme.accent)
+                        Text("\(pendingScratchCards.count) card\(pendingScratchCards.count == 1 ? "" : "s") to scratch")
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .foregroundStyle(Theme.textPrimary)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(Theme.textMuted)
+                    }
+                    .padding(14)
+                    .glassCard(cornerRadius: 12)
+                }
+                .buttonStyle(.plain)
+                .staggerIn(appeared: appeared, delay: 0.08)
+            }
+        }
+    }
+
     private var dashboardContent: some View {
         VStack(spacing: 20) {
             trialBanner
             greetingHeader
+            pendingScratchCardsPrompt
             heroSavedCard
             quickActionsGrid
             budgetBarsSection
@@ -726,8 +755,10 @@ struct LogWinSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Query private var profiles: [UserProfile]
+    @Query private var gachaStates: [GachaState]
     @State private var amount: String = ""
     @State private var note: String = ""
+    @State private var scratchCardToast: ScratchCardToastData?
 
     var body: some View {
         NavigationStack {
@@ -750,13 +781,28 @@ struct LogWinSheet: View {
                 }
 
                 Button {
-                    if let value = Double(amount) {
-                        let log = ImpulseLog(amount: value, note: note, resisted: true)
-                        modelContext.insert(log)
-                        if let profile = profiles.first {
-                            profile.totalSaved += value
-                        }
+                    guard let value = Double(amount), value > 0 else { return }
+                    let log = ImpulseLog(amount: value, note: note, resisted: true)
+                    modelContext.insert(log)
+                    if let profile = profiles.first {
+                        profile.totalSaved += value
                     }
+
+                    let engine = GachaEngine()
+                    if let state = gachaStates.first {
+                        engine.syncFromState(state)
+                    }
+                    let currency = profiles.first?.defaultCurrency ?? "USD"
+                    if let result = ScratchCardService.earnScratchCard(
+                        resistedAmount: value,
+                        currency: currency,
+                        engine: engine,
+                        gachaState: gachaStates.first,
+                        modelContext: modelContext
+                    ) {
+                        scratchCardToast = ScratchCardToastData(isGlowing: result.isGlowing)
+                    }
+
                     dismiss()
                 } label: {
                     Text("Log Win")
@@ -776,6 +822,15 @@ struct LogWinSheet: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
+                }
+            }
+            .overlay(alignment: .top) {
+                if let toast = scratchCardToast {
+                    ScratchCardToast(data: toast) {
+                        withAnimation { scratchCardToast = nil }
+                    }
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .zIndex(100)
                 }
             }
         }

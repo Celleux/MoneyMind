@@ -1,25 +1,25 @@
-# Add Set Completion Bonuses & Card Evolution System
+# Connect Scratch Card Earning to Impulse Resistance + Home Screen Prompt
 
-## Features
+**What's already done (from previous phases):**
+- Confetti celebration effects ✅
+- Pity info sheet with tracker ✅
+- The full Vault game, scratch cards, collection, gacha engine ✅
 
-- **Set completion milestones** — Already exists via `SetProgressView`. Will be enhanced to show milestone rewards visually.
-- **Card evolution** — Spend Essence (earned from duplicate pulls) to evolve a collected card to a higher rarity tier visually.
-- **Evolution UI on Card Detail** — When viewing a collected card, see an "Evolve" button if the card is eligible and you have enough Essence.
-- **Essence display** — Show current Essence balance in the Vault and Card Detail screens.
-- **Evolution visual feedback** — Evolved cards show an evolution badge and enhanced glow in the collection grid.
+**What this plan adds:**
 
-## Design
+### Features
+- Every time you log a resisted impulse ("Log a Win"), you automatically earn a scratch card with a hidden gacha pull inside
+- A maximum of 5 unscratched cards can be held at once — if you already have 5, you'll see a message to go scratch them first
+- The Home screen shows a small card prompting you to scratch pending cards when you have them (tapping takes you to The Vault)
+- A small toast-style notification appears after earning a scratch card, with a special glowing version for rare pulls
 
-- **Evolve Card section** appears at the bottom of the Card Detail sheet, showing current rarity → next rarity with the Essence cost.
-- **Evolve button** uses the emerald accent when affordable, muted gray when not. Disabled for Legendary or max-evolved cards.
-- **Evolution badge** — Small "Evo +1" or "Evo +2" pill on cards in the collection grid, using the next rarity's color.
-- **Confetti/haptic** on successful evolution for satisfying feedback.
-- **Essence counter** shown in the Vault stats bar (replacing or alongside existing stats).
+### Design
+- The "scratch card earned" toast slides in from the top with the app's emerald accent color
+- If the hidden card is Epic or Legendary, the toast shows "You earned a GLOWING scratch card" with a shimmer effect
+- The Home screen prompt is a compact card with the sparkles icon, showing "X card(s) to scratch" with a chevron to navigate to The Vault
+- Sits between the greeting header and the quick actions grid on the Home screen
 
-## Changes
-
-1. **New file: `EvolveCardView.swift`** — The evolution UI component showing current → evolved rarity, Essence cost, and evolve button.
-2. **Update `CardDetailView.swift`** — Add the EvolveCardView at the bottom, pass Essence from GachaState, handle evolution logic (spend Essence, increment evolutionLevel, update rarity string).
-3. **Update `CardCollectionView.swift`** — Show evolution level badge on evolved cards in the grid.
-4. **Update `VaultGameView.swift`** — Add Essence to the stats bar so users always know their balance.
-5. **Update `GachaEngine.swift`** — Add a helper to get the next rarity string for evolution.
+### Screens affected
+- **Wallet Log Win sheet** — after saving a win, a scratch card is created behind the scenes
+- **Home Log Win sheet** — same scratch card creation logic added here
+- **Home screen** — new pending scratch cards prompt card added to the dashboard

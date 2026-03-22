@@ -5,9 +5,11 @@ struct WalletLogWinSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Query private var profiles: [UserProfile]
+    @Query private var gachaStates: [GachaState]
     @State private var amount: String = ""
     @State private var note: String = ""
     @State private var selectedTrigger: String = ""
+    @State private var scratchCardToast: ScratchCardToastData?
 
     let onSaved: (Double) -> Void
     @State private var showShareWin = false
@@ -130,6 +132,15 @@ struct WalletLogWinSheet: View {
                 }
             }
         }
+        .overlay(alignment: .top) {
+            if let toast = scratchCardToast {
+                ScratchCardToast(data: toast) {
+                    withAnimation { scratchCardToast = nil }
+                }
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .zIndex(100)
+            }
+        }
         .sheet(isPresented: $showShareWin, onDismiss: { dismiss() }) {
             ShareWinSheet(
                 amount: savedAmount,
@@ -150,6 +161,22 @@ struct WalletLogWinSheet: View {
             profile.totalSaved += value
             profile.xpPoints += 25
         }
+
+        let engine = GachaEngine()
+        if let state = gachaStates.first {
+            engine.syncFromState(state)
+        }
+        let currency = profiles.first?.defaultCurrency ?? "USD"
+        if let result = ScratchCardService.earnScratchCard(
+            resistedAmount: value,
+            currency: currency,
+            engine: engine,
+            gachaState: gachaStates.first,
+            modelContext: modelContext
+        ) {
+            scratchCardToast = ScratchCardToastData(isGlowing: result.isGlowing)
+        }
+
         savedAmount = value
         savedNote = note
         savedTrigger = selectedTrigger

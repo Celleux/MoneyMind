@@ -30,7 +30,7 @@ struct ContentView: View {
                     ProfileView()
                 }
             }
-            .tint(Theme.accentGreen)
+            .tint(Theme.accent)
 
             sosButton
         }

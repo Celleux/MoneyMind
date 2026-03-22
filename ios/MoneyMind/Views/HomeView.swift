@@ -12,6 +12,7 @@ struct HomeView: View {
     @State private var showAddIncome = false
     @State private var showCoach = false
     @State private var showUrgeSurf = false
+    @State private var showChallengesHub = false
     @State private var appeared = false
     @State private var streakBounce = 0
     @State private var characterVM = CharacterViewModel()
@@ -154,6 +155,9 @@ struct HomeView: View {
             .fullScreenCover(isPresented: $showCoach) {
                 CoachChatView()
             }
+            .fullScreenCover(isPresented: $showChallengesHub) {
+                ChallengesHubView()
+            }
             .navigationDestination(for: String.self) { value in
                 if value == "budgetAnalytics" {
                     BudgetAnalyticsView()
@@ -194,6 +198,7 @@ struct HomeView: View {
             streakCard
             DailyPledgeCard()
                 .staggerIn(appeared: appeared, delay: 0.42)
+            challengesCard
             coachShortcutCard
             dailyInsightCard
         }
@@ -569,6 +574,56 @@ struct HomeView: View {
                 .strokeBorder(Theme.teal.opacity(0.15), lineWidth: 1)
         )
         .staggerIn(appeared: appeared, delay: 0.36)
+    }
+
+    // MARK: - Challenges Card
+
+    private var challengesCard: some View {
+        Button {
+            showChallengesHub = true
+        } label: {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .fill(Theme.accent.opacity(0.1))
+                        .frame(width: 48, height: 48)
+                    Image(systemName: "trophy.fill")
+                        .font(.title2)
+                        .foregroundStyle(Theme.accent)
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Money Challenges")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Theme.textPrimary)
+                    Text("Gamified savings goals & streaks")
+                        .font(.caption)
+                        .foregroundStyle(Theme.textSecondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Theme.textSecondary.opacity(0.4))
+            }
+            .padding(16)
+            .background(
+                LinearGradient(
+                    colors: [Theme.accent.opacity(0.08), Theme.card],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                in: .rect(cornerRadius: 16)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(Theme.accent.opacity(0.15), lineWidth: 1)
+            )
+        }
+        .buttonStyle(PressableButtonStyle())
+        .sensoryFeedback(.impact(weight: .medium), trigger: showChallengesHub)
+        .staggerIn(appeared: appeared, delay: 0.45)
     }
 
     // MARK: - Coach Shortcut

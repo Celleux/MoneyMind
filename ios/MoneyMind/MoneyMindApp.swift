@@ -53,7 +53,8 @@ struct MoneyMindApp: App {
             ChallengeGroup.self,
             ReferralCode.self,
             Transaction.self,
-            BudgetCategory.self
+            BudgetCategory.self,
+            SavingsChallenge.self
         ])
     }
 }

@@ -10,6 +10,8 @@ struct ContentView: View {
     @State private var sosPulse = false
     @State private var showSiriUrgeSurf = false
     @State private var showSiriCheckIn = false
+    @State private var showQuickTransaction = false
+    @State private var fabBounce: Bool = false
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -32,7 +34,16 @@ struct ContentView: View {
             }
             .tint(Theme.accent)
 
-            sosButton
+            VStack(spacing: 12) {
+                fabButton
+                sosButton
+            }
+        }
+        .sheet(isPresented: $showQuickTransaction) {
+            QuickTransactionSheet()
+                .presentationDetents([.large])
+                .presentationDragIndicator(.hidden)
+                .presentationBackground(Theme.background)
         }
         .sheet(isPresented: $showSOSSheet) {
             SOSEmergencySheet()
@@ -51,6 +62,27 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: .siriCheckInRequested)) { _ in
             showSiriCheckIn = true
         }
+    }
+
+    private var fabButton: some View {
+        Button {
+            fabBounce.toggle()
+            showQuickTransaction = true
+        } label: {
+            ZStack {
+                Circle()
+                    .fill(Theme.accent)
+                    .frame(width: 56, height: 56)
+                    .shadow(color: Theme.accent.opacity(0.2), radius: 24, y: 8)
+
+                Image(systemName: "plus")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundStyle(.white)
+            }
+        }
+        .buttonStyle(PressableButtonStyle())
+        .sensoryFeedback(.impact(weight: .medium), trigger: fabBounce)
+        .accessibilityLabel("Add transaction")
     }
 
     private var sosButton: some View {
@@ -79,7 +111,7 @@ struct ContentView: View {
         .accessibilityLabel("Emergency help")
         .accessibilityHint("Opens emergency support tools")
         .padding(.trailing, 16)
-        .padding(.bottom, 60)
+        .padding(.bottom, 4)
         .sensoryFeedback(.impact(weight: .heavy), trigger: showSOSSheet)
         .onAppear {
             withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: false)) {

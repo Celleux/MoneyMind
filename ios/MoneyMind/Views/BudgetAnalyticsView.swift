@@ -62,8 +62,11 @@ struct BudgetAnalyticsView: View {
                     )
                     .staggerIn(appeared: vm.appeared, delay: 0.32)
 
+                    recurringExpensesCard
+                        .staggerIn(appeared: vm.appeared, delay: 0.36)
+
                     ghostBudgetCard
-                        .staggerIn(appeared: vm.appeared, delay: 0.40)
+                        .staggerIn(appeared: vm.appeared, delay: 0.44)
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 80)
@@ -87,6 +90,8 @@ struct BudgetAnalyticsView: View {
         .navigationDestination(for: String.self) { value in
             if value == "ghostBudget" {
                 GhostBudgetView()
+            } else if value == "recurringExpenses" {
+                RecurringExpensesView()
             }
         }
         .sensoryFeedback(.impact(weight: .light), trigger: vm.monthChangeTrigger)
@@ -95,6 +100,52 @@ struct BudgetAnalyticsView: View {
                 vm.appeared = true
             }
         }
+    }
+
+    // MARK: - Recurring Expenses Card
+
+    private var recurringExpensesCard: some View {
+        NavigationLink(value: "recurringExpenses") {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .fill(Theme.secondary.opacity(0.1))
+                        .frame(width: 48, height: 48)
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                        .font(.title2)
+                        .foregroundStyle(Theme.secondary)
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Recurring Expenses")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Theme.textPrimary)
+                    Text("Track subscriptions & bills")
+                        .font(.caption)
+                        .foregroundStyle(Theme.textSecondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Theme.textSecondary.opacity(0.4))
+            }
+            .padding(16)
+            .background(
+                LinearGradient(
+                    colors: [Theme.secondary.opacity(0.06), Theme.card],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                in: .rect(cornerRadius: 16)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(Theme.secondary.opacity(0.12), lineWidth: 1)
+            )
+        }
+        .buttonStyle(PressableButtonStyle())
     }
 
     // MARK: - Ghost Budget Card

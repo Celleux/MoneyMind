@@ -1,27 +1,41 @@
-# Smart Category Engine — On-Device ML Categorization
-
+# Recurring Expense Tracker with Detection, Calendar & Notifications
 
 ## Features
 
-- **Expanded to 15 categories**: Food & Dining, Transport, Shopping, Bills & Utilities, Entertainment, Health & Fitness, Education, Personal Care, Home, Travel, Gifts, Subscriptions, Income, Savings, Other — each with a unique emoji and color
-- **Keyword-based merchant matching**: 50+ built-in merchant→category mappings (e.g. "Starbucks"→Food, "Uber"→Transport, "Amazon"→Shopping, "Netflix"→Subscriptions)
-- **User correction learning**: When a user changes a transaction's category, the app asks "Always categorize [merchant] as [category]?" and saves the preference
-- **Retroactive re-categorization**: Accepting a correction updates all past transactions from the same merchant
-- **Smart suggestions on entry**: When adding a transaction, the top 3 category suggestions appear based on time of day, day of week, amount range, and recent usage
-- **Amount-based heuristics**: Small amounts default toward Food, medium toward Shopping, large toward Bills — as a fallback
-- **Entirely on-device**: No network calls needed. All mappings stored locally via SwiftData
+- **Automatic Detection**: Scans your transaction history for repeating patterns — same merchant, similar amount, regular intervals (weekly, biweekly, monthly, quarterly, yearly). Flags as "possible recurring" after 2 occurrences and shows a confirmation card
+- **Recurring Expenses Screen**: Accessible from the Budget Analytics screen. Shows total monthly recurring cost prominently, with a scrollable list of all recurring items — each showing merchant name, amount, next due date, category color, and frequency
+- **Sortable List**: Sort recurring expenses by next due date (default), amount, or category
+- **Calendar View**: Month calendar with color-coded category dots on due dates. Tap any date to see all expenses due that day. Current week is highlighted
+- **Bill Reminder Notifications**: Configurable reminders — 1 day, 3 days, or 1 week before a bill is due. Plus a monthly summary notification: "You have X recurring expenses totaling $Y this month"
+- **Usage-Based Suggestions**: Flags items you haven't logged a transaction for in 30+ days with a "Consider cancelling?" suggestion
+- **Quick Actions**: Swipe left on any recurring item to Mark as Paid, Skip This Month, or Remove. Tap to see full payment history for that item
+- **Empty State**: Personality-themed empty state when no recurring expenses are detected yet
 
 ## Design
 
-- A new `MerchantCategoryMapping` data model stores learned merchant→category pairs in SwiftData
-- The `CategoryMLEngine` service provides instant suggestion lookups (under 100ms)
-- Smart suggestion pills appear at the top of the category selector in the transaction entry sheet, highlighted with a sparkle icon and the app's purple accent
-- The "Always categorize as…?" confirmation appears as a subtle inline banner after a user changes a category, styled with the dark card background and rounded corners
-- Updated category pills use each category's unique emoji alongside the SF Symbol icon for quick visual scanning
+- **Dark theme** consistent with the existing MoneyMind design system (#0A0F1E background, #111827 cards)
+- **Header area** with a large total monthly recurring amount in personality color, with a subtitle showing what percentage of income this represents
+- **Segmented control** at the top to switch between List view and Calendar view
+- **Each recurring item card** styled as an MMCard with category color dot, merchant name, amount in bold rounded font, frequency pill badge, and next due date in muted text
+- **Calendar** uses a clean grid layout with small colored dots for each due date, matching the category color. Today highlighted with accent ring. Tapping a date slides up a detail panel
+- **Confirmation cards** for newly detected recurring expenses appear as a compact banner with Accept/Dismiss actions
+- **Swipe actions** use the standard iOS swipe-to-reveal pattern with green (Paid), orange (Skip), and red (Remove) actions
+- **Stagger-in animations** on appear, consistent with other screens
 
-## Screens & Changes
+## Screens / Sections
 
-- **Transaction Entry Sheet**: Smart suggestion row upgraded to show top 3 engine-powered suggestions instead of simple amount matching; note field text is used for merchant matching
-- **Add Expense / Add Income Sheets**: Category grid updated to use the expanded 15-category set with new emojis and colors
-- **Transaction Detail (inline editing)**: When a user changes a category, a confirmation prompt offers to learn the mapping and apply retroactively
-- **No new screens**: All changes integrate into existing transaction entry and editing flows
+- **Recurring Expenses Screen** — Main screen with segmented List/Calendar toggle, total header, detection banners, and the recurring items list or calendar view
+- **Recurring Detail Sheet** — Bottom sheet showing full history of a single recurring expense: all past payments, average amount, total spent to date, and edit options
+- **Detection Banner** — Inline card that appears when a new recurring pattern is detected, asking the user to confirm
+- **Calendar Day Detail** — Expandable section showing all expenses due on a tapped calendar date
+
+## New Files
+
+- **RecurringExpense model** — SwiftData model storing merchant, amount, frequency, category, next due date, reminder preference, active status, and payment history
+- **RecurringExpenseDetector service** — Scans transactions to find recurring patterns, generates suggestions
+- **RecurringExpenseViewModel** — Business logic for the screen, sorting, filtering, calendar data
+- **RecurringExpensesView** — Main screen with list and calendar views
+- **RecurringDetailSheet** — Detail sheet for individual recurring expenses
+- Model container updated to include the new RecurringExpense model
+- Notification scheduling extended for bill reminders
+- Navigation link added from Budget Analytics screen

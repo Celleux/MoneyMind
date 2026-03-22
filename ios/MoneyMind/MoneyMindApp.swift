@@ -57,7 +57,8 @@ struct MoneyMindApp: App {
             Transaction.self,
             BudgetCategory.self,
             SavingsChallenge.self,
-            MerchantCategoryMapping.self
+            MerchantCategoryMapping.self,
+            RecurringExpense.self
         ])
     }
 }

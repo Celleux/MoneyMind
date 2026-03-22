@@ -613,14 +613,14 @@ struct ProfileView: View {
                 showClearDataAlert = true
             } label: {
                 HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "trash.fill", color: Theme.danger)
+                    SettingsIconBadge(icon: "trash.fill", color: Theme.textSecondary)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Clear All Data")
                             .font(.subheadline.weight(.medium))
-                            .foregroundStyle(Theme.danger)
+                            .foregroundStyle(Theme.textSecondary)
                         Text("Remove all transactions and progress")
                             .font(.caption)
-                            .foregroundStyle(Theme.textSecondary)
+                            .foregroundStyle(Theme.textMuted)
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
@@ -776,33 +776,24 @@ struct ProfileView: View {
     // MARK: - Danger Zone
 
     private var dangerZoneSection: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(spacing: 10) {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.subheadline)
-                    .foregroundStyle(Theme.danger)
-                Text("Danger Zone")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Theme.danger)
-            }
-
+        SettingsSection(title: "Data Management", icon: "externaldrive.fill", iconColor: Theme.textSecondary) {
             Button {
                 showClearDataAlert = true
             } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "trash.fill")
-                        .font(.subheadline)
-                        .foregroundStyle(Theme.danger)
-                        .frame(width: 28)
+                HStack(spacing: 14) {
+                    SettingsIconBadge(icon: "trash.fill", color: Theme.textSecondary)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Clear All Data")
                             .font(.subheadline.weight(.medium))
-                            .foregroundStyle(Theme.danger)
+                            .foregroundStyle(Theme.textSecondary)
                         Text("Permanently remove all app data")
                             .font(.caption)
-                            .foregroundStyle(Theme.textSecondary)
+                            .foregroundStyle(Theme.textMuted)
                     }
                     Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Theme.textSecondary.opacity(0.4))
                 }
             }
             .sensoryFeedback(.warning, trigger: showClearDataAlert)
@@ -812,26 +803,24 @@ struct ProfileView: View {
             Button {
                 showDeleteAccountAlert = true
             } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "person.crop.circle.badge.xmark")
-                        .font(.subheadline)
-                        .foregroundStyle(Theme.danger)
-                        .frame(width: 28)
+                HStack(spacing: 14) {
+                    SettingsIconBadge(icon: "person.crop.circle.badge.xmark", color: Theme.textSecondary)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Delete Account")
                             .font(.subheadline.weight(.medium))
-                            .foregroundStyle(Theme.danger)
+                            .foregroundStyle(Theme.textSecondary)
                         Text("Delete your account and all data forever")
                             .font(.caption)
-                            .foregroundStyle(Theme.textSecondary)
+                            .foregroundStyle(Theme.textMuted)
                     }
                     Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Theme.textSecondary.opacity(0.4))
                 }
             }
             .sensoryFeedback(.warning, trigger: showDeleteAccountAlert)
         }
-        .padding(16)
-        .glassCard()
     }
 
     // MARK: - PGSI

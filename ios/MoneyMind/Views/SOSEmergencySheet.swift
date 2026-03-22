@@ -12,7 +12,7 @@ struct SOSEmergencySheet: View {
                     VStack(spacing: 8) {
                         Image(systemName: "heart.fill")
                             .font(.system(size: 40))
-                            .foregroundStyle(Theme.emergency)
+                            .foregroundStyle(Theme.accent)
                             .symbolEffect(.pulse, options: .repeating)
 
                         Text("You're Not Alone")
@@ -40,7 +40,7 @@ struct SOSEmergencySheet: View {
                             icon: "cross.fill",
                             title: "Full Crisis Support",
                             subtitle: "Hotlines, grounding & screening",
-                            color: Theme.emergency
+                            color: Theme.textSecondary
                         ) {
                             showEmergency = true
                         }

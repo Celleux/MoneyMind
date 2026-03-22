@@ -66,7 +66,8 @@ struct SplurjApp: App {
             GachaState.self,
             QuestProgress.self,
             PlayerProfile.self,
-            DailyQuestSlot.self
+            DailyQuestSlot.self,
+            QuestBuddy.self
         ])
     }
 }

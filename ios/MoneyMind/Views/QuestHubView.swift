@@ -7,6 +7,7 @@ struct QuestHubView: View {
     @State private var selectedTab: QuestHubTab = .dailies
     @State private var showBossBattle: Bool = false
     @State private var showQuestMap: Bool = false
+    @State private var showBuddy: Bool = false
     @Namespace private var animation
 
     private var player: PlayerProfile {
@@ -59,6 +60,18 @@ struct QuestHubView: View {
         .navigationTitle("Quests")
         .toolbarColorScheme(.dark, for: .navigationBar)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { showBuddy = true } label: {
+                    Image(systemName: "person.2.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(Theme.accent)
+                }
+            }
+        }
+        .navigationDestination(isPresented: $showBuddy) {
+            AccountabilityBuddyView()
+        }
         .onAppear {
             ensurePlayerAndQuests()
         }

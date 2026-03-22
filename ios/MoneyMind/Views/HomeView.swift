@@ -161,6 +161,8 @@ struct HomeView: View {
             .navigationDestination(for: String.self) { value in
                 if value == "budgetAnalytics" {
                     BudgetAnalyticsView()
+                } else if value == "ghostBudget" {
+                    GhostBudgetView()
                 }
             }
             .onAppear {
@@ -198,6 +200,7 @@ struct HomeView: View {
             streakCard
             DailyPledgeCard()
                 .staggerIn(appeared: appeared, delay: 0.42)
+            ghostBudgetCard
             challengesCard
             coachShortcutCard
             dailyInsightCard
@@ -574,6 +577,60 @@ struct HomeView: View {
                 .strokeBorder(Theme.teal.opacity(0.15), lineWidth: 1)
         )
         .staggerIn(appeared: appeared, delay: 0.36)
+    }
+
+    // MARK: - Ghost Budget Card
+
+    private var ghostBudgetCard: some View {
+        NavigationLink(value: "ghostBudget") {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .fill(Theme.success.opacity(0.1))
+                        .frame(width: 48, height: 48)
+                    Text("\u{1F47B}")
+                        .font(.system(size: 22))
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 6) {
+                        Text("Ghost Budget")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(Theme.textPrimary)
+                        Label("PRO", systemImage: "crown.fill")
+                            .font(.system(size: 9, weight: .bold, design: .rounded))
+                            .foregroundStyle(Theme.gold)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Theme.gold.opacity(0.12), in: .capsule)
+                    }
+                    Text("What if you changed your habits?")
+                        .font(.caption)
+                        .foregroundStyle(Theme.textSecondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Theme.textSecondary.opacity(0.4))
+            }
+            .padding(16)
+            .background(
+                LinearGradient(
+                    colors: [Theme.success.opacity(0.06), Theme.card],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                in: .rect(cornerRadius: 16)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(Theme.success.opacity(0.12), lineWidth: 1)
+            )
+        }
+        .buttonStyle(PressableButtonStyle())
+        .staggerIn(appeared: appeared, delay: 0.43)
     }
 
     // MARK: - Challenges Card

@@ -1,33 +1,35 @@
-# iOS Widgets for MoneyMind — Home Screen & Lock Screen
+# Ghost Budget Mode — "What If?" Parallel Financial Timeline
+
 
 ## Features
 
-- **Small Widget**: Shows daily budget remaining with a mini progress ring and personality color accent
-- **Medium Widget**: Left side shows remaining budget + progress ring; right side lists top 3 spending categories with mini bars; bottom hint text
-- **Large Widget**: Hero balance at top, weekly spending bar chart (7 days, today highlighted), top 3 categories with progress bars
-- **Lock Screen Circular Widget**: Budget ring showing percentage used with remaining amount
-- **Lock Screen Rectangular Widget**: No-spend streak counter with flame emoji
-- **Lock Screen Inline Widget**: "Budget: $X remaining" text
-- **Data Sharing**: App writes budget/spending data to a shared App Group so widgets can read it
-- **Deep Linking**: Tapping any widget opens the relevant screen in the app
-- **Personality Theming**: Widgets use the user's Money Personality accent color
-- **Privacy Redaction**: Amounts show placeholder when widget is redacted
+- **Habit Toggle System** — See a list of your spending categories with their monthly averages; toggle any category on to "eliminate" it and instantly see the impact
+- **Split Comparison Chart** — Animated dual-line visualization showing your real balance trajectory vs. your "ghost" balance without the eliminated spending
+- **Dramatic Savings Callout** — Large animated number showing how much more you'd have, with fun rotating equivalents ("That's X iPhones", "X months of rent", "X round-trip flights")
+- **Timeline Projections** — Switch between 1 month, 3 months, 6 months, and 1 year views to see long-term impact
+- **Shareable Ghost Card** — Generate a beautiful 1080×1920 share image with "If I stopped [habit], I'd have $X,XXX in [timeframe]" and MoneyMind branding
+- **Premium Gate** — Free users see a preview with blurred projections and a prompt to upgrade; full access for premium users
 
 ## Design
 
-- Dark background (#111827) matching the app's card color for all Home Screen widgets
-- Personality-colored accent dot and progress ring gradients (purple → cyan by default)
-- SF Pro Rounded typography consistent with the main app
-- Progress rings use the same gradient stroke as the app (accent → secondary)
-- Lock Screen widgets use the system accessory widget styling (automatic)
-- Over-budget state turns amounts and rings red (#FF5252)
-- Clean, minimal layouts — no clutter, just key numbers at a glance
-- Weekly bar chart in the large widget mirrors the dashboard style
+- **Dark OLED theme** consistent with the rest of MoneyMind — deep navy background (#0A0F1E), dark cards (#111827)
+- **Ghost emoji (👻) + "What if?" tagline** at the top in muted text, with a premium badge if locked
+- **Toggle switches** in rows with category icon, name, and average monthly spend — toggled items glow with the accent purple
+- **Dual-line chart** uses red-to-white gradient for "Reality" and a vivid green gradient for "Ghost" — lines animate drawing left-to-right over 1.5 seconds
+- **Big green savings number** in 34pt bold with a counting animation, surrounded by a subtle green glow
+- **Fun equivalents** fade in and out in a cycling carousel below the savings number
+- **Timeline tabs** (1M / 3M / 6M / 1Y) as segmented pill selectors with spring animation on switch
+- **Staggered fade-in** on all sections matching the app's existing animation pattern
+- **Haptic feedback** on toggle changes and timeline tab switches
 
-## Screens / Components
+## Screens
 
-- **Widget Extension Target**: New "MoneyMindWidgets" extension added to the project
-- **App Group**: Shared data container (`group.app.rork.moneymind.shared`) for app↔widget communication
-- **Shared Data Writer** (in main app): Writes budget totals, category spending, streak info, and personality color to the shared container whenever data changes
-- **Timeline Provider**: Refreshes widget data every 30 minutes; also refreshes on-demand when the app updates data
-- **Widget Bundle**: Groups all widget families (small, medium, large, lock screen variants) into one extension
+- **Ghost Budget View** — A full scrollable screen accessible from the Budget Analytics screen (new tab/section) and from a card on the Home dashboard
+  - Top: Header with ghost emoji, title, and premium badge
+  - Habit toggles section: scrollable list of expense categories with toggle switches
+  - Comparison chart: side-by-side or overlaid line chart with "Reality" vs "Ghost" labels
+  - Savings callout: large animated number with rotating fun equivalents
+  - Timeline selector: 1M / 3M / 6M / 1Y pill tabs
+  - Share button at the bottom that generates a branded share card
+- **Ghost Budget Share Card** — A rendered 1080×1920 image with the dramatic stat, personality color accents, and MoneyMind watermark (uses the existing share card renderer)
+- **Dashboard Integration** — A new "Ghost Budget" card on the Home screen showing a teaser ("What if you stopped X?") that navigates into the full Ghost Budget view

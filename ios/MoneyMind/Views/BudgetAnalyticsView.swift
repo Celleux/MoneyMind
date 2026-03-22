@@ -56,6 +56,9 @@ struct BudgetAnalyticsView: View {
                         isCurrentMonthSelected: vm.isCurrentMonth
                     )
                     .staggerIn(appeared: vm.appeared, delay: 0.32)
+
+                    ghostBudgetCard
+                        .staggerIn(appeared: vm.appeared, delay: 0.40)
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 80)
@@ -76,12 +79,70 @@ struct BudgetAnalyticsView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
         }
+        .navigationDestination(for: String.self) { value in
+            if value == "ghostBudget" {
+                GhostBudgetView()
+            }
+        }
         .sensoryFeedback(.impact(weight: .light), trigger: vm.monthChangeTrigger)
         .onAppear {
             withAnimation(.easeOut(duration: 0.1)) {
                 vm.appeared = true
             }
         }
+    }
+
+    // MARK: - Ghost Budget Card
+
+    private var ghostBudgetCard: some View {
+        NavigationLink(value: "ghostBudget") {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .fill(Theme.success.opacity(0.1))
+                        .frame(width: 48, height: 48)
+                    Text("👻")
+                        .font(.system(size: 22))
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 6) {
+                        Text("Ghost Budget")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(Theme.textPrimary)
+                        Label("PRO", systemImage: "crown.fill")
+                            .font(.system(size: 9, weight: .bold, design: .rounded))
+                            .foregroundStyle(Theme.gold)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Theme.gold.opacity(0.12), in: .capsule)
+                    }
+                    Text("See your parallel financial timeline")
+                        .font(.caption)
+                        .foregroundStyle(Theme.textSecondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Theme.textSecondary.opacity(0.4))
+            }
+            .padding(16)
+            .background(
+                LinearGradient(
+                    colors: [Theme.success.opacity(0.06), Theme.card],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                in: .rect(cornerRadius: 16)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(Theme.success.opacity(0.12), lineWidth: 1)
+            )
+        }
+        .buttonStyle(PressableButtonStyle())
     }
 
     // MARK: - Month Selector

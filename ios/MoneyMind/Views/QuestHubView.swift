@@ -6,6 +6,7 @@ struct QuestHubView: View {
     @Query private var playerProfiles: [PlayerProfile]
     @State private var selectedTab: QuestHubTab = .dailies
     @State private var showBossBattle: Bool = false
+    @State private var showQuestMap: Bool = false
     @Namespace private var animation
 
     private var player: PlayerProfile {
@@ -19,6 +20,7 @@ struct QuestHubView: View {
                     .padding(.bottom, 16)
 
                 ZoneBanner(zone: player.currentQuestZone)
+                    .onTapGesture { showQuestMap = true }
                     .padding(.horizontal, 16)
                     .padding(.bottom, 20)
 
@@ -62,6 +64,9 @@ struct QuestHubView: View {
         }
         .fullScreenCover(isPresented: $showBossBattle) {
             BossBattleView(player: player, zone: player.currentQuestZone)
+        }
+        .fullScreenCover(isPresented: $showQuestMap) {
+            QuestMapView(player: player)
         }
     }
 

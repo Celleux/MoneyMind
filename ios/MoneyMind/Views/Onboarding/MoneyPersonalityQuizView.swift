@@ -136,15 +136,12 @@ struct MoneyPersonalityQuizView: View {
                         }
                         .padding(.horizontal, 20)
                         .padding(.vertical, 18)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Theme.card)
-                        )
+                        .glassCard(cornerRadius: 16)
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
                                 .strokeBorder(
-                                    isSelected ? Theme.accent : Theme.border,
-                                    lineWidth: isSelected ? 1.5 : 0.5
+                                    isSelected ? Theme.accent : Color.clear,
+                                    lineWidth: isSelected ? 1.5 : 0
                                 )
                         )
                         .scaleEffect(isSelected ? 1.02 : 1.0)
@@ -206,13 +203,7 @@ struct MoneyPersonalityQuizView: View {
                     .frame(height: 4)
 
                 Capsule()
-                    .fill(
-                        LinearGradient(
-                            colors: [Theme.accent, Theme.secondary],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
+                    .fill(Theme.accent)
                     .frame(width: geo.size.width * progress, height: 4)
                     .animation(.spring(response: 0.5, dampingFraction: 0.8), value: progress)
             }

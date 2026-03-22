@@ -2,6 +2,7 @@ import SwiftUI
 
 struct FirstWinScreen: View {
     let personality: MoneyPersonality
+    var currencySymbol: String = "$"
     @Binding var savedAmount: Double
     let onNext: () -> Void
 
@@ -106,7 +107,7 @@ struct FirstWinScreen: View {
                     .foregroundStyle(Theme.textSecondary)
 
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    Text("$")
+                    Text(currencySymbol)
                         .font(.system(size: 48, weight: .bold, design: .rounded))
                         .foregroundStyle(Theme.textPrimary)
 
@@ -145,7 +146,7 @@ struct FirstWinScreen: View {
             confettiOverlay
 
             VStack(spacing: 12) {
-                Text("$\(counterValue, specifier: "%.0f") saved!")
+                Text("\(currencySymbol)\(counterValue, specifier: "%.0f") saved!")
                     .font(.system(size: 44, weight: .bold, design: .rounded))
                     .foregroundStyle(Theme.gold)
                     .contentTransition(.numericText(value: counterValue))

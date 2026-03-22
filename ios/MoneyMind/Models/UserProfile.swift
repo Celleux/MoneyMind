@@ -66,12 +66,23 @@ class UserProfile {
     var budgetAlert100: Bool
     var dailyCheckInNotif: Bool
     var weeklyDigestNotif: Bool
+    var userPathRaw: String
+    var currencySymbol: String
+    var installDate: Date
+
+    var userPath: UserPath {
+        get { UserPath(rawValue: userPathRaw) ?? .generalSaver }
+        set { userPathRaw = newValue.rawValue }
+    }
 
     init(
         name: String,
         dailyImpulseAmount: Double = 25.0,
         selectedGoals: [String] = [],
-        selectedReason: String = "spend"
+        selectedReason: String = "spend",
+        userPath: UserPath = .generalSaver,
+        currencyCode: String = "USD",
+        currencySymbol: String = "$"
     ) {
         self.name = name
         self.startDate = Date()
@@ -136,6 +147,9 @@ class UserProfile {
         self.budgetAlert100 = true
         self.dailyCheckInNotif = true
         self.weeklyDigestNotif = true
+        self.userPathRaw = userPath.rawValue
+        self.currencySymbol = currencySymbol
+        self.installDate = Date()
     }
 
     private static func generateReferralCode() -> String {

@@ -3,12 +3,12 @@ import SwiftData
 
 nonisolated enum OnboardingScreen: Int, CaseIterable, Sendable {
     case welcome
+    case choosePath
     case personalityQuiz
     case personalityReveal
-    case lossVisualization
+    case currencySelection
     case firstWin
-    case socialProof
-    case intentionSetup
+    case setupComplete
 }
 
 struct OnboardingView: View {
@@ -18,7 +18,9 @@ struct OnboardingView: View {
     @State private var currentScreen: OnboardingScreen = .welcome
     @State private var savedAmount: Double = 0
     @State private var quizResult: QuizResult?
-    @State private var showUrgeSurf = false
+    @State private var selectedPath: UserPath?
+    @State private var selectedCurrencyCode: String = "USD"
+    @State private var selectedCurrencySymbol: String = "$"
 
     private var personality: MoneyPersonality {
         quizResult?.personality ?? .builder
@@ -31,9 +33,12 @@ struct OnboardingView: View {
             switch currentScreen {
             case .welcome:
                 SplurjWelcomeScreen {
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                        currentScreen = .personalityQuiz
-                    }
+                    advance(to: .choosePath)
+                }
+
+            case .choosePath:
+                ChooseYourPathScreen(selectedPath: $selectedPath) {
+                    advance(to: .personalityQuiz)
                 }
 
             case .personalityQuiz:
@@ -41,9 +46,7 @@ struct OnboardingView: View {
                     onComplete: { result in
                         quizResult = result
                         modelContext.insert(result)
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                            currentScreen = .personalityReveal
-                        }
+                        advance(to: .personalityReveal)
                     },
                     skipWelcome: true,
                     skipResult: true
@@ -51,40 +54,43 @@ struct OnboardingView: View {
 
             case .personalityReveal:
                 SplurjPersonalityRevealScreen(personality: personality) {
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                        currentScreen = .lossVisualization
-                    }
+                    advance(to: .currencySelection)
                 }
 
-            case .lossVisualization:
-                LossVisualizationScreen(personality: personality) {
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                        currentScreen = .firstWin
-                    }
+            case .currencySelection:
+                CurrencySelectionScreen(
+                    selectedCurrencyCode: $selectedCurrencyCode,
+                    selectedCurrencySymbol: $selectedCurrencySymbol
+                ) {
+                    advance(to: .firstWin)
                 }
 
             case .firstWin:
-                FirstWinScreen(personality: personality, savedAmount: $savedAmount) {
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                        currentScreen = .socialProof
-                    }
+                FirstWinScreen(
+                    personality: personality,
+                    currencySymbol: selectedCurrencySymbol,
+                    savedAmount: $savedAmount
+                ) {
+                    advance(to: .setupComplete)
                 }
 
-            case .socialProof:
-                SocialProofScreen(personality: personality) {
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                        currentScreen = .intentionSetup
-                    }
-                }
-
-            case .intentionSetup:
-                IntentionScreen(personality: personality, modelContext: modelContext, onComplete: onComplete)
+            case .setupComplete:
+                SetupCompleteScreen(
+                    personality: personality,
+                    userPath: selectedPath ?? .generalSaver,
+                    currencyCode: selectedCurrencyCode,
+                    currencySymbol: selectedCurrencySymbol,
+                    savedAmount: savedAmount,
+                    modelContext: modelContext,
+                    onComplete: onComplete
+                )
             }
         }
-        .sheet(isPresented: $showUrgeSurf) {
-            UrgeSurfSheet()
-                .presentationDetents([.large])
-                .presentationDragIndicator(.visible)
+    }
+
+    private func advance(to screen: OnboardingScreen) {
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+            currentScreen = screen
         }
     }
 }

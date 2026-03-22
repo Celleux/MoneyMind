@@ -57,7 +57,7 @@ struct VaultGameView: View {
     }
 
     private var statsBar: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
             VaultStat(
                 label: "Collected",
                 value: "\(collection.count)/\(CardDatabase.totalCards)",
@@ -66,6 +66,11 @@ struct VaultGameView: View {
             VaultStat(
                 label: "Pending",
                 value: "\(pendingCards.count)",
+                color: Theme.gold
+            )
+            VaultStat(
+                label: "Essence",
+                value: "\(gachaState?.totalEssence ?? 0)",
                 color: Theme.gold
             )
             VaultStat(

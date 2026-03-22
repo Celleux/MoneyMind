@@ -165,6 +165,22 @@ struct CardCollectionView: View {
                 }
             }
 
+            if let info, info.evolutionLevel > 0 {
+                VStack {
+                    HStack {
+                        Text("Evo +\(info.evolutionLevel)")
+                            .font(.system(size: 8, weight: .heavy, design: .rounded))
+                            .foregroundStyle(Theme.background)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Theme.gold, in: .capsule)
+                            .padding(6)
+                        Spacer()
+                    }
+                    Spacer()
+                }
+            }
+
             if let info, info.duplicateCount > 0 {
                 VStack {
                     Spacer()

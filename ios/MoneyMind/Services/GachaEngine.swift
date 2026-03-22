@@ -62,6 +62,20 @@ class GachaEngine {
         }
     }
 
+    static func nextRarity(from current: String) -> CardRarity? {
+        switch current {
+        case "Common": return .uncommon
+        case "Uncommon": return .rare
+        case "Rare": return .epic
+        case "Epic": return .legendary
+        default: return nil
+        }
+    }
+
+    static func nextRarityName(from current: String) -> String {
+        nextRarity(from: current)?.rawValue ?? "MAX"
+    }
+
     private func determineRarity() -> CardRarity {
         pullsSinceLastLegendary += 1
         pullsSinceLastEpic += 1

@@ -78,7 +78,7 @@ struct GhostBudgetShareCard: View {
                 Spacer()
 
                 VStack(spacing: 8) {
-                    Text("Discover your parallel financial timeline")
+                    Text("Made with Splurj")
                         .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(.white.opacity(0.3))
                     CardWatermark()

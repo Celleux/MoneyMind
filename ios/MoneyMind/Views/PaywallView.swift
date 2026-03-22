@@ -77,13 +77,13 @@ struct PaywallView: View {
                 }
             }
 
-            Text("Unlock Your Full\nFinancial Potential")
+            Text("Unlock Your Full\n\(personality.rawValue) Potential")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
                 .lineSpacing(2)
 
-            Text("As \(personality.rawValue), you need these tools")
+            Text("Built for how \(personality.rawValue)s think about money")
                 .font(.system(size: 15, weight: .medium, design: .rounded))
                 .foregroundStyle(personality.color)
         }
@@ -350,7 +350,7 @@ struct PaywallView: View {
     ]
 
     private let premiumFeatures: [PremiumFeature] = [
-        PremiumFeature(icon: "sparkles", name: "Full Money Wrapped", subtitle: "Complete monthly & annual story recaps"),
+        PremiumFeature(icon: "sparkles", name: "Full Splurj Wrapped", subtitle: "Complete monthly & annual story recaps"),
         PremiumFeature(icon: "eye.slash.fill", name: "Ghost Budget", subtitle: "Hidden budgets only you can see"),
         PremiumFeature(icon: "trophy.fill", name: "Unlimited Challenges", subtitle: "Access every savings challenge"),
         PremiumFeature(icon: "chart.bar.xaxis.ascending", name: "Premium Analytics", subtitle: "Deep spending insights & trends"),

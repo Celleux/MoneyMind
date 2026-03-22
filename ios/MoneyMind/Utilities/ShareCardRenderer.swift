@@ -26,12 +26,17 @@ enum ShareCardRenderer {
 
 struct CardWatermark: View {
     var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "leaf.fill")
-                .foregroundStyle(Theme.accentGreen)
-            Text("moneymind.app")
-                .font(.caption.weight(.medium))
-                .foregroundStyle(.white.opacity(0.4))
+        VStack(spacing: 4) {
+            HStack(spacing: 6) {
+                Image(systemName: "leaf.fill")
+                    .foregroundStyle(Theme.accentGreen)
+                Text("splurj.app")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.4))
+            }
+            Text("Don't splurge. Splurj.")
+                .font(.system(size: 9, weight: .medium, design: .rounded))
+                .foregroundStyle(.white.opacity(0.25))
         }
     }
 }

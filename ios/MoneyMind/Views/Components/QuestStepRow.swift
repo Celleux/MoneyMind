@@ -6,6 +6,8 @@ struct QuestStepRow: View {
     let isCompleted: Bool
     let isCurrent: Bool
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         HStack(spacing: 12) {
             ZStack {
@@ -42,5 +44,19 @@ struct QuestStepRow: View {
             RoundedRectangle(cornerRadius: 10)
                 .fill(isCurrent ? Theme.elevated : Color.clear)
         )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(stepAccessibilityLabel)
+    }
+
+    private var stepAccessibilityLabel: String {
+        var label = "Step \(stepNumber): \(step.instruction)."
+        if isCompleted {
+            label += " Completed."
+        } else if isCurrent {
+            label += " Current step. \(step.xpReward) XP reward."
+        } else {
+            label += " Locked."
+        }
+        return label
     }
 }

@@ -10,6 +10,7 @@ struct DailyQuestStack: View {
     @State private var expandedQuestID: String?
     @State private var showRewardCelebration: Bool = false
     @State private var lastReward: QuestReward?
+    @State private var completedQuestIDs: Set<String> = []
 
     private var todaysSlots: [DailyQuestSlot] {
         let today = Calendar.current.startOfDay(for: Date())
@@ -37,33 +38,43 @@ struct DailyQuestStack: View {
                     .foregroundStyle(Theme.textMuted)
             }
             .padding(.horizontal, 20)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Today's Quests. Resets at midnight.")
 
             if todaysQuests.isEmpty {
                 AllQuestsCompleteCard()
                     .padding(.horizontal, 16)
             } else {
-                ForEach(todaysQuests, id: \.quest.id) { item in
+                let activeQuests = todaysQuests.filter { item in
                     let engine = QuestEngine(modelContext: modelContext)
                     let progress = engine.questProgress(for: item.quest.id)
                     let isCompleted = progress?.questStatus == .completed || progress?.questStatus == .claimed
+                    return !isCompleted && !completedQuestIDs.contains(item.quest.id)
+                }
 
-                    if !isCompleted {
-                        QuestCard(
-                            quest: item.quest,
-                            isLucky: item.slot.isLuckyQuest,
-                            isExpanded: expandedQuestID == item.quest.id,
-                            progress: progress,
-                            onTap: {
-                                withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
-                                    expandedQuestID = expandedQuestID == item.quest.id ? nil : item.quest.id
-                                }
-                            },
-                            onComplete: {
-                                completeQuest(item.quest.id)
+                ForEach(activeQuests, id: \.quest.id) { item in
+                    let engine = QuestEngine(modelContext: modelContext)
+                    let progress = engine.questProgress(for: item.quest.id)
+
+                    QuestCard(
+                        quest: item.quest,
+                        isLucky: item.slot.isLuckyQuest,
+                        isExpanded: expandedQuestID == item.quest.id,
+                        progress: progress,
+                        onTap: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+                                expandedQuestID = expandedQuestID == item.quest.id ? nil : item.quest.id
                             }
-                        )
-                        .padding(.horizontal, 16)
-                    }
+                        },
+                        onComplete: {
+                            completeQuest(item.quest.id)
+                        }
+                    )
+                    .padding(.horizontal, 16)
+                    .transition(.asymmetric(
+                        insertion: .scale.combined(with: .opacity),
+                        removal: .scale(scale: 0.9).combined(with: .opacity)
+                    ))
                 }
 
                 let completedCount = todaysQuests.filter { item in
@@ -93,19 +104,21 @@ struct DailyQuestStack: View {
 
         if let quest, quest.steps.count > 1 {
             let allDone = engine.advanceQuestStep(questID)
-            if !allDone { return }
+            if !allDone {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                return
+            }
         }
 
         let reward = engine.completeQuest(questID, player: player)
         lastReward = reward
 
-        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
             expandedQuestID = nil
+            completedQuestIDs.insert(questID)
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             showRewardCelebration = true
         }
     }

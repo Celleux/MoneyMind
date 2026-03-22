@@ -15,6 +15,7 @@ struct BossDefeatCelebration: View {
     @State private var bossScale: CGFloat = 1.0
     @State private var bossOpacity: Double = 1.0
     @State private var bossRotation: Double = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var nextZone: QuestZone? {
         let all = QuestZone.allCases
@@ -115,7 +116,11 @@ struct BossDefeatCelebration: View {
             }
         }
         .onAppear {
-            startCelebrationSequence()
+            if reduceMotion {
+                startReducedSequence()
+            } else {
+                startCelebrationSequence()
+            }
         }
     }
 
@@ -336,6 +341,27 @@ struct BossDefeatCelebration: View {
                 color: Color(hex: 0xF87171)
             )
         ]
+    }
+
+    private func startReducedSequence() {
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        showFlash = false
+        showBossExplosion = true
+        bossOpacity = 0
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            showDefeatedText = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            buildLootItems()
+            showLoot = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+            showNextZone = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+            showContinue = true
+        }
     }
 
     private func spawnConfetti() {

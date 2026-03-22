@@ -4,6 +4,7 @@ struct QuestHeroHeader: View {
     let player: PlayerProfile
     @State private var xpAnimating: Bool = false
     @State private var avatarGlow: Bool = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(spacing: 12) {
@@ -19,7 +20,7 @@ struct QuestHeroHeader: View {
                         )
                         .frame(width: 72, height: 72)
                         .blur(radius: avatarGlow ? 6 : 2)
-                        .animation(.easeInOut(duration: 2).repeatForever(), value: avatarGlow)
+                        .animation(reduceMotion ? nil : .easeInOut(duration: 2).repeatForever(), value: avatarGlow)
 
                     Image(systemName: avatarIcon(stage: player.avatarStage))
                         .font(.system(size: 28, weight: .bold))
@@ -71,7 +72,7 @@ struct QuestHeroHeader: View {
                                             )
                                         )
                                         .offset(x: xpAnimating ? geo.size.width : -geo.size.width)
-                                        .animation(.linear(duration: 2).repeatForever(autoreverses: false), value: xpAnimating)
+                                        .animation(reduceMotion ? nil : .linear(duration: 2).repeatForever(autoreverses: false), value: xpAnimating)
                                 )
                                 .clipShape(RoundedRectangle(cornerRadius: 6))
 
@@ -90,7 +91,7 @@ struct QuestHeroHeader: View {
                     Image(systemName: player.questStreak > 0 ? "flame.fill" : "flame")
                         .font(.system(size: 24))
                         .foregroundStyle(player.questStreak > 0 ? Color(hex: 0xFB923C) : Theme.textMuted)
-                        .symbolEffect(.pulse, isActive: player.questStreak >= 7)
+                        .symbolEffect(.pulse, isActive: player.questStreak >= 7 && !reduceMotion)
 
                     Text("\(player.questStreak)")
                         .font(.system(size: 14, weight: .black, design: .rounded))
@@ -105,9 +106,13 @@ struct QuestHeroHeader: View {
         }
         .padding(.top, 8)
         .onAppear {
-            xpAnimating = true
-            avatarGlow = true
+            if !reduceMotion {
+                xpAnimating = true
+                avatarGlow = true
+            }
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Level \(player.level), \(player.activeTitle). \(player.xpProgressInCurrentLevel) of \(player.xpForCurrentLevel) XP. \(player.questStreak) day streak.")
     }
 
     private func avatarIcon(stage: Int) -> String {

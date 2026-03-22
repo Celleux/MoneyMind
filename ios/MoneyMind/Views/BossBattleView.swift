@@ -13,6 +13,7 @@ struct BossBattleView: View {
     @State private var bossBreathing: Bool = false
     @State private var glowPulsing: Bool = false
     @State private var damageShown: Bool = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var damagePercent: CGFloat {
         CGFloat(player.currentBossDamageDealt) / CGFloat(max(1, zone.bossHP))
@@ -86,8 +87,10 @@ struct BossBattleView: View {
             }
         }
         .onAppear {
-            bossBreathing = true
-            glowPulsing = true
+            if !reduceMotion {
+                bossBreathing = true
+                glowPulsing = true
+            }
             if player.currentBossDamageDealt > 0 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                     showDamageParticles()
@@ -156,13 +159,13 @@ struct BossBattleView: View {
                 )
                 .frame(width: 260, height: 260)
                 .scaleEffect(glowPulsing ? 1.1 : 0.9)
-                .animation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true), value: glowPulsing)
+                .animation(reduceMotion ? nil : .easeInOut(duration: 2.5).repeatForever(autoreverses: true), value: glowPulsing)
 
             Circle()
                 .stroke(Color(hex: 0xF87171).opacity(0.15), lineWidth: 1)
                 .frame(width: 180, height: 180)
                 .scaleEffect(bossBreathing ? 1.05 : 0.95)
-                .animation(.easeInOut(duration: 3).repeatForever(autoreverses: true), value: bossBreathing)
+                .animation(reduceMotion ? nil : .easeInOut(duration: 3).repeatForever(autoreverses: true), value: bossBreathing)
 
             Image(systemName: bossIcon)
                 .font(.system(size: 80, weight: .bold))
@@ -175,8 +178,8 @@ struct BossBattleView: View {
                 )
                 .shadow(color: Color(hex: 0xF87171).opacity(0.6), radius: 30)
                 .offset(x: shaking ? -5 : 5)
-                .scaleEffect(bossBreathing ? 1.02 : 0.98)
-                .animation(.easeInOut(duration: 3).repeatForever(autoreverses: true), value: bossBreathing)
+                .scaleEffect(reduceMotion ? 1.0 : (bossBreathing ? 1.02 : 0.98))
+                .animation(reduceMotion ? nil : .easeInOut(duration: 3).repeatForever(autoreverses: true), value: bossBreathing)
                 .animation(.easeInOut(duration: 0.06).repeatCount(8, autoreverses: true), value: shaking)
                 .opacity(attackFlash ? 0.3 : 1.0)
                 .animation(.easeOut(duration: 0.08), value: attackFlash)
@@ -201,6 +204,9 @@ struct BossBattleView: View {
                     .font(.system(size: 12, weight: .bold, design: .monospaced))
                     .foregroundStyle(Theme.textSecondary)
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Boss HP: \(remainingHP) of \(zone.bossHP)")
+            .accessibilityValue("\(Int((1.0 - damagePercent) * 100)) percent remaining")
 
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
@@ -360,7 +366,7 @@ struct BossBattleView: View {
     // MARK: - Actions
 
     private func deliverFinalBlow() {
-        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+        triggerBossDefeatHaptics()
 
         shaking = true
         attackFlash = true
@@ -373,10 +379,6 @@ struct BossBattleView: View {
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             attackFlash = false
-            UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-            UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
@@ -431,6 +433,17 @@ struct BossBattleView: View {
         case .savingsCitadel: return "building.columns.circle.fill"
         case .incomeFrontier: return "lizard.fill"
         case .legacy: return "crown.fill"
+        }
+    }
+
+    private func triggerBossDefeatHaptics() {
+        let heavy = UIImpactFeedbackGenerator(style: .heavy)
+        heavy.prepare()
+        heavy.impactOccurred(intensity: 1.0)
+        for i in 1...8 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.1) {
+                heavy.impactOccurred(intensity: max(0.3, 1.0 - Double(i) * 0.08))
+            }
         }
     }
 

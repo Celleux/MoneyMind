@@ -25,6 +25,7 @@ struct QuestRewardCelebration: View {
     @State private var cardBounce: Bool = false
     @State private var essenceFly: Bool = false
     @State private var flameActive: Bool = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack {
@@ -302,8 +303,12 @@ struct QuestRewardCelebration: View {
             }
         }
         .onAppear {
-            startAnimationSequence()
-            spawnParticles()
+            if reduceMotion {
+                startReducedSequence()
+            } else {
+                startAnimationSequence()
+                spawnParticles()
+            }
         }
     }
 
@@ -443,6 +448,28 @@ struct QuestRewardCelebration: View {
         }
 
         withAnimation(.easeOut(duration: 0.3).delay(delay + 0.2)) {
+            canDismiss = true
+        }
+    }
+
+    private func startReducedSequence() {
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        showTitle = true
+        showXP = true
+        xpCounter = reward.xp
+
+        if reward.scratchCard { showCard = true; cardBounce = true }
+        if reward.essence > 0 { showEssence = true; essenceFly = true }
+        if reward.bossDamage > 0 { showBoss = true; swordSlash = true }
+        if reward.didLevelUp {
+            showLevelUp = true
+            levelUpScale = 1.0
+        }
+        showStreak = true
+        streakCount = 1
+        if reward.tiktokMoment != nil { showShare = true }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             canDismiss = true
         }
     }

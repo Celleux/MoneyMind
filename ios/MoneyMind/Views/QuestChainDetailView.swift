@@ -13,6 +13,7 @@ struct QuestChainDetailView: View {
     @State private var showRewardCelebration: Bool = false
     @State private var lastReward: QuestReward?
     @State private var shimmerOffset: CGFloat = -200
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var chainQuests: [QuestDefinition] {
         QuestDatabase.quests(forChain: chainID)
@@ -625,8 +626,10 @@ struct QuestChainDetailView: View {
                     .offset(x: shimmerOffset)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .onAppear {
-                        withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
-                            shimmerOffset = 400
+                        if !reduceMotion {
+                            withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+                                shimmerOffset = 400
+                            }
                         }
                     }
             }
@@ -644,9 +647,11 @@ struct QuestChainDetailView: View {
             let reward = questEngine.completeQuest(quest.id, player: player)
             lastReward = reward
             expandedQuestID = nil
-            withAnimation(.spring(response: 0.4)) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 showRewardCelebration = true
             }
+        } else {
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         }
     }
 }

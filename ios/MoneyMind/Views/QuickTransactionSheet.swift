@@ -6,6 +6,7 @@ struct QuickTransactionSheet: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var profiles: [UserProfile]
     @Query(sort: \Transaction.date, order: .reverse) private var recentTransactions: [Transaction]
+    @Query private var merchantMappings: [MerchantCategoryMapping]
 
     @State private var amountString: String = ""
     @State private var selectedCategory: TransactionCategory = .food
@@ -19,7 +20,11 @@ struct QuickTransactionSheet: View {
     @State private var keyHaptic: Bool = false
     @State private var vibeHaptic: Bool = false
     @State private var savedSuccessfully: Bool = false
-    @State private var suggestionVisible: Bool = false
+    @State private var showLearnPrompt: Bool = false
+    @State private var learnMerchantName: String = ""
+    @State private var learnCategory: TransactionCategory = .other
+
+    private let engine = CategoryMLEngine()
 
     private var hasData: Bool {
         !amountString.isEmpty || !note.isEmpty || selectedVibe != ""
@@ -51,15 +56,19 @@ struct QuickTransactionSheet: View {
         return seen
     }
 
-    private var smartSuggestion: (String, TransactionCategory)? {
-        guard let val = Double(amountString) else { return nil }
-        if transactionType == .expense {
-            if val >= 3.50 && val <= 7.00 { return ("Coffee?", .food) }
-            if val >= 8.00 && val <= 18.00 { return ("Lunch?", .food) }
-            if val >= 2.00 && val <= 4.00 { return ("Transit?", .transport) }
-            if val >= 10.00 && val <= 20.00 { return ("Streaming?", .entertainment) }
-        }
-        return nil
+    private var smartSuggestions: [TransactionCategory] {
+        guard transactionType == .expense else { return [] }
+        let recentCats = recentTransactions
+            .filter { $0.transactionType == .expense }
+            .prefix(10)
+            .map(\.transactionCategory)
+        return engine.suggestCategories(
+            note: note,
+            amount: Double(amountString),
+            date: selectedDate,
+            recentCategories: Array(recentCats),
+            userMappings: merchantMappings
+        )
     }
 
     private var saveColor: Color {
@@ -93,14 +102,26 @@ struct QuickTransactionSheet: View {
             Button("Discard", role: .destructive) { dismiss() }
             Button("Keep Editing", role: .cancel) {}
         }
+        .alert("Learn this category?", isPresented: $showLearnPrompt) {
+            Button("Always") {
+                engine.learnMapping(merchantKeyword: learnMerchantName, category: learnCategory, context: modelContext)
+                engine.applyCategoryRetroactively(merchantKeyword: learnMerchantName, newCategory: learnCategory, context: modelContext)
+            }
+            Button("Just this time", role: .cancel) {}
+        } message: {
+            Text("Always categorize \"\(learnMerchantName)\" as \(learnCategory.rawValue)?")
+        }
         .interactiveDismissDisabled(hasData)
-        .onDisappear {
-            if hasData && !savedSuccessfully {
+        .onChange(of: note) { _, newValue in
+            if transactionType == .expense, !newValue.isEmpty {
+                if let matched = engine.matchMerchant(note: newValue, userMappings: merchantMappings) {
+                    withAnimation(Theme.spring) {
+                        selectedCategory = matched
+                    }
+                }
             }
         }
     }
-
-    // MARK: - Drag Handle
 
     private var dragHandle: some View {
         RoundedRectangle(cornerRadius: 2)
@@ -110,15 +131,13 @@ struct QuickTransactionSheet: View {
             .padding(.bottom, 6)
     }
 
-    // MARK: - Type Toggle
-
     private var typeToggle: some View {
         HStack(spacing: 0) {
             ForEach([TransactionType.expense, .income], id: \.self) { type in
                 Button {
                     withAnimation(Theme.spring) {
                         transactionType = type
-                        selectedCategory = type == .expense ? .food : .salary
+                        selectedCategory = type == .expense ? .food : .income
                     }
                 } label: {
                     Text(type == .expense ? "Expense" : "Income")
@@ -142,8 +161,6 @@ struct QuickTransactionSheet: View {
         .padding(.bottom, 8)
     }
 
-    // MARK: - Amount Display
-
     private var amountDisplay: some View {
         HStack(alignment: .firstTextBaseline, spacing: 2) {
             Text("$")
@@ -162,36 +179,48 @@ struct QuickTransactionSheet: View {
         .padding(.vertical, 4)
     }
 
-    // MARK: - Smart Suggestion
-
     private var smartSuggestionRow: some View {
         Group {
-            if let (label, category) = smartSuggestion {
-                Button {
-                    withAnimation(Theme.spring) {
-                        selectedCategory = category
-                    }
-                } label: {
-                    HStack(spacing: 6) {
+            let suggestions = smartSuggestions
+            if !suggestions.isEmpty && transactionType == .expense {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
                         Image(systemName: "sparkles")
                             .font(.system(size: 11))
-                        Text(label)
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .foregroundStyle(Theme.accent)
+
+                        ForEach(suggestions, id: \.self) { cat in
+                            Button {
+                                withAnimation(Theme.spring) {
+                                    selectedCategory = cat
+                                }
+                                keyHaptic.toggle()
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Text(cat.emoji)
+                                        .font(.system(size: 12))
+                                    Text(cat.rawValue)
+                                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                                        .foregroundStyle(selectedCategory == cat ? .white : Theme.accent)
+                                }
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(
+                                    selectedCategory == cat ? Theme.accent.opacity(0.7) : Theme.accent.opacity(0.12),
+                                    in: .capsule
+                                )
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
-                    .foregroundStyle(Theme.secondary)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 5)
-                    .background(Theme.secondary.opacity(0.12), in: .capsule)
                 }
-                .buttonStyle(.plain)
-                .transition(.scale.combined(with: .opacity))
+                .contentMargins(.horizontal, 16)
+                .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
-        .frame(height: 28)
-        .animation(Theme.spring, value: smartSuggestion?.0)
+        .frame(height: 32)
+        .animation(Theme.spring, value: smartSuggestions)
     }
-
-    // MARK: - Categories
 
     private var categorySection: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -232,10 +261,9 @@ struct QuickTransactionSheet: View {
             }
             keyHaptic.toggle()
         } label: {
-            HStack(spacing: 5) {
-                Image(systemName: cat.icon)
-                    .font(.system(size: 12))
-                    .foregroundStyle(isSelected ? .white : catColor)
+            HStack(spacing: 4) {
+                Text(cat.emoji)
+                    .font(.system(size: 13))
                 Text(cat.rawValue)
                     .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(isSelected ? .white : Theme.textSecondary)
@@ -255,8 +283,6 @@ struct QuickTransactionSheet: View {
         }
         .buttonStyle(.plain)
     }
-
-    // MARK: - Date & Note Row
 
     private var dateAndNoteRow: some View {
         HStack(spacing: 10) {
@@ -313,7 +339,7 @@ struct QuickTransactionSheet: View {
 
             Spacer()
 
-            TextField("Add a note...", text: $note)
+            TextField("Merchant / note...", text: $note)
                 .font(.system(size: 13, design: .rounded))
                 .foregroundStyle(Theme.textPrimary)
                 .tint(Theme.accent)
@@ -326,14 +352,12 @@ struct QuickTransactionSheet: View {
         .padding(.vertical, 4)
     }
 
-    // MARK: - Vibe Check
-
     private let vibes: [(String, String)] = [
-        ("🤑", "Worth it"),
-        ("😐", "Meh"),
-        ("😬", "Regret"),
-        ("✅", "Necessary"),
-        ("💪", "Flex")
+        ("\u{1F911}", "Worth it"),
+        ("\u{1F610}", "Meh"),
+        ("\u{1F62C}", "Regret"),
+        ("\u{2705}", "Necessary"),
+        ("\u{1F4AA}", "Flex")
     ]
 
     private var vibeCheckRow: some View {
@@ -375,8 +399,6 @@ struct QuickTransactionSheet: View {
         .padding(.vertical, 2)
     }
 
-    // MARK: - Save Button
-
     private var saveButton: some View {
         Button {
             saveTransaction()
@@ -398,13 +420,11 @@ struct QuickTransactionSheet: View {
         .padding(.bottom, 2)
     }
 
-    // MARK: - Custom Numpad
-
     private let numpadKeys: [[String]] = [
         ["1", "2", "3"],
         ["4", "5", "6"],
         ["7", "8", "9"],
-        [".", "0", "⌫"]
+        [".", "0", "\u{232B}"]
     ]
 
     private var numpad: some View {
@@ -425,11 +445,9 @@ struct QuickTransactionSheet: View {
         .padding(.top, 4)
     }
 
-    // MARK: - Actions
-
     private func handleKey(_ key: String) {
         switch key {
-        case "⌫":
+        case "\u{232B}":
             if !amountString.isEmpty {
                 amountString.removeLast()
             }
@@ -457,7 +475,7 @@ struct QuickTransactionSheet: View {
 
         let adjustedCategory: TransactionCategory
         if transactionType == .income && !TransactionCategory.incomeCategories.contains(selectedCategory) {
-            adjustedCategory = .salary
+            adjustedCategory = .income
         } else if transactionType == .expense && !TransactionCategory.expenseCategories.contains(selectedCategory) {
             adjustedCategory = .food
         } else {
@@ -479,16 +497,29 @@ struct QuickTransactionSheet: View {
             profile.totalSaved += 0
         }
 
+        let trimmedNote = note.trimmingCharacters(in: .whitespaces)
+        if !trimmedNote.isEmpty && transactionType == .expense {
+            let matchedFromEngine = engine.matchMerchant(note: trimmedNote, userMappings: merchantMappings)
+            if matchedFromEngine == nil || matchedFromEngine != adjustedCategory {
+                learnMerchantName = trimmedNote
+                learnCategory = adjustedCategory
+            }
+        }
+
         savedSuccessfully = true
         saveHaptic.toggle()
 
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
             dismiss()
         }
+
+        if !learnMerchantName.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                showLearnPrompt = true
+            }
+        }
     }
 }
-
-// MARK: - Numpad Key
 
 struct NumpadKey: View {
     let label: String
@@ -501,7 +532,7 @@ struct NumpadKey: View {
             action()
         } label: {
             Group {
-                if label == "⌫" {
+                if label == "\u{232B}" {
                     Image(systemName: "delete.left.fill")
                         .font(.system(size: 20))
                         .foregroundStyle(Theme.textSecondary)
@@ -528,8 +559,6 @@ struct NumpadKey: View {
         )
     }
 }
-
-// MARK: - Blinking Cursor
 
 struct BlinkingCursor: View {
     @State private var visible: Bool = true

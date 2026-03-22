@@ -1,43 +1,27 @@
-# Redesigned Settings & Profile Screen
+# Smart Category Engine — On-Device ML Categorization
 
 
 ## Features
 
-- **Personality hero card** at the top showing your personality icon, name, type, trait tags, and a "Retake Quiz" link — styled like the quiz result card
-- **Member since date** displayed beneath the personality card
-- **Appearance settings** — Dark Only theme badge, personality color preview swatch, and app icon selector with 5 personality-themed icons
-- **Notification settings** — Bill reminders toggle, budget alert thresholds (50%/80%/100%), daily check-in toggle, weekly digest toggle — all persisted
-- **Budget settings** — Default currency picker, default budget method (50/30/20, Zero-Based, Envelope), first day of month picker
-- **Data management** — Export Transactions as CSV, Export Monthly Report as PDF, Import Transactions, Clear All Data with double-confirmation dialog
-- **Premium section** — Shows current plan status, Manage Subscription button, Restore Purchases link
-- **About section** — App version, Rate on App Store, Share MoneyMind, Privacy Policy, Terms, Contact Support
-- **Danger Zone** — Red-bordered card with Delete Account and Clear All Data buttons, each requiring a double-confirmation alert
-- **All toggles persist** their state through the user profile model
-- **Smooth scrolling** with grouped card sections and subtle dividers
+- **Expanded to 15 categories**: Food & Dining, Transport, Shopping, Bills & Utilities, Entertainment, Health & Fitness, Education, Personal Care, Home, Travel, Gifts, Subscriptions, Income, Savings, Other — each with a unique emoji and color
+- **Keyword-based merchant matching**: 50+ built-in merchant→category mappings (e.g. "Starbucks"→Food, "Uber"→Transport, "Amazon"→Shopping, "Netflix"→Subscriptions)
+- **User correction learning**: When a user changes a transaction's category, the app asks "Always categorize [merchant] as [category]?" and saves the preference
+- **Retroactive re-categorization**: Accepting a correction updates all past transactions from the same merchant
+- **Smart suggestions on entry**: When adding a transaction, the top 3 category suggestions appear based on time of day, day of week, amount range, and recent usage
+- **Amount-based heuristics**: Small amounts default toward Food, medium toward Shopping, large toward Bills — as a fallback
+- **Entirely on-device**: No network calls needed. All mappings stored locally via SwiftData
 
 ## Design
 
-- Dark OLED background (#0A0F1E) consistent with the app's design system
-- **Personality hero card**: large card at the top with the personality icon (e.g. flame for Hustler) in a glowing circle using the personality accent color, personality name in bold white, trait tags as small capsule pills in the personality color
-- **Grouped settings sections**: each group is an elevated dark card (#111827) with rounded corners, a section header with an SF Symbol icon and title, and rows separated by subtle dividers
-- **Settings rows**: each row has a colored icon badge (SF Symbol in a rounded square), title text, and either a toggle, chevron, or value indicator on the right
-- **Danger Zone card**: distinguished by a red (#FF5252) border stroke, with destructive-styled buttons inside
-- **Animations**: staggered fade-in on appear for each section; haptic feedback on toggle changes
-- **Typography**: section headers in semibold, row titles in regular weight, subtitles in secondary gray (#94A3B8)
+- A new `MerchantCategoryMapping` data model stores learned merchant→category pairs in SwiftData
+- The `CategoryMLEngine` service provides instant suggestion lookups (under 100ms)
+- Smart suggestion pills appear at the top of the category selector in the transaction entry sheet, highlighted with a sparkle icon and the app's purple accent
+- The "Always categorize as…?" confirmation appears as a subtle inline banner after a user changes a category, styled with the dark card background and rounded corners
+- Updated category pills use each category's unique emoji alongside the SF Symbol icon for quick visual scanning
 
-## Screens
+## Screens & Changes
 
-- **Settings & Profile** (replaces the current Profile tab) — single scrollable screen with sections:
-  1. Personality hero card with avatar, name, type, traits, "Retake Quiz" link, member since date
-  2. Stats grid (streak, total saved, wins) — kept from current design
-  3. Character companion card — kept from current design
-  4. Appearance settings group
-  5. Notifications settings group (with inline toggles, links to detailed notification settings)
-  6. Budget preferences group
-  7. Data management group
-  8. Premium status group
-  9. About group
-  10. Danger Zone group
-- **Export flow**: tapping Export CSV or Export PDF generates and presents a share sheet
-- **Delete confirmations**: first tap shows an alert, confirming shows a second "Are you sure?" alert before executing
-- Existing sections (referral, badges, sharing, PGSI, goals) are preserved and reorganized within the flow
+- **Transaction Entry Sheet**: Smart suggestion row upgraded to show top 3 engine-powered suggestions instead of simple amount matching; note field text is used for merchant matching
+- **Add Expense / Add Income Sheets**: Category grid updated to use the expanded 15-category set with new emojis and colors
+- **Transaction Detail (inline editing)**: When a user changes a category, a confirmation prompt offers to learn the mapping and apply retroactively
+- **No new screens**: All changes integrate into existing transaction entry and editing flows

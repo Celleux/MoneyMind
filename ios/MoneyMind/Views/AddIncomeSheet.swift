@@ -6,7 +6,7 @@ struct AddIncomeSheet: View {
     @Environment(\.modelContext) private var modelContext
     @State private var amount: String = ""
     @State private var note: String = ""
-    @State private var selectedCategory: TransactionCategory = .salary
+    @State private var selectedCategory: TransactionCategory = .income
     @State private var hapticTrigger: Bool = false
 
     private let categories = TransactionCategory.incomeCategories
@@ -42,17 +42,17 @@ struct AddIncomeSheet: View {
 
                         HStack(spacing: 10) {
                             ForEach(categories, id: \.self) { cat in
+                                let catColor = Color(hex: UInt(cat.color, radix: 16) ?? 0x64748B)
                                 Button {
                                     selectedCategory = cat
                                 } label: {
                                     VStack(spacing: 8) {
                                         ZStack {
                                             Circle()
-                                                .fill(Color(hex: UInt(cat.color, radix: 16) ?? 0x64748B).opacity(selectedCategory == cat ? 0.25 : 0.1))
+                                                .fill(catColor.opacity(selectedCategory == cat ? 0.25 : 0.1))
                                                 .frame(width: 44, height: 44)
-                                            Image(systemName: cat.icon)
-                                                .font(.system(size: 18))
-                                                .foregroundStyle(Color(hex: UInt(cat.color, radix: 16) ?? 0x64748B))
+                                            Text(cat.emoji)
+                                                .font(.system(size: 20))
                                         }
                                         Text(cat.rawValue)
                                             .font(.caption2.weight(.medium))
@@ -68,7 +68,7 @@ struct AddIncomeSheet: View {
                                         RoundedRectangle(cornerRadius: 12)
                                             .strokeBorder(
                                                 selectedCategory == cat
-                                                    ? Color(hex: UInt(cat.color, radix: 16) ?? 0x64748B).opacity(0.4)
+                                                    ? catColor.opacity(0.4)
                                                     : Theme.border,
                                                 lineWidth: 1
                                             )

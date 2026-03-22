@@ -4,12 +4,32 @@ import SwiftData
 struct AddExpenseSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    @Query private var merchantMappings: [MerchantCategoryMapping]
+    @Query(sort: \Transaction.date, order: .reverse) private var recentTransactions: [Transaction]
+
     @State private var amount: String = ""
     @State private var note: String = ""
     @State private var selectedCategory: TransactionCategory = .food
     @State private var hapticTrigger: Bool = false
+    @State private var showLearnPrompt: Bool = false
+    @State private var learnMerchantName: String = ""
 
     private let categories = TransactionCategory.expenseCategories
+    private let engine = CategoryMLEngine()
+
+    private var smartSuggestions: [TransactionCategory] {
+        let recentCats = recentTransactions
+            .filter { $0.transactionType == .expense }
+            .prefix(10)
+            .map(\.transactionCategory)
+        return engine.suggestCategories(
+            note: note,
+            amount: Double(amount),
+            date: Date(),
+            recentCategories: Array(recentCats),
+            userMappings: merchantMappings
+        )
+    }
 
     var body: some View {
         NavigationStack {
@@ -35,6 +55,50 @@ struct AddExpenseSheet: View {
                     }
                     .padding(.top, 8)
 
+                    if !smartSuggestions.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "sparkles")
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(Theme.accent)
+                                Text("Suggested")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundStyle(Theme.textMuted)
+                            }
+
+                            HStack(spacing: 8) {
+                                ForEach(smartSuggestions, id: \.self) { cat in
+                                    let catColor = Color(hex: UInt(cat.color, radix: 16) ?? 0x64748B)
+                                    Button {
+                                        selectedCategory = cat
+                                        hapticTrigger.toggle()
+                                    } label: {
+                                        HStack(spacing: 5) {
+                                            Text(cat.emoji)
+                                                .font(.system(size: 14))
+                                            Text(cat.rawValue)
+                                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                                .foregroundStyle(selectedCategory == cat ? .white : Theme.textSecondary)
+                                        }
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 8)
+                                        .background(
+                                            selectedCategory == cat ? catColor.opacity(0.8) : Theme.card,
+                                            in: .capsule
+                                        )
+                                        .overlay(
+                                            Capsule()
+                                                .strokeBorder(selectedCategory == cat ? catColor : Theme.border, lineWidth: 0.5)
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                        .animation(Theme.spring, value: smartSuggestions)
+                    }
+
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Category")
                             .font(.subheadline.weight(.medium))
@@ -44,21 +108,22 @@ struct AddExpenseSheet: View {
                             GridItem(.adaptive(minimum: 90), spacing: 10)
                         ], spacing: 10) {
                             ForEach(categories, id: \.self) { cat in
+                                let catColor = Color(hex: UInt(cat.color, radix: 16) ?? 0x64748B)
                                 Button {
                                     selectedCategory = cat
                                 } label: {
                                     VStack(spacing: 8) {
                                         ZStack {
                                             Circle()
-                                                .fill(Color(hex: UInt(cat.color, radix: 16) ?? 0x64748B).opacity(selectedCategory == cat ? 0.25 : 0.1))
+                                                .fill(catColor.opacity(selectedCategory == cat ? 0.25 : 0.1))
                                                 .frame(width: 44, height: 44)
-                                            Image(systemName: cat.icon)
-                                                .font(.system(size: 18))
-                                                .foregroundStyle(Color(hex: UInt(cat.color, radix: 16) ?? 0x64748B))
+                                            Text(cat.emoji)
+                                                .font(.system(size: 20))
                                         }
                                         Text(cat.rawValue)
                                             .font(.caption2.weight(.medium))
                                             .foregroundStyle(selectedCategory == cat ? Theme.textPrimary : Theme.textSecondary)
+                                            .lineLimit(1)
                                     }
                                     .padding(.vertical, 10)
                                     .frame(maxWidth: .infinity)
@@ -70,7 +135,7 @@ struct AddExpenseSheet: View {
                                         RoundedRectangle(cornerRadius: 12)
                                             .strokeBorder(
                                                 selectedCategory == cat
-                                                    ? Color(hex: UInt(cat.color, radix: 16) ?? 0x64748B).opacity(0.4)
+                                                    ? catColor.opacity(0.4)
                                                     : Theme.border,
                                                 lineWidth: 1
                                             )
@@ -82,7 +147,7 @@ struct AddExpenseSheet: View {
                     }
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Note (optional)")
+                        Text("Merchant / Note (optional)")
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(Theme.textSecondary)
                         TextField("What was this for?", text: $note)
@@ -122,6 +187,24 @@ struct AddExpenseSheet: View {
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
+            .alert("Learn this category?", isPresented: $showLearnPrompt) {
+                Button("Always") {
+                    engine.learnMapping(merchantKeyword: learnMerchantName, category: selectedCategory, context: modelContext)
+                    engine.applyCategoryRetroactively(merchantKeyword: learnMerchantName, newCategory: selectedCategory, context: modelContext)
+                }
+                Button("Just this time", role: .cancel) {}
+            } message: {
+                Text("Always categorize \"\(learnMerchantName)\" as \(selectedCategory.rawValue)?")
+            }
+            .onChange(of: note) { _, newValue in
+                if !newValue.isEmpty {
+                    if let matched = engine.matchMerchant(note: newValue, userMappings: merchantMappings) {
+                        withAnimation(Theme.spring) {
+                            selectedCategory = matched
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -134,7 +217,19 @@ struct AddExpenseSheet: View {
             type: .expense
         )
         modelContext.insert(transaction)
+
+        let trimmedNote = note.trimmingCharacters(in: .whitespaces)
+        if !trimmedNote.isEmpty {
+            let matched = engine.matchMerchant(note: trimmedNote, userMappings: merchantMappings)
+            if matched == nil || matched != selectedCategory {
+                learnMerchantName = trimmedNote
+                showLearnPrompt = true
+            }
+        }
+
         hapticTrigger.toggle()
-        dismiss()
+        if learnMerchantName.isEmpty {
+            dismiss()
+        }
     }
 }

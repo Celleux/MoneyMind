@@ -1,33 +1,35 @@
-# Quest System Phase 1A — Quest Data Models
+# Create Quest Database with 110+ Quest Definitions
 
-**What this does**
+## What Will Be Built
 
-Adds the foundational data models for the Quest System — the enums, structs, and database models that everything else will be built on.
+A single new file (`QuestDatabase.swift`) containing the complete static quest library — the data that powers the entire quest engine.
 
-**New files created:**
+### Features
 
-- **QuestCategory, QuestArchetype, QuestDifficulty, VerificationType, QuestCadence enums** — Define quest types, difficulty tiers, how quests are verified, and how often they refresh. Each has colors, icons, and multipliers matching the app's dark luxury palette.
+- **55 standalone quests** across 6 categories:
+  - 10 Money Recovery quests (cancel subs, negotiate bills, reverse fees, etc.)
+  - 11 Spending Defense quests (no-spend days, cooking challenges, app purges, etc.)
+  - 10 Income & Earning quests (sell items, raise conversations, freelancing, etc.)
+  - 11 Financial Literacy quests (credit checks, budgeting, savings automation, etc.)
+  - 8 Social & Accountability quests (loud budgeting, partner talks, buddy check-ins)
+  - 5 Generosity quests (paying it forward, volunteering, teaching)
 
-- **QuestZone enum** — The 5 zones spanning 50 levels (The Awakening → The Legacy), each with a level range, boss name, boss HP, theme colors, and description.
+- **6 seasonal quests** that appear only in specific months (January sub audit, tax season, Black Friday, etc.)
 
-- **QuestDefinition struct** — The static quest blueprint containing title, subtitle, description, category, difficulty, XP rewards, scratch card chance, steps, zone, chain info, and seasonal availability.
+- **50 chain quests** (5 story chains × 10 sequential quests each):
+  - The Saver's Journey — from $0 saved to emergency fund
+  - The Compound Path — from understanding interest to investing
+  - The Budget Battle — from tracking expenses to zero-based budgeting
+  - Debt Freedom Road — from listing debts to first debt payoff
+  - Impulse Mastery — from identifying triggers to 30-day streak
 
-- **QuestStep struct** — Individual steps within multi-step quests, each with instructions and partial XP rewards.
+- Each chain quest has proper `chainID`, `chainIndex`, and `prerequisiteQuestID` linking
+- Each quest includes RPG-flavored title, difficulty, XP rewards, scratch card chances, zone assignment, multi-step instructions, and estimated real-world financial impact
+- A static helper method to look up quests by ID, category, zone, chain, or cadence
+- A `totalQuests` count property for UI display
 
-- **QuestProgress model** — Tracks per-user progress on each quest (status, current step, completion date, XP earned). Stored in the device database.
+### Design
 
-- **QuestStatus enum** — Quest lifecycle states: locked → available → active → completed → claimed (plus expired and archived for graceful exits).
-
-- **PlayerProfile model** — The RPG character: level, total XP, current zone, quest streak, bosses defeated, badges, active title, avatar stage. Includes the 1.4x exponential XP curve for 50 levels.
-
-- **DailyQuestSlot model** — Tracks which 3 daily and 2 weekly quests are offered each day, including which one is the "lucky quest" with enhanced rewards.
-
-**Design details:**
-
-- All enums follow the existing pattern: `nonisolated`, `Codable`, `Sendable`
-- Colors use `Color(hex: 0x...)` UInt format matching Theme.swift
-- Color-returning properties use `@MainActor` annotation (matching CardRarity/CardSet pattern)
-- Database models use `@Model class` with default values (matching ScratchCard/CollectedCard pattern)
-- New SwiftData models are registered in the app's model container
-
-**No UI changes in this phase** — this is purely the data foundation.
+- Pure data file — no UI, no views
+- All quests follow the progressive difficulty curve within chains (awareness → action → sustained behavior → social → milestone)
+- Matches existing `QuestDefinition` struct exactly (uses `nonisolated` pattern)

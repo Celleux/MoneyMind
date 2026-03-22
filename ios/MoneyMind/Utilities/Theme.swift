@@ -2,62 +2,75 @@ import SwiftUI
 
 enum Theme {
 
-    // MARK: - Backgrounds (OLED-optimized dark)
+    // MARK: - Backgrounds (3-tier depth system)
 
-    static let background = Color(hex: 0x0A0F1E)
-    static let card = Color(hex: 0x111827)
-    static let elevated = Color(hex: 0x1A2236)
+    static let background = Color(hex: 0x0B0E14)
+    static let surface = Color(hex: 0x12161F)
+    static let elevated = Color(hex: 0x1A1F2E)
 
-    // MARK: - Accents
+    // MARK: - Accent (emerald/mint — primary actions, CTAs)
 
-    static let accent = Color(hex: 0x6C5CE7)
-    static let secondary = Color(hex: 0x00D2FF)
-    static let success = Color(hex: 0x00E676)
+    static let accent = Color(hex: 0x34D399)
+    static let accentDim = Color(hex: 0x34D399, opacity: 0.15)
+    static let accentGlow = Color(hex: 0x34D399, opacity: 0.25)
 
-    // MARK: - Status
+    // MARK: - Gold (badges, streaks, premium ONLY)
 
-    static let warning = Color(hex: 0xFF9100)
-    static let danger = Color(hex: 0xFF5252)
-    static let gold = Color(hex: 0xFFD700)
-    static let emergency = danger
+    static let gold = Color(hex: 0xF5C542)
+    static let goldDim = Color(hex: 0xF5C542, opacity: 0.12)
 
-    // MARK: - Text
+    // MARK: - Semantic
+
+    static let success = Color(hex: 0x34D399)
+    static let warning = Color(hex: 0xFBBF24)
+    static let danger = Color(hex: 0xEF4444)
+
+    // MARK: - Text (4-level hierarchy)
 
     static let textPrimary = Color.white
     static let textSecondary = Color(hex: 0x94A3B8)
-    static let textMuted = Color(hex: 0x64748B)
+    static let textMuted = Color(hex: 0x4B5563)
+    static let textDisabled = Color(hex: 0x374151)
 
-    // MARK: - Border
+    // MARK: - Borders & Dividers
 
-    static let border = Color(hex: 0x1E293B)
+    static let border = Color(hex: 0x1F2937)
+    static let divider = Color(hex: 0x1F2937, opacity: 0.5)
+
+    // MARK: - Glass Material
+
+    static let glass = Color.white.opacity(0.05)
+    static let glassBorder = Color.white.opacity(0.08)
+    static let glassHighlight = Color.white.opacity(0.12)
 
     // MARK: - Legacy Aliases (backward-compatible)
 
-    static let cardSurface = card
-    static let tabBarBg = Color(hex: 0x0D1321)
-    static let accentGreen = success
-    static let teal = secondary
+    static let card = elevated
+    static let cardSurface = elevated
+    static let secondary = accent
+    static let accentGreen = accent
+    static let teal = accent
+    static let emergency = danger
+    static let tabBarBg = Color(hex: 0x0B0E14)
     static let unselectedTab = textMuted
 
     // MARK: - Gradients
 
     static let accentGradient = LinearGradient(
-        colors: [accent, secondary],
+        colors: [Color(hex: 0x34D399), Color(hex: 0x059669)],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
 
-    static let goldGradient = LinearGradient(
-        colors: [gold, Color(hex: 0xFFB300)],
+    static let premiumGradient = LinearGradient(
+        colors: [Color(hex: 0xF5C542), Color(hex: 0xD97706)],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
 
-    static let successGradient = LinearGradient(
-        colors: [success, secondary],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+    static let goldGradient = premiumGradient
+
+    static let successGradient = accentGradient
 
     static let meshBackground = MeshGradient(
         width: 3, height: 3,
@@ -67,9 +80,9 @@ enum Theme {
             [0.0, 1.0], [0.5, 1.0], [1.0, 1.0]
         ],
         colors: [
-            .black, Color(hex: 0x0A0F1E), .black,
-            Color(hex: 0x6C5CE7).opacity(0.06), Color(hex: 0x0A0F1E), Color(hex: 0x00D2FF).opacity(0.04),
-            .black, Color(hex: 0x6C5CE7).opacity(0.04), .black
+            .black, Color(hex: 0x0B0E14), .black,
+            Color(hex: 0x34D399).opacity(0.04), Color(hex: 0x0B0E14), Color(hex: 0x059669).opacity(0.03),
+            .black, Color(hex: 0x34D399).opacity(0.03), .black
         ]
     )
 
@@ -125,12 +138,56 @@ extension Color {
     }
 }
 
+// MARK: - Glass Card Modifier
+
+struct GlassCard: ViewModifier {
+    var cornerRadius: CGFloat = Theme.Radius.card
+
+    func body(content: Content) -> some View {
+        content
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(.ultraThinMaterial.opacity(0.3))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color.white.opacity(0.08), Color.clear],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .strokeBorder(
+                                LinearGradient(
+                                    colors: [Color.white.opacity(0.12), Color.white.opacity(0.03)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 0.5
+                            )
+                    )
+                    .shadow(color: .black.opacity(0.25), radius: 12, y: 4)
+            )
+    }
+}
+
+extension View {
+    func glassCard(cornerRadius: CGFloat = Theme.Radius.card) -> some View {
+        modifier(GlassCard(cornerRadius: cornerRadius))
+    }
+}
+
 // MARK: - Button Styles
 
 struct PressableButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .animation(.spring(response: 0.35, dampingFraction: 0.7), value: configuration.isPressed)
+            .shadow(color: Theme.accent.opacity(configuration.isPressed ? 0 : 0.3), radius: 12, y: 6)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .brightness(configuration.isPressed ? -0.05 : 0)
+            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }

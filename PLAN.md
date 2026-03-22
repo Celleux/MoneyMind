@@ -1,40 +1,38 @@
-# Onboarding Screens 4–7: Personalized Loss Visualization, First Win, Social Proof & Intention Setup
+# Part 1: Premium Visual Overhaul — New "Dark Luxury" Design System
 
-## What's Changing
+## What Changes
 
-Complete the evidence-based onboarding rewrite by updating screens 4–7 with personality-driven personalization, adding testimonials, counter animations, notification priming, and removing unused screens.
+### New Color Palette
+- **Backgrounds:** Deeper, richer dark tones with a 3-tier depth system (deepest background → surface → elevated)
+- **Single Accent:** Emerald/mint green replaces the current mix of purple, teal, cyan, and green
+- **Gold:** Kept only for badges, streaks, and premium indicators — not used on buttons
+- **Text:** 4-level hierarchy (white → slate → gray → dark gray) for clear readability
+- **Semantic colors:** Warning (amber) and danger (red) used subtly — small dots or text only, never big red cards
+- **Glass effects:** New subtle white-opacity layers for card depth and premium feel
+- **Personality colors:** Kept as-is for quiz results and personality-specific moments
 
----
+### New Card Style — "Glass Card"
+- A reusable glass-style card with ultra-thin material, a top-to-bottom highlight gradient, a subtle border with light-to-dark gradient, and a soft drop shadow
+- Replaces all flat dark cards (applied to views in later parts)
 
-### **Screen 4 — Loss Visualization (personalized)**
-- Header changes from generic "Drag to see the real cost" to personality-aware: *"Here's what impulse spending costs a Hustler"* (or whatever type the user got)
-- Slider default changes based on personality: Hustler/Generous start at $15/day, Saver/Minimalist at $5/day, Builder at $10/day
-- New "Ghost Budget" preview card appears below the cost numbers showing what you could buy with that money in a year (weekend getaway, MacBook, month in Thailand, used car)
-- Button text changes from "That's eye-opening" to **"I want to change this"**
-- Slider track tinted with the user's personality color
+### New Button Style — "Premium Button"
+- Adds an emerald glow shadow beneath buttons that disappears on press
+- Subtle scale-down (0.97) and brightness shift on press
+- Spring animation for natural feel
+- Replaces the current basic scale-only button style
 
-### **Screen 5 — First Win (personality prompts)**
-- Title changes from "Your First Win" to **"Log Your First Save"**
-- Subtitle changes to "Think of something you resisted buying recently. How much was it?"
-- Personality-specific example prompts appear below the subtitle (e.g. Hustler sees *"That impulse Amazon order? The 2 AM Uber Eats?"*, Generous sees *"That gift you almost bought? The extra round of drinks?"*)
-- Coin animation and celebration kept as-is
+### New Gradients
+- **Accent gradient:** Emerald to darker green — for primary action buttons only
+- **Premium gradient:** Gold to amber — for pro/premium badges only
+- Old purple-to-cyan and rainbow gradients removed
 
-### **Screen 6 — Social Proof (testimonials + animated counters)**
-- Two testimonial cards added below the stats — one from a "Hustler" user, one from a "Generous" user
-- Stat numbers now animate counting up from 0 to their final value over 1.5 seconds
-- Button text changes from "Join the Community" to personalized: **"Join 2,847 Hustlers like you"** (matches the user's personality type)
+### Backward Compatibility
+- `Theme.card` and `Theme.cardSurface` will map to the new `elevated` color for more contrast
+- `Theme.accentGreen`, `Theme.teal`, `Theme.secondary` will map to the new emerald accent
+- `Theme.emergency` will map to `Theme.danger`
+- `Theme.tabBarBg` and `Theme.unselectedTab` updated to match new palette
+- Existing `PressableButtonStyle` kept (still used in 100+ places) but updated with the new premium behavior
+- All existing code continues to compile — no view files are changed in this part
 
-### **Screen 7 — Intention Setup (merged with account creation)**
-- Header changes from "One Last Thing" to **"Almost there, 🔥"** (personality emoji)
-- Name field and intention picker kept as-is
-- New notification permission card added: bell icon, benefit text *"Get a gentle nudge when your spending patterns spike"*, personality-specific stat (*"Hustlers who enable notifications save 34% more"*), and an "Enable Smart Nudges" button
-- Main button changes to **"Start My Splurj Journey"**
-- "Free forever. Premium unlocks deeper tools." text below the button
-- Small "Skip for now" link at the very bottom
-- Email field, Create Account button, and Sign in with Apple button removed (this is an offline-first app)
-
-### **Flow Updates**
-- Personality type now passed through from the quiz to all remaining screens (4–7) for personalized copy
-- `AccountCreationScreen.swift` deleted — merged into Intention screen
-- `SplashOnboardingScreen.swift` deleted — replaced by the Welcome screen from previous task
-- `BranchingScreen.swift` kept in codebase but removed from onboarding flow (available for later contextual use)
+### Files Changed
+- **Theme.swift** — Complete color palette replacement, new gradients, updated button style, new GlassCard modifier, updated mesh background to use emerald tones instead of purple/cyan

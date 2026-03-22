@@ -23,6 +23,8 @@ struct HomeView: View {
     @State private var refreshRotation: Double = 0
     @State private var deepLinkDestination: NotificationDeepLink?
     @Environment(\.modelContext) private var modelContext
+    @Environment(PremiumManager.self) private var premiumManager
+    @State private var showPaywall = false
 
     private var profile: UserProfile? { profiles.first }
 
@@ -171,6 +173,9 @@ struct HomeView: View {
             .fullScreenCover(isPresented: $showCoach) {
                 CoachChatView()
             }
+            .fullScreenCover(isPresented: $showPaywall) {
+                PaywallView()
+            }
             .sheet(isPresented: $showNotificationCenter) {
                 NotificationCenterView { link in
                     handleDeepLink(link)
@@ -190,6 +195,7 @@ struct HomeView: View {
             }
             .onAppear {
                 if let profile {
+                    premiumManager.updateInstallDate(profile.installDate)
                     characterVM.syncFromProfile(profile)
                     profile.lastOpenDate = Date()
                     NotificationService.shared.scheduleAllNotifications(profile: profile)
@@ -225,8 +231,40 @@ struct HomeView: View {
 
     // MARK: - Dashboard Content
 
+    private var trialBanner: some View {
+        Group {
+            if premiumManager.shouldShowTrialBanner {
+                Button {
+                    showPaywall = true
+                } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "clock.fill")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(Theme.accent)
+
+                        let days = premiumManager.trialDaysRemaining
+                        Text("Your free trial ends in \(days) day\(days == 1 ? "" : "s")")
+                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .foregroundStyle(Theme.textPrimary)
+
+                        Spacer()
+
+                        Text("See Plans")
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .foregroundStyle(Theme.accent)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .glassCard(cornerRadius: 12)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
     private var dashboardContent: some View {
         VStack(spacing: 20) {
+            trialBanner
             greetingHeader
             heroSavedCard
             quickActionsGrid

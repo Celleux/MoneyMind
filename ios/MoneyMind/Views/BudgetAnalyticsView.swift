@@ -5,6 +5,7 @@ struct BudgetAnalyticsView: View {
     @Query private var budgets: [BudgetCategory]
     @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
     @Query private var quizResults: [QuizResult]
+    @Environment(PremiumManager.self) private var premiumManager
     @State private var vm = BudgetAnalyticsViewModel()
     @State private var showTemplates = false
     @Environment(\.modelContext) private var modelContext
@@ -160,12 +161,14 @@ struct BudgetAnalyticsView: View {
                         Text("Ghost Budget")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(Theme.textPrimary)
-                        Label("PRO", systemImage: "crown.fill")
-                            .font(.system(size: 9, weight: .bold, design: .rounded))
-                            .foregroundStyle(Theme.gold)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Theme.gold.opacity(0.12), in: .capsule)
+                        if !premiumManager.hasFullAccess {
+                            Label("PRO", systemImage: "crown.fill")
+                                .font(.system(size: 9, weight: .bold, design: .rounded))
+                                .foregroundStyle(Theme.gold)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Theme.gold.opacity(0.12), in: .capsule)
+                        }
                     }
                     Text("See your parallel financial timeline")
                         .font(.caption)

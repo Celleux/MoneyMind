@@ -3,7 +3,10 @@ import SwiftData
 
 struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(PremiumManager.self) private var premiumManager
     @Query private var quizResults: [QuizResult]
+    @Query private var profiles: [UserProfile]
+    @Query private var impulseLogs: [ImpulseLog]
     @State private var selectedPlan: PlanType = .annual
     @State private var featuresVisible: [Bool] = Array(repeating: false, count: 5)
     @State private var iconPulse: Bool = false
@@ -14,6 +17,16 @@ struct PaywallView: View {
         quizResults.first?.personality ?? .builder
     }
 
+    private var profile: UserProfile? { profiles.first }
+
+    private var totalSaved: Double {
+        impulseLogs.reduce(0) { $0 + $1.amount }
+    }
+
+    private var totalWins: Int {
+        impulseLogs.count
+    }
+
     var body: some View {
         ZStack(alignment: .topTrailing) {
             Theme.background.ignoresSafeArea()
@@ -21,6 +34,7 @@ struct PaywallView: View {
             ScrollView {
                 VStack(spacing: 32) {
                     heroSection
+                    trialStatsCard
                     featureList
                     socialProof
                     pricingCards
@@ -57,19 +71,19 @@ struct PaywallView: View {
         VStack(spacing: 16) {
             ZStack {
                 Circle()
-                    .fill(personality.color.opacity(0.12))
+                    .fill(Theme.accent.opacity(0.12))
                     .frame(width: 96, height: 96)
                     .scaleEffect(iconPulse ? 1.15 : 1.0)
                     .opacity(iconPulse ? 0.4 : 0.8)
 
                 Circle()
-                    .fill(personality.color.opacity(0.2))
+                    .fill(Theme.accent.opacity(0.2))
                     .frame(width: 72, height: 72)
 
                 Image(systemName: "crown.fill")
                     .font(.system(size: 32))
-                    .foregroundStyle(personality.color)
-                    .shadow(color: personality.color.opacity(0.5), radius: 8)
+                    .foregroundStyle(Theme.accent)
+                    .shadow(color: Theme.accent.opacity(0.5), radius: 8)
             }
             .onAppear {
                 withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
@@ -77,16 +91,35 @@ struct PaywallView: View {
                 }
             }
 
-            Text("Unlock Your Full\n\(personality.rawValue) Potential")
+            Text("Your 3-Day Trial\nHas Ended")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
                 .lineSpacing(2)
 
-            Text("Built for how \(personality.rawValue)s think about money")
+            Text("Keep all the tools that are helping you save")
                 .font(.system(size: 15, weight: .medium, design: .rounded))
-                .foregroundStyle(personality.color)
+                .foregroundStyle(Theme.accent)
         }
+    }
+
+    // MARK: - Trial Stats
+
+    private var trialStatsCard: some View {
+        VStack(spacing: 12) {
+            let currencySymbol = profile?.currencySymbol ?? "$"
+            Text("In 3 days, you've saved \(currencySymbol)\(String(format: "%.0f", totalSaved)) and logged \(totalWins) win\(totalWins == 1 ? "" : "s").")
+                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .foregroundStyle(.white)
+                .multilineTextAlignment(.center)
+
+            Text("Don't lose your momentum.")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(Theme.textSecondary)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity)
+        .glassCard()
     }
 
     // MARK: - Features
@@ -103,12 +136,12 @@ struct PaywallView: View {
         HStack(spacing: 14) {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(personality.color.opacity(0.12))
+                    .fill(Theme.accent.opacity(0.12))
                     .frame(width: 40, height: 40)
 
                 Image(systemName: feature.icon)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(personality.color)
+                    .foregroundStyle(Theme.accent)
             }
 
             VStack(alignment: .leading, spacing: 2) {
@@ -125,7 +158,7 @@ struct PaywallView: View {
 
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 18))
-                .foregroundStyle(personality.color.opacity(0.6))
+                .foregroundStyle(Theme.accent.opacity(0.6))
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 4)
@@ -250,7 +283,7 @@ struct PaywallView: View {
                         .foregroundStyle(.white)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
-                        .background(Theme.success, in: .capsule)
+                        .background(Theme.accent, in: .capsule)
                 }
             }
             .padding(.vertical, 16)
@@ -263,12 +296,12 @@ struct PaywallView: View {
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.Radius.card)
                     .strokeBorder(
-                        isSelected ? personality.color : Theme.border,
+                        isSelected ? Theme.accent : Theme.border,
                         lineWidth: isSelected ? 2 : 0.5
                     )
             )
             .shadow(
-                color: isSelected ? personality.color.opacity(0.2) : .clear,
+                color: isSelected ? Theme.accent.opacity(0.2) : .clear,
                 radius: 12, y: 4
             )
             .scaleEffect(isSelected && type == .annual ? 1.02 : 1.0)
@@ -283,21 +316,22 @@ struct PaywallView: View {
         VStack(spacing: 10) {
             Button {
                 ctaTapped.toggle()
+                premiumManager.unlock()
             } label: {
-                Text("Start 7-Day Free Trial")
+                Text("Continue My Journey")
                     .font(.system(size: 17, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(personality.color, in: .rect(cornerRadius: Theme.Radius.button))
-                    .shadow(color: personality.color.opacity(0.3), radius: 12, y: 6)
+                    .background(Theme.accent, in: .rect(cornerRadius: Theme.Radius.button))
+                    .shadow(color: Theme.accent.opacity(0.3), radius: 12, y: 6)
             }
             .buttonStyle(PressableButtonStyle())
             .sensoryFeedback(.impact(weight: .medium), trigger: ctaTapped)
 
             Text(selectedPlan == .annual
-                 ? "Then $39.99/year. Cancel anytime."
-                 : "Then $4.99/month. Cancel anytime.")
+                 ? "$39.99/year. Cancel anytime."
+                 : "$4.99/month. Cancel anytime.")
                 .font(.system(size: 11))
                 .foregroundStyle(Theme.textMuted)
         }
@@ -307,7 +341,9 @@ struct PaywallView: View {
 
     private var footerLinks: some View {
         VStack(spacing: 12) {
-            Button { } label: {
+            Button {
+                premiumManager.restore()
+            } label: {
                 Text("Restore Purchases")
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(Theme.textMuted)
@@ -342,11 +378,11 @@ struct PaywallView: View {
     // MARK: - Data
 
     private let avatarColors: [Color] = [
-        Color(hex: 0x6C5CE7),
-        Color(hex: 0x00D2FF),
-        Color(hex: 0x00E676),
-        Color(hex: 0xFF9100),
-        Color(hex: 0xFFD700)
+        Theme.accent.opacity(0.8),
+        Theme.accent.opacity(0.6),
+        Theme.accent.opacity(0.4),
+        Theme.gold.opacity(0.6),
+        Theme.gold.opacity(0.4)
     ]
 
     private let premiumFeatures: [PremiumFeature] = [

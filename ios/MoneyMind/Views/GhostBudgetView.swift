@@ -4,6 +4,7 @@ import SwiftData
 struct GhostBudgetView: View {
     @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
     @Query private var quizResults: [QuizResult]
+    @Environment(PremiumManager.self) private var premiumManager
     @State private var vm = GhostBudgetViewModel()
     @State private var showShare = false
     @State private var shareImage: UIImage?
@@ -92,12 +93,14 @@ struct GhostBudgetView: View {
 
             Spacer()
 
-            Label("PRO", systemImage: "crown.fill")
-                .font(.system(size: 11, weight: .bold, design: .rounded))
-                .foregroundStyle(Theme.gold)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(Theme.gold.opacity(0.12), in: .capsule)
+            if !premiumManager.hasFullAccess {
+                Label("PRO", systemImage: "crown.fill")
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .foregroundStyle(Theme.gold)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(Theme.gold.opacity(0.12), in: .capsule)
+            }
         }
         .padding(.top, 8)
     }

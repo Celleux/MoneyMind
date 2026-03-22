@@ -633,17 +633,38 @@ struct ProfileView: View {
 
     // MARK: - Premium
 
+    private var premiumStatusText: String {
+        if premiumManager.isPremium {
+            return "Premium Active"
+        } else if premiumManager.isInTrial {
+            let days = premiumManager.trialDaysRemaining
+            return "3-Day Trial \u{2022} \(days) day\(days == 1 ? "" : "s") left"
+        } else {
+            return "Free Plan"
+        }
+    }
+
+    private var premiumStatusColor: Color {
+        if premiumManager.isPremium {
+            return Theme.accent
+        } else if premiumManager.isInTrial {
+            return Theme.accent
+        } else {
+            return Theme.textSecondary
+        }
+    }
+
     private var premiumSection: some View {
         SettingsSection(title: "Premium", icon: "crown.fill", iconColor: Theme.gold) {
             HStack(spacing: 14) {
-                SettingsIconBadge(icon: "checkmark.seal.fill", color: premiumManager.isPremium ? Theme.accentGreen : Theme.textMuted)
+                SettingsIconBadge(icon: "checkmark.seal.fill", color: premiumStatusColor)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Current Plan")
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(Theme.textPrimary)
-                    Text(premiumManager.isPremium ? "Premium Active" : "Free Plan")
+                    Text(premiumStatusText)
                         .font(.caption)
-                        .foregroundStyle(premiumManager.isPremium ? Theme.accentGreen : Theme.textSecondary)
+                        .foregroundStyle(premiumStatusColor)
                 }
                 Spacer()
                 if premiumManager.isPremium {
@@ -653,10 +674,17 @@ struct ProfileView: View {
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(Theme.goldGradient, in: .capsule)
+                } else if premiumManager.isInTrial {
+                    Text("TRIAL")
+                        .font(.system(size: 10, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Theme.accent, in: .capsule)
                 }
             }
 
-            if !premiumManager.isPremium {
+            if !premiumManager.hasFullAccess {
                 SettingsDivider()
                 Button {
                     showPaywall = true

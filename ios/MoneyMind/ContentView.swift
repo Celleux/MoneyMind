@@ -33,6 +33,7 @@ struct ContentView: View {
             }
         }
         .tint(Theme.accent)
+        .sensoryFeedback(.selection, trigger: selectedTab)
         .fullScreenCover(isPresented: $showSiriUrgeSurf) {
             UrgeSurfView(siriTriggered: true)
         }

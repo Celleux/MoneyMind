@@ -139,6 +139,7 @@ struct WalletView: View {
                     .font(.system(size: 42, weight: .bold, design: .rounded))
                     .foregroundStyle(Theme.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentTransition(.numericText())
                     .onTapGesture { vm.revealExact = true }
                     .accessibilityLabel("Total saved approximately \(Int(effectiveTotal)) dollars")
             } else {
@@ -147,7 +148,7 @@ struct WalletView: View {
                     .foregroundStyle(Theme.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .contentTransition(.numericText(value: effectiveTotal))
-                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: effectiveTotal)
+                    .animation(Theme.numericSpring, value: effectiveTotal)
                     .sensoryFeedback(.impact(weight: .medium), trigger: effectiveTotal)
                     .accessibilityLabel("Total saved \(effectiveTotal, format: .currency(code: "USD"))")
             }
@@ -166,8 +167,8 @@ struct WalletView: View {
         .padding(24)
         .glassCard(cornerRadius: 20)
         .opacity(vm.appeared ? 1 : 0)
-        .offset(y: vm.appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.05), value: vm.appeared)
+        .offset(y: vm.appeared ? 0 : 16)
+        .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.05), value: vm.appeared)
         .onAppear { vm.appeared = true }
     }
 
@@ -234,8 +235,8 @@ struct WalletView: View {
         }
         .padding(.vertical, 8)
         .opacity(vm.appeared ? 1 : 0)
-        .offset(y: vm.appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.08), value: vm.appeared)
+        .offset(y: vm.appeared ? 0 : 16)
+        .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.08), value: vm.appeared)
     }
 
     // MARK: - Stats Row
@@ -247,8 +248,8 @@ struct WalletView: View {
             WalletStatPill(label: "This Month", amount: monthSaved, color: Theme.gold, gentle: gentle, revealExact: vm.revealExact)
         }
         .opacity(vm.appeared ? 1 : 0)
-        .offset(y: vm.appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.1), value: vm.appeared)
+        .offset(y: vm.appeared ? 0 : 16)
+        .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.1), value: vm.appeared)
     }
 
     // MARK: - Impulse Cost Calculator
@@ -332,8 +333,8 @@ struct WalletView: View {
         .padding(20)
         .glassCard()
         .opacity(vm.appeared ? 1 : 0)
-        .offset(y: vm.appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.12), value: vm.appeared)
+        .offset(y: vm.appeared ? 0 : 16)
+        .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.12), value: vm.appeared)
     }
 
     // MARK: - Weekly Chart
@@ -377,8 +378,8 @@ struct WalletView: View {
         .padding(16)
         .glassCard()
         .opacity(vm.appeared ? 1 : 0)
-        .offset(y: vm.appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.14), value: vm.appeared)
+        .offset(y: vm.appeared ? 0 : 16)
+        .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.14), value: vm.appeared)
     }
 
     // MARK: - Recent Transactions
@@ -422,8 +423,8 @@ struct WalletView: View {
             }
         }
         .opacity(vm.appeared ? 1 : 0)
-        .offset(y: vm.appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.16), value: vm.appeared)
+        .offset(y: vm.appeared ? 0 : 16)
+        .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.16), value: vm.appeared)
     }
 
     // MARK: - Projection
@@ -453,8 +454,8 @@ struct WalletView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .glassCard()
         .opacity(vm.appeared ? 1 : 0)
-        .offset(y: vm.appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.18), value: vm.appeared)
+        .offset(y: vm.appeared ? 0 : 16)
+        .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.18), value: vm.appeared)
     }
 
     // MARK: - Floating Actions

@@ -141,6 +141,7 @@ struct HomeView: View {
                     dashboardContent
                 }
             }
+            .coordinateSpace(name: "homeScroll")
             .scrollIndicators(.hidden)
             .refreshable {
                 withAnimation(.linear(duration: 0.6)) {
@@ -148,6 +149,7 @@ struct HomeView: View {
                 }
                 try? await Task.sleep(for: .seconds(0.5))
             }
+            .sensoryFeedback(.impact(weight: .light), trigger: refreshRotation)
             .background(Theme.background.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showLogWin) {
@@ -216,7 +218,7 @@ struct HomeView: View {
                 ensureDefaultBudgets()
                 Task {
                     try? await Task.sleep(for: .seconds(0.4))
-                    withAnimation(.easeOut(duration: 0.3)) {
+                    withAnimation(Theme.springSnappy) {
                         isLoading = false
                     }
                 }
@@ -277,7 +279,7 @@ struct HomeView: View {
         .padding(.horizontal)
         .padding(.bottom, 80)
         .onAppear {
-            withAnimation(.easeOut(duration: 0.1)) {
+            withAnimation(Theme.springStagger) {
                 appeared = true
             }
         }
@@ -368,24 +370,32 @@ struct HomeView: View {
     // MARK: - Hero Saved Card
 
     private var heroSavedCard: some View {
-        VStack(spacing: 10) {
-            Text("Total Saved This Month")
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(Theme.textSecondary)
+        GeometryReader { geo in
+            let minY = geo.frame(in: .named("homeScroll")).minY
+            let parallax = minY * 0.2
 
-            MMAmountDisplay(amount: totalSavedThisMonth, font: Theme.amountXL, color: Theme.accent)
+            VStack(spacing: 10) {
+                Text("Total Saved This Month")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(Theme.textSecondary)
 
-            HStack(spacing: 4) {
-                Image(systemName: savedDifference >= 0 ? "arrow.up.right" : "arrow.down.right")
-                    .font(.system(size: 11, weight: .bold))
-                Text("$\(abs(savedDifference), specifier: "%.0f") from last month")
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                MMAmountDisplay(amount: totalSavedThisMonth, font: Theme.amountXL, color: Theme.accent)
+
+                HStack(spacing: 4) {
+                    Image(systemName: savedDifference >= 0 ? "arrow.up.right" : "arrow.down.right")
+                        .font(.system(size: 11, weight: .bold))
+                    Text("$\(abs(savedDifference), specifier: "%.0f") from last month")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .contentTransition(.numericText())
+                }
+                .foregroundStyle(savedDifference >= 0 ? Theme.accent : Theme.danger)
             }
-            .foregroundStyle(savedDifference >= 0 ? Theme.accent : Theme.danger)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 24)
+            .glassCard(cornerRadius: 20)
+            .offset(y: parallax)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 24)
-        .glassCard(cornerRadius: 20)
+        .frame(height: 140)
         .staggerIn(appeared: appeared, delay: 0.05)
     }
 
@@ -697,8 +707,8 @@ extension View {
     func staggerIn(appeared: Bool, delay: Double) -> some View {
         self
             .opacity(appeared ? 1 : 0)
-            .offset(y: appeared ? 0 : 15)
-            .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(delay), value: appeared)
+            .offset(y: appeared ? 0 : 16)
+            .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(delay), value: appeared)
     }
 }
 

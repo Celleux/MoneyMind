@@ -83,7 +83,7 @@ struct CommunityView: View {
             .onAppear {
                 vm.seedSamplePosts(context: modelContext, existingPosts: posts)
                 vm.seedSampleChallenges(context: modelContext, existingChallenges: challenges)
-                withAnimation(.spring(response: 0.5)) { appeared = true }
+                withAnimation(Theme.springStagger) { appeared = true }
             }
         }
     }
@@ -127,14 +127,20 @@ struct CommunityView: View {
             if filtered.isEmpty {
                 emptyFeedState
             } else {
-                ForEach(filtered) { post in
+                ForEach(Array(filtered.enumerated()), id: \.element.id) { index, post in
                     CommunityPostCard(post: post, vm: vm, likeTrigger: $likeTrigger)
-                        .transition(.opacity.combined(with: .move(edge: .top)))
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
+                        .opacity(appeared ? 1 : 0)
+                        .offset(y: appeared ? 0 : 16)
+                        .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(Double(index) * 0.06), value: appeared)
                 }
             }
         }
         .padding(.horizontal)
-        .animation(.snappy, value: vm.selectedCategory)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: vm.selectedCategory)
     }
 
     private var emptyFeedState: some View {
@@ -172,8 +178,8 @@ struct CommunityView: View {
             }
         }
         .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.1), value: appeared)
+        .offset(y: appeared ? 0 : 16)
+        .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.1), value: appeared)
     }
 
     private func partnerCard(_ partner: AccountabilityPartner) -> some View {
@@ -308,8 +314,8 @@ struct CommunityView: View {
             .scrollIndicators(.hidden)
         }
         .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.15), value: appeared)
+        .offset(y: appeared ? 0 : 16)
+        .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.15), value: appeared)
     }
 
     // MARK: - Create Post Button

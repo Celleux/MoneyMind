@@ -17,12 +17,12 @@ struct MMAmountDisplay: View {
             .onAppear {
                 guard !hasAppeared else { return }
                 hasAppeared = true
-                withAnimation(.easeInOut(duration: 0.8)) {
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                     displayedAmount = amount
                 }
             }
             .onChange(of: amount) { _, newValue in
-                withAnimation(.easeInOut(duration: 0.8)) {
+                withAnimation(Theme.numericSpring) {
                     displayedAmount = newValue
                 }
             }

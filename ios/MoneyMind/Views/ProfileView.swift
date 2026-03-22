@@ -1008,12 +1008,7 @@ struct ProfileView: View {
 
     private func staggerAppear() {
         for i in sectionAppeared.indices {
-            let delay = Double(i) * 0.08
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                withAnimation(.spring(response: 0.45, dampingFraction: 0.8)) {
-                    sectionAppeared[i] = true
-                }
-            }
+            sectionAppeared[i] = true
         }
     }
 
@@ -1206,10 +1201,15 @@ private struct SectionFadeInModifier: ViewModifier {
     let index: Int
     @Binding var appeared: [Bool]
 
+    private var isVisible: Bool {
+        index < appeared.count && appeared[index]
+    }
+
     func body(content: Content) -> some View {
         content
-            .opacity(index < appeared.count && appeared[index] ? 1 : 0)
-            .offset(y: index < appeared.count && appeared[index] ? 0 : 12)
+            .opacity(isVisible ? 1 : 0)
+            .offset(y: isVisible ? 0 : 16)
+            .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(Double(index) * 0.08), value: isVisible)
     }
 }
 

@@ -92,6 +92,8 @@ enum Theme {
         .system(style, design: .rounded, weight: weight)
     }
 
+    static let numericSpring = Animation.spring(response: 0.4, dampingFraction: 0.8)
+
     static let amountXL: Font = .system(size: 48, weight: .bold, design: .rounded)
     static let amountLG: Font = .system(size: 34, weight: .bold, design: .rounded)
 
@@ -122,7 +124,13 @@ enum Theme {
     // MARK: - Animation
 
     static let spring = Animation.spring(response: 0.35, dampingFraction: 0.7)
+    static let springSnappy = Animation.spring(response: 0.3, dampingFraction: 0.75)
+    static let springStagger = Animation.spring(response: 0.5, dampingFraction: 0.75)
     static let colorTransition = Animation.easeOut(duration: 0.2)
+
+    static func staggerDelay(_ index: Int) -> Animation {
+        springStagger.delay(Double(index) * 0.08)
+    }
 }
 
 // MARK: - Color Hex Init

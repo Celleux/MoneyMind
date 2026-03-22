@@ -1,2 +1,0 @@
-# MoneyMind
-Created by Rork

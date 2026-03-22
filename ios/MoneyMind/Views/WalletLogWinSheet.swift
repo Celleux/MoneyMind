@@ -1,0 +1,163 @@
+import SwiftUI
+import SwiftData
+
+struct WalletLogWinSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @Query private var profiles: [UserProfile]
+    @State private var amount: String = ""
+    @State private var note: String = ""
+    @State private var selectedTrigger: String = ""
+
+    let onSaved: (Double) -> Void
+    @State private var showShareWin = false
+    @State private var savedAmount: Double = 0
+    @State private var savedNote: String = ""
+    @State private var savedTrigger: String = ""
+
+    private let triggers = ["Boredom", "Stress", "Social Pressure", "FOMO", "Habit", "Reward"]
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 28) {
+                    VStack(spacing: 6) {
+                        Text("What did you resist?")
+                            .font(Theme.headingFont(.title3))
+                            .foregroundStyle(Theme.textPrimary)
+
+                        Text("Every resist is a win worth celebrating")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.textSecondary)
+                    }
+                    .padding(.top, 8)
+
+                    VStack(spacing: 8) {
+                        HStack(spacing: 2) {
+                            Text("$")
+                                .font(.system(size: 36, weight: .bold, design: .rounded))
+                                .foregroundStyle(Theme.accentGreen)
+                            TextField("0", text: $amount)
+                                .keyboardType(.decimalPad)
+                                .font(.system(size: 36, weight: .bold, design: .rounded))
+                                .foregroundStyle(Theme.textPrimary)
+                                .tint(Theme.accentGreen)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .padding(.horizontal, 24)
+                        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .strokeBorder(Theme.accentGreen.opacity(0.2), lineWidth: 1)
+                        )
+                    }
+
+                    TextField("What was the temptation? (optional)", text: $note)
+                        .font(.body)
+                        .foregroundStyle(Theme.textPrimary)
+                        .tint(Theme.accentGreen)
+                        .padding(16)
+                        .background(Theme.cardSurface, in: .rect(cornerRadius: 12))
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("What triggered it?")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(Theme.textSecondary)
+
+                        LazyVGrid(columns: [
+                            GridItem(.adaptive(minimum: 90), spacing: 8)
+                        ], spacing: 8) {
+                            ForEach(triggers, id: \.self) { trigger in
+                                Button {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        selectedTrigger = selectedTrigger == trigger ? "" : trigger
+                                    }
+                                } label: {
+                                    Text(trigger)
+                                        .font(.caption.weight(.medium))
+                                        .foregroundStyle(selectedTrigger == trigger ? Theme.background : Theme.textPrimary)
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 10)
+                                        .frame(maxWidth: .infinity)
+                                        .background(
+                                            selectedTrigger == trigger ? Theme.accentGreen : Theme.cardSurface,
+                                            in: .capsule
+                                        )
+                                        .overlay(
+                                            Capsule()
+                                                .strokeBorder(
+                                                    selectedTrigger == trigger ? Theme.accentGreen : Theme.textSecondary.opacity(0.2),
+                                                    lineWidth: 1
+                                                )
+                                        )
+                                }
+                                .buttonStyle(PressableButtonStyle())
+                                .sensoryFeedback(.selection, trigger: selectedTrigger)
+                                .accessibilityLabel("Trigger: \(trigger)")
+                            }
+                        }
+                    }
+
+                    Button {
+                        saveWin()
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "star.fill")
+                                .font(.body)
+                            Text("I Saved This!")
+                                .font(.headline)
+                        }
+                        .foregroundStyle(Theme.background)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
+                    }
+                    .buttonStyle(PressableButtonStyle())
+                    .disabled(amount.isEmpty)
+                    .opacity(amount.isEmpty ? 0.5 : 1)
+                    .sensoryFeedback(.impact(weight: .medium), trigger: amount)
+                    .accessibilityLabel("Save this win")
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 32)
+            }
+            .scrollDismissesKeyboard(.interactively)
+            .background(Theme.background.ignoresSafeArea())
+            .navigationTitle("Log a Win")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                        .foregroundStyle(Theme.textSecondary)
+                }
+            }
+        }
+        .sheet(isPresented: $showShareWin, onDismiss: { dismiss() }) {
+            ShareWinSheet(
+                amount: savedAmount,
+                itemName: savedNote,
+                trigger: savedTrigger,
+                hourlyRate: profiles.first?.hourlyRate ?? 20
+            )
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
+        }
+    }
+
+    private func saveWin() {
+        guard let value = Double(amount), value > 0 else { return }
+        let log = ImpulseLog(amount: value, note: note, resisted: true, emotionalTrigger: selectedTrigger)
+        modelContext.insert(log)
+        if let profile = profiles.first {
+            profile.totalSaved += value
+            profile.xpPoints += 25
+        }
+        savedAmount = value
+        savedNote = note
+        savedTrigger = selectedTrigger
+        onSaved(value)
+        showShareWin = true
+    }
+}

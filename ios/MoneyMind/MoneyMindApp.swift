@@ -1,0 +1,57 @@
+import SwiftUI
+import SwiftData
+
+@main
+struct MoneyMindApp: App {
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+
+    var body: some Scene {
+        WindowGroup {
+            Group {
+                if hasCompletedOnboarding {
+                    ContentView()
+                } else {
+                    OnboardingView {
+                        withAnimation(.spring(response: 0.5)) {
+                            hasCompletedOnboarding = true
+                        }
+                    }
+                }
+            }
+            .preferredColorScheme(.dark)
+        }
+        .modelContainer(for: [
+            UserProfile.self,
+            ImpulseLog.self,
+            DailyCheckIn.self,
+            ImplementationIntention.self,
+            QuizResult.self,
+            SpendingAutopsy.self,
+            UrgeSurfSession.self,
+            HALTCheckIn.self,
+            CoolingOffSession.self,
+            ImaginalSession.self,
+            EveningReflection.self,
+            DailyPledge.self,
+            PGSIAssessment.self,
+            CurriculumSession.self,
+            EMACheckIn.self,
+            Badge.self,
+            HighRiskPattern.self,
+            WatchHRVReading.self,
+            WatchIntervention.self,
+            CrisisRiskDataPoint.self,
+            JITAIRecommendation.self,
+            CoachMessage.self,
+            CoachSession.self,
+            VoiceSession.self,
+            ACTExercise.self,
+            SeekingSafetyEntry.self,
+            CommunityPost.self,
+            AccountabilityPartner.self,
+            PartnerCheckIn.self,
+            ChallengeGroup.self,
+            ReferralCode.self
+        ])
+    }
+}

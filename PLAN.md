@@ -1,43 +1,37 @@
-# MoneyMind Design System Overhaul
+# Money Personality Quiz — 5-Question Onboarding Flow
 
-## Overview
-Replace the existing theme with a comprehensive premium design system — new color palette, typography, spacing constants, and 7 reusable components. Dark mode only, OLED-optimized.
+Replace the existing 3-question mini quiz with a premium 5-question Money Personality Quiz that becomes the app's Day 0 viral moment.
 
----
+**Features**
+- 5 engaging money personality questions with emoji-enriched answer cards
+- Auto-advance after selection with haptic feedback and scale animation
+- Smooth gradient progress bar filling across all 5 questions
+- Dramatic personality reveal with pulsing ring animation and 2-second suspense
+- 5 distinct personalities: The Saver, The Builder, The Hustler, The Minimalist, The Generous — each with unique color and icon
+- Premium glassmorphic personality result card with trait tags
+- "Share My Personality" button that generates a beautiful shareable image
+- "Start Managing Money" button to continue into the app
 
-### **Color System**
-- **Backgrounds:** Deep navy primary (#0A0F1E), dark card (#111827), elevated surface (#1A2236)
-- **Accents:** Rich purple (#6C5CE7) as primary, electric cyan (#00D2FF) as secondary, vibrant green (#00E676) for success
-- **Status:** Amber warning (#FF9100), coral danger (#FF5252), gold for premium (#FFD700)
-- **Text:** White primary, slate secondary (#94A3B8), muted (#64748B)
-- **Borders:** Dark slate (#1E293B)
-- **Gradients:** Purple-to-cyan accent gradient, gold gradient, mesh background updated to match new palette
+**Design**
+- Welcome screen: dark background with floating particle dots in purple at low opacity, animated logo bounce-in, headline "Discover Your Money Personality", subtext in muted gray, full-width purple CTA button
+- Quiz screens: thin gradient progress bar (purple → cyan) at top, question number in muted text, question in large semibold white text, 4 answer option cards with emoji + text — selected card gets purple border glow and subtle scale-up
+- Result screen: pulsing ring reveal animation, then personality card slides up with blur background, thin white border at 20% opacity, personality icon at 48pt in the personality's color, bold personality name, 3 trait pills, brief description, share and continue buttons
+- All animations use spring physics for natural feel
+- Dark mode only, OLED-optimized
 
-### **Typography**
-- SF Pro Rounded used throughout for a premium feel
-- Full hierarchy: largeTitle (34pt Bold) → caption (12pt Regular)
-- Special `amountXL` style at 48pt Bold for hero balance displays
+**Screens**
+- **Welcome Screen** — animated intro with "Let's Go" button to start the quiz
+- **Question 1** — "When you get unexpected money, you..." (4 options)
+- **Question 2** — "Your ideal Saturday involves..." (4 options)
+- **Question 3** — "Money makes you feel..." (4 options)
+- **Question 4** — "Your friends say you're the one who..." (4 options)
+- **Question 5** — "Your financial superpower is..." (4 options)
+- **Result Screen** — dramatic reveal of personality type with shareable card
 
-### **Spacing & Sizing**
-- Consistent spacing scale: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64 points
-- Corner radii: buttons 12pt, cards 16pt, modals 20pt, pills 8pt
-
-### **7 Reusable Components**
-
-1. **MMCard** — Dark card with subtle border and shadow, consistent across all screens
-2. **MMButton** — Primary (purple fill) and secondary (outlined) variants with haptic feedback on tap
-3. **MMTextField** — Dark input field with floating label animation
-4. **MMProgressRing** — Circular progress indicator with purple-to-cyan gradient stroke
-5. **MMAmountDisplay** — Large dollar amount with smooth counting animation (0.8s ease-in-out)
-6. **MMCategoryPill** — Rounded pill with color dot and label for tags/categories
-7. **MMTabBar** — (Handled via existing TabView with new tint) Spring animation on selection
-
-### **Migration**
-- Existing `Theme.*` color names will be mapped to the new palette so all 50+ views continue working without changes
-- Old names like `Theme.accentGreen` → mapped to the new success green, `Theme.teal` → mapped to secondary cyan, `Theme.cardSurface` → mapped to new card color
-- New canonical names also available (e.g. `Theme.accent`, `Theme.secondary`, `Theme.card`)
-- Default animation spring updated to response: 0.35, damping: 0.7
-
-### **What Won't Change**
-- No view files are modified in this step — this is the foundation layer only
-- The existing `PressableButtonStyle` is kept and updated to use the new spring values
+**Changes**
+- Update the QuizResult model to support 5 answers and the new personality types (Saver, Builder, Hustler, Minimalist, Generous) with associated colors, icons, and traits
+- Replace MiniQuizScreen with new MoneyPersonalityQuizView (welcome + 5 questions + result)
+- Add floating particle background effect for the welcome screen
+- Add pulsing ring reveal animation for the result screen
+- Add shareable personality card image generation using UIGraphicsImageRenderer
+- Wire into existing OnboardingView flow in place of the old mini quiz screen

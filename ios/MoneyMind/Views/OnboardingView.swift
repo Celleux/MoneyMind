@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 nonisolated enum OnboardingScreen: Int, CaseIterable, Sendable {
-    case splash, lossVisualization, firstWin, branching, miniQuiz, socialProof, accountCreation, intention
+    case splash, lossVisualization, firstWin, branching, personalityQuiz, socialProof, accountCreation, intention
 }
 
 struct OnboardingView: View {
@@ -44,7 +44,7 @@ struct OnboardingView: View {
                     },
                     onUnderstand: {
                         withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                            currentScreen = .miniQuiz
+                            currentScreen = .personalityQuiz
                         }
                     },
                     onCommunity: {
@@ -53,8 +53,8 @@ struct OnboardingView: View {
                         }
                     }
                 )
-            case .miniQuiz:
-                MiniQuizScreen { result in
+            case .personalityQuiz:
+                MoneyPersonalityQuizView { result in
                     quizResult = result
                     modelContext.insert(result)
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {

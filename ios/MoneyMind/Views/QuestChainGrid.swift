@@ -12,6 +12,8 @@ struct QuestChainGrid: View {
         ("chain_impulse_defenders", "Impulse Mastery", "hand.raised.fill", Color(hex: 0xFB923C)),
     ]
 
+    @State private var selectedChain: ChainInfo?
+
     var body: some View {
         VStack(spacing: 12) {
             HStack {
@@ -27,11 +29,14 @@ struct QuestChainGrid: View {
             }
             .padding(.horizontal, 20)
 
+            let topRow = Array(chains.prefix(4))
+            let bottomRow = Array(chains.suffix(1))
+
             LazyVGrid(columns: [
                 GridItem(.flexible(), spacing: 12),
                 GridItem(.flexible(), spacing: 12),
             ], spacing: 12) {
-                ForEach(chains, id: \.id) { chain in
+                ForEach(topRow, id: \.id) { chain in
                     ChainCard(
                         chainID: chain.id,
                         name: chain.name,
@@ -39,11 +44,54 @@ struct QuestChainGrid: View {
                         accentColor: chain.color,
                         modelContext: modelContext
                     )
+                    .onTapGesture {
+                        selectedChain = ChainInfo(
+                            id: chain.id,
+                            name: chain.name,
+                            icon: chain.icon,
+                            color: chain.color
+                        )
+                    }
                 }
             }
             .padding(.horizontal, 16)
+
+            if let last = bottomRow.first {
+                ChainCard(
+                    chainID: last.id,
+                    name: last.name,
+                    icon: last.icon,
+                    accentColor: last.color,
+                    modelContext: modelContext
+                )
+                .frame(maxWidth: .infinity)
+                .frame(width: UIScreen.main.bounds.width / 2 - 22)
+                .onTapGesture {
+                    selectedChain = ChainInfo(
+                        id: last.id,
+                        name: last.name,
+                        icon: last.icon,
+                        color: last.color
+                    )
+                }
+            }
+        }
+        .fullScreenCover(item: $selectedChain) { chain in
+            QuestChainDetailView(
+                chainID: chain.id,
+                chainName: chain.name,
+                chainIcon: chain.icon,
+                chainColor: chain.color
+            )
         }
     }
+}
+
+struct ChainInfo: Identifiable {
+    let id: String
+    let name: String
+    let icon: String
+    let color: Color
 }
 
 private struct ChainCard: View {
@@ -96,27 +144,44 @@ private struct ChainCard: View {
 
             Spacer(minLength: 4)
 
-            VStack(spacing: 4) {
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 3)
-                            .fill(Theme.elevated)
-                            .frame(height: 6)
-                        RoundedRectangle(cornerRadius: 3)
-                            .fill(accentColor)
-                            .frame(width: geo.size.width * progressFraction, height: 6)
-                    }
+            if isComplete {
+                HStack(spacing: 4) {
+                    Image(systemName: "crown.fill")
+                        .font(.system(size: 8))
+                    Text("COMPLETED")
+                        .font(.system(size: 9, weight: .black))
+                        .tracking(1)
                 }
-                .frame(height: 6)
+                .foregroundStyle(Theme.gold)
+            } else {
+                VStack(spacing: 4) {
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(Theme.elevated)
+                                .frame(height: 6)
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(accentColor)
+                                .frame(width: geo.size.width * progressFraction, height: 6)
+                        }
+                    }
+                    .frame(height: 6)
 
-                HStack {
-                    Text("\(progress.completed)/\(progress.total)")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(accentColor)
-                    Spacer()
-                    Text(isComplete ? "Complete" : "In Progress")
-                        .font(.system(size: 9))
-                        .foregroundStyle(Theme.textMuted)
+                    HStack {
+                        Text("\(progress.completed)/\(progress.total)")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundStyle(accentColor)
+                        Spacer()
+                        if progress.completed == 0 {
+                            Text("Start")
+                                .font(.system(size: 9, weight: .semibold))
+                                .foregroundStyle(accentColor)
+                        } else {
+                            Text("In Progress")
+                                .font(.system(size: 9))
+                                .foregroundStyle(Theme.textMuted)
+                        }
+                    }
                 }
             }
         }
@@ -134,5 +199,6 @@ private struct ChainCard: View {
                 )
         )
         .shadow(color: isComplete ? accentColor.opacity(0.2) : .clear, radius: isComplete ? 8 : 0)
+        .contentShape(Rectangle())
     }
 }

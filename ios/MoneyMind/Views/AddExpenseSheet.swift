@@ -228,6 +228,7 @@ struct AddExpenseSheet: View {
         }
 
         hapticTrigger.toggle()
+        NotificationCenter.default.post(name: .transactionSaved, object: transaction)
         if learnMerchantName.isEmpty {
             dismiss()
         }

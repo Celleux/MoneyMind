@@ -133,6 +133,7 @@ struct AddIncomeSheet: View {
         )
         modelContext.insert(transaction)
         hapticTrigger.toggle()
+        NotificationCenter.default.post(name: .transactionSaved, object: transaction)
         dismiss()
     }
 }

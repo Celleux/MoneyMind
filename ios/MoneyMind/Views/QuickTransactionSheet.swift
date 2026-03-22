@@ -492,6 +492,17 @@ struct QuickTransactionSheet: View {
         transaction.date = selectedDate
         modelContext.insert(transaction)
 
+        if !selectedVibe.isEmpty, let vibeType = VibeType(fromEmoji: selectedVibe) {
+            let entry = VibeCheckEntry(
+                transactionID: "\(transaction.persistentModelID.hashValue)",
+                emoji: vibeType.emoji,
+                sentiment: vibeType.sentiment,
+                amount: value,
+                categoryName: adjustedCategory.rawValue
+            )
+            modelContext.insert(entry)
+        }
+
         if transactionType == .expense {
         } else if let profile = profiles.first {
             profile.totalSaved += 0
@@ -508,6 +519,10 @@ struct QuickTransactionSheet: View {
 
         savedSuccessfully = true
         saveHaptic.toggle()
+
+        if selectedVibe.isEmpty {
+            NotificationCenter.default.post(name: .transactionSaved, object: transaction)
+        }
 
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
             dismiss()

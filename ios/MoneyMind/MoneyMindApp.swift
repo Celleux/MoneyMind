@@ -59,7 +59,8 @@ struct MoneyMindApp: App {
             SavingsChallenge.self,
             MerchantCategoryMapping.self,
             RecurringExpense.self,
-            InAppNotification.self
+            InAppNotification.self,
+            VibeCheckEntry.self
         ])
     }
 }

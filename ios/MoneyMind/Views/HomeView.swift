@@ -175,6 +175,8 @@ struct HomeView: View {
                     BudgetAnalyticsView()
                 } else if value == "ghostBudget" {
                     GhostBudgetView()
+                } else if value == "vibeCheck" {
+                    VibeCheckAnalyticsView()
                 }
             }
             .onAppear {
@@ -225,6 +227,7 @@ struct HomeView: View {
             streakCard
             DailyPledgeCard()
                 .staggerIn(appeared: appeared, delay: 0.42)
+            vibeCheckCard
             ghostBudgetCard
             challengesCard
             coachShortcutCard
@@ -583,6 +586,52 @@ struct HomeView: View {
                 .strokeBorder(Theme.teal.opacity(0.15), lineWidth: 1)
         )
         .staggerIn(appeared: appeared, delay: 0.36)
+    }
+
+    // MARK: - Vibe Check Card
+
+    private var vibeCheckCard: some View {
+        NavigationLink(value: "vibeCheck") {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .fill(Theme.gold.opacity(0.1))
+                        .frame(width: 48, height: 48)
+                    Text("\u{1F60E}")
+                        .font(.system(size: 22))
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Vibe Check")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Theme.textPrimary)
+                    Text("Your spending moods & insights")
+                        .font(.caption)
+                        .foregroundStyle(Theme.textSecondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Theme.textSecondary.opacity(0.4))
+            }
+            .padding(16)
+            .background(
+                LinearGradient(
+                    colors: [Theme.gold.opacity(0.06), Theme.card],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                in: .rect(cornerRadius: 16)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(Theme.gold.opacity(0.12), lineWidth: 1)
+            )
+        }
+        .buttonStyle(PressableButtonStyle())
+        .staggerIn(appeared: appeared, delay: 0.42)
     }
 
     // MARK: - Ghost Budget Card

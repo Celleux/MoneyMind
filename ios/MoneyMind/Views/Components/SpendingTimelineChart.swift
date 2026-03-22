@@ -4,6 +4,7 @@ struct SpendingTimelineChart: View {
     let dailyAmounts: [Double]
     let dayLabels: [String]
     let currentDayIndex: Int
+    var currencySymbol: String = "$"
 
     @State private var animatedHeights: [CGFloat] = Array(repeating: 0, count: 7)
 
@@ -30,7 +31,7 @@ struct SpendingTimelineChart: View {
                 ForEach(0..<7, id: \.self) { index in
                     VStack(spacing: 8) {
                         if dailyAmounts[index] > 0 {
-                            Text("$\(Int(dailyAmounts[index]))")
+                            Text("\(currencySymbol)\(Int(dailyAmounts[index]))")
                                 .font(.system(size: 10, weight: .medium, design: .rounded))
                                 .foregroundStyle(index == currentDayIndex ? Theme.textPrimary : Theme.textMuted)
                                 .opacity(animatedHeights[index] > 0 ? 1 : 0)

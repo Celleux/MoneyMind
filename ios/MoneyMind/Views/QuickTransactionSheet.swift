@@ -163,7 +163,7 @@ struct QuickTransactionSheet: View {
 
     private var amountDisplay: some View {
         HStack(alignment: .firstTextBaseline, spacing: 2) {
-            Text("$")
+            Text(CurrencyHelper.symbol(for: profiles.first?.defaultCurrency ?? "USD"))
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundStyle(Theme.textMuted)
 

@@ -8,6 +8,8 @@ struct BudgetAnalyticsView: View {
     @Environment(PremiumManager.self) private var premiumManager
     @State private var vm = BudgetAnalyticsViewModel()
     @State private var showTemplates = false
+    @State private var showRecurring = false
+    @State private var showGhostBudget = false
     @Environment(\.modelContext) private var modelContext
 
     private var personality: MoneyPersonality {
@@ -93,11 +95,36 @@ struct BudgetAnalyticsView: View {
             BudgetTemplateSelectionView()
                 .presentationDragIndicator(.visible)
         }
-        .navigationDestination(for: String.self) { value in
-            if value == "ghostBudget" {
-                GhostBudgetView()
-            } else if value == "recurringExpenses" {
+        .sheet(isPresented: $showRecurring) {
+            NavigationStack {
                 RecurringExpensesView()
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button { showRecurring = false } label: {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundStyle(Theme.textSecondary)
+                                    .frame(width: 30, height: 30)
+                                    .background(Theme.elevated, in: .circle)
+                            }
+                        }
+                    }
+            }
+        }
+        .sheet(isPresented: $showGhostBudget) {
+            NavigationStack {
+                GhostBudgetView()
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button { showGhostBudget = false } label: {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundStyle(Theme.textSecondary)
+                                    .frame(width: 30, height: 30)
+                                    .background(Theme.elevated, in: .circle)
+                            }
+                        }
+                    }
             }
         }
         .sensoryFeedback(.impact(weight: .light), trigger: vm.monthChangeTrigger)
@@ -111,7 +138,7 @@ struct BudgetAnalyticsView: View {
     // MARK: - Recurring Expenses Card
 
     private var recurringExpensesCard: some View {
-        NavigationLink(value: "recurringExpenses") {
+        Button { showRecurring = true } label: {
             HStack(spacing: 14) {
                 ZStack {
                     Circle()
@@ -146,7 +173,7 @@ struct BudgetAnalyticsView: View {
     // MARK: - Ghost Budget Card
 
     private var ghostBudgetCard: some View {
-        NavigationLink(value: "ghostBudget") {
+        Button { showGhostBudget = true } label: {
             HStack(spacing: 14) {
                 ZStack {
                     Circle()

@@ -95,8 +95,13 @@ class BudgetAnalyticsViewModel {
         let end = endOfMonth(for: selectedMonth)
 
         return budgets.sorted(by: { $0.sortOrder < $1.sortOrder }).map { budget in
+            let budgetName = budget.name.lowercased()
             let spent = transactions
-                .filter { $0.transactionType == .expense && $0.category == budget.name && $0.date >= start && $0.date < end }
+                .filter {
+                    $0.transactionType == .expense &&
+                    ($0.category.lowercased() == budgetName || $0.transactionCategory.resolvedCategory.rawValue.lowercased() == budgetName) &&
+                    $0.date >= start && $0.date < end
+                }
                 .reduce(0) { $0 + $1.amount }
 
             let totalSpent = totalSpent(budgets: budgets, transactions: transactions)

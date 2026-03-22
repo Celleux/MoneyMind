@@ -48,19 +48,19 @@ struct ToolkitView: View {
                     appeared = true
                 }
             }
-            .fullScreenCover(isPresented: $showBudgetAnalytics) { BudgetAnalyticsView() }
-            .fullScreenCover(isPresented: $showGhostBudget) { GhostBudgetView() }
-            .fullScreenCover(isPresented: $showVibeCheck) { VibeCheckAnalyticsView() }
-            .fullScreenCover(isPresented: $showChallenges) { ChallengesHubView() }
-            .fullScreenCover(isPresented: $showUrgeSurf) { UrgeSurfView() }
-            .fullScreenCover(isPresented: $showCoolingOff) { CoolingOffView() }
-            .fullScreenCover(isPresented: $showHALTCheck) { HALTCheckView() }
-            .fullScreenCover(isPresented: $showIntentions) { ImplementationIntentionsView() }
-            .fullScreenCover(isPresented: $showCoach) { CoachChatView() }
-            .fullScreenCover(isPresented: $showExercises) { ACTExercisesView() }
-            .fullScreenCover(isPresented: $showEmergency) { EmergencyCrisisView() }
-            .fullScreenCover(isPresented: $showDNSBlocking) { DNSBlockingWizardView() }
-            .fullScreenCover(isPresented: $showOneSecGuide) { OneSecBreathingGuideView() }
+            .fullScreenCover(isPresented: $showBudgetAnalytics) { toolWrapper { BudgetAnalyticsView() } dismissAction: { showBudgetAnalytics = false } }
+            .fullScreenCover(isPresented: $showGhostBudget) { toolWrapper { GhostBudgetView() } dismissAction: { showGhostBudget = false } }
+            .fullScreenCover(isPresented: $showVibeCheck) { toolWrapper { VibeCheckAnalyticsView() } dismissAction: { showVibeCheck = false } }
+            .fullScreenCover(isPresented: $showChallenges) { toolWrapper { ChallengesHubView() } dismissAction: { showChallenges = false } }
+            .fullScreenCover(isPresented: $showUrgeSurf) { toolWrapper { UrgeSurfView() } dismissAction: { showUrgeSurf = false } }
+            .fullScreenCover(isPresented: $showCoolingOff) { toolWrapper { CoolingOffView() } dismissAction: { showCoolingOff = false } }
+            .fullScreenCover(isPresented: $showHALTCheck) { toolWrapper { HALTCheckView() } dismissAction: { showHALTCheck = false } }
+            .fullScreenCover(isPresented: $showIntentions) { toolWrapper { ImplementationIntentionsView() } dismissAction: { showIntentions = false } }
+            .fullScreenCover(isPresented: $showCoach) { toolWrapper { CoachChatView() } dismissAction: { showCoach = false } }
+            .fullScreenCover(isPresented: $showExercises) { toolWrapper { ACTExercisesView() } dismissAction: { showExercises = false } }
+            .fullScreenCover(isPresented: $showEmergency) { toolWrapper { EmergencyCrisisView() } dismissAction: { showEmergency = false } }
+            .fullScreenCover(isPresented: $showDNSBlocking) { toolWrapper { DNSBlockingWizardView() } dismissAction: { showDNSBlocking = false } }
+            .fullScreenCover(isPresented: $showOneSecGuide) { toolWrapper { OneSecBreathingGuideView() } dismissAction: { showOneSecGuide = false } }
         }
     }
 
@@ -311,6 +311,27 @@ struct ToolkitView: View {
             .padding(.vertical, 12)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: showEmergency)
+    }
+
+    // MARK: - Tool Wrapper
+
+    private func toolWrapper<Content: View>(@ViewBuilder content: () -> Content, dismissAction: @escaping () -> Void) -> some View {
+        NavigationStack {
+            content()
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button {
+                            dismissAction()
+                        } label: {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundStyle(Theme.textSecondary)
+                                .frame(width: 30, height: 30)
+                                .background(Theme.elevated, in: .circle)
+                        }
+                    }
+                }
+        }
     }
 
     // MARK: - Helpers

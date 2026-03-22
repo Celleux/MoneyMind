@@ -5,8 +5,12 @@ struct RecurringExpensesView: View {
     @Query private var recurringExpenses: [RecurringExpense]
     @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
     @Query private var quizResults: [QuizResult]
+    @Query private var profiles: [UserProfile]
     @State private var vm = RecurringExpenseViewModel()
     @Environment(\.modelContext) private var modelContext
+
+    private var currencyCode: String { profiles.first?.defaultCurrency ?? "USD" }
+    private var currencySymbol: String { CurrencyHelper.symbol(for: currencyCode) }
 
     private var personality: MoneyPersonality {
         quizResults.first?.personality ?? .builder
@@ -99,7 +103,7 @@ struct RecurringExpensesView: View {
             }
 
             let total = vm.totalMonthlyRecurring(recurringExpenses)
-            Text(total, format: .currency(code: "USD").precision(.fractionLength(0)))
+            Text(total, format: .currency(code: currencyCode).precision(.fractionLength(0)))
                 .font(.system(size: 42, weight: .bold, design: .rounded))
                 .foregroundStyle(personality.color)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -400,7 +404,7 @@ struct RecurringExpensesView: View {
 
                     if !dateExpenses.isEmpty {
                         let total = dateExpenses.reduce(0.0) { $0 + $1.amount }
-                        Text("$\(Int(total))")
+                        Text("\(currencySymbol)\(Int(total))")
                             .font(.subheadline.weight(.bold))
                             .foregroundStyle(personality.color)
                     }
@@ -431,7 +435,7 @@ struct RecurringExpensesView: View {
 
                                 Spacer()
 
-                                Text("$\(Int(expense.amount))")
+                                Text("\(currencySymbol)\(Int(expense.amount))")
                                     .font(.system(.subheadline, design: .rounded, weight: .semibold))
                                     .foregroundStyle(Theme.textPrimary)
                             }
@@ -542,7 +546,7 @@ private struct DetectionBannerCard: View {
                     .lineLimit(1)
 
                 HStack(spacing: 6) {
-                    Text("$\(Int(expense.amount))/\(expense.frequency.rawValue.lowercased())")
+                    Text("\(CurrencyHelper.symbol(for: "USD"))\(Int(expense.amount))/\(expense.frequency.rawValue.lowercased())")
                         .font(.caption)
                         .foregroundStyle(Theme.textSecondary)
                 }
@@ -633,7 +637,7 @@ private struct RecurringExpenseRow: View {
 
                 Spacer()
 
-                Text("$\(Int(expense.amount))")
+                Text("\(CurrencyHelper.symbol(for: "USD"))\(Int(expense.amount))")
                     .font(.system(.title3, design: .rounded, weight: .bold))
                     .foregroundStyle(Theme.textPrimary)
             }

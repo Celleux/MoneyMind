@@ -47,7 +47,7 @@ struct SpendingAutopsySheet: View {
                             .foregroundStyle(Theme.textSecondary)
 
                         HStack(spacing: 2) {
-                            Text("$")
+                            Text(CurrencyHelper.symbol(for: "USD"))
                                 .font(.system(size: 28, weight: .bold, design: .rounded))
                                 .foregroundStyle(Theme.textSecondary)
                             TextField("0", text: $amount)

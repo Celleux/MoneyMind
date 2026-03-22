@@ -5,7 +5,10 @@ struct BudgetDetailSheet: View {
     let budget: BudgetCategory
     let spent: Double
 
+    @Query private var profiles: [UserProfile]
     @Environment(\.dismiss) private var dismiss
+
+    private var currencyCode: String { profiles.first?.defaultCurrency ?? "USD" }
 
     private var progress: Double {
         guard budget.monthlyLimit > 0 else { return 0 }
@@ -67,7 +70,7 @@ struct BudgetDetailSheet: View {
                     Text("Spent")
                         .font(.caption)
                         .foregroundStyle(Theme.textSecondary)
-                    Text(spent, format: .currency(code: "USD").precision(.fractionLength(0)))
+                    Text(spent, format: .currency(code: currencyCode).precision(.fractionLength(0)))
                         .font(.system(.title3, design: .rounded, weight: .semibold))
                         .foregroundStyle(categoryColor)
                 }
@@ -80,7 +83,7 @@ struct BudgetDetailSheet: View {
                     Text("Budget")
                         .font(.caption)
                         .foregroundStyle(Theme.textSecondary)
-                    Text(budget.monthlyLimit, format: .currency(code: "USD").precision(.fractionLength(0)))
+                    Text(budget.monthlyLimit, format: .currency(code: currencyCode).precision(.fractionLength(0)))
                         .font(.system(.title3, design: .rounded, weight: .semibold))
                         .foregroundStyle(Theme.textPrimary)
                 }
@@ -93,7 +96,7 @@ struct BudgetDetailSheet: View {
                     Text("Left")
                         .font(.caption)
                         .foregroundStyle(Theme.textSecondary)
-                    Text(remaining, format: .currency(code: "USD").precision(.fractionLength(0)))
+                    Text(remaining, format: .currency(code: currencyCode).precision(.fractionLength(0)))
                         .font(.system(.title3, design: .rounded, weight: .semibold))
                         .foregroundStyle(remaining > 0 ? Theme.accentGreen : Theme.danger)
                 }

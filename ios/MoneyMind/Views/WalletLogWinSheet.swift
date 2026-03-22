@@ -34,7 +34,7 @@ struct WalletLogWinSheet: View {
 
                     VStack(spacing: 8) {
                         HStack(spacing: 2) {
-                            Text("$")
+                            Text(CurrencyHelper.symbol(for: profiles.first?.defaultCurrency ?? "USD"))
                                 .font(.system(size: 36, weight: .bold, design: .rounded))
                                 .foregroundStyle(Theme.accentGreen)
                             TextField("0", text: $amount)

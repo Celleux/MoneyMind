@@ -14,6 +14,8 @@ struct WalletView: View {
 
     private var profile: UserProfile? { profiles.first }
     private var gentle: Bool { profile?.gentleViewMode ?? false }
+    private var currencyCode: String { profile?.defaultCurrency ?? "USD" }
+    private var currencySymbol: String { CurrencyHelper.symbol(for: currencyCode) }
 
     private var effectiveTotal: Double {
         vm.effectiveTotal(profile?.totalSaved ?? 0, phantomApplied: profile?.phantomProgressApplied ?? false)
@@ -56,6 +58,7 @@ struct WalletView: View {
                             walletVisualization
                             statsRow
                             impulseCostCalculator
+                            savingsTrendChart
                             weeklyChart
                             recentTransactions
                             projectionCard
@@ -143,14 +146,14 @@ struct WalletView: View {
                     .onTapGesture { vm.revealExact = true }
                     .accessibilityLabel("Total saved approximately \(Int(effectiveTotal)) dollars")
             } else {
-                Text(effectiveTotal, format: .currency(code: "USD"))
+                Text(effectiveTotal, format: .currency(code: currencyCode))
                     .font(.system(size: 42, weight: .bold, design: .rounded))
                     .foregroundStyle(Theme.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .contentTransition(.numericText(value: effectiveTotal))
                     .animation(Theme.numericSpring, value: effectiveTotal)
                     .sensoryFeedback(.impact(weight: .medium), trigger: effectiveTotal)
-                    .accessibilityLabel("Total saved \(effectiveTotal, format: .currency(code: "USD"))")
+                    .accessibilityLabel("Total saved \(effectiveTotal, format: .currency(code: currencyCode))")
             }
 
             HStack(spacing: 4) {
@@ -176,7 +179,7 @@ struct WalletView: View {
         HStack(spacing: 4) {
             Image(systemName: "flag.checkered")
                 .font(.caption2)
-            Text("$\(Int(milestone))")
+            Text("\(CurrencyHelper.symbol(for: profiles.first?.defaultCurrency ?? "USD"))\(Int(milestone))")
                 .font(.caption.weight(.bold))
         }
         .foregroundStyle(Theme.gold)
@@ -243,9 +246,9 @@ struct WalletView: View {
 
     private var statsRow: some View {
         HStack(spacing: 12) {
-            WalletStatPill(label: "Today", amount: todaySaved, color: Theme.accentGreen, gentle: gentle, revealExact: vm.revealExact)
-            WalletStatPill(label: "This Week", amount: weekSaved, color: Theme.teal, gentle: gentle, revealExact: vm.revealExact)
-            WalletStatPill(label: "This Month", amount: monthSaved, color: Theme.gold, gentle: gentle, revealExact: vm.revealExact)
+            WalletStatPill(label: "Today", amount: todaySaved, color: Theme.accentGreen, gentle: gentle, revealExact: vm.revealExact, currencyCode: currencyCode)
+            WalletStatPill(label: "This Week", amount: weekSaved, color: Theme.teal, gentle: gentle, revealExact: vm.revealExact, currencyCode: currencyCode)
+            WalletStatPill(label: "This Month", amount: monthSaved, color: Theme.gold, gentle: gentle, revealExact: vm.revealExact, currencyCode: currencyCode)
         }
         .opacity(vm.appeared ? 1 : 0)
         .offset(y: vm.appeared ? 0 : 16)
@@ -279,7 +282,7 @@ struct WalletView: View {
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
-                    Text(gentle && !vm.revealExact ? vm.displayAmountShort(totalImpact, gentle: true) : "$\(Int(totalImpact))")
+                    Text(gentle && !vm.revealExact ? vm.displayAmountShort(totalImpact, gentle: true, symbol: currencySymbol) : "\(currencySymbol)\(Int(totalImpact))")
                         .font(.system(.title3, design: .rounded, weight: .bold))
                         .foregroundStyle(Theme.emergency)
                         .contentTransition(.numericText())
@@ -301,7 +304,7 @@ struct WalletView: View {
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
-                    Text(gentle && !vm.revealExact ? vm.displayAmountShort(totalResisted, gentle: true) : "$\(Int(totalResisted))")
+                    Text(gentle && !vm.revealExact ? vm.displayAmountShort(totalGaveIn, gentle: true, symbol: currencySymbol) : "\(currencySymbol)\(Int(totalGaveIn))")
                         .font(.system(.title3, design: .rounded, weight: .bold))
                         .foregroundStyle(Theme.accentGreen)
                         .contentTransition(.numericText())
@@ -321,7 +324,7 @@ struct WalletView: View {
                         .font(.caption)
                     Text("Total Impact:")
                         .font(.subheadline)
-                    Text("$\(Int(totalImpact))")
+                    Text("\(currencySymbol)\(Int(totalResisted))")
                         .font(.system(.title3, design: .rounded, weight: .bold))
                 }
                 .foregroundStyle(Theme.gold)
@@ -335,6 +338,113 @@ struct WalletView: View {
         .opacity(vm.appeared ? 1 : 0)
         .offset(y: vm.appeared ? 0 : 16)
         .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.12), value: vm.appeared)
+    }
+
+    // MARK: - Savings Trend Chart
+
+    private var savingsTrendChart: some View {
+        let monthlyData = vm.monthlySavings(from: impulseLogs)
+        let projected = projectedMonths(from: monthlyData)
+        let allData = monthlyData + projected
+        let maxVal = max((allData.map(\.amount).max() ?? 1) * 1.15, 1)
+
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Savings Trend")
+                    .font(.headline)
+                    .foregroundStyle(Theme.textPrimary)
+                Spacer()
+                Text("Last 6 months")
+                    .font(.caption)
+                    .foregroundStyle(Theme.textMuted)
+            }
+
+            GeometryReader { geo in
+                let w = geo.size.width
+                let h = geo.size.height
+                let totalPoints = max(allData.count - 1, 1)
+
+                ZStack(alignment: .bottomLeading) {
+                    Path { path in
+                        for (i, data) in monthlyData.enumerated() {
+                            let x = w * CGFloat(i) / CGFloat(totalPoints)
+                            let y = h - (CGFloat(data.amount / maxVal) * h)
+                            if i == 0 { path.move(to: CGPoint(x: x, y: y)) }
+                            else { path.addLine(to: CGPoint(x: x, y: y)) }
+                        }
+                    }
+                    .stroke(Theme.accent, style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round))
+
+                    Path { path in
+                        path.move(to: CGPoint(x: 0, y: h))
+                        for (i, data) in monthlyData.enumerated() {
+                            let x = w * CGFloat(i) / CGFloat(totalPoints)
+                            let y = h - (CGFloat(data.amount / maxVal) * h)
+                            path.addLine(to: CGPoint(x: x, y: y))
+                        }
+                        let lastX = w * CGFloat(monthlyData.count - 1) / CGFloat(totalPoints)
+                        path.addLine(to: CGPoint(x: lastX, y: h))
+                        path.closeSubpath()
+                    }
+                    .fill(
+                        LinearGradient(
+                            colors: [Theme.accent.opacity(0.2), Theme.accent.opacity(0.0)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+
+                    if !projected.isEmpty {
+                        Path { path in
+                            let startIdx = monthlyData.count - 1
+                            for (i, data) in ([monthlyData.last!] + projected).enumerated() {
+                                let idx = startIdx + i
+                                let x = w * CGFloat(idx) / CGFloat(totalPoints)
+                                let y = h - (CGFloat(data.amount / maxVal) * h)
+                                if i == 0 { path.move(to: CGPoint(x: x, y: y)) }
+                                else { path.addLine(to: CGPoint(x: x, y: y)) }
+                            }
+                        }
+                        .stroke(Theme.accent.opacity(0.4), style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+                    }
+                }
+            }
+            .frame(height: 160)
+
+            HStack(spacing: 16) {
+                HStack(spacing: 4) {
+                    Circle().fill(Theme.accent).frame(width: 8, height: 8)
+                    Text("Actual").font(.caption2).foregroundStyle(Theme.textSecondary)
+                }
+                HStack(spacing: 4) {
+                    Circle().fill(Theme.accent.opacity(0.4)).frame(width: 8, height: 8)
+                    Text("Projected").font(.caption2).foregroundStyle(Theme.textSecondary)
+                }
+            }
+        }
+        .padding(20)
+        .glassCard()
+        .opacity(vm.appeared ? 1 : 0)
+        .offset(y: vm.appeared ? 0 : 16)
+        .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.13), value: vm.appeared)
+    }
+
+    private func projectedMonths(from actual: [MonthlySavingsData]) -> [MonthlySavingsData] {
+        guard actual.count >= 2, let lastAmount = actual.last?.amount else { return [] }
+        let secondLast = actual[actual.count - 2].amount
+        let growthRate = lastAmount > 0 ? (lastAmount - secondLast) / max(lastAmount, 1) : 0.1
+        let calendar = Calendar.current
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM"
+
+        var projected: [MonthlySavingsData] = []
+        var currentAmount = lastAmount
+        for i in 1...3 {
+            currentAmount = max(0, currentAmount * (1 + growthRate))
+            let futureDate = calendar.date(byAdding: .month, value: i, to: Date()) ?? Date()
+            projected.append(MonthlySavingsData(month: formatter.string(from: futureDate), amount: currentAmount, date: futureDate, isProjected: true))
+        }
+        return projected
     }
 
     // MARK: - Weekly Chart
@@ -352,7 +462,7 @@ struct WalletView: View {
                     .font(Theme.headingFont(.subheadline))
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
-                Text("$\(Int(weekSaved)) saved")
+                Text("\(currencySymbol)\(Int(weekSaved)) saved")
                     .font(.caption)
                     .foregroundStyle(Theme.textSecondary)
             }
@@ -416,7 +526,7 @@ struct WalletView: View {
             } else {
                 VStack(spacing: 2) {
                     ForEach(impulseLogs.prefix(10)) { log in
-                        WalletTransactionRow(log: log, gentle: gentle, revealExact: vm.revealExact)
+                        WalletTransactionRow(log: log, gentle: gentle, revealExact: vm.revealExact, currencyCode: currencyCode)
                     }
                 }
                 .clipShape(.rect(cornerRadius: 16))
@@ -430,32 +540,52 @@ struct WalletView: View {
     // MARK: - Projection
 
     private var projectionCard: some View {
-        let daily = profile?.dailyImpulseAmount ?? 25
-        let yearProjection = daily * 365
+        let allSaves = impulseLogs.filter { $0.resisted }
+        let totalSaved = allSaves.reduce(0.0) { $0 + $1.amount }
+        let firstDate = allSaves.map(\.date).min() ?? Date()
+        let daysActive = max(1, Calendar.current.dateComponents([.day], from: firstDate, to: Date()).day ?? 1)
+        let dailyAverage = totalSaved / Double(daysActive)
+        let yearProjection = dailyAverage * 365
+        let optimisticProjection = (dailyAverage + 10) * 365
 
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "chart.line.uptrend.xyaxis")
-                    .foregroundStyle(Theme.teal)
+                    .foregroundStyle(Theme.accent)
                 Text("1-Year Projection")
                     .font(.headline)
                     .foregroundStyle(Theme.textPrimary)
             }
 
-            Text(yearProjection, format: .currency(code: "USD").precision(.fractionLength(0)))
-                .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundStyle(Theme.accentGradient)
+            Text(yearProjection, format: .currency(code: currencyCode).precision(.fractionLength(0)))
+                .font(.system(size: 32, weight: .bold, design: .rounded))
+                .foregroundStyle(Theme.accent)
+                .contentTransition(.numericText(value: yearProjection))
 
-            Text("if you save $\(daily, specifier: "%.0f")/day for a full year")
+            Text("based on your \(currencySymbol)\(dailyAverage, specifier: "%.0f")/day average over \(daysActive) days")
                 .font(.caption)
                 .foregroundStyle(Theme.textSecondary)
+
+            Divider().background(Theme.border)
+
+            HStack {
+                Image(systemName: "arrow.up.right")
+                    .foregroundStyle(Theme.gold)
+                Text("Save \(currencySymbol)10 more/day →")
+                    .font(.caption)
+                    .foregroundStyle(Theme.textSecondary)
+                Spacer()
+                Text(optimisticProjection, format: .currency(code: currencyCode).precision(.fractionLength(0)))
+                    .font(.subheadline.bold())
+                    .foregroundStyle(Theme.gold)
+            }
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
         .glassCard()
         .opacity(vm.appeared ? 1 : 0)
         .offset(y: vm.appeared ? 0 : 16)
-        .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.18), value: vm.appeared)
+        .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.20), value: vm.appeared)
     }
 
     // MARK: - Floating Actions
@@ -511,17 +641,18 @@ private struct WalletStatPill: View {
     let color: Color
     let gentle: Bool
     let revealExact: Bool
+    var currencyCode: String = "USD"
 
     var body: some View {
         VStack(spacing: 6) {
             if gentle && !revealExact {
-                Text("~$\(Int((amount / 10).rounded() * 10))")
+                Text("~\(CurrencyHelper.symbol(for: currencyCode))\(Int((amount / 10).rounded() * 10))")
                     .font(.system(.headline, design: .rounded, weight: .bold))
                     .foregroundStyle(color)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
             } else {
-                Text(amount, format: .currency(code: "USD").precision(.fractionLength(0)))
+                Text(amount, format: .currency(code: currencyCode).precision(.fractionLength(0)))
                     .font(.system(.headline, design: .rounded, weight: .bold))
                     .foregroundStyle(color)
                     .lineLimit(1)
@@ -541,6 +672,9 @@ private struct WalletTransactionRow: View {
     let log: ImpulseLog
     let gentle: Bool
     let revealExact: Bool
+    var currencyCode: String = "USD"
+
+    private var sym: String { CurrencyHelper.symbol(for: currencyCode) }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -578,11 +712,11 @@ private struct WalletTransactionRow: View {
             Spacer()
 
             if gentle && !revealExact {
-                Text(log.resisted ? "+~$\(Int((log.amount / 10).rounded() * 10))" : "-~$\(Int((log.amount / 10).rounded() * 10))")
+                Text(log.resisted ? "+~\(sym)\(Int((log.amount / 10).rounded() * 10))" : "-~\(sym)\(Int((log.amount / 10).rounded() * 10))")
                     .font(.system(.subheadline, design: .rounded, weight: .semibold))
                     .foregroundStyle(log.resisted ? Theme.accentGreen : Theme.emergency)
             } else {
-                Text(log.resisted ? "+$\(log.amount, specifier: "%.0f")" : "-$\(log.amount, specifier: "%.0f")")
+                Text(log.resisted ? "+\(sym)\(log.amount, specifier: "%.0f")" : "-\(sym)\(log.amount, specifier: "%.0f")")
                     .font(.system(.subheadline, design: .rounded, weight: .semibold))
                     .foregroundStyle(log.resisted ? Theme.accentGreen : Theme.emergency)
             }
@@ -651,7 +785,7 @@ struct CelebrationOverlay: View {
                     .scaleEffect(coinScale)
                     .offset(y: coinY)
 
-                Text("+$\(Int(amount))")
+                Text("+\(CurrencyHelper.symbol(for: "USD"))\(Int(amount))")
                     .font(.system(size: 36, weight: .bold, design: .rounded))
                     .foregroundStyle(Theme.accentGreen)
 

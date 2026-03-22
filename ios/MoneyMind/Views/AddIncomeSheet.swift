@@ -4,6 +4,7 @@ import SwiftData
 struct AddIncomeSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    @Query private var profiles: [UserProfile]
     @State private var amount: String = ""
     @State private var note: String = ""
     @State private var selectedCategory: TransactionCategory = .income
@@ -21,7 +22,7 @@ struct AddIncomeSheet: View {
                             .foregroundStyle(Theme.textSecondary)
 
                         HStack(alignment: .firstTextBaseline, spacing: 4) {
-                            Text("$")
+                            Text(CurrencyHelper.symbol(for: profiles.first?.defaultCurrency ?? "USD"))
                                 .font(.system(size: 36, weight: .bold, design: .rounded))
                                 .foregroundStyle(Theme.accentGreen.opacity(0.6))
                             TextField("0", text: $amount)

@@ -7,12 +7,15 @@ struct AddExpenseSheet: View {
     @Query private var merchantMappings: [MerchantCategoryMapping]
     @Query(sort: \Transaction.date, order: .reverse) private var recentTransactions: [Transaction]
 
+    @Query private var profiles: [UserProfile]
     @State private var amount: String = ""
     @State private var note: String = ""
     @State private var selectedCategory: TransactionCategory = .food
     @State private var hapticTrigger: Bool = false
     @State private var showLearnPrompt: Bool = false
     @State private var learnMerchantName: String = ""
+
+    private var currencySymbol: String { CurrencyHelper.symbol(for: profiles.first?.defaultCurrency ?? "USD") }
 
     private let categories = TransactionCategory.expenseCategories
     private let engine = CategoryMLEngine()
@@ -41,7 +44,7 @@ struct AddExpenseSheet: View {
                             .foregroundStyle(Theme.textSecondary)
 
                         HStack(alignment: .firstTextBaseline, spacing: 4) {
-                            Text("$")
+                            Text(currencySymbol)
                                 .font(.system(size: 36, weight: .bold, design: .rounded))
                                 .foregroundStyle(Theme.textMuted)
                             TextField("0", text: $amount)

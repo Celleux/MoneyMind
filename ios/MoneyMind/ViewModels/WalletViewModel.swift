@@ -111,23 +111,41 @@ class WalletViewModel {
         }
     }
 
-    func displayAmount(_ amount: Double, gentle: Bool) -> String {
+    func displayAmount(_ amount: Double, gentle: Bool, symbol: String = "$") -> String {
         if gentle {
             let rounded = (amount / 100).rounded() * 100
             if rounded < 100 {
                 let r10 = (amount / 10).rounded() * 10
-                return "~$\(Int(r10))"
+                return "~\(symbol)\(Int(r10))"
             }
-            return "~$\(Int(rounded))"
+            return "~\(symbol)\(Int(rounded))"
         }
-        return "$\(String(format: "%.2f", amount))"
+        return "\(symbol)\(String(format: "%.2f", amount))"
     }
 
-    func displayAmountShort(_ amount: Double, gentle: Bool) -> String {
+    func displayAmountShort(_ amount: Double, gentle: Bool, symbol: String = "$") -> String {
         if gentle {
             let rounded = (amount / 10).rounded() * 10
-            return "~$\(Int(rounded))"
+            return "~\(symbol)\(Int(rounded))"
         }
-        return "$\(Int(amount))"
+        return "\(symbol)\(Int(amount))"
+    }
+
+    func monthlySavings(from logs: [ImpulseLog]) -> [MonthlySavingsData] {
+        let calendar = Calendar.current
+        let resistedLogs = logs.filter { $0.resisted }
+        var monthlyTotals: [(date: Date, amount: Double)] = []
+
+        for monthsAgo in (0..<6).reversed() {
+            let date = calendar.date(byAdding: .month, value: -monthsAgo, to: Date()) ?? Date()
+            let start = calendar.date(from: calendar.dateComponents([.year, .month], from: date))!
+            let end = calendar.date(byAdding: .month, value: 1, to: start)!
+            let total = resistedLogs.filter { $0.date >= start && $0.date < end }.reduce(0) { $0 + $1.amount }
+            monthlyTotals.append((date: start, amount: total))
+        }
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM"
+        return monthlyTotals.map { MonthlySavingsData(month: formatter.string(from: $0.date), amount: $0.amount, date: $0.date) }
     }
 }

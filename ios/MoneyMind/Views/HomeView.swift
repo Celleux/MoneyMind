@@ -27,6 +27,8 @@ struct HomeView: View {
     @State private var showPaywall = false
 
     private var profile: UserProfile? { profiles.first }
+    private var currencyCode: String { profile?.defaultCurrency ?? "USD" }
+    private var currencySymbol: String { CurrencyHelper.symbol(for: currencyCode) }
 
     private var personality: MoneyPersonality {
         quizResults.first?.personality ?? .builder
@@ -384,7 +386,7 @@ struct HomeView: View {
                 HStack(spacing: 4) {
                     Image(systemName: savedDifference >= 0 ? "arrow.up.right" : "arrow.down.right")
                         .font(.system(size: 11, weight: .bold))
-                    Text("$\(abs(savedDifference), specifier: "%.0f") from last month")
+                    Text("\(currencySymbol)\(abs(savedDifference), specifier: "%.0f") from last month")
                         .font(.system(size: 13, weight: .medium, design: .rounded))
                         .contentTransition(.numericText())
                 }
@@ -479,7 +481,7 @@ struct HomeView: View {
                                         .font(.system(size: 14, weight: .medium))
                                         .foregroundStyle(Theme.textPrimary)
                                     Spacer()
-                                    Text("$\(Int(spent)) / $\(Int(budget.monthlyLimit))")
+                                    Text("\(currencySymbol)\(Int(spent)) / \(currencySymbol)\(Int(budget.monthlyLimit))")
                                         .font(.system(size: 12, weight: .medium, design: .rounded))
                                         .foregroundStyle(Theme.textSecondary)
                                 }
@@ -516,7 +518,8 @@ struct HomeView: View {
         return SpendingTimelineChart(
             dailyAmounts: amounts,
             dayLabels: labels,
-            currentDayIndex: currentDay
+            currentDayIndex: currentDay,
+            currencySymbol: currencySymbol
         )
         .staggerIn(appeared: appeared, delay: 0.24)
     }
@@ -588,9 +591,9 @@ struct HomeView: View {
 
             Spacer()
 
-            Text(item.isIncome ? "+$\(item.amount, specifier: "%.0f")" :
-                    item.isResisted ? "Saved $\(item.amount, specifier: "%.0f")" :
-                    "-$\(item.amount, specifier: "%.0f")")
+            Text(item.isIncome ? "+\(currencySymbol)\(item.amount, specifier: "%.0f")" :
+                    item.isResisted ? "Saved \(currencySymbol)\(item.amount, specifier: "%.0f")" :
+                    "-\(currencySymbol)\(item.amount, specifier: "%.0f")")
                 .font(.system(size: 17, weight: .semibold, design: .rounded))
                 .foregroundStyle(
                     item.isIncome ? Theme.accent :
@@ -606,8 +609,13 @@ struct HomeView: View {
     private func spentForBudget(_ budget: BudgetCategory) -> Double {
         let calendar = Calendar.current
         let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: Date()))!
+        let budgetName = budget.name.lowercased()
         return transactions
-            .filter { $0.transactionType == .expense && $0.category == budget.name && $0.date >= startOfMonth }
+            .filter {
+                $0.transactionType == .expense &&
+                ($0.category.lowercased() == budgetName || $0.transactionCategory.resolvedCategory.rawValue.lowercased() == budgetName) &&
+                $0.date >= startOfMonth
+            }
             .reduce(0) { $0 + $1.amount }
     }
 

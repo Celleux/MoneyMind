@@ -5,6 +5,7 @@ struct AddBudgetSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Query private var budgets: [BudgetCategory]
+    @Query private var profiles: [UserProfile]
 
     @State private var name: String = ""
     @State private var icon: String = "cart.fill"
@@ -48,7 +49,7 @@ struct AddBudgetSheet: View {
                             .font(.system(size: 13, weight: .medium))
                             .foregroundStyle(Theme.textSecondary)
                         HStack {
-                            Text("$")
+                            Text(CurrencyHelper.symbol(for: profiles.first?.defaultCurrency ?? "USD"))
                                 .font(.system(.title3, design: .rounded, weight: .bold))
                                 .foregroundStyle(Theme.textSecondary)
                             TextField("0", text: $monthlyLimit)

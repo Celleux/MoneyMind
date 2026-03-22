@@ -59,7 +59,7 @@ struct ReferralGateView: View {
                         .foregroundStyle(Theme.textSecondary)
                         .padding(.vertical, 14)
                         .frame(maxWidth: .infinity)
-                        .background(Theme.cardSurface, in: .rect(cornerRadius: 14))
+                        .glassCard(cornerRadius: 14)
                 }
                 .buttonStyle(PressableButtonStyle())
                 .accessibilityLabel("Continue to AI coach")

@@ -57,11 +57,7 @@ struct CurriculumSectionView: View {
                 }
             }
             .padding(20)
-            .background(Theme.cardSurface, in: .rect(cornerRadius: 20))
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .strokeBorder(Theme.teal.opacity(0.12), lineWidth: 1)
-            )
+            .glassCard(cornerRadius: 20)
         }
     }
 }

@@ -164,18 +164,7 @@ struct WalletView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(24)
-        .background(
-            LinearGradient(
-                colors: [Theme.accentGreen.opacity(0.12), Theme.cardSurface],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ),
-            in: .rect(cornerRadius: 20)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.accentGreen.opacity(0.2), lineWidth: 1)
-        )
+        .glassCard(cornerRadius: 20)
         .opacity(vm.appeared ? 1 : 0)
         .offset(y: vm.appeared ? 0 : 15)
         .animation(.spring(response: 0.5).delay(0.05), value: vm.appeared)
@@ -341,11 +330,7 @@ struct WalletView: View {
             }
         }
         .padding(20)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Theme.gold.opacity(0.1), lineWidth: 1)
-        )
+        .glassCard()
         .opacity(vm.appeared ? 1 : 0)
         .offset(y: vm.appeared ? 0 : 15)
         .animation(.spring(response: 0.5).delay(0.12), value: vm.appeared)
@@ -390,7 +375,7 @@ struct WalletView: View {
             .frame(height: 68)
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
         .opacity(vm.appeared ? 1 : 0)
         .offset(y: vm.appeared ? 0 : 15)
         .animation(.spring(response: 0.5).delay(0.14), value: vm.appeared)
@@ -426,7 +411,7 @@ struct WalletView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 32)
-                .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+                .glassCard()
             } else {
                 VStack(spacing: 2) {
                     ForEach(impulseLogs.prefix(10)) { log in
@@ -466,11 +451,7 @@ struct WalletView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Theme.teal.opacity(0.1), lineWidth: 1)
-        )
+        .glassCard()
         .opacity(vm.appeared ? 1 : 0)
         .offset(y: vm.appeared ? 0 : 15)
         .animation(.spring(response: 0.5).delay(0.18), value: vm.appeared)
@@ -551,7 +532,7 @@ private struct WalletStatPill: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 14))
+        .glassCard(cornerRadius: 14)
     }
 }
 

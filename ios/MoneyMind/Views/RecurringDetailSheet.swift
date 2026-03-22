@@ -229,11 +229,7 @@ struct RecurringDetailSheet: View {
                     .tint(Theme.textSecondary)
                 }
             }
-            .background(Theme.card, in: .rect(cornerRadius: 14))
-            .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(Theme.border, lineWidth: 0.5)
-            )
+            .glassCard(cornerRadius: 14)
         }
     }
 
@@ -279,7 +275,7 @@ struct RecurringDetailSheet: View {
                     .padding(.vertical, 24)
                     Spacer()
                 }
-                .background(Theme.card, in: .rect(cornerRadius: 14))
+                .glassCard(cornerRadius: 14)
             } else {
                 VStack(spacing: 2) {
                     ForEach(allEntries) { entry in
@@ -360,10 +356,6 @@ private struct StatCell: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
-        .background(Theme.card, in: .rect(cornerRadius: 14))
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 14)
     }
 }

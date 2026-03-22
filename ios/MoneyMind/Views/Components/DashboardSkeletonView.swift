@@ -71,7 +71,7 @@ struct DashboardSkeletonView: View {
                 }
             }
             .padding(20)
-            .background(Theme.card, in: .rect(cornerRadius: 20))
+            .glassCard(cornerRadius: 20)
 
             skeletonBlock(width: .infinity, height: 180)
 
@@ -86,7 +86,7 @@ struct DashboardSkeletonView: View {
                     skeletonBlock(width: 60, height: 16)
                 }
                 .padding(16)
-                .background(Theme.card, in: .rect(cornerRadius: 16))
+                .glassCard()
             }
         }
     }

@@ -206,7 +206,7 @@ struct ImplementationIntentionsView: View {
             }
         }
         .padding(14)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 14))
+        .glassCard(cornerRadius: 14)
         .accessibilityElement(children: .combine)
     }
 
@@ -311,7 +311,7 @@ struct ImplementationIntentionsView: View {
                 TextField("Describe your trigger...", text: $customTrigger)
                     .font(.subheadline)
                     .padding(12)
-                    .background(Theme.cardSurface, in: .rect(cornerRadius: 10))
+                    .glassCard(cornerRadius: 10)
                     .foregroundStyle(Theme.textPrimary)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
@@ -405,7 +405,7 @@ struct ImplementationIntentionsView: View {
                 TextField("Describe your response...", text: $customResponse)
                     .font(.subheadline)
                     .padding(12)
-                    .background(Theme.cardSurface, in: .rect(cornerRadius: 10))
+                    .glassCard(cornerRadius: 10)
                     .foregroundStyle(Theme.textPrimary)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
@@ -461,7 +461,7 @@ struct ImplementationIntentionsView: View {
                 }
             }
             .padding(16)
-            .background(Theme.cardSurface, in: .rect(cornerRadius: 14))
+            .glassCard(cornerRadius: 14)
 
             VStack(alignment: .leading, spacing: 8) {
                 Text("Sign your commitment")
@@ -519,7 +519,7 @@ struct ImplementationIntentionsView: View {
                 }
             }
             .frame(height: 120)
-            .background(Theme.cardSurface, in: .rect(cornerRadius: 12))
+            .glassCard(cornerRadius: 12)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .strokeBorder(Theme.textSecondary.opacity(0.2), lineWidth: 1)

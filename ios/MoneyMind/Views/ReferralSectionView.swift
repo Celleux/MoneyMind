@@ -89,11 +89,7 @@ struct ReferralSectionView: View {
             }
         }
         .padding(20)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.accentGreen.opacity(0.1), lineWidth: 1)
-        )
+        .glassCard(cornerRadius: 20)
         .sheet(isPresented: $showShareSheet) {
             ShareSheet(items: [shareText])
         }

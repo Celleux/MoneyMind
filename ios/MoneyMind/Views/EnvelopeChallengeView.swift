@@ -89,11 +89,7 @@ struct EnvelopeChallengeView: View {
             Spacer()
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard()
         .padding(.top, 8)
     }
 

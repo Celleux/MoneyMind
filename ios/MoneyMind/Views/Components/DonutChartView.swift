@@ -100,11 +100,7 @@ struct DonutChartView: View {
             }
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
         .onAppear {
             guard !appeared else { return }
             appeared = true

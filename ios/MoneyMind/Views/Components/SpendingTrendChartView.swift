@@ -158,11 +158,7 @@ struct SpendingTrendChartView: View {
             }
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
         .onAppear {
             withAnimation(.easeInOut(duration: 1.0)) {
                 animatedProgress = 1

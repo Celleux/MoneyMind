@@ -218,7 +218,7 @@ struct OneSecBreathingGuideView: View {
             }
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
     }
 
     private func toggleStep(_ index: Int) {
@@ -325,14 +325,7 @@ private struct SetupStepCard: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(
-                    isCompleted ? Theme.accentGreen.opacity(0.2) : accentColor.opacity(0.1),
-                    lineWidth: 1
-                )
-        )
+        .glassCard()
     }
 }
 

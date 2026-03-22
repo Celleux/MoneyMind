@@ -80,7 +80,7 @@ struct PartnerCheckInSheet: View {
             }
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
     }
 
     private func textFieldSection(_ title: String, text: Binding<String>, icon: String, color: Color) -> some View {

@@ -422,11 +422,7 @@ struct HomeView: View {
             }
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
         .staggerIn(appeared: appeared, delay: 0.18)
     }
 
@@ -479,11 +475,7 @@ struct HomeView: View {
             }
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
         .staggerIn(appeared: appeared, delay: 0.30)
     }
 
@@ -580,11 +572,7 @@ struct HomeView: View {
             }
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.teal.opacity(0.15), lineWidth: 1)
-        )
+        .glassCard(cornerRadius: 20)
         .staggerIn(appeared: appeared, delay: 0.36)
     }
 
@@ -617,18 +605,7 @@ struct HomeView: View {
                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
             }
             .padding(16)
-            .background(
-                LinearGradient(
-                    colors: [Theme.gold.opacity(0.06), Theme.card],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ),
-                in: .rect(cornerRadius: 16)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(Theme.gold.opacity(0.12), lineWidth: 1)
-            )
+            .glassCard()
         }
         .buttonStyle(PressableButtonStyle())
         .staggerIn(appeared: appeared, delay: 0.42)
@@ -671,18 +648,7 @@ struct HomeView: View {
                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
             }
             .padding(16)
-            .background(
-                LinearGradient(
-                    colors: [Theme.success.opacity(0.06), Theme.card],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ),
-                in: .rect(cornerRadius: 16)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(Theme.success.opacity(0.12), lineWidth: 1)
-            )
+            .glassCard()
         }
         .buttonStyle(PressableButtonStyle())
         .staggerIn(appeared: appeared, delay: 0.43)
@@ -720,18 +686,7 @@ struct HomeView: View {
                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
             }
             .padding(16)
-            .background(
-                LinearGradient(
-                    colors: [Theme.accent.opacity(0.08), Theme.card],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ),
-                in: .rect(cornerRadius: 16)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(Theme.accent.opacity(0.15), lineWidth: 1)
-            )
+            .glassCard()
         }
         .buttonStyle(PressableButtonStyle())
         .sensoryFeedback(.impact(weight: .medium), trigger: showChallengesHub)
@@ -770,18 +725,7 @@ struct HomeView: View {
                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
             }
             .padding(16)
-            .background(
-                LinearGradient(
-                    colors: [Theme.teal.opacity(0.08), Theme.card],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ),
-                in: .rect(cornerRadius: 16)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(Theme.teal.opacity(0.15), lineWidth: 1)
-            )
+            .glassCard()
         }
         .buttonStyle(PressableButtonStyle())
         .sensoryFeedback(.impact(weight: .medium), trigger: showCoach)
@@ -823,11 +767,7 @@ struct HomeView: View {
                 .foregroundStyle(Theme.teal)
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
         .staggerIn(appeared: appeared, delay: 0.54)
     }
 
@@ -891,12 +831,13 @@ struct DashboardQuickAction: View {
             VStack(spacing: 8) {
                 ZStack {
                     Circle()
-                        .fill(Theme.card)
+                        .fill(.ultraThinMaterial.opacity(0.3))
                         .frame(width: 56, height: 56)
                         .overlay(
                             Circle()
-                                .strokeBorder(color.opacity(0.15), lineWidth: 1)
+                                .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5)
                         )
+                        .shadow(color: .black.opacity(0.2), radius: 8, y: 3)
                     Image(systemName: icon)
                         .font(.system(size: 20))
                         .foregroundStyle(color)

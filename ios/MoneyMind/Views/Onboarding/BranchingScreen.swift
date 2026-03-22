@@ -117,12 +117,7 @@ private struct BranchCard: View {
                     .foregroundStyle(color.opacity(0.6))
             }
             .padding(20)
-            .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(color.opacity(hasPulse ? 0.4 : 0.15), lineWidth: hasPulse ? 2 : 1)
-                    .scaleEffect(hasPulse ? pulseScale : 1)
-            )
+            .glassCard()
         }
         .buttonStyle(PressableButtonStyle())
         .sensoryFeedback(.impact(weight: .medium), trigger: title)

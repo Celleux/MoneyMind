@@ -167,7 +167,7 @@ struct EmergencyCrisisView: View {
                                 .foregroundStyle(Theme.accentGreen)
                         }
                         .padding(14)
-                        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+                        .glassCard()
                     }
                     .buttonStyle(PressableButtonStyle())
                     .accessibilityLabel("\(hotline.name), \(hotline.number)")
@@ -229,7 +229,7 @@ struct EmergencyCrisisView: View {
                             TextField("Type here...", text: $groundingInputs[i])
                                 .font(.subheadline)
                                 .padding(12)
-                                .background(Theme.cardSurface, in: .rect(cornerRadius: 10))
+                                .glassCard(cornerRadius: 10)
                                 .foregroundStyle(Theme.textPrimary)
                                 .transition(.opacity.combined(with: .move(edge: .top)))
 
@@ -366,7 +366,7 @@ struct EmergencyCrisisView: View {
             }
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
     }
 
     private var phqResult: some View {

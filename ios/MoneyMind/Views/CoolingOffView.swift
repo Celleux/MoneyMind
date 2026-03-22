@@ -114,11 +114,7 @@ struct CoolingOffView: View {
                             .foregroundStyle(Theme.textPrimary)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 20)
-                            .background(Theme.cardSurface, in: .rect(cornerRadius: 12))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .strokeBorder(Color(red: 0.3, green: 0.5, blue: 1.0).opacity(0.2), lineWidth: 1)
-                            )
+                            .glassCard(cornerRadius: 12)
                     }
                     .buttonStyle(PressableButtonStyle())
                     .accessibilityLabel("Set timer for \(label)")
@@ -191,7 +187,7 @@ struct CoolingOffView: View {
                         .foregroundStyle(Theme.textSecondary)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 12)
-                        .background(Theme.cardSurface, in: .rect(cornerRadius: 10))
+                        .glassCard(cornerRadius: 10)
                 }
                 .buttonStyle(PressableButtonStyle())
             }

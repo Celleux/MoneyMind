@@ -54,11 +54,7 @@ struct ACTExercisesView: View {
                                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
                             }
                             .padding(16)
-                            .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .strokeBorder(Theme.teal.opacity(0.1), lineWidth: 1)
-                            )
+                            .glassCard()
                         }
                         .buttonStyle(PressableButtonStyle())
                         .accessibilityLabel(type.title)
@@ -184,7 +180,7 @@ struct ACTExerciseFlowView: View {
                                 .lineLimit(3...6)
                                 .font(.subheadline)
                                 .padding(14)
-                                .background(Theme.cardSurface, in: .rect(cornerRadius: 12))
+                                .glassCard(cornerRadius: 12)
                                 .foregroundStyle(Theme.textPrimary)
                                 .tint(Theme.teal)
                         }
@@ -270,7 +266,7 @@ struct ACTExerciseFlowView: View {
             }
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
     }
 
     private var willingnessTimerSection: some View {
@@ -394,7 +390,7 @@ struct ACTExerciseFlowView: View {
                     .foregroundStyle(Theme.textSecondary)
                     .padding(.vertical, 14)
                     .padding(.horizontal, 24)
-                    .background(Theme.cardSurface, in: .rect(cornerRadius: 12))
+                    .glassCard(cornerRadius: 12)
                 }
                 .buttonStyle(PressableButtonStyle())
             }
@@ -472,7 +468,7 @@ struct ACTExerciseFlowView: View {
                     }
                 }
                 .padding(16)
-                .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+                .glassCard()
             }
 
             Spacer()

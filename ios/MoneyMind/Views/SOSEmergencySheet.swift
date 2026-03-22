@@ -70,7 +70,7 @@ struct SOSEmergencySheet: View {
                         }
                     }
                     .padding(16)
-                    .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+                    .glassCard()
 
                     Text("Remember: You've resisted before and you can do it again.")
                         .font(.caption)
@@ -130,7 +130,7 @@ private struct SOSActionCard: View {
                     .foregroundStyle(Theme.textSecondary.opacity(0.5))
             }
             .padding(16)
-            .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+            .glassCard()
         }
         .buttonStyle(PressableButtonStyle())
         .accessibilityLabel(title)

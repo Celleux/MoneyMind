@@ -99,11 +99,7 @@ struct SocialProofScreen: View {
                         }
                         .padding(16)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Theme.cardSurface, in: .rect(cornerRadius: 14))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .strokeBorder(Theme.accentGreen.opacity(0.1), lineWidth: 0.5)
-                        )
+                        .glassCard(cornerRadius: 14)
                         .opacity(appeared ? 1 : 0)
                         .offset(y: appeared ? 0 : 15)
                         .animation(.spring(response: 0.5).delay(0.4 + Double(index) * 0.1), value: appeared)
@@ -163,7 +159,7 @@ struct SocialProofScreen: View {
             Spacer()
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
         .opacity(appeared ? 1 : 0)
         .offset(y: appeared ? 0 : 20)
         .animation(.spring(response: 0.5).delay(delay), value: appeared)

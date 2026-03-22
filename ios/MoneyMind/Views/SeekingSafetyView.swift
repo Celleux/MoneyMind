@@ -56,11 +56,7 @@ struct SeekingSafetyView: View {
                                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
                             }
                             .padding(16)
-                            .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .strokeBorder(purple.opacity(0.1), lineWidth: 1)
-                            )
+                            .glassCard()
                         }
                         .buttonStyle(PressableButtonStyle())
                         .accessibilityLabel(topic.title)
@@ -226,7 +222,7 @@ struct SeekingSafetyTopicFlowView: View {
                 .lineLimit(4...8)
                 .font(.subheadline)
                 .padding(14)
-                .background(Theme.cardSurface, in: .rect(cornerRadius: 12))
+                .glassCard(cornerRadius: 12)
                 .foregroundStyle(Theme.textPrimary)
                 .tint(purple)
         }
@@ -264,7 +260,7 @@ struct SeekingSafetyTopicFlowView: View {
                     .lineLimit(5...10)
                     .font(.subheadline)
                     .padding(14)
-                    .background(Theme.cardSurface, in: .rect(cornerRadius: 12))
+                    .glassCard(cornerRadius: 12)
                     .foregroundStyle(Theme.textPrimary)
                     .tint(purple)
             }
@@ -287,7 +283,7 @@ struct SeekingSafetyTopicFlowView: View {
                     .foregroundStyle(Theme.textSecondary)
                     .padding(.vertical, 14)
                     .padding(.horizontal, 24)
-                    .background(Theme.cardSurface, in: .rect(cornerRadius: 12))
+                    .glassCard(cornerRadius: 12)
                 }
                 .buttonStyle(PressableButtonStyle())
             }

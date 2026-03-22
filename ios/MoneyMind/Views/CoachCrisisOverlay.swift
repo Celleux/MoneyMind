@@ -67,7 +67,7 @@ struct CoachCrisisOverlay: View {
                         .padding(.horizontal, 32)
                 }
                 .padding(16)
-                .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+                .glassCard()
                 .padding(.horizontal, 24)
 
                 Spacer()
@@ -149,11 +149,7 @@ private struct CrisisCallButton: View {
                     .foregroundStyle(color.opacity(0.6))
             }
             .padding(14)
-            .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(color.opacity(0.2), lineWidth: 1)
-            )
+            .glassCard()
         }
         .buttonStyle(PressableButtonStyle())
         .sensoryFeedback(.impact(weight: .heavy), trigger: title)

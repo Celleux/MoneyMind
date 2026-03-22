@@ -176,11 +176,7 @@ struct AddBudgetSheet: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 24)
-        .background(Theme.card, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard()
     }
 
     private func saveBudget() {

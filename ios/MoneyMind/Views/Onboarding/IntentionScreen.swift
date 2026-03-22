@@ -213,11 +213,7 @@ struct IntentionScreen: View {
                 .foregroundStyle(Theme.textMuted)
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Theme.accentGreen.opacity(0.15), lineWidth: 0.5)
-        )
+        .glassCard()
     }
 
     private var canContinue: Bool {

@@ -161,11 +161,7 @@ struct VibeCheckAnalyticsView: View {
             }
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     private var moodPieChart: some View {
@@ -257,11 +253,7 @@ struct VibeCheckAnalyticsView: View {
             }
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     private func moodMapCell(_ entry: VibeCheckEntry) -> some View {
@@ -363,11 +355,7 @@ struct VibeCheckAnalyticsView: View {
             sentimentTrendLine(trends)
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     private func sentimentTrendLine(_ trends: [VibeCheckViewModel.WeeklyTrend]) -> some View {
@@ -435,11 +423,7 @@ struct VibeCheckAnalyticsView: View {
                 }
             }
             .padding(20)
-            .background(Theme.card, in: .rect(cornerRadius: 20))
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .strokeBorder(Theme.border, lineWidth: 0.5)
-            )
+            .glassCard(cornerRadius: 20)
         )
     }
 
@@ -500,11 +484,7 @@ struct VibeCheckAnalyticsView: View {
             }
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     // MARK: - Helpers

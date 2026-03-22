@@ -163,18 +163,7 @@ struct ToolkitView: View {
                     .foregroundStyle(Theme.textSecondary.opacity(0.5))
             }
             .padding(16)
-            .background(
-                LinearGradient(
-                    colors: [Theme.emergency.opacity(0.15), Theme.cardSurface],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                ),
-                in: .rect(cornerRadius: 16)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(Theme.emergency.opacity(0.2), lineWidth: 1)
-            )
+            .glassCard()
         }
         .buttonStyle(PressableButtonStyle())
         .sensoryFeedback(.impact(weight: .medium), trigger: selectedTool)
@@ -213,18 +202,7 @@ struct ToolkitView: View {
                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
             }
             .padding(16)
-            .background(
-                LinearGradient(
-                    colors: [Theme.teal.opacity(0.08), Theme.cardSurface],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                ),
-                in: .rect(cornerRadius: 16)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(Theme.teal.opacity(0.15), lineWidth: 1)
-            )
+            .glassCard()
         }
         .buttonStyle(PressableButtonStyle())
         .sensoryFeedback(.impact(weight: .medium), trigger: showCoach)
@@ -287,18 +265,7 @@ struct ToolkitView: View {
                     }
                 }
                 .padding(16)
-                .background(
-                    LinearGradient(
-                        colors: [Color(red: 0.25, green: 0.45, blue: 0.95).opacity(0.06), Theme.cardSurface],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    in: .rect(cornerRadius: 16)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(Color(red: 0.25, green: 0.45, blue: 0.95).opacity(0.12), lineWidth: 1)
-                )
+                .glassCard()
             }
             .buttonStyle(PressableButtonStyle())
             .sensoryFeedback(.impact(weight: .medium), trigger: showDNSBlocking)
@@ -336,18 +303,7 @@ struct ToolkitView: View {
                         .background(Color(red: 0.2, green: 0.78, blue: 0.4).opacity(0.12), in: .capsule)
                 }
                 .padding(16)
-                .background(
-                    LinearGradient(
-                        colors: [Color(red: 0.2, green: 0.78, blue: 0.4).opacity(0.06), Theme.cardSurface],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    in: .rect(cornerRadius: 16)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(Color(red: 0.2, green: 0.78, blue: 0.4).opacity(0.12), lineWidth: 1)
-                )
+                .glassCard()
             }
             .buttonStyle(PressableButtonStyle())
             .sensoryFeedback(.impact(weight: .medium), trigger: showOneSecGuide)
@@ -383,16 +339,7 @@ private struct ToolCard: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(16)
-            .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(
-                        tool == .emergency
-                            ? Theme.emergency.opacity(emergencyPulse ? 0.6 : 0.15)
-                            : tool.color.opacity(0.1),
-                        lineWidth: tool == .emergency ? 1.5 : 1
-                    )
-            )
+            .glassCard()
         }
         .buttonStyle(PressableButtonStyle())
         .accessibilityLabel(tool.title)

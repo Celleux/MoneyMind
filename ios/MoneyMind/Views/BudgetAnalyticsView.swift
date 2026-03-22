@@ -137,18 +137,7 @@ struct BudgetAnalyticsView: View {
                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
             }
             .padding(16)
-            .background(
-                LinearGradient(
-                    colors: [Theme.secondary.opacity(0.06), Theme.card],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ),
-                in: .rect(cornerRadius: 16)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(Theme.secondary.opacity(0.12), lineWidth: 1)
-            )
+            .glassCard()
         }
         .buttonStyle(PressableButtonStyle())
     }
@@ -190,18 +179,7 @@ struct BudgetAnalyticsView: View {
                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
             }
             .padding(16)
-            .background(
-                LinearGradient(
-                    colors: [Theme.success.opacity(0.06), Theme.card],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ),
-                in: .rect(cornerRadius: 16)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(Theme.success.opacity(0.12), lineWidth: 1)
-            )
+            .glassCard()
         }
         .buttonStyle(PressableButtonStyle())
     }
@@ -358,11 +336,7 @@ struct BudgetAnalyticsView: View {
             }
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     // MARK: - Category Grid
@@ -408,11 +382,7 @@ struct BudgetAnalyticsView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 28)
-                .background(Theme.card, in: .rect(cornerRadius: 16))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(Theme.border, lineWidth: 0.5)
-                )
+                .glassCard()
             } else {
                 LazyVGrid(columns: [
                     GridItem(.flexible(), spacing: 12),
@@ -468,14 +438,7 @@ struct BudgetAnalyticsView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
-            .background(Theme.card, in: .rect(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(
-                        cat.isOverBudget ? Theme.danger.opacity(0.3) : Theme.border,
-                        lineWidth: cat.isOverBudget ? 1 : 0.5
-                    )
-            )
+            .glassCard()
         }
         .buttonStyle(PressableButtonStyle())
     }
@@ -536,11 +499,7 @@ struct BudgetAnalyticsView: View {
                 .frame(width: 10, height: 10)
         }
         .padding(14)
-        .background(Theme.card, in: .rect(cornerRadius: 12))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 12)
     }
 
     private func createDefaultBudgets() {

@@ -180,7 +180,7 @@ struct DNSBlockingWizardView: View {
                         BlockedCategoryRow(name: "Lottery Sites", count: "300+")
                     }
                     .padding(16)
-                    .background(Theme.cardSurface, in: .rect(cornerRadius: 14))
+                    .glassCard(cornerRadius: 14)
                     .padding(.horizontal, 24)
                 }
             }
@@ -254,7 +254,7 @@ struct DNSBlockingWizardView: View {
                 ManualStepRow(number: 4, text: "Return here and tap \"I've Enabled It\"")
             }
             .padding(16)
-            .background(Theme.cardSurface, in: .rect(cornerRadius: 14))
+            .glassCard(cornerRadius: 14)
             .padding(.horizontal, 24)
         }
     }
@@ -307,7 +307,7 @@ struct DNSBlockingWizardView: View {
                 }
             }
             .padding(16)
-            .background(Theme.cardSurface, in: .rect(cornerRadius: 14))
+            .glassCard(cornerRadius: 14)
             .padding(.horizontal, 24)
 
             Spacer()

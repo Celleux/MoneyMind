@@ -545,7 +545,7 @@ struct SimpleModeView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
     }
 
     private func simpleStat(_ text: String, icon: String) -> some View {
@@ -585,11 +585,7 @@ struct SocialProofCard: View {
             Spacer(minLength: 0)
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 14))
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(Theme.teal.opacity(0.1), lineWidth: 1)
-        )
+        .glassCard(cornerRadius: 14)
     }
 }
 

@@ -106,7 +106,7 @@ struct LossVisualizationScreen: View {
                     )
                 }
                 .padding(28)
-                .background(Theme.cardSurface, in: .rect(cornerRadius: 20))
+                .glassCard(cornerRadius: 20)
                 .animation(.spring(response: 0.3), value: dailyAmount)
             }
             .padding(.horizontal, 24)

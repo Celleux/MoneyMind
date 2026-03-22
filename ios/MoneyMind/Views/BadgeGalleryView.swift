@@ -62,11 +62,7 @@ struct BadgeGalleryView: View {
             }
         }
         .padding(20)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.gold.opacity(0.1), lineWidth: 1)
-        )
+        .glassCard(cornerRadius: 20)
         .sheet(isPresented: Binding(
             get: { selectedBadgeName != nil },
             set: { if !$0 { selectedBadgeName = nil } }

@@ -68,7 +68,7 @@ struct ChallengeDetailSheet: View {
             )
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
     }
 
     private func statItem(value: String, label: String, icon: String) -> some View {
@@ -123,7 +123,7 @@ struct ChallengeDetailSheet: View {
             }
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
     }
 
     private var descriptionSection: some View {

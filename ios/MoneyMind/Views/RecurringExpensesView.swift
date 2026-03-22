@@ -118,18 +118,7 @@ struct RecurringExpensesView: View {
             }
         }
         .padding(24)
-        .background(
-            LinearGradient(
-                colors: [personality.color.opacity(0.1), Theme.card],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ),
-            in: .rect(cornerRadius: 20)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(personality.color.opacity(0.15), lineWidth: 1)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     // MARK: - View Mode Picker
@@ -160,11 +149,7 @@ struct RecurringExpensesView: View {
             }
         }
         .padding(4)
-        .background(Theme.card, in: .rect(cornerRadius: 14))
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 14)
     }
 
     // MARK: - Pending Detections
@@ -398,11 +383,7 @@ struct RecurringExpensesView: View {
             }
         }
         .padding(16)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     @ViewBuilder
@@ -461,11 +442,7 @@ struct RecurringExpensesView: View {
                 }
             }
             .padding(16)
-            .background(Theme.card, in: .rect(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(Theme.border, lineWidth: 0.5)
-            )
+            .glassCard()
             .transition(.move(edge: .bottom).combined(with: .opacity))
         }
     }

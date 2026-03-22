@@ -140,11 +140,7 @@ struct CurriculumSessionDetailView: View {
                 .lineSpacing(5)
         }
         .padding(20)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(accentColor.opacity(0.06), lineWidth: 1)
-        )
+        .glassCard()
     }
 
     private func takeawaysSection(_ content: CurriculumSessionContent) -> some View {
@@ -214,7 +210,7 @@ struct CurriculumSessionDetailView: View {
                 )
         }
         .padding(20)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
     }
 
     private var completeButton: some View {

@@ -113,11 +113,7 @@ struct NoSpendChallengeView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity)
-        .background(Theme.card, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard()
         .padding(.top, 8)
     }
 
@@ -226,11 +222,7 @@ struct NoSpendChallengeView: View {
             }
         }
         .padding(16)
-        .background(Theme.card, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard()
     }
 
     private var shareSection: some View {

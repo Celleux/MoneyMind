@@ -159,11 +159,7 @@ struct BudgetTemplateSelectionView: View {
                 }
                 .padding(20)
             }
-            .background(Theme.card, in: .rect(cornerRadius: 20))
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .strokeBorder(template.accentColor.opacity(0.15), lineWidth: 1)
-            )
+            .glassCard(cornerRadius: 20)
         }
         .buttonStyle(PressableButtonStyle())
     }
@@ -337,11 +333,7 @@ struct BudgetTemplateSelectionView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 20)
-                        .background(Theme.card, in: .rect(cornerRadius: 20))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .strokeBorder(template.accentColor.opacity(vm.canProceedFromIncome ? 0.3 : 0.1), lineWidth: 1)
-                        )
+                        .glassCard(cornerRadius: 20)
                     }
                     .padding(.horizontal)
 
@@ -399,11 +391,7 @@ struct BudgetTemplateSelectionView: View {
             }
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard()
     }
 
     // MARK: - Category Review
@@ -431,11 +419,7 @@ struct BudgetTemplateSelectionView: View {
                         }
                     }
                     .padding(20)
-                    .background(Theme.card, in: .rect(cornerRadius: 20))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .strokeBorder(Theme.border, lineWidth: 0.5)
-                    )
+                    .glassCard(cornerRadius: 20)
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 100)
@@ -490,11 +474,7 @@ struct BudgetTemplateSelectionView: View {
             }
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     private func ringColumn(label: String, value: Double, target: Double, color: Color) -> some View {
@@ -563,11 +543,7 @@ struct BudgetTemplateSelectionView: View {
             .frame(height: 8)
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     private var envelopeHeader: some View {
@@ -602,11 +578,7 @@ struct BudgetTemplateSelectionView: View {
             }
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     private var payYourselfFirstHeader: some View {
@@ -639,11 +611,7 @@ struct BudgetTemplateSelectionView: View {
                 .foregroundStyle(Theme.textSecondary)
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     private var customHeader: some View {
@@ -660,11 +628,7 @@ struct BudgetTemplateSelectionView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     private func allocationRow(index: Int, alloc: BudgetAllocation, template: BudgetTemplateType) -> some View {
@@ -756,11 +720,7 @@ struct BudgetTemplateSelectionView: View {
                         }
                     }
                     .padding(16)
-                    .background(Theme.card, in: .rect(cornerRadius: 20))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .strokeBorder(Theme.border, lineWidth: 0.5)
-                    )
+                    .glassCard(cornerRadius: 20)
 
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
@@ -782,11 +742,7 @@ struct BudgetTemplateSelectionView: View {
                         }
                     }
                     .padding(20)
-                    .background(Theme.card, in: .rect(cornerRadius: 16))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .strokeBorder(Theme.border, lineWidth: 0.5)
-                    )
+                    .glassCard()
 
                     if !budgets.isEmpty {
                         HStack(spacing: 8) {

@@ -128,11 +128,7 @@ struct GhostBudgetView: View {
                     }
                 }
             }
-            .background(Theme.card, in: .rect(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(Theme.border, lineWidth: 0.5)
-            )
+            .glassCard()
         }
     }
 
@@ -214,11 +210,7 @@ struct GhostBudgetView: View {
             }
         }
         .padding(4)
-        .background(Theme.card, in: .capsule)
-        .overlay(
-            Capsule()
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 999)
     }
 
     // MARK: - Savings Callout
@@ -266,11 +258,7 @@ struct GhostBudgetView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 28)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.success.opacity(0.15), lineWidth: 1)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     // MARK: - Comparison Chart
@@ -300,11 +288,7 @@ struct GhostBudgetView: View {
             }
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     private func chartLegendDot(color: Color, label: String) -> some View {
@@ -351,11 +335,7 @@ struct GhostBudgetView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     // MARK: - Empty State

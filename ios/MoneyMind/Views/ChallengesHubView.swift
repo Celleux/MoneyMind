@@ -204,25 +204,7 @@ private struct ActiveChallengeCard: View {
                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
             }
             .padding(16)
-            .background(
-                LinearGradient(
-                    colors: [personalityColor.opacity(0.08), Theme.card],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ),
-                in: .rect(cornerRadius: 16)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [personalityColor.opacity(0.3), personalityColor.opacity(0.08)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
-            )
+            .glassCard()
         }
         .buttonStyle(PressableButtonStyle())
     }
@@ -302,10 +284,6 @@ private struct ChallengePickerCard: View {
             }
         }
         .padding(16)
-        .background(Theme.card, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard()
     }
 }

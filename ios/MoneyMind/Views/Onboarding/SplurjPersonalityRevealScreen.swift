@@ -219,11 +219,7 @@ struct SplurjPersonalityRevealScreen: View {
             Spacer()
         }
         .padding(16)
-        .background(Theme.card, in: .rect(cornerRadius: 14))
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(color.opacity(0.15), lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 14)
         .opacity(opacity)
         .offset(x: offset)
     }

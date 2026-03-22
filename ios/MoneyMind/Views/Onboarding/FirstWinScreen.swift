@@ -120,7 +120,7 @@ struct FirstWinScreen: View {
                 }
             }
             .padding(32)
-            .background(Theme.cardSurface, in: .rect(cornerRadius: 20))
+            .glassCard(cornerRadius: 20)
         }
         .padding(.horizontal, 24)
         .opacity(appeared ? 1 : 0)

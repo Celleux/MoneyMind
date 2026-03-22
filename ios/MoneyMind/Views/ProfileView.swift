@@ -216,18 +216,7 @@ struct ProfileView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 28)
         .padding(.horizontal, 20)
-        .background(
-            LinearGradient(
-                colors: [personality.color.opacity(0.06), Theme.cardSurface],
-                startPoint: .top,
-                endPoint: .bottom
-            ),
-            in: .rect(cornerRadius: 20)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(personality.color.opacity(0.12), lineWidth: 1)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     // MARK: - Stats Grid
@@ -314,11 +303,7 @@ struct ProfileView: View {
             )
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(characterStage.primaryColor.opacity(0.12), lineWidth: 1)
-        )
+        .glassCard()
     }
 
     // MARK: - Appearance
@@ -818,11 +803,7 @@ struct ProfileView: View {
             .sensoryFeedback(.warning, trigger: showDeleteAccountAlert)
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Theme.danger.opacity(0.3), lineWidth: 1)
-        )
+        .glassCard()
     }
 
     // MARK: - PGSI
@@ -870,18 +851,7 @@ struct ProfileView: View {
                             .background(Theme.teal.opacity(0.1), in: .capsule)
                     }
                     .padding(16)
-                    .background(
-                        LinearGradient(
-                            colors: [Theme.teal.opacity(0.06), Theme.cardSurface],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        in: .rect(cornerRadius: 16)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .strokeBorder(Theme.teal.opacity(0.12), lineWidth: 1)
-                    )
+                    .glassCard()
                 }
                 .buttonStyle(PressableButtonStyle())
             }
@@ -1070,7 +1040,7 @@ private struct SettingsSection<Content: View>: View {
             content()
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
     }
 }
 
@@ -1179,7 +1149,7 @@ private struct ProfileStatCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 14))
+        .glassCard(cornerRadius: 14)
     }
 }
 

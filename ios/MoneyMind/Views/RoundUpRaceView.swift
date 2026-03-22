@@ -150,11 +150,7 @@ struct RoundUpRaceView: View {
             }
         }
         .padding(24)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
         .padding(.top, 8)
     }
 
@@ -173,7 +169,7 @@ struct RoundUpRaceView: View {
             statItem(value: String(format: "$%.2f", avg), label: "Avg Round-Up", icon: "chart.bar.fill")
         }
         .padding(16)
-        .background(Theme.card, in: .rect(cornerRadius: 16))
+        .glassCard()
     }
 
     private func statItem(value: String, label: String, icon: String) -> some View {
@@ -251,11 +247,7 @@ struct RoundUpRaceView: View {
             }
         }
         .padding(16)
-        .background(Theme.card, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard()
     }
 
     private var shareSection: some View {

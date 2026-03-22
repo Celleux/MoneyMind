@@ -57,11 +57,7 @@ struct SpendingAutopsySheet: View {
                                 .tint(Theme.teal)
                         }
                         .padding(16)
-                        .background(Theme.cardSurface, in: .rect(cornerRadius: 12))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .strokeBorder(Theme.textSecondary.opacity(0.15), lineWidth: 1)
-                        )
+                        .glassCard(cornerRadius: 12)
                     }
 
                     VStack(alignment: .leading, spacing: 8) {
@@ -75,7 +71,7 @@ struct SpendingAutopsySheet: View {
                             .tint(Theme.teal)
                             .lineLimit(2...4)
                             .padding(16)
-                            .background(Theme.cardSurface, in: .rect(cornerRadius: 12))
+                            .glassCard(cornerRadius: 12)
                     }
 
                     VStack(alignment: .leading, spacing: 10) {
@@ -132,7 +128,7 @@ struct SpendingAutopsySheet: View {
                             .tint(Theme.teal)
                             .lineLimit(2...4)
                             .padding(16)
-                            .background(Theme.cardSurface, in: .rect(cornerRadius: 12))
+                            .glassCard(cornerRadius: 12)
                     }
 
                     Button {

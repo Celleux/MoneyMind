@@ -176,7 +176,7 @@ struct HALTCheckView: View {
             }
         }
         .padding(24)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
         .padding(.horizontal, 24)
         .accessibilityElement(children: .contain)
         .accessibilityLabel("\(cat.name) level slider")
@@ -263,7 +263,7 @@ struct HALTCheckView: View {
             }
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
     }
 
     private func recommendationCard(for category: String) -> some View {
@@ -318,7 +318,7 @@ struct HALTCheckView: View {
                 .font(.subheadline)
                 .lineLimit(3...6)
                 .padding(12)
-                .background(Theme.cardSurface, in: .rect(cornerRadius: 12))
+                .glassCard(cornerRadius: 12)
                 .foregroundStyle(Theme.textPrimary)
         }
     }

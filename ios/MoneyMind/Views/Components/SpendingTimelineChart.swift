@@ -54,11 +54,7 @@ struct SpendingTimelineChart: View {
             .frame(height: maxBarHeight + 40)
         }
         .padding(20)
-        .background(Theme.card, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.border, lineWidth: 0.5)
-        )
+        .glassCard(cornerRadius: 20)
         .onAppear {
             for i in 0..<7 {
                 let targetHeight = dailyAmounts[i] > 0

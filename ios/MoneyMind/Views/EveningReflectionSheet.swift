@@ -143,7 +143,7 @@ struct EveningReflectionSheet: View {
             }
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
     }
 
     private var urgeColor: Color {

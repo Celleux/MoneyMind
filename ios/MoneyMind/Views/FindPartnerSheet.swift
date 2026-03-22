@@ -75,7 +75,7 @@ struct FindPartnerSheet: View {
                 matchCriteria("Fully anonymous & private", icon: "lock.fill")
             }
             .padding(16)
-            .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+            .glassCard()
 
             Button {
                 startMatching()

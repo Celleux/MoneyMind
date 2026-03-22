@@ -231,11 +231,7 @@ struct CommunityView: View {
             .accessibilityLabel("Send weekly check-in to partner")
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Theme.teal.opacity(0.15), lineWidth: 1)
-        )
+        .glassCard()
         .padding(.horizontal)
     }
 
@@ -282,11 +278,7 @@ struct CommunityView: View {
             .accessibilityLabel("Find an accountability partner")
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Theme.teal.opacity(0.1), lineWidth: 1)
-        )
+        .glassCard()
         .padding(.horizontal)
     }
 
@@ -454,11 +446,7 @@ struct CommunityPostCard: View {
             }
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(moodInfo.color.opacity(0.08), lineWidth: 1)
-        )
+        .glassCard()
     }
 }
 
@@ -553,11 +541,7 @@ struct ChallengeCard: View {
             }
             .padding(16)
             .frame(width: 260)
-            .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(Theme.accentGreen.opacity(0.08), lineWidth: 1)
-            )
+            .glassCard()
         }
         .buttonStyle(.plain)
     }

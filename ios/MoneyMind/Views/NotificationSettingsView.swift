@@ -119,7 +119,7 @@ struct NotificationSettingsView: View {
                 }
             }
         }
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
         .sensoryFeedback(.selection, trigger: profile?.notificationsEnabled)
     }
 
@@ -524,7 +524,7 @@ struct NotificationSettingsView: View {
             }
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
     }
 
     private func formatHour(_ hour: Int, minute: Int = 0) -> String {
@@ -558,7 +558,7 @@ private struct NotifSection<Content: View>: View {
             content()
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
+        .glassCard()
     }
 }
 

@@ -122,7 +122,7 @@ struct PGSIAssessmentView: View {
                     .foregroundStyle(Theme.textSecondary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Theme.cardSurface, in: .rect(cornerRadius: 12))
+                    .glassCard(cornerRadius: 12)
                 }
                 .buttonStyle(PressableButtonStyle())
             }
@@ -273,11 +273,7 @@ struct PGSITrendChart: View {
             }
         }
         .padding(20)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.teal.opacity(0.1), lineWidth: 1)
-        )
+        .glassCard(cornerRadius: 20)
     }
 
     private var chartView: some View {

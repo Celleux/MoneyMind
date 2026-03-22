@@ -81,11 +81,7 @@ struct JITAIRecommendationCard: View {
                 }
             }
             .padding(16)
-            .background(Theme.cardSurface, in: .rect(cornerRadius: 20))
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .strokeBorder(Theme.teal.opacity(0.08), lineWidth: 1)
-            )
+            .glassCard(cornerRadius: 20)
             .onAppear {
                 withAnimation {
                     appeared = true

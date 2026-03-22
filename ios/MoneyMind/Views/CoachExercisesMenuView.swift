@@ -91,10 +91,6 @@ private struct ExerciseMenuRow: View {
                 .foregroundStyle(Theme.textSecondary.opacity(0.4))
         }
         .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(color.opacity(0.1), lineWidth: 1)
-        )
+        .glassCard()
     }
 }

@@ -217,70 +217,21 @@ struct HomeView: View {
     // MARK: - Empty State
 
     private var emptyState: some View {
-        VStack(spacing: 28) {
+        VStack(spacing: 0) {
             topBar
                 .padding(.horizontal)
 
-            Spacer()
-                .frame(height: 40)
-
-            VStack(spacing: 20) {
-                ZStack {
-                    Circle()
-                        .fill(Theme.accent.opacity(0.08))
-                        .frame(width: 120, height: 120)
-                    Circle()
-                        .fill(Theme.accent.opacity(0.04))
-                        .frame(width: 160, height: 160)
-                    Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 52))
-                        .foregroundStyle(Theme.accent)
-                        .symbolEffect(.pulse, options: .repeating)
-                }
-
-                Text("Start Your Journey")
-                    .font(.system(.title2, design: .rounded, weight: .bold))
-                    .foregroundStyle(Theme.textPrimary)
-
-                Text("Add your first transaction or log a win\nto see your dashboard come alive")
-                    .font(.subheadline)
-                    .foregroundStyle(Theme.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(4)
+            PersonalityEmptyStateView(
+                personality: personality,
+                icon: "rocket.fill",
+                secondaryIcon: "sparkles",
+                headline: "Start Your Journey",
+                subtext: "Add your first transaction or log a win\nto see your dashboard come alive",
+                buttonLabel: "Add Your First Transaction",
+                buttonIcon: "arrow.down.circle.fill"
+            ) {
+                showAddExpense = true
             }
-
-            VStack(spacing: 12) {
-                Button {
-                    showAddExpense = true
-                } label: {
-                    Label("Add an Expense", systemImage: "arrow.down.circle.fill")
-                        .font(.system(.body, design: .rounded, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Theme.accent, in: .rect(cornerRadius: 14))
-                }
-                .buttonStyle(PressableButtonStyle())
-
-                Button {
-                    showLogWin = true
-                } label: {
-                    Label("Log a Win", systemImage: "star.fill")
-                        .font(.system(.body, design: .rounded, weight: .semibold))
-                        .foregroundStyle(Theme.accentGreen)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Theme.accentGreen.opacity(0.12), in: .rect(cornerRadius: 14))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .strokeBorder(Theme.accentGreen.opacity(0.2), lineWidth: 1)
-                        )
-                }
-                .buttonStyle(PressableButtonStyle())
-            }
-            .padding(.horizontal, 32)
-
-            Spacer()
         }
         .padding(.top, 16)
     }

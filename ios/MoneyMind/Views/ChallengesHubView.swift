@@ -72,43 +72,14 @@ struct ChallengesHubView: View {
     }
 
     private var emptyStateCard: some View {
-        VStack(spacing: 20) {
-            ZStack {
-                Circle()
-                    .fill(Theme.accent.opacity(0.08))
-                    .frame(width: 100, height: 100)
-                Circle()
-                    .fill(Theme.accent.opacity(0.15))
-                    .frame(width: 72, height: 72)
-                Image(systemName: "trophy.fill")
-                    .font(.system(size: 32))
-                    .foregroundStyle(Theme.accent)
-            }
-
-            VStack(spacing: 8) {
-                Text("Ready to Challenge Yourself?")
-                    .font(Theme.headingFont(.title3))
-                    .foregroundStyle(Theme.textPrimary)
-                Text("Pick a savings challenge and start building your financial muscles.")
-                    .font(.subheadline)
-                    .foregroundStyle(Theme.textSecondary)
-                    .multilineTextAlignment(.center)
-            }
-        }
-        .padding(32)
-        .frame(maxWidth: .infinity)
-        .background(
-            LinearGradient(
-                colors: [Theme.accent.opacity(0.06), Theme.card],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ),
-            in: .rect(cornerRadius: 20)
+        PersonalityEmptyStateView(
+            personality: personality,
+            icon: "trophy.fill",
+            secondaryIcon: "flag.fill",
+            headline: "Ready to Challenge Yourself?",
+            subtext: "Pick a savings challenge and start\nbuilding your financial muscles"
         )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.accent.opacity(0.12), lineWidth: 1)
-        )
+        .frame(height: 340)
     }
 
     private var activeChallengesSection: some View {

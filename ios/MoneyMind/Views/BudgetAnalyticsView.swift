@@ -4,8 +4,13 @@ import SwiftData
 struct BudgetAnalyticsView: View {
     @Query private var budgets: [BudgetCategory]
     @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
+    @Query private var quizResults: [QuizResult]
     @State private var vm = BudgetAnalyticsViewModel()
     @Environment(\.modelContext) private var modelContext
+
+    private var personality: MoneyPersonality {
+        quizResults.first?.personality ?? .builder
+    }
 
     private var categories: [CategorySpending] {
         vm.categorySpending(budgets: budgets, transactions: transactions)
@@ -412,74 +417,35 @@ struct BudgetAnalyticsView: View {
     // MARK: - Empty State
 
     private var emptyState: some View {
-        VStack(spacing: 28) {
-            Spacer()
-                .frame(height: 60)
-
-            VStack(spacing: 20) {
-                ZStack {
-                    Circle()
-                        .fill(Theme.accent.opacity(0.08))
-                        .frame(width: 120, height: 120)
-                    Circle()
-                        .fill(Theme.accent.opacity(0.04))
-                        .frame(width: 160, height: 160)
-                    Image(systemName: "chart.pie.fill")
-                        .font(.system(size: 48))
-                        .foregroundStyle(Theme.accentGradient)
-                        .symbolEffect(.pulse, options: .repeating)
-                }
-
-                Text("Set Your First Budget")
-                    .font(.system(.title2, design: .rounded, weight: .bold))
-                    .foregroundStyle(Theme.textPrimary)
-
-                Text("Track spending by category with\nthe popular 50/30/20 rule")
-                    .font(.subheadline)
-                    .foregroundStyle(Theme.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(4)
+        VStack(spacing: 16) {
+            PersonalityEmptyStateView(
+                personality: personality,
+                icon: "chart.pie.fill",
+                secondaryIcon: "percent",
+                headline: "Set Your First Budget",
+                subtext: "Track spending by category with\nthe popular 50/30/20 rule",
+                buttonLabel: "Use 50/30/20 Template",
+                buttonIcon: "sparkles"
+            ) {
+                createDefaultBudgets()
             }
 
-            VStack(spacing: 8) {
-                templateRow(emoji: "🏠", label: "Needs (50%)", desc: "Housing, food, bills", color: Theme.accentGreen)
-                templateRow(emoji: "🎯", label: "Wants (30%)", desc: "Shopping, entertainment", color: Theme.accent)
-                templateRow(emoji: "💰", label: "Savings (20%)", desc: "Emergency fund, goals", color: Theme.gold)
+            Button {
+                vm.showAddBudget = true
+            } label: {
+                Label("Create Custom Budget", systemImage: "plus")
+                    .font(.system(.body, design: .rounded, weight: .semibold))
+                    .foregroundStyle(Theme.accent)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Theme.accent.opacity(0.12), in: .rect(cornerRadius: 14))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .strokeBorder(Theme.accent.opacity(0.2), lineWidth: 1)
+                    )
             }
+            .buttonStyle(PressableButtonStyle())
             .padding(.horizontal, 24)
-
-            VStack(spacing: 12) {
-                Button {
-                    createDefaultBudgets()
-                } label: {
-                    Label("Use 50/30/20 Template", systemImage: "sparkles")
-                        .font(.system(.body, design: .rounded, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Theme.accent, in: .rect(cornerRadius: 14))
-                }
-                .buttonStyle(PressableButtonStyle())
-
-                Button {
-                    vm.showAddBudget = true
-                } label: {
-                    Label("Create Custom Budget", systemImage: "plus")
-                        .font(.system(.body, design: .rounded, weight: .semibold))
-                        .foregroundStyle(Theme.accent)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Theme.accent.opacity(0.12), in: .rect(cornerRadius: 14))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .strokeBorder(Theme.accent.opacity(0.2), lineWidth: 1)
-                        )
-                }
-                .buttonStyle(PressableButtonStyle())
-            }
-            .padding(.horizontal, 24)
-
-            Spacer()
         }
         .sheet(isPresented: $vm.showAddBudget) {
             AddBudgetSheet()

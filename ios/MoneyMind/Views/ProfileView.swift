@@ -77,13 +77,51 @@ struct ProfileView: View {
                 .presentationDragIndicator(.visible)
             }
             .fullScreenCover(isPresented: $showMoneyWrapped) {
-                MoneyWrappedView(data: monthlyWrappedData)
+                if hasMonthlyData {
+                    MoneyWrappedView(data: monthlyWrappedData)
+                } else {
+                    wrappedEmptyState
+                }
             }
             .fullScreenCover(isPresented: $showAnnualWrapped) {
                 MoneyWrappedView(data: annualWrappedData)
             }
             .fullScreenCover(isPresented: $showPaywall) {
                 PaywallView()
+            }
+        }
+    }
+
+    private var hasMonthlyData: Bool {
+        let monthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
+        return transactions.contains { $0.date >= monthAgo } || impulseLogs.contains { $0.date >= monthAgo }
+    }
+
+    private var wrappedEmptyState: some View {
+        ZStack {
+            Theme.background.ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                HStack {
+                    Spacer()
+                    Button { showMoneyWrapped = false } label: {
+                        Image(systemName: "xmark")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.7))
+                            .frame(width: 32, height: 32)
+                            .background(.ultraThinMaterial, in: .circle)
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.top, 8)
+
+                PersonalityEmptyStateView(
+                    personality: personality,
+                    icon: "calendar.badge.clock",
+                    secondaryIcon: "sparkles",
+                    headline: "Your First Wrapped Is Coming",
+                    subtext: "Keep tracking your spending this month\nand we'll create your story"
+                )
             }
         }
     }

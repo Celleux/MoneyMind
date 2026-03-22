@@ -4,8 +4,13 @@ import SwiftData
 struct WalletView: View {
     @Query private var profiles: [UserProfile]
     @Query(sort: \ImpulseLog.date, order: .reverse) private var impulseLogs: [ImpulseLog]
+    @Query private var quizResults: [QuizResult]
     @State private var vm = WalletViewModel()
     @Environment(\.modelContext) private var modelContext
+
+    private var personality: MoneyPersonality {
+        quizResults.first?.personality ?? .builder
+    }
 
     private var profile: UserProfile? { profiles.first }
     private var gentle: Bool { profile?.gentleViewMode ?? false }
@@ -33,18 +38,32 @@ struct WalletView: View {
         NavigationStack {
             ZStack(alignment: .bottom) {
                 ScrollView {
-                    VStack(spacing: 24) {
-                        heroCounterCard
-                        walletVisualization
-                        statsRow
-                        impulseCostCalculator
-                        weeklyChart
-                        recentTransactions
-                        projectionCard
+                    if impulseLogs.isEmpty && (profile?.totalSaved ?? 0) <= 2.0 {
+                        PersonalityEmptyStateView(
+                            personality: personality,
+                            icon: "wallet.bifold.fill",
+                            secondaryIcon: "sparkle",
+                            headline: "Your Wallet Awaits",
+                            subtext: "Log your first win to start\ntracking your savings journey",
+                            buttonLabel: "Log a Win",
+                            buttonIcon: "star.fill"
+                        ) {
+                            vm.showLogWin = true
+                        }
+                    } else {
+                        VStack(spacing: 24) {
+                            heroCounterCard
+                            walletVisualization
+                            statsRow
+                            impulseCostCalculator
+                            weeklyChart
+                            recentTransactions
+                            projectionCard
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom, 120)
+                        .padding(.top, 8)
                     }
-                    .padding(.horizontal)
-                    .padding(.bottom, 120)
-                    .padding(.top, 8)
                 }
                 .scrollIndicators(.hidden)
 

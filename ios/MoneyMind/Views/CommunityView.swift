@@ -7,12 +7,14 @@ struct CommunityView: View {
     @Query private var challenges: [ChallengeGroup]
     @Query private var profiles: [UserProfile]
     @Query private var partnerCheckIns: [PartnerCheckIn]
+    @Query private var quizResults: [QuizResult]
     @Environment(\.modelContext) private var modelContext
     @State private var vm = CommunityViewModel()
     @State private var appeared = false
     @State private var likeTrigger = 0
 
     private var profile: UserProfile? { profiles.first }
+    private var personality: MoneyPersonality { quizResults.first?.personality ?? .builder }
     private var partner: AccountabilityPartner? { partners.first }
 
     var body: some View {
@@ -136,19 +138,18 @@ struct CommunityView: View {
     }
 
     private var emptyFeedState: some View {
-        VStack(spacing: 14) {
-            Image(systemName: "bubble.left.and.text.bubble.right")
-                .font(.system(size: 40))
-                .foregroundStyle(Theme.textSecondary.opacity(0.4))
-            Text("No posts in \(vm.selectedCategory) yet")
-                .font(.subheadline)
-                .foregroundStyle(Theme.textSecondary)
-            Text("Be the first to share!")
-                .font(.caption)
-                .foregroundStyle(Theme.textSecondary.opacity(0.6))
+        PersonalityEmptyStateView(
+            personality: personality,
+            icon: "bubble.left.and.text.bubble.right.fill",
+            secondaryIcon: "person.2.fill",
+            headline: "Be the First to Share",
+            subtext: "Start a conversation and connect\nwith the MoneyMind community",
+            buttonLabel: "Create a Post",
+            buttonIcon: "square.and.pencil"
+        ) {
+            vm.showCreatePost = true
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 48)
+        .frame(height: 420)
     }
 
     // MARK: - Partner Section

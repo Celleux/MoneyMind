@@ -1,35 +1,48 @@
-# Ghost Budget Mode — "What If?" Parallel Financial Timeline
+# Personality-Themed Empty States for All Screens
 
 
-## Features
+## Overview
+Replace all existing generic empty states and add new ones across 9 screens. Each empty state features a unique personality-themed illustration built from SF Symbols, a gentle floating animation, and a clear call-to-action button.
 
-- **Habit Toggle System** — See a list of your spending categories with their monthly averages; toggle any category on to "eliminate" it and instantly see the impact
-- **Split Comparison Chart** — Animated dual-line visualization showing your real balance trajectory vs. your "ghost" balance without the eliminated spending
-- **Dramatic Savings Callout** — Large animated number showing how much more you'd have, with fun rotating equivalents ("That's X iPhones", "X months of rent", "X round-trip flights")
-- **Timeline Projections** — Switch between 1 month, 3 months, 6 months, and 1 year views to see long-term impact
-- **Shareable Ghost Card** — Generate a beautiful 1080×1920 share image with "If I stopped [habit], I'd have $X,XXX in [timeframe]" and MoneyMind branding
-- **Premium Gate** — Free users see a preview with blurred projections and a prompt to upgrade; full access for premium users
+---
 
-## Design
+### **Features**
 
-- **Dark OLED theme** consistent with the rest of MoneyMind — deep navy background (#0A0F1E), dark cards (#111827)
-- **Ghost emoji (👻) + "What if?" tagline** at the top in muted text, with a premium badge if locked
-- **Toggle switches** in rows with category icon, name, and average monthly spend — toggled items glow with the accent purple
-- **Dual-line chart** uses red-to-white gradient for "Reality" and a vivid green gradient for "Ghost" — lines animate drawing left-to-right over 1.5 seconds
-- **Big green savings number** in 34pt bold with a counting animation, surrounded by a subtle green glow
-- **Fun equivalents** fade in and out in a cycling carousel below the savings number
-- **Timeline tabs** (1M / 3M / 6M / 1Y) as segmented pill selectors with spring animation on switch
-- **Staggered fade-in** on all sections matching the app's existing animation pattern
-- **Haptic feedback** on toggle changes and timeline tab switches
+- Each empty state shows a unique character illustration using SF Symbols, tinted with the user's Money Personality color (Saver = green, Builder = purple, Hustler = orange, Minimalist = cyan, Generous = gold)
+- Personality-specific character variations: Saver sees a piggy bank, Builder sees a growth chart, Hustler sees flames, Minimalist sees a meditation figure, Generous sees a sharing/heart figure
+- Every illustration gently floats up and down in a subtle looping animation to feel alive
+- Each screen has a unique headline, supporting text, and action button that navigates to the right creation flow
+- All 9 empty states follow a consistent visual structure but with distinct content per screen
 
-## Screens
+---
 
-- **Ghost Budget View** — A full scrollable screen accessible from the Budget Analytics screen (new tab/section) and from a card on the Home dashboard
-  - Top: Header with ghost emoji, title, and premium badge
-  - Habit toggles section: scrollable list of expense categories with toggle switches
-  - Comparison chart: side-by-side or overlaid line chart with "Reality" vs "Ghost" labels
-  - Savings callout: large animated number with rotating fun equivalents
-  - Timeline selector: 1M / 3M / 6M / 1Y pill tabs
-  - Share button at the bottom that generates a branded share card
-- **Ghost Budget Share Card** — A rendered 1080×1920 image with the dramatic stat, personality color accents, and MoneyMind watermark (uses the existing share card renderer)
-- **Dashboard Integration** — A new "Ghost Budget" card on the Home screen showing a teaser ("What if you stopped X?") that navigates into the full Ghost Budget view
+### **Design**
+
+- Dark background (#0A0F1E) matching the app's existing theme
+- Centered layout with personality-colored accent circles behind the illustration
+- Illustration: layered SF Symbols composing a character scene (40–60pt), personality color accented
+- Headline: bold white text, one line
+- Subtext: muted gray (#94A3B8), up to two lines, centered
+- CTA button: full-width purple (#6C5CE7) rounded button with action-specific label
+- Floating animation: smooth 2-second up/down cycle, 4pt travel range
+
+---
+
+### **Screens Getting Empty States**
+
+1. **Dashboard** (no transactions) — Character with a rocket/sparkle. "Start Your Journey" → "Add Your First Transaction"
+2. **Budget** (no budgets set) — Character with pie chart. "Set Your First Budget" → "Create a Budget" (keeps existing 50/30/20 template)
+3. **Analytics** (no data) — Character with magnifying glass on chart. "Nothing to Analyze Yet" → "Add a Transaction"
+4. **Wallet / Transactions List** (empty) — Character with empty wallet. "Your Wallet Awaits" → "Log a Win"
+5. **Savings Goals** (none created in Challenges Hub) — Character with target/flag. "Ready to Challenge Yourself?" → "Start a Challenge"
+6. **Challenges Hub** (none active) — Character with trophy. "No Active Challenges" → "Browse Challenges"
+7. **Community** (no posts in feed) — Character with speech bubbles. "Be the First to Share" → "Create a Post"
+8. **Money Wrapped** (first month not complete) — Character with calendar/clock. "Your First Wrapped Is Coming" → informational, no destructive action
+9. **Ghost Budget** (no data) — Character with ghost/parallel lines. "Not Enough Data Yet" → "Add Transactions"
+
+---
+
+### **Shared Component**
+
+- A reusable empty state component that all 9 screens use, accepting: illustration icon, personality color, headline, subtext, button label, and button action
+- This keeps the design perfectly consistent while allowing unique content per screen

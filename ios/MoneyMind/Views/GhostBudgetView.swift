@@ -361,31 +361,13 @@ struct GhostBudgetView: View {
     // MARK: - Empty State
 
     private var emptyState: some View {
-        VStack(spacing: 20) {
-            Spacer().frame(height: 40)
-
-            ZStack {
-                Circle()
-                    .fill(Theme.accent.opacity(0.06))
-                    .frame(width: 140, height: 140)
-                Image(systemName: "chart.line.text.clipboard")
-                    .font(.system(size: 44))
-                    .foregroundStyle(Theme.accentGradient)
-                    .symbolEffect(.pulse, options: .repeating)
-            }
-
-            Text("Not Enough Data Yet")
-                .font(.system(.title3, design: .rounded, weight: .bold))
-                .foregroundStyle(Theme.textPrimary)
-
-            Text("Add some transactions first so we can\nanalyze your spending habits")
-                .font(.subheadline)
-                .foregroundStyle(Theme.textSecondary)
-                .multilineTextAlignment(.center)
-                .lineSpacing(4)
-
-            Spacer()
-        }
+        PersonalityEmptyStateView(
+            personality: personality,
+            icon: "eye.trianglebadge.exclamationmark.fill",
+            secondaryIcon: "chart.line.flattrend.xyaxis",
+            headline: "Not Enough Data Yet",
+            subtext: "Add some transactions first so we can\nanalyze your spending habits"
+        )
     }
 
     // MARK: - Helpers

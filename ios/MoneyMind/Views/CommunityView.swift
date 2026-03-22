@@ -19,21 +19,18 @@ struct CommunityView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .bottomTrailing) {
-                ScrollView {
-                    VStack(spacing: 20) {
-                        categoryFilter
-                        feedSection
-                        partnerSection
-                        challengesSection
-                    }
-                    .padding(.bottom, 100)
+            ScrollView {
+                VStack(spacing: 20) {
+                    categoryFilter
+                    shareStoryCard
+                    feedSection
+                    partnerSection
+                    challengesSection
                 }
-                .refreshable { }
-                .background(Theme.background.ignoresSafeArea())
-
-                createPostButton
+                .padding(.bottom, 32)
             }
+            .refreshable { }
+            .background(Theme.background.ignoresSafeArea())
             .navigationTitle("Community")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)
@@ -46,7 +43,7 @@ struct CommunityView: View {
                                 .foregroundStyle(Theme.textSecondary)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background(Theme.cardSurface, in: .capsule)
+                                .background(Theme.elevated, in: .capsule)
                         }
                     }
                 }
@@ -100,12 +97,12 @@ struct CommunityView: View {
                         VStack(spacing: 6) {
                             Text(category)
                                 .font(.subheadline.weight(vm.selectedCategory == category ? .semibold : .regular))
-                                .foregroundStyle(vm.selectedCategory == category ? Theme.accentGreen : Theme.textSecondary)
+                                .foregroundStyle(vm.selectedCategory == category ? Theme.accent : Theme.textSecondary)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 8)
 
                             Rectangle()
-                                .fill(vm.selectedCategory == category ? Theme.accentGreen : .clear)
+                                .fill(vm.selectedCategory == category ? Theme.accent : .clear)
                                 .frame(height: 2)
                                 .clipShape(.rect(cornerRadius: 1))
                         }
@@ -117,6 +114,36 @@ struct CommunityView: View {
         }
         .contentMargins(.horizontal, 16)
         .scrollIndicators(.hidden)
+    }
+
+    // MARK: - Share Story Card
+
+    private var shareStoryCard: some View {
+        Button {
+            vm.showCreatePost = true
+        } label: {
+            HStack(spacing: 12) {
+                Circle()
+                    .fill(Theme.accent.opacity(0.12))
+                    .frame(width: 36, height: 36)
+                    .overlay {
+                        Image(systemName: "square.and.pencil")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(Theme.accent)
+                    }
+
+                Text("Share your story...")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.textMuted)
+
+                Spacer()
+            }
+            .padding(14)
+            .glassCard()
+        }
+        .buttonStyle(PressableButtonStyle())
+        .sensoryFeedback(.impact(weight: .light), trigger: vm.showCreatePost)
+        .padding(.horizontal)
     }
 
     // MARK: - Feed
@@ -164,7 +191,7 @@ struct CommunityView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Image(systemName: "person.2.fill")
-                    .foregroundStyle(Theme.teal)
+                    .foregroundStyle(Theme.accent)
                 Text("Accountability Partner")
                     .font(Theme.headingFont(.title3))
                     .foregroundStyle(Theme.textPrimary)
@@ -187,17 +214,15 @@ struct CommunityView: View {
             HStack(spacing: 14) {
                 ZStack {
                     Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [Theme.teal.opacity(0.3), Theme.cardSurface],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
+                        .fill(Theme.elevated)
                         .frame(width: 52, height: 52)
+                        .overlay {
+                            Circle()
+                                .strokeBorder(Theme.accent.opacity(0.3), lineWidth: 1)
+                        }
                     Image(systemName: "person.fill")
                         .font(.title3)
-                        .foregroundStyle(Theme.teal)
+                        .foregroundStyle(Theme.accent)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -230,7 +255,7 @@ struct CommunityView: View {
                 .foregroundStyle(Theme.background)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(Theme.teal, in: .rect(cornerRadius: 12))
+                .background(Theme.accent, in: .rect(cornerRadius: 12))
             }
             .buttonStyle(PressableButtonStyle())
             .sensoryFeedback(.impact(weight: .medium), trigger: vm.showPartnerCheckIn)
@@ -246,11 +271,11 @@ struct CommunityView: View {
             HStack(spacing: 14) {
                 ZStack {
                     Circle()
-                        .strokeBorder(Theme.teal.opacity(0.3), style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+                        .strokeBorder(Theme.accent.opacity(0.3), style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
                         .frame(width: 52, height: 52)
                     Image(systemName: "person.badge.plus")
                         .font(.title3)
-                        .foregroundStyle(Theme.teal.opacity(0.6))
+                        .foregroundStyle(Theme.accent.opacity(0.6))
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -274,10 +299,10 @@ struct CommunityView: View {
                     Text("Find a Partner")
                         .font(.subheadline.weight(.semibold))
                 }
-                .foregroundStyle(Theme.teal)
+                .foregroundStyle(Theme.accent)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(Theme.teal.opacity(0.12), in: .rect(cornerRadius: 12))
+                .background(Theme.accent.opacity(0.12), in: .rect(cornerRadius: 12))
             }
             .buttonStyle(PressableButtonStyle())
             .sensoryFeedback(.impact(weight: .light), trigger: vm.showFindPartner)
@@ -294,7 +319,7 @@ struct CommunityView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Image(systemName: "flag.checkered")
-                    .foregroundStyle(Theme.accentGreen)
+                    .foregroundStyle(Theme.accent)
                 Text("Active Challenges")
                     .font(Theme.headingFont(.title3))
                     .foregroundStyle(Theme.textPrimary)
@@ -318,24 +343,7 @@ struct CommunityView: View {
         .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.15), value: appeared)
     }
 
-    // MARK: - Create Post Button
 
-    private var createPostButton: some View {
-        Button {
-            vm.showCreatePost = true
-        } label: {
-            Image(systemName: "plus")
-                .font(.title2.weight(.semibold))
-                .foregroundStyle(Theme.background)
-                .frame(width: 56, height: 56)
-                .background(Theme.accentGradient, in: Circle())
-                .shadow(color: Theme.accentGreen.opacity(0.3), radius: 8, y: 4)
-        }
-        .buttonStyle(PressableButtonStyle())
-        .accessibilityLabel("Create new post")
-        .padding(.trailing, 20)
-        .padding(.bottom, 20)
-    }
 }
 
 // MARK: - Post Card
@@ -345,44 +353,22 @@ struct CommunityPostCard: View {
     let vm: CommunityViewModel
     @Binding var likeTrigger: Int
 
-    private var moodInfo: (icon: String, color: Color) {
-        switch post.mood {
-        case "Hopeful": return ("circle.fill", Theme.accentGreen)
-        case "Struggling": return ("triangle.fill", Theme.emergency)
-        case "Grateful": return ("diamond.fill", Theme.teal)
-        case "Anxious": return ("square.fill", Theme.gold)
-        case "Proud": return ("star.fill", Theme.gold)
-        case "Seeking Help": return ("heart.fill", Color.purple)
-        default: return ("circle.fill", Theme.textSecondary)
-        }
-    }
 
-    private var categoryColor: Color {
-        switch post.category {
-        case "Victories": return Theme.accentGreen
-        case "Struggles": return Theme.emergency.opacity(0.8)
-        case "Tips": return Theme.gold
-        case "Questions": return Theme.teal
-        default: return Theme.textSecondary
-        }
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Circle()
-                    .fill(
-                        LinearGradient(
-                            colors: [moodInfo.color.opacity(0.25), Theme.cardSurface],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+                    .fill(Theme.elevated)
                     .frame(width: 38, height: 38)
+                    .overlay {
+                        Circle()
+                            .strokeBorder(Theme.accent.opacity(0.25), lineWidth: 1)
+                    }
                     .overlay {
                         Text(String(post.authorName.prefix(1)))
                             .font(.system(.caption, design: .rounded, weight: .bold))
-                            .foregroundStyle(moodInfo.color)
+                            .foregroundStyle(Theme.accent)
                     }
 
                 VStack(alignment: .leading, spacing: 2) {
@@ -396,17 +382,12 @@ struct CommunityPostCard: View {
 
                 Spacer()
 
-                HStack(spacing: 6) {
-                    Image(systemName: moodInfo.icon)
-                        .font(.system(size: 8))
-                        .foregroundStyle(moodInfo.color)
-                    Text(post.mood)
-                        .font(.caption2.weight(.medium))
-                        .foregroundStyle(moodInfo.color)
-                }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(moodInfo.color.opacity(0.12), in: .capsule)
+                Text(post.mood)
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(Theme.textSecondary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Theme.elevated, in: .capsule)
             }
 
             Text(post.content)
@@ -417,10 +398,10 @@ struct CommunityPostCard: View {
             HStack(spacing: 4) {
                 Text(post.category)
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(categoryColor)
+                    .foregroundStyle(Theme.textSecondary)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
-                    .background(categoryColor.opacity(0.12), in: .capsule)
+                    .background(Theme.elevated, in: .capsule)
 
                 Spacer()
 
@@ -432,7 +413,7 @@ struct CommunityPostCard: View {
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: post.isLikedByUser ? "heart.fill" : "heart")
-                            .foregroundStyle(post.isLikedByUser ? Theme.emergency : Theme.textSecondary)
+                            .foregroundStyle(post.isLikedByUser ? Theme.accent : Theme.textSecondary)
                             .contentTransition(.symbolEffect(.replace))
                         Text("\(post.likes)")
                             .foregroundStyle(Theme.textSecondary)
@@ -469,11 +450,11 @@ struct ChallengeCard: View {
                 HStack(spacing: 10) {
                     ZStack {
                         Circle()
-                            .fill(Theme.accentGreen.opacity(0.12))
+                            .fill(Theme.accent.opacity(0.12))
                             .frame(width: 40, height: 40)
                         Image(systemName: challenge.iconName)
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(Theme.accentGreen)
+                            .foregroundStyle(Theme.accent)
                     }
 
                     VStack(alignment: .leading, spacing: 2) {
@@ -482,7 +463,7 @@ struct ChallengeCard: View {
                             .foregroundStyle(Theme.textPrimary)
                         Text(challenge.hashtag)
                             .font(.caption)
-                            .foregroundStyle(Theme.accentGreen.opacity(0.8))
+                            .foregroundStyle(Theme.accent.opacity(0.8))
                     }
                 }
 
@@ -495,7 +476,7 @@ struct ChallengeCard: View {
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
                             Capsule()
-                                .fill(Theme.cardSurface)
+                                .fill(Theme.elevated)
                                 .frame(height: 6)
                             Capsule()
                                 .fill(Theme.accentGradient)
@@ -521,10 +502,10 @@ struct ChallengeCard: View {
                         Text("Joined")
                     }
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(Theme.accentGreen)
+                    .foregroundStyle(Theme.accent)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
-                    .background(Theme.accentGreen.opacity(0.1), in: .rect(cornerRadius: 8))
+                    .background(Theme.accent.opacity(0.1), in: .rect(cornerRadius: 8))
                 } else {
                     Button {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {

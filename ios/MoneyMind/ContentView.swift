@@ -16,19 +16,19 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            Tab("Home", systemImage: "house.fill", value: .home) {
+            Tab("Home", systemImage: "house", value: .home) {
                 HomeView()
             }
-            Tab("Wallet", systemImage: "wallet.bifold.fill", value: .wallet) {
+            Tab("Wallet", systemImage: "wallet.bifold", value: .wallet) {
                 WalletView()
             }
-            Tab("Tools", systemImage: "wrench.and.screwdriver.fill", value: .tools) {
+            Tab("Tools", systemImage: "wrench.and.screwdriver", value: .tools) {
                 ToolkitView()
             }
-            Tab("Community", systemImage: "person.3.fill", value: .community) {
+            Tab("Community", systemImage: "bubble.left.and.bubble.right", value: .community) {
                 CommunityView()
             }
-            Tab("Profile", systemImage: "person.crop.circle.fill", value: .profile) {
+            Tab("Profile", systemImage: "person.circle", value: .profile) {
                 ProfileView()
             }
         }

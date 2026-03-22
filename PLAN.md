@@ -1,36 +1,31 @@
-# Budget Templates Screen with 5 Template Options & Setup Flow
+# Comprehensive Notification System with In-App Notification Center
 
 ## Features
 
-- **Template Selection Screen** — A scrollable list of 5 beautifully designed budget template cards, each with a unique visual preview
-- **Personality Recommendations** — Each template shows a colored pill tag like "Recommended for Savers" based on the user's money personality
-- **50/30/20 Rule Template** — Enter income, auto-splits into Needs (50%), Wants (30%), Savings (20%) with a 3-ring visual display
-- **Zero-Based Template** — Assign every dollar to a category; a live "Unassigned" counter counts down to $0
-- **Envelope Method Template** — Digital envelopes for each category with visual envelope icons that show fill levels
-- **Pay Yourself First Template** — Set a savings percentage first, then budget the remainder; savings ring shown prominently
-- **Custom Template** — Blank slate where all categories and amounts are set manually
-- **Setup Flow** — Select template → Enter monthly income → Review auto-generated categories → Adjust amounts → Confirm & create budgets
-- **Animated Transitions** — Smooth spring animations between setup steps with staggered card entry
+- **Budget Alerts**: Automatic notifications when spending hits 50%, 80%, and 100% of any budget category — yellow warning at 80%, red alert at 100%
+- **Bill Reminders**: "Netflix ($15.99) is due tomorrow" with configurable lead time (already partially built, will be integrated into the unified system)
+- **Savings Celebrations**: Confetti-worthy notifications for milestones like "$50 saved today!" and "10-day no-spend streak!" 🎉
+- **Daily Check-In**: Evening reflection prompt at a configurable time — "How was your spending today?"
+- **Weekly Digest**: Sunday morning summary — "Last week: spent $X, saved $Y, top category: Z"
+- **Smart JITAI Nudges**: Pattern-based alerts like "It's Friday evening — your spending tends to increase. Set a weekend budget?" using existing HighRiskPattern data
+- **In-App Notification Center**: Bell icon on the dashboard with unread count badge, scrollable list of all recent notifications, swipe to dismiss, tap to navigate to the relevant screen
+- **Quiet Hours**: Respected across all notification types (default 10pm–8am)
+- **Frequency Cap**: Maximum 3 push notifications per day to avoid overwhelming users
 
 ## Design
 
-- **Dark theme** matching the existing MoneyMind design system (#0A0F1E background, #111827 cards)
-- Each template card has a large header area with a unique visual preview illustration using SF Symbols
-- Template name in 22pt Semibold rounded white, description in 13pt muted gray
-- Personality recommendation pill in the personality's accent color (green for Saver, purple for Builder, etc.)
-- Income input uses a large bold rounded number style with the personality accent color
-- Category allocation rows with colored dots, editable amounts, and progress indicators
-- The Zero-Based template features a prominent "Unassigned: $X" counter that animates down to $0
-- The 50/30/20 template shows three concentric rings for Needs/Wants/Savings
-- The Pay Yourself First template has a large savings goal ring above the remaining budget breakdown
-- The Envelope template shows mini envelope icons with fill-level indicators
-- Confirm button uses the accent gradient (purple → cyan) in capsule style
+- **Bell Icon**: Appears in the dashboard top bar next to the personality icon — subtle unread count badge in the app's accent color with a bounce animation when new notifications arrive
+- **Notification Center Sheet**: Dark card-based list matching the existing MoneyMind design system (#111827 cards on #0A0F1E background). Each notification shows an icon, color-coded by type, title, body, and relative timestamp ("2h ago")
+- **Color Coding**: Budget alerts use yellow (#FF9100) at 80% and red (#FF5252) at 100%. Savings celebrations use green (#00E676). Bill reminders use teal (#00D2FF). JITAI nudges use the existing teal brain icon style
+- **Swipe Actions**: Swipe left to dismiss a notification, with a smooth spring animation
+- **Empty State**: Friendly "All caught up!" message with a checkmark icon when no notifications exist
+- **Celebration Notifications**: Savings milestones show with confetti-style star icons and the accent gradient
 
-## Screens
+## Screens & Components
 
-1. **Template Selection Screen** — Full-screen with "Budget Templates" header. 5 vertical cards, each showing template name, brief description, visual preview, and personality recommendation tag. Tapping a card opens the setup flow.
-2. **Income Entry Step** — Large centered income input field with the template's visual style shown above. "Next" button at the bottom.
-3. **Category Review Step** — Shows auto-generated budget categories with amounts. Each row is editable. For Zero-Based, a live unassigned counter is shown. For 50/30/20, the three rings update in real-time. Adjust amounts with inline text fields.
-4. **Confirmation Step** — Summary of all categories and amounts with the template's signature visual. "Create Budget" button saves all categories to SwiftData and dismisses the flow.
-
-The screen is accessible from the Budget Analytics empty state and from the Profile/Settings budget method selector.
+- **In-App Notification Center (new sheet)**: Presented from the bell icon on the dashboard — a scrollable list of `InAppNotification` items grouped by today / earlier, with swipe-to-dismiss and tap-to-navigate deep linking
+- **Dashboard Top Bar (updated)**: Bell icon with unread badge added next to the existing personality icon
+- **NotificationService (enhanced)**: New methods for budget threshold checking, savings celebration triggers, daily check-in scheduling, weekly digest scheduling, and frequency cap enforcement
+- **InAppNotification Model (new)**: SwiftData model storing notification type, title, body, timestamp, read status, and deep link destination
+- **NotificationSettingsView (enhanced)**: Budget alert threshold toggles and daily check-in time picker integrated into the existing notification settings (some already exist in Profile settings — will wire them into the scheduling engine)
+- **Deep Linking**: Tapping a notification navigates to the relevant screen (budget → budget analytics, bill → recurring expenses, savings → wallet, etc.)

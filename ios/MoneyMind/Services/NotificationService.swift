@@ -1,5 +1,6 @@
 import Foundation
 import UserNotifications
+import SwiftData
 
 @Observable
 class NotificationService {
@@ -9,6 +10,9 @@ class NotificationService {
 
     private let center = UNUserNotificationCenter.current()
     private let milestones: [Double] = [100, 500, 1_000, 5_000, 10_000, 25_000, 50_000, 100_000]
+    private let maxDailyNotifications = 3
+    private var scheduledTodayCount = 0
+    private var lastCountResetDate: Date?
 
     private init() {
         Task { await checkAuthorizationStatus() }
@@ -29,6 +33,8 @@ class NotificationService {
         }
     }
 
+    // MARK: - Schedule All Push Notifications
+
     func scheduleAllNotifications(profile: UserProfile, patterns: [HighRiskPattern] = [], nextIncompleteSession: Int? = nil, lastSessionCompletionDate: Date? = nil) {
         guard profile.notificationsEnabled else {
             center.removeAllPendingNotificationRequests()
@@ -36,6 +42,7 @@ class NotificationService {
         }
 
         center.removeAllPendingNotificationRequests()
+        resetDailyCountIfNeeded()
 
         let isGentle = profile.gentleViewMode
         let isSupportive = profile.notificationStyle != "minimal"
@@ -60,6 +67,21 @@ class NotificationService {
                 body: isSupportive ? "How was your day? Take a moment to reflect on your journey." : "Time for your evening reflection.",
                 profile: profile
             )
+        }
+
+        if profile.dailyCheckInNotif {
+            scheduleDailyNotification(
+                id: "daily_checkin",
+                hour: 20,
+                minute: 0,
+                title: isSupportive ? "How Was Your Spending Today?" : "Daily Check-In",
+                body: isSupportive ? "Take a moment to reflect. Every conscious choice counts." : "Rate your spending day.",
+                profile: profile
+            )
+        }
+
+        if profile.weeklyDigestNotif {
+            scheduleWeeklyDigest(profile: profile, isSupportive: isSupportive)
         }
 
         if profile.weeklyPaycheckNotif {
@@ -136,6 +158,214 @@ class NotificationService {
         }
     }
 
+    // MARK: - Budget Threshold Alerts
+
+    func checkBudgetThresholds(
+        budgets: [BudgetCategory],
+        transactions: [Transaction],
+        profile: UserProfile,
+        modelContext: ModelContext
+    ) {
+        guard profile.notificationsEnabled else { return }
+
+        let calendar = Calendar.current
+        let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: Date()))!
+
+        for budget in budgets {
+            let spent = transactions
+                .filter { $0.transactionType == .expense && $0.category == budget.name && $0.date >= startOfMonth }
+                .reduce(0.0) { $0 + $1.amount }
+
+            guard budget.monthlyLimit > 0 else { continue }
+            let percentage = spent / budget.monthlyLimit
+
+            if percentage >= 1.0 && profile.budgetAlert100 {
+                let overAmount = Int(spent - budget.monthlyLimit)
+                let title = "Over Budget"
+                let body = "Over budget on \(budget.name) by $\(overAmount)."
+
+                createInAppNotification(
+                    type: .budgetExceeded,
+                    title: title,
+                    body: body,
+                    deepLink: .budgetAnalytics,
+                    modelContext: modelContext
+                )
+
+                schedulePushIfAllowed(
+                    id: "budget_exceeded_\(budget.name)",
+                    title: title,
+                    body: body,
+                    profile: profile
+                )
+            } else if percentage >= 0.8 && profile.budgetAlert80 {
+                let title = "Heads Up"
+                let body = "Heads up: \(budget.name) budget at \(Int(percentage * 100))%."
+
+                createInAppNotification(
+                    type: .budgetCritical,
+                    title: title,
+                    body: body,
+                    deepLink: .budgetAnalytics,
+                    modelContext: modelContext
+                )
+
+                schedulePushIfAllowed(
+                    id: "budget_critical_\(budget.name)",
+                    title: title,
+                    body: body,
+                    profile: profile
+                )
+            } else if percentage >= 0.5 && profile.budgetAlert50 {
+                let title = "Budget Update"
+                let body = "Halfway through your \(budget.name) budget."
+
+                createInAppNotification(
+                    type: .budgetWarning,
+                    title: title,
+                    body: body,
+                    deepLink: .budgetAnalytics,
+                    modelContext: modelContext
+                )
+            }
+        }
+    }
+
+    // MARK: - Savings Celebrations
+
+    func celebrateSavings(amount: Double, profile: UserProfile, modelContext: ModelContext) {
+        guard profile.notificationsEnabled else { return }
+
+        let formatted = amount.formatted(.currency(code: profile.defaultCurrency).precision(.fractionLength(0)))
+        let title = "Nice Save!"
+        let body = "You saved \(formatted) today! Every win counts."
+
+        createInAppNotification(
+            type: .savingsCelebration,
+            title: title,
+            body: body,
+            deepLink: .wallet,
+            modelContext: modelContext
+        )
+
+        schedulePushIfAllowed(
+            id: "savings_celebration_\(Int(Date().timeIntervalSince1970))",
+            title: title,
+            body: body,
+            profile: profile
+        )
+    }
+
+    func celebrateStreak(days: Int, profile: UserProfile, modelContext: ModelContext) {
+        guard profile.notificationsEnabled else { return }
+
+        let streakMilestones = [3, 7, 10, 14, 21, 30, 60, 90, 100, 180, 365]
+        guard streakMilestones.contains(days) else { return }
+
+        let title = "\(days)-Day Streak!"
+        let body: String
+        switch days {
+        case 3: body = "3 days strong! You're building a real habit."
+        case 7: body = "One full week! That's serious discipline."
+        case 14: body = "Two weeks! You're in the zone now."
+        case 30: body = "A whole month! This is who you are now."
+        case 100: body = "Triple digits! You're unstoppable."
+        case 365: body = "ONE YEAR! Legendary achievement unlocked."
+        default: body = "\(days) days of mindful choices. Keep going!"
+        }
+
+        createInAppNotification(
+            type: .streakCelebration,
+            title: title,
+            body: body,
+            deepLink: .home,
+            modelContext: modelContext
+        )
+
+        schedulePushIfAllowed(
+            id: "streak_celebration_\(days)",
+            title: title,
+            body: body,
+            profile: profile
+        )
+    }
+
+    // MARK: - JITAI Smart Nudge (Immediate)
+
+    func sendJITAINudge(dayName: String, profile: UserProfile, modelContext: ModelContext) {
+        guard profile.notificationsEnabled && profile.jitaiAdaptiveNotif else { return }
+
+        let isSupportive = profile.notificationStyle != "minimal"
+        let title = isSupportive ? "Heads Up" : "Alert"
+        let body = isSupportive
+            ? "It's \(dayName) evening — your spending tends to increase. Set a weekend budget?"
+            : "\(dayName) pattern detected. Plan ahead."
+
+        createInAppNotification(
+            type: .jitaiNudge,
+            title: title,
+            body: body,
+            deepLink: .budgetAnalytics,
+            modelContext: modelContext
+        )
+    }
+
+    // MARK: - In-App Notification Creation
+
+    func createInAppNotification(
+        type: NotificationType,
+        title: String,
+        body: String,
+        deepLink: NotificationDeepLink = .none,
+        modelContext: ModelContext
+    ) {
+        let notification = InAppNotification(
+            type: type,
+            title: title,
+            body: body,
+            deepLink: deepLink
+        )
+        modelContext.insert(notification)
+    }
+
+    // MARK: - Weekly Digest
+
+    func generateWeeklyDigest(
+        transactions: [Transaction],
+        profile: UserProfile,
+        modelContext: ModelContext
+    ) {
+        let calendar = Calendar.current
+        let weekAgo = calendar.date(byAdding: .day, value: -7, to: Date()) ?? Date()
+        let weekTransactions = transactions.filter { $0.date >= weekAgo }
+
+        let spent = weekTransactions
+            .filter { $0.transactionType == .expense }
+            .reduce(0.0) { $0 + $1.amount }
+        let saved = profile.totalSaved
+        let topCategory = weekTransactions
+            .filter { $0.transactionType == .expense }
+            .reduce(into: [String: Double]()) { result, t in result[t.category, default: 0] += t.amount }
+            .max(by: { $0.value < $1.value })?.key ?? "None"
+
+        let currency = profile.defaultCurrency
+        let spentFormatted = spent.formatted(.currency(code: currency).precision(.fractionLength(0)))
+        let savedFormatted = saved.formatted(.currency(code: currency).precision(.fractionLength(0)))
+
+        let title = "Weekly Digest"
+        let body = "Last week: spent \(spentFormatted), saved \(savedFormatted). Top category: \(topCategory)."
+
+        createInAppNotification(
+            type: .weeklyDigest,
+            title: title,
+            body: body,
+            deepLink: .budgetAnalytics,
+            modelContext: modelContext
+        )
+    }
+
+    // MARK: - Private Push Scheduling
+
     private func scheduleDailyNotification(id: String, hour: Int, minute: Int, title: String, body: String, profile: UserProfile) {
         guard !isInQuietHours(hour: hour, minute: minute, profile: profile) else { return }
 
@@ -150,6 +380,26 @@ class NotificationService {
         content.sound = .default
 
         let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+        center.add(request)
+    }
+
+    private func scheduleWeeklyDigest(profile: UserProfile, isSupportive: Bool) {
+        guard !isInQuietHours(hour: 9, minute: 0, profile: profile) else { return }
+
+        var dateComponents = DateComponents()
+        dateComponents.weekday = 1
+        dateComponents.hour = 9
+        dateComponents.minute = 0
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+        let content = UNMutableNotificationContent()
+        content.title = isSupportive ? "Your Weekly Digest" : "Weekly Digest"
+        content.body = isSupportive
+            ? "Your weekly spending summary is ready. See how you did!"
+            : "Weekly summary available."
+        content.sound = .default
+
+        let request = UNNotificationRequest(identifier: "weekly_digest", content: content, trigger: trigger)
         center.add(request)
     }
 
@@ -231,7 +481,7 @@ class NotificationService {
 
         for (index, pattern) in topPatterns.enumerated() {
             var notifHour = pattern.hourOfDay
-            var notifMinute = 45
+            let notifMinute = 45
 
             if pattern.hourOfDay > 0 {
                 notifHour = pattern.hourOfDay - 1
@@ -254,7 +504,7 @@ class NotificationService {
 
             content.title = isSupportive ? "Heads Up" : "Alert"
             content.body = isSupportive
-                ? "\(dayName) evening. Usually a tough time for you. Urge surf is one tap away."
+                ? "It's \(dayName) evening — your spending tends to increase. Set a weekend budget?"
                 : "\(dayName) pattern detected. Tools ready."
             content.sound = .default
 
@@ -336,6 +586,37 @@ class NotificationService {
             center.add(request)
         }
     }
+
+    // MARK: - Frequency Cap
+
+    private func schedulePushIfAllowed(id: String, title: String, body: String, profile: UserProfile) {
+        resetDailyCountIfNeeded()
+        guard scheduledTodayCount < maxDailyNotifications else { return }
+
+        let hour = Calendar.current.component(.hour, from: Date())
+        let minute = Calendar.current.component(.minute, from: Date())
+        guard !isInQuietHours(hour: hour, minute: minute, profile: profile) else { return }
+
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = .default
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+        center.add(request)
+        scheduledTodayCount += 1
+    }
+
+    private func resetDailyCountIfNeeded() {
+        let today = Calendar.current.startOfDay(for: Date())
+        if lastCountResetDate != today {
+            scheduledTodayCount = 0
+            lastCountResetDate = today
+        }
+    }
+
+    // MARK: - Helpers
 
     private func nextMilestoneGap(_ profile: UserProfile) -> Double {
         let next = milestones.first { $0 > profile.totalSaved } ?? 100

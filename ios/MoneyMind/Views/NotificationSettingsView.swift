@@ -27,12 +27,14 @@ struct NotificationSettingsView: View {
             VStack(spacing: 20) {
                 masterToggleSection
                 if profile?.notificationsEnabled == true {
+                    budgetAlertsSection
                     dailyRemindersSection
                     checkInsSection
                     weeklyMilestonesSection
                     smartNotificationsSection
                     quietHoursSection
                     styleSection
+                    frequencyCapNote
                 }
             }
             .padding(.horizontal)
@@ -394,6 +396,105 @@ struct NotificationSettingsView: View {
         }
     }
 
+    private var budgetAlertsSection: some View {
+        NotifSection(title: "Budget & Bills", icon: "chart.bar.fill", iconColor: Theme.warning) {
+            if let profile {
+                NotifToggleRow(
+                    icon: "creditcard.fill",
+                    title: "Bill Reminders",
+                    subtitle: "Remind before bills are due",
+                    isOn: Binding(
+                        get: { profile.billRemindersEnabled },
+                        set: { profile.billRemindersEnabled = $0; reschedule() }
+                    ),
+                    color: Theme.teal
+                )
+
+                Divider().overlay(Theme.background.opacity(0.3))
+
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.warning)
+                            .frame(width: 24)
+                        Text("Budget Alert Thresholds")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(Theme.textPrimary)
+                    }
+
+                    HStack(spacing: 10) {
+                        BudgetThresholdPill(
+                            label: "50%",
+                            color: Theme.gold,
+                            isOn: Binding(
+                                get: { profile.budgetAlert50 },
+                                set: { profile.budgetAlert50 = $0; reschedule() }
+                            )
+                        )
+                        BudgetThresholdPill(
+                            label: "80%",
+                            color: Theme.warning,
+                            isOn: Binding(
+                                get: { profile.budgetAlert80 },
+                                set: { profile.budgetAlert80 = $0; reschedule() }
+                            )
+                        )
+                        BudgetThresholdPill(
+                            label: "100%",
+                            color: Theme.danger,
+                            isOn: Binding(
+                                get: { profile.budgetAlert100 },
+                                set: { profile.budgetAlert100 = $0; reschedule() }
+                            )
+                        )
+                    }
+                    .padding(.leading, 36)
+                }
+
+                Divider().overlay(Theme.background.opacity(0.3))
+
+                NotifToggleRow(
+                    icon: "moon.stars.fill",
+                    title: "Daily Check-In",
+                    subtitle: "Evening spending reflection",
+                    isOn: Binding(
+                        get: { profile.dailyCheckInNotif },
+                        set: { profile.dailyCheckInNotif = $0; reschedule() }
+                    ),
+                    color: Theme.accent
+                )
+
+                Divider().overlay(Theme.background.opacity(0.3))
+
+                NotifToggleRow(
+                    icon: "newspaper.fill",
+                    title: "Weekly Digest",
+                    subtitle: "Sunday morning spending summary",
+                    isOn: Binding(
+                        get: { profile.weeklyDigestNotif },
+                        set: { profile.weeklyDigestNotif = $0; reschedule() }
+                    ),
+                    color: Theme.teal
+                )
+            }
+        }
+    }
+
+    private var frequencyCapNote: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "info.circle.fill")
+                .font(.subheadline)
+                .foregroundStyle(Theme.textMuted)
+            Text("Push notifications are capped at 3 per day to keep things calm.")
+                .font(.caption)
+                .foregroundStyle(Theme.textMuted)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Theme.elevated.opacity(0.5), in: .rect(cornerRadius: 12))
+    }
+
     private var styleSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 10) {
@@ -538,5 +639,26 @@ private struct NotifTimePicker: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "h a"
         return formatter.string(from: date)
+    }
+}
+
+private struct BudgetThresholdPill: View {
+    let label: String
+    let color: Color
+    @Binding var isOn: Bool
+
+    var body: some View {
+        Button {
+            isOn.toggle()
+        } label: {
+            Text(label)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(isOn ? .white : Theme.textSecondary)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(isOn ? color : Theme.elevated, in: .capsule)
+        }
+        .buttonStyle(PressableButtonStyle())
+        .sensoryFeedback(.selection, trigger: isOn)
     }
 }

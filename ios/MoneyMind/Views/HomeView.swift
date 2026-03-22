@@ -7,20 +7,24 @@ struct HomeView: View {
     @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
     @Query private var budgets: [BudgetCategory]
     @Query private var quizResults: [QuizResult]
+    @Query(filter: #Predicate<InAppNotification> { !$0.isDismissed && !$0.isRead }) private var unreadNotifications: [InAppNotification]
     @State private var showLogWin = false
     @State private var showAddExpense = false
     @State private var showAddIncome = false
     @State private var showCoach = false
     @State private var showUrgeSurf = false
     @State private var showChallengesHub = false
+    @State private var showNotificationCenter = false
     @State private var appeared = false
     @State private var streakBounce = 0
+    @State private var bellBounce = 0
     @State private var characterVM = CharacterViewModel()
     @State private var selectedBudget: BudgetCategory?
     @State private var selectedBudgetSpent: Double = 0
     @State private var showBudgetAnalytics = false
     @State private var isLoading = true
     @State private var refreshRotation: Double = 0
+    @State private var deepLinkDestination: NotificationDeepLink?
     @Environment(\.modelContext) private var modelContext
 
     private var profile: UserProfile? { profiles.first }
@@ -158,6 +162,14 @@ struct HomeView: View {
             .fullScreenCover(isPresented: $showChallengesHub) {
                 ChallengesHubView()
             }
+            .sheet(isPresented: $showNotificationCenter) {
+                NotificationCenterView { link in
+                    handleDeepLink(link)
+                }
+                .presentationDetents([.large])
+                .presentationDragIndicator(.hidden)
+                .presentationBackground(Theme.background)
+            }
             .navigationDestination(for: String.self) { value in
                 if value == "budgetAnalytics" {
                     BudgetAnalyticsView()
@@ -170,6 +182,19 @@ struct HomeView: View {
                     characterVM.syncFromProfile(profile)
                     profile.lastOpenDate = Date()
                     NotificationService.shared.scheduleAllNotifications(profile: profile)
+                    NotificationService.shared.checkBudgetThresholds(
+                        budgets: Array(budgets),
+                        transactions: Array(transactions),
+                        profile: profile,
+                        modelContext: modelContext
+                    )
+                    if profile.currentStreak > 0 {
+                        NotificationService.shared.celebrateStreak(
+                            days: profile.currentStreak,
+                            profile: profile,
+                            modelContext: modelContext
+                        )
+                    }
                 }
                 ensureDefaultBudgets()
                 Task {
@@ -245,6 +270,36 @@ struct HomeView: View {
                 .foregroundStyle(Theme.textPrimary)
 
             Spacer()
+
+            Button {
+                bellBounce += 1
+                showNotificationCenter = true
+            } label: {
+                ZStack(alignment: .topTrailing) {
+                    ZStack {
+                        Circle()
+                            .fill(Theme.card)
+                            .frame(width: 36, height: 36)
+                        Image(systemName: "bell.fill")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(Theme.textSecondary)
+                            .symbolEffect(.bounce, value: bellBounce)
+                    }
+
+                    if !unreadNotifications.isEmpty {
+                        Text("\(min(unreadNotifications.count, 99))")
+                            .font(.system(size: 9, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 1)
+                            .background(Theme.danger, in: .capsule)
+                            .offset(x: 4, y: -4)
+                            .transition(.scale.combined(with: .opacity))
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+            .sensoryFeedback(.impact(weight: .light), trigger: bellBounce)
 
             ZStack {
                 Circle()
@@ -748,6 +803,23 @@ struct HomeView: View {
                 sortOrder: i
             )
             modelContext.insert(budget)
+        }
+    }
+
+    private func handleDeepLink(_ link: NotificationDeepLink) {
+        switch link {
+        case .budgetAnalytics:
+            showBudgetAnalytics = true
+        case .wallet:
+            break
+        case .challenges:
+            showChallengesHub = true
+        case .ghostBudget:
+            break
+        case .eveningReflection:
+            break
+        case .home, .none, .recurringExpenses, .profile:
+            break
         }
     }
 }

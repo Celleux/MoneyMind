@@ -1,74 +1,43 @@
-# Profile Redesign + Monthly Recap Fix + Gamified Journey
+# Add Games Tab + Games Hub Screen
 
-## Overview
-Four changes: fix Monthly Recap navigation, fix Profile title, split Profile from Settings into separate screens, and add a gamified "My Journey" section.
+## What's changing
 
----
-
-## Bug Fixes
-
-### Monthly Recap — Tap & Exit Fix
-- **Tap anywhere to advance**: Replace the invisible left/right split tap zones with a single full-screen tap that advances to the next slide
-- **Swipe right to go back**: Add a swipe-right gesture to go back one slide instead of the left-half tap
-- **Exit button always works**: Move the X close button to the highest layer so it's never blocked by the tap overlay, and make it always dismiss regardless of pause state
-
-### Profile Title
-- Change the navigation title from "Settings" to "Profile"
+Adding a new **Games** tab to the main navigation bar, positioned between Wallet and Tools (center of the tab bar). This tab leads to a **Games Hub** screen that showcases "The Vault" game and teases upcoming games.
 
 ---
 
-## Profile vs Settings Split
+### **Features**
 
-### Profile Screen (main tab view)
-The Profile tab becomes a personal dashboard showing:
-1. **Hero Card** — Name, personality type, level, trait pills, retake quiz, member since
-2. **Stats Row** — Day streak, total saved, wins logged (3 cards)
-3. **My Journey** — Gamified section (see below)
-4. **Share & Celebrate** — Weekly Summary, Monthly Recap, Splurj Wrapped
-5. **Referral** — Invite code + copy button
-6. **Recovery Progress** — Only for gambling/impulse path users (PGSI)
-7. **Premium** — Current plan status + upgrade button
-8. **Settings link** — A card at the bottom that navigates to the new Settings screen
-
-### New Settings Screen (separate page, reached via Profile)
-All configuration/toggles move here:
-- **Appearance** — Theme, personality color, gentle view, simple mode, ADHD mode, high contrast
-- **Notifications** — Bill reminders, budget alerts, daily check-in, weekly digest, advanced settings
-- **Budget Preferences** — Currency, budget method, first day of month
-- **Account** — Export CSV, monthly PDF report, restore purchases
-- **About** — Version, rate, share, privacy, terms, support
-- **Data Management** — Clear all data, delete account (with confirmation dialogs)
+- New "Games" tab with a game controller icon in the main tab bar
+- Games Hub screen showing available games as cards
+- "The Vault" card navigates to the Vault game screen (placeholder for now — built in Phase 2+)
+- Two "Coming Soon" locked game cards: Savings Roulette and Battle Pass
+- Stats bar at top showing pending scratch cards count and collection count
+- Reusable GameCard and StatPill components for consistent styling
 
 ---
 
-## Gamified "My Journey" Section
+### **Design**
 
-A rich, engaging section on the Profile screen with four parts:
-
-### Character + Level Card
-- Large character avatar with a personality-colored glow ring
-- Character name (Seedling, Sprout, Guardian, etc.) and level
-- XP progress bar with a glowing fill and shadow
-- XP counter showing current/next level
-
-### Milestone Timeline
-- Horizontal scrollable cards for key achievements
-- Milestones: First Save, 7-Day Streak, $100 Club, $500 Saver, $1,000 Legend, 30-Day Warrior
-- Completed milestones glow with color; uncompleted ones are dimmed silhouettes
-- Each card shows icon, title, subtitle, and a checkmark when completed
-
-### Badge Collection Preview
-- Shows first 10 badges in a 5×2 grid
-- Earned badges glow with their category color; unearned are faded silhouettes
-- Header shows "X/Y" earned count with a chevron to open the full Badge Gallery
-
-### Share Character Card
-- A button to share the character card (uses existing share functionality)
+- Tab bar goes from 5 tabs to 6: Home / Wallet / **Games** / Tools / Community / Profile
+- Games icon: game controller SF Symbol, emerald tint when active
+- Games Hub uses the dark luxury palette with glass-material cards
+- Game cards have icon circles, badge counts, gradient stroke borders
+- Locked "Coming Soon" cards appear dimmed with a lock icon
+- StatPill components use ultra-thin material capsules with colored icons
+- All text follows the existing 4-level text hierarchy (primary → muted)
 
 ---
 
-## Files Changed
-- **Monthly Recap screen** — Fix tap gesture, exit button layering, add swipe-back
-- **Profile screen** — New title, remove settings sections, add Journey section, add Settings link
-- **New Settings screen** — All settings/toggles/account/about sections moved here
-- **New Milestone Card component** — Reusable card for the milestone timeline
+### **Screens**
+
+- **Games Hub** — scrollable list with stats bar at top, The Vault game card (tappable), and two locked placeholder game cards
+- **Vault Game View** — a minimal placeholder screen for now (will be fully built in Phase 2+)
+
+---
+
+### **Data**
+
+- New SwiftData models: `ScratchCard` and `CollectedCard` (registered in the app's model container) — these are created now so the Games Hub can query them for stats, even though they'll be empty until Phase 2+
+- New `GachaState` model to persist pity counters
+- New `AppTab` case `.games` added to the tab enum

@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 nonisolated enum AppTab: Int, Sendable {
-    case home, wallet, tools, community, profile
+    case home, wallet, games, tools, community, profile
 }
 
 struct ContentView: View {
@@ -21,6 +21,9 @@ struct ContentView: View {
             }
             Tab("Wallet", systemImage: "wallet.bifold", value: .wallet) {
                 WalletView()
+            }
+            Tab("Games", systemImage: "gamecontroller.fill", value: .games) {
+                GamesHubView()
             }
             Tab("Tools", systemImage: "wrench.and.screwdriver", value: .tools) {
                 ToolkitView()

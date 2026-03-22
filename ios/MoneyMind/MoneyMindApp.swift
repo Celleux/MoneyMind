@@ -60,7 +60,10 @@ struct SplurjApp: App {
             MerchantCategoryMapping.self,
             RecurringExpense.self,
             InAppNotification.self,
-            VibeCheckEntry.self
+            VibeCheckEntry.self,
+            ScratchCard.self,
+            CollectedCard.self,
+            GachaState.self
         ])
     }
 }

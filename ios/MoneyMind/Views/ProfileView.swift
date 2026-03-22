@@ -8,6 +8,7 @@ struct ProfileView: View {
     @Query(sort: \PGSIAssessment.date) private var pgsiAssessments: [PGSIAssessment]
     @Query private var referrals: [ReferralCode]
     @Query private var quizResults: [QuizResult]
+    @Query private var badges: [Badge]
     @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
     @Environment(\.modelContext) private var modelContext
     @Environment(PremiumManager.self) private var premiumManager
@@ -18,13 +19,7 @@ struct ProfileView: View {
     @State private var showAnnualWrapped = false
     @State private var showPaywall = false
     @State private var showRetakeQuiz = false
-    @State private var showExportCSVShare = false
-    @State private var showExportPDFShare = false
-    @State private var exportURL: URL?
-    @State private var showClearDataAlert = false
-    @State private var showClearDataConfirm = false
-    @State private var showDeleteAccountAlert = false
-    @State private var showDeleteAccountConfirm = false
+    @State private var showShareCharacter = false
     @State private var sectionAppeared: [Bool] = Array(repeating: false, count: 8)
 
     private var profile: UserProfile? { profiles.first }
@@ -51,6 +46,40 @@ struct ProfileView: View {
         return path == .gambling || path == .impulseShopper
     }
 
+    private var totalSaved: Double {
+        profile?.totalSaved ?? 0
+    }
+
+    private var bestStreak: Int {
+        profile?.longestStreak ?? 0
+    }
+
+    private var totalWins: Int {
+        impulseLogs.filter(\.resisted).count
+    }
+
+    private var xpProgress: Double {
+        let xp = profile?.xpPoints ?? 0
+        let lvl = CharacterStage.level(from: xp)
+        let cur = CharacterStage.xpForLevel(lvl)
+        let nxt = CharacterStage.xpForNextLevel(lvl)
+        let range = nxt - cur
+        guard range > 0 else { return 1.0 }
+        return Double(xp - cur) / Double(range)
+    }
+
+    private var currentXP: Int {
+        profile?.xpPoints ?? 0
+    }
+
+    private var nextLevelXP: Int {
+        CharacterStage.xpForNextLevel(characterLevel)
+    }
+
+    private var earnedBadges: [Badge] {
+        badges.filter(\.isEarned)
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -59,25 +88,34 @@ struct ProfileView: View {
                         .sectionFadeIn(index: 0, appeared: $sectionAppeared)
                     statsGrid
                         .sectionFadeIn(index: 1, appeared: $sectionAppeared)
-                    appearanceSection
-                        .sectionFadeIn(index: 2, appeared: $sectionAppeared)
-                    notificationsSection
-                        .sectionFadeIn(index: 3, appeared: $sectionAppeared)
                     journeySection
+                        .sectionFadeIn(index: 2, appeared: $sectionAppeared)
+                    shareCelebrateSection
+                        .sectionFadeIn(index: 3, appeared: $sectionAppeared)
+                    referralSection
                         .sectionFadeIn(index: 4, appeared: $sectionAppeared)
-                    accountSection
-                        .sectionFadeIn(index: 5, appeared: $sectionAppeared)
-                    aboutSection
+
+                    if showRecoveryContent {
+                        recoverySection
+                            .sectionFadeIn(index: 5, appeared: $sectionAppeared)
+                    }
+
+                    premiumSection
                         .sectionFadeIn(index: 6, appeared: $sectionAppeared)
+                    settingsLink
+                        .sectionFadeIn(index: 7, appeared: $sectionAppeared)
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 80)
             }
             .background(Theme.background.ignoresSafeArea())
-            .navigationTitle("Settings")
+            .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)
-            .onAppear { staggerAppear() }
+            .onAppear {
+                seedBadgesIfNeeded()
+                staggerAppear()
+            }
             .sheet(isPresented: $showPGSI) {
                 PGSIAssessmentView()
                     .presentationDragIndicator(.visible)
@@ -106,39 +144,16 @@ struct ProfileView: View {
             .fullScreenCover(isPresented: $showPaywall) {
                 PaywallView()
             }
-            .sheet(isPresented: $showExportCSVShare) {
-                if let exportURL {
-                    ShareSheet(items: [exportURL])
-                }
-            }
-            .sheet(isPresented: $showExportPDFShare) {
-                if let exportURL {
-                    ShareSheet(items: [exportURL])
-                }
-            }
-            .alert("Clear All Data", isPresented: $showClearDataAlert) {
-                Button("Cancel", role: .cancel) { }
-                Button("Continue", role: .destructive) { showClearDataConfirm = true }
-            } message: {
-                Text("This will permanently delete all your transactions, check-ins, and progress. This cannot be undone.")
-            }
-            .alert("Are you absolutely sure?", isPresented: $showClearDataConfirm) {
-                Button("Cancel", role: .cancel) { }
-                Button("Delete Everything", role: .destructive) { clearAllData() }
-            } message: {
-                Text("All data will be permanently erased. There is no way to recover it.")
-            }
-            .alert("Delete Account", isPresented: $showDeleteAccountAlert) {
-                Button("Cancel", role: .cancel) { }
-                Button("Continue", role: .destructive) { showDeleteAccountConfirm = true }
-            } message: {
-                Text("This will delete your account and all associated data permanently.")
-            }
-            .alert("Final Confirmation", isPresented: $showDeleteAccountConfirm) {
-                Button("Cancel", role: .cancel) { }
-                Button("Delete Account", role: .destructive) { clearAllData() }
-            } message: {
-                Text("This action is irreversible. Your account and all data will be permanently deleted.")
+            .sheet(isPresented: $showShareCharacter) {
+                ShareCharacterCardView(
+                    stage: characterStage,
+                    level: characterLevel,
+                    totalSaved: totalSaved,
+                    streak: profile?.currentStreak ?? 0,
+                    dayCount: dayCount
+                )
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
             }
         }
     }
@@ -225,406 +240,238 @@ struct ProfileView: View {
         }
     }
 
-    // MARK: - Appearance
-
-    private var appearanceSection: some View {
-        SettingsSection(title: "Appearance", icon: "paintbrush.fill", iconColor: Theme.accent) {
-            if let profile {
-                HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "moon.fill", color: Theme.accent)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Theme")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(Theme.textPrimary)
-                        Text("Dark mode only")
-                            .font(.caption)
-                            .foregroundStyle(Theme.textSecondary)
-                    }
-                    Spacer()
-                    Text("DARK")
-                        .font(.system(size: 10, weight: .heavy, design: .rounded))
-                        .foregroundStyle(Theme.accent)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Theme.accent.opacity(0.12), in: .capsule)
-                }
-
-                SettingsDivider()
-
-                HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "paintpalette.fill", color: Theme.accent)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Personality Color")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(Theme.textPrimary)
-                        Text(personality.rawValue)
-                            .font(.caption)
-                            .foregroundStyle(Theme.textSecondary)
-                    }
-                    Spacer()
-                    Circle()
-                        .fill(personality.color)
-                        .frame(width: 24, height: 24)
-                        .overlay(Circle().strokeBorder(.white.opacity(0.2), lineWidth: 1))
-                }
-
-                SettingsDivider()
-
-                PreferenceToggle(
-                    icon: "eye.slash.fill",
-                    title: "Gentle View Mode",
-                    subtitle: "Hide exact dollar amounts",
-                    isOn: Binding(
-                        get: { profile.gentleViewMode },
-                        set: { profile.gentleViewMode = $0 }
-                    ),
-                    color: Theme.accent
-                )
-
-                SettingsDivider()
-
-                PreferenceToggle(
-                    icon: "figure.stand",
-                    title: "Simple Mode",
-                    subtitle: "Hide character, show minimal stats",
-                    isOn: Binding(
-                        get: { profile.simpleMode },
-                        set: { profile.simpleMode = $0 }
-                    ),
-                    color: Theme.accent
-                )
-
-                SettingsDivider()
-
-                PreferenceToggle(
-                    icon: "circle.hexagongrid.fill",
-                    title: "ADHD Mode",
-                    subtitle: "Simplified interactions, fewer choices",
-                    isOn: Binding(
-                        get: { profile.adhdMode },
-                        set: { profile.adhdMode = $0 }
-                    ),
-                    color: Theme.accent
-                )
-
-                SettingsDivider()
-
-                PreferenceToggle(
-                    icon: "sun.max.fill",
-                    title: "High Contrast",
-                    subtitle: "Increase text and icon contrast",
-                    isOn: Binding(
-                        get: { profile.highContrastMode },
-                        set: { profile.highContrastMode = $0 }
-                    ),
-                    color: Theme.accent
-                )
-            }
-        }
-    }
-
-    // MARK: - Notifications
-
-    private var notificationsSection: some View {
-        SettingsSection(title: "Notifications", icon: "bell.badge.fill", iconColor: Theme.accent) {
-            if let profile {
-                PreferenceToggle(
-                    icon: "creditcard.fill",
-                    title: "Bill Reminders",
-                    subtitle: "Get reminded before bills are due",
-                    isOn: Binding(
-                        get: { profile.billRemindersEnabled },
-                        set: { profile.billRemindersEnabled = $0 }
-                    ),
-                    color: Theme.accent
-                )
-
-                SettingsDivider()
-
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack(spacing: 12) {
-                        Image(systemName: "chart.bar.fill")
-                            .font(.subheadline)
-                            .foregroundStyle(Theme.accent)
-                            .frame(width: 28)
-                        Text("Budget Alerts")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(Theme.textPrimary)
-                    }
-
-                    HStack(spacing: 12) {
-                        BudgetAlertPill(
-                            label: "50%",
-                            isOn: Binding(
-                                get: { profile.budgetAlert50 },
-                                set: { profile.budgetAlert50 = $0 }
-                            )
-                        )
-                        BudgetAlertPill(
-                            label: "80%",
-                            isOn: Binding(
-                                get: { profile.budgetAlert80 },
-                                set: { profile.budgetAlert80 = $0 }
-                            )
-                        )
-                        BudgetAlertPill(
-                            label: "100%",
-                            isOn: Binding(
-                                get: { profile.budgetAlert100 },
-                                set: { profile.budgetAlert100 = $0 }
-                            )
-                        )
-                    }
-                    .padding(.leading, 40)
-                }
-
-                SettingsDivider()
-
-                PreferenceToggle(
-                    icon: "checkmark.circle.fill",
-                    title: "Daily Check-In",
-                    subtitle: "Morning and evening reminders",
-                    isOn: Binding(
-                        get: { profile.dailyCheckInNotif },
-                        set: { profile.dailyCheckInNotif = $0 }
-                    ),
-                    color: Theme.accent
-                )
-
-                SettingsDivider()
-
-                PreferenceToggle(
-                    icon: "newspaper.fill",
-                    title: "Weekly Digest",
-                    subtitle: "Summary of your weekly spending",
-                    isOn: Binding(
-                        get: { profile.weeklyDigestNotif },
-                        set: { profile.weeklyDigestNotif = $0 }
-                    ),
-                    color: Theme.accent
-                )
-
-                SettingsDivider()
-
-                NavigationLink(destination: NotificationSettingsView()) {
-                    HStack(spacing: 14) {
-                        SettingsIconBadge(icon: "slider.horizontal.3", color: Theme.textSecondary)
-                        Text("Advanced Settings")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(Theme.textPrimary)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(Theme.textSecondary.opacity(0.4))
-                    }
-                }
-            }
-        }
-    }
-
-    // MARK: - My Journey
+    // MARK: - My Journey (Gamified)
 
     private var journeySection: some View {
-        SettingsSection(title: "My Journey", icon: "leaf.fill", iconColor: Theme.accent) {
-            NavigationLink(destination: CharacterDetailView()) {
-                HStack(spacing: 14) {
-                    CharacterView(stage: characterStage, reaction: .idle, level: characterLevel)
-                        .scaleEffect(0.35)
-                        .frame(width: 36, height: 36)
-                        .clipShape(.rect(cornerRadius: 8))
+        VStack(alignment: .leading, spacing: 20) {
+            HStack(spacing: 10) {
+                Image(systemName: "leaf.fill")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.accent)
+                Text("My Journey")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Theme.textPrimary)
+            }
 
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("My Character")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(Theme.textPrimary)
-                        Text("\(characterStage.name) · Level \(characterLevel)")
-                            .font(.caption)
-                            .foregroundStyle(Theme.textSecondary)
+            characterLevelCard
+            milestoneTimeline
+            badgeCollectionPreview
+            shareCharacterButton
+        }
+    }
+
+    private var characterLevelCard: some View {
+        HStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(personality.color.opacity(0.15))
+                    .frame(width: 80, height: 80)
+                    .shadow(color: personality.color.opacity(0.3), radius: 12)
+
+                Image(systemName: characterStage.bodyIcon)
+                    .font(.system(size: 32))
+                    .foregroundStyle(characterStage.primaryColor)
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(characterStage.name)
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+
+                Text("Level \(characterLevel) \(personality.rawValue)")
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .foregroundStyle(personality.color)
+
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Theme.elevated)
+                            .frame(height: 8)
+
+                        Capsule()
+                            .fill(personality.color)
+                            .frame(width: geo.size.width * xpProgress, height: 8)
+                            .shadow(color: personality.color.opacity(0.5), radius: 4)
                     }
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Theme.textSecondary.opacity(0.4))
                 }
+                .frame(height: 8)
+
+                Text("\(currentXP)/\(nextLevelXP) XP")
+                    .font(.system(size: 11, design: .rounded))
+                    .foregroundStyle(Theme.textMuted)
             }
+        }
+        .padding(20)
+        .glassCard()
+    }
 
-            SettingsDivider()
+    private var milestoneTimeline: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Milestones")
+                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
 
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    MilestoneCard(
+                        icon: "star.fill",
+                        title: "First Save",
+                        subtitle: "Logged your first win",
+                        isCompleted: totalWins >= 1,
+                        accentColor: Theme.accent
+                    )
+                    MilestoneCard(
+                        icon: "flame.fill",
+                        title: "7-Day Streak",
+                        subtitle: "Saved 7 days in a row",
+                        isCompleted: bestStreak >= 7,
+                        accentColor: .orange
+                    )
+                    MilestoneCard(
+                        icon: "dollarsign.circle.fill",
+                        title: "$100 Club",
+                        subtitle: "Total savings hit $100",
+                        isCompleted: totalSaved >= 100,
+                        accentColor: Theme.accent
+                    )
+                    MilestoneCard(
+                        icon: "trophy.fill",
+                        title: "$500 Saver",
+                        subtitle: "Total savings hit $500",
+                        isCompleted: totalSaved >= 500,
+                        accentColor: Theme.gold
+                    )
+                    MilestoneCard(
+                        icon: "crown.fill",
+                        title: "$1,000 Legend",
+                        subtitle: "Total savings hit $1,000",
+                        isCompleted: totalSaved >= 1000,
+                        accentColor: Theme.gold
+                    )
+                    MilestoneCard(
+                        icon: "bolt.fill",
+                        title: "30-Day Warrior",
+                        subtitle: "30-day streak achieved",
+                        isCompleted: bestStreak >= 30,
+                        accentColor: .purple
+                    )
+                }
+                .padding(.horizontal, 4)
+            }
+            .contentMargins(.horizontal, 0)
+        }
+    }
+
+    private var badgeCollectionPreview: some View {
+        VStack(alignment: .leading, spacing: 10) {
             NavigationLink(destination: BadgeGalleryView()) {
-                HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "medal.fill", color: Theme.accent)
+                HStack {
                     Text("Badges")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(Theme.textPrimary)
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
                     Spacer()
+                    Text("\(earnedBadges.count)/\(badges.count)")
+                        .font(.system(size: 13, design: .rounded))
+                        .foregroundStyle(Theme.textMuted)
                     Image(systemName: "chevron.right")
                         .font(.caption.weight(.semibold))
-                        .foregroundStyle(Theme.textSecondary.opacity(0.4))
+                        .foregroundStyle(Theme.textMuted)
                 }
             }
 
-            SettingsDivider()
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 5), spacing: 12) {
+                ForEach(Array(badges.prefix(10)), id: \.name) { badge in
+                    ZStack {
+                        Circle()
+                            .fill(badge.isEarned ? badgeColor(for: badge).opacity(0.15) : Theme.elevated)
+                            .frame(width: 48, height: 48)
+                            .shadow(color: badge.isEarned ? badgeColor(for: badge).opacity(0.3) : .clear, radius: 6)
 
+                        Image(systemName: badge.iconName)
+                            .font(.system(size: 18))
+                            .foregroundStyle(badge.isEarned ? badgeColor(for: badge) : Theme.textMuted.opacity(0.3))
+                    }
+                }
+            }
+        }
+        .padding(20)
+        .glassCard()
+    }
+
+    private var shareCharacterButton: some View {
+        Button {
+            showShareCharacter = true
+        } label: {
+            HStack {
+                Image(systemName: "square.and.arrow.up")
+                    .foregroundStyle(Theme.accent)
+                Text("Share My Character Card")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(.white)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(Theme.textMuted)
+            }
+            .padding(16)
+            .background(Theme.elevated, in: .rect(cornerRadius: 12))
+        }
+        .sensoryFeedback(.impact(weight: .light), trigger: showShareCharacter)
+    }
+
+    // MARK: - Share & Celebrate
+
+    private var shareCelebrateSection: some View {
+        SettingsSectionCard(title: "Share & Celebrate", icon: "sparkles", iconColor: Theme.accent) {
             SettingsNavRow(icon: "calendar", title: "Weekly Summary", subtitle: "Share your 7-day highlights", color: Theme.accent) {
                 showWeeklySummary = true
             }
 
-            SettingsDivider()
+            SettingsDividerLine()
 
             SettingsNavRow(icon: "sparkles", title: "Monthly Recap", subtitle: "Your month in 6 story cards", color: Theme.accent, badge: "NEW") {
                 showMoneyWrapped = true
             }
 
-            SettingsDivider()
+            SettingsDividerLine()
 
             SettingsNavRow(icon: "gift.fill", title: "Splurj Wrapped", subtitle: "Your all-time journey in cards", color: Theme.accent) {
                 showAnnualWrapped = true
             }
+        }
+    }
 
-            SettingsDivider()
+    // MARK: - Referral
 
-            ReferralInlineView(
+    private var referralSection: some View {
+        SettingsSectionCard(title: "Referral", icon: "person.badge.plus", iconColor: Theme.accent) {
+            ProfileReferralInlineView(
                 referralCode: profile?.referralCode ?? "SP-XXXXX",
                 referralCount: referrals.count
             )
-
-            if showRecoveryContent {
-                SettingsDivider()
-
-                SettingsNavRow(icon: "chart.line.downtrend.xyaxis", title: "Recovery Progress", subtitle: "PGSI assessments & trends", color: Theme.accent) {
-                    showPGSI = true
-                }
-
-                if !pgsiAssessments.isEmpty {
-                    PGSITrendChart(assessments: pgsiAssessments)
-                        .padding(.top, 8)
-                }
-
-                pgsiPromptCard
-            }
         }
     }
 
-    // MARK: - Account
+    // MARK: - Recovery Progress
 
-    private var accountSection: some View {
-        SettingsSection(title: "Account", icon: "gearshape.fill", iconColor: Theme.accent) {
-            if let profile {
-                HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "dollarsign.circle.fill", color: Theme.accent)
-                    Text("Default Currency")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(Theme.textPrimary)
-                    Spacer()
-                    Picker("", selection: Binding(
-                        get: { profile.defaultCurrency },
-                        set: { profile.defaultCurrency = $0 }
-                    )) {
-                        Text("USD").tag("USD")
-                        Text("EUR").tag("EUR")
-                        Text("GBP").tag("GBP")
-                        Text("CAD").tag("CAD")
-                        Text("AUD").tag("AUD")
-                        Text("JPY").tag("JPY")
-                        Text("INR").tag("INR")
-                        Text("THB").tag("THB")
-                    }
-                    .pickerStyle(.menu)
-                    .tint(Theme.accent)
-                }
-
-                SettingsDivider()
-
-                HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "list.bullet.rectangle.fill", color: Theme.accent)
-                    Text("Budget Method")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(Theme.textPrimary)
-                    Spacer()
-                    Picker("", selection: Binding(
-                        get: { profile.defaultBudgetMethod },
-                        set: { profile.defaultBudgetMethod = $0 }
-                    )) {
-                        Text("50/30/20").tag("50/30/20")
-                        Text("Zero-Based").tag("Zero-Based")
-                        Text("Envelope").tag("Envelope")
-                    }
-                    .pickerStyle(.menu)
-                    .tint(Theme.accent)
-                }
-
-                SettingsDivider()
-
-                HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "calendar", color: Theme.accent)
-                    Text("First Day of Month")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(Theme.textPrimary)
-                    Spacer()
-                    Picker("", selection: Binding(
-                        get: { profile.firstDayOfMonth },
-                        set: { profile.firstDayOfMonth = $0 }
-                    )) {
-                        ForEach(1...28, id: \.self) { day in
-                            Text("\(day)").tag(day)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .tint(Theme.accent)
-                }
+    private var recoverySection: some View {
+        SettingsSectionCard(title: "Recovery Progress", icon: "chart.line.downtrend.xyaxis", iconColor: Theme.accent) {
+            SettingsNavRow(icon: "chart.line.downtrend.xyaxis", title: "Recovery Progress", subtitle: "PGSI assessments & trends", color: Theme.accent) {
+                showPGSI = true
             }
 
-            SettingsDivider()
-
-            SettingsNavRow(icon: "tablecells.fill", title: "Export Transactions", subtitle: "Download as CSV file", color: Theme.accent) {
-                if let url = ExportService.exportCSV(transactions: Array(transactions)) {
-                    exportURL = url
-                    showExportCSVShare = true
-                }
+            if !pgsiAssessments.isEmpty {
+                PGSITrendChart(assessments: pgsiAssessments)
+                    .padding(.top, 8)
             }
 
-            SettingsDivider()
-
-            SettingsNavRow(icon: "doc.richtext.fill", title: "Monthly Report", subtitle: "Generate PDF report", color: Theme.accent) {
-                if let url = ExportService.exportPDF(transactions: Array(transactions), profile: profile) {
-                    exportURL = url
-                    showExportPDFShare = true
-                }
-            }
-
-            SettingsDivider()
-
-            premiumInlineSection
-
-            SettingsDivider()
-
-            dataManagementInline
+            pgsiPromptCard
         }
     }
 
-    // MARK: - Premium (inline)
+    // MARK: - Premium
 
-    private var premiumStatusText: String {
-        if premiumManager.isPremium {
-            return "Premium Active"
-        } else if premiumManager.isInTrial {
-            let days = premiumManager.trialDaysRemaining
-            return "3-Day Trial \u{2022} \(days) day\(days == 1 ? "" : "s") left"
-        } else {
-            return "Free Plan"
-        }
-    }
-
-    private var premiumStatusColor: Color {
-        if premiumManager.isPremium || premiumManager.isInTrial {
-            return Theme.accent
-        } else {
-            return Theme.textSecondary
-        }
-    }
-
-    private var premiumInlineSection: some View {
-        VStack(spacing: 14) {
+    private var premiumSection: some View {
+        SettingsSectionCard(title: "Premium", icon: "crown.fill", iconColor: Theme.gold) {
             HStack(spacing: 14) {
                 SettingsIconBadge(icon: "crown.fill", color: Theme.gold)
                 VStack(alignment: .leading, spacing: 2) {
@@ -672,120 +519,49 @@ struct ProfileView: View {
                 }
                 .buttonStyle(PressableButtonStyle())
             }
-
-            Button {
-                premiumManager.restore()
-            } label: {
-                HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "arrow.counterclockwise", color: Theme.textSecondary)
-                    Text("Restore Purchases")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(Theme.textPrimary)
-                    Spacer()
-                }
-            }
         }
     }
 
-    // MARK: - Data Management (inline)
+    // MARK: - Settings Link
 
-    private var dataManagementInline: some View {
-        VStack(spacing: 14) {
-            Button {
-                showClearDataAlert = true
-            } label: {
-                HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "trash.fill", color: Theme.textSecondary)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Clear All Data")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(Theme.textSecondary)
-                        Text("Permanently remove all app data")
-                            .font(.caption)
-                            .foregroundStyle(Theme.textMuted)
-                    }
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Theme.textSecondary.opacity(0.4))
-                }
-            }
-            .sensoryFeedback(.warning, trigger: showClearDataAlert)
-
-            SettingsDivider()
-
-            Button {
-                showDeleteAccountAlert = true
-            } label: {
-                HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "person.crop.circle.badge.xmark", color: Theme.textSecondary)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Delete Account")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(Theme.textSecondary)
-                        Text("Delete your account and all data forever")
-                            .font(.caption)
-                            .foregroundStyle(Theme.textMuted)
-                    }
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Theme.textSecondary.opacity(0.4))
-                }
-            }
-            .sensoryFeedback(.warning, trigger: showDeleteAccountAlert)
-        }
-    }
-
-    // MARK: - About
-
-    private var aboutSection: some View {
-        SettingsSection(title: "About", icon: "info.circle.fill", iconColor: Theme.textSecondary) {
-            HStack(spacing: 14) {
-                SettingsIconBadge(icon: "number", color: Theme.textMuted)
-                Text("Version")
+    private var settingsLink: some View {
+        NavigationLink {
+            SettingsView()
+        } label: {
+            HStack {
+                Image(systemName: "gearshape")
+                    .foregroundStyle(Theme.textSecondary)
+                Text("Settings")
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
-                Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
-                    .font(.subheadline)
-                    .foregroundStyle(Theme.textSecondary)
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Theme.textMuted)
             }
+            .padding(16)
+            .background(Theme.elevated, in: .rect(cornerRadius: 12))
+        }
+    }
 
-            SettingsDivider()
+    // MARK: - Premium Helpers
 
-            SettingsNavRow(icon: "star.fill", title: "Rate on App Store", color: Theme.accent) {
-                if let url = URL(string: "https://apps.apple.com/app/splurj") {
-                    UIApplication.shared.open(url)
-                }
-            }
-            SettingsDivider()
-            SettingsNavRow(icon: "square.and.arrow.up", title: "Share Splurj", color: Theme.accent) {
-                let url = URL(string: "https://splurj.app")!
-                let av = UIActivityViewController(activityItems: ["Check out Splurj — Don't splurge. Splurj.", url], applicationActivities: nil)
-                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let root = scene.windows.first?.rootViewController {
-                    root.present(av, animated: true)
-                }
-            }
-            SettingsDivider()
-            SettingsNavRow(icon: "lock.shield.fill", title: "Privacy Policy", color: Theme.accent) {
-                if let url = URL(string: "https://splurj.app/privacy") {
-                    UIApplication.shared.open(url)
-                }
-            }
-            SettingsDivider()
-            SettingsNavRow(icon: "doc.text.fill", title: "Terms of Service", color: Theme.textSecondary) {
-                if let url = URL(string: "https://splurj.app/terms") {
-                    UIApplication.shared.open(url)
-                }
-            }
-            SettingsDivider()
-            SettingsNavRow(icon: "envelope.fill", title: "Contact Support", color: Theme.accent) {
-                if let url = URL(string: "mailto:support@splurj.app") {
-                    UIApplication.shared.open(url)
-                }
-            }
+    private var premiumStatusText: String {
+        if premiumManager.isPremium {
+            return "Premium Active"
+        } else if premiumManager.isInTrial {
+            let days = premiumManager.trialDaysRemaining
+            return "3-Day Trial \u{2022} \(days) day\(days == 1 ? "" : "s") left"
+        } else {
+            return "Free Plan"
+        }
+    }
+
+    private var premiumStatusColor: Color {
+        if premiumManager.isPremium || premiumManager.isInTrial {
+            return Theme.accent
+        } else {
+            return Theme.textSecondary
         }
     }
 
@@ -830,6 +606,25 @@ struct ProfileView: View {
                 .buttonStyle(PressableButtonStyle())
                 .padding(.top, 8)
             }
+        }
+    }
+
+    // MARK: - Badge Helpers
+
+    private func badgeColor(for badge: Badge) -> Color {
+        switch badge.category {
+        case "Money": Theme.accentGreen
+        case "Streak": .orange
+        case "Skill": Theme.teal
+        default: Theme.textSecondary
+        }
+    }
+
+    private func seedBadgesIfNeeded() {
+        guard badges.isEmpty else { return }
+        for info in BadgeDefinition.all {
+            let badge = Badge(name: info.name, category: info.category, badgeDescription: info.description, iconName: info.icon)
+            modelContext.insert(badge)
         }
     }
 
@@ -969,27 +764,11 @@ struct ProfileView: View {
             sectionAppeared[i] = true
         }
     }
-
-    private func clearAllData() {
-        do {
-            try modelContext.delete(model: Transaction.self)
-            try modelContext.delete(model: ImpulseLog.self)
-            try modelContext.delete(model: DailyCheckIn.self)
-            try modelContext.delete(model: Badge.self)
-            if let profile {
-                profile.totalSaved = 0
-                profile.currentStreak = 0
-                profile.longestStreak = 0
-                profile.xpPoints = 0
-                profile.totalConsciousChoices = 0
-            }
-        } catch { }
-    }
 }
 
 // MARK: - Referral Inline View
 
-private struct ReferralInlineView: View {
+private struct ProfileReferralInlineView: View {
     let referralCode: String
     let referralCount: Int
     @State private var copied = false
@@ -1035,113 +814,7 @@ private struct ReferralInlineView: View {
     }
 }
 
-// MARK: - Reusable Settings Components
-
-private struct SettingsSection<Content: View>: View {
-    let title: String
-    let icon: String
-    let iconColor: Color
-    @ViewBuilder let content: () -> Content
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(spacing: 10) {
-                Image(systemName: icon)
-                    .font(.subheadline)
-                    .foregroundStyle(iconColor)
-                Text(title)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Theme.textPrimary)
-            }
-            .padding(.bottom, 2)
-
-            content()
-        }
-        .padding(16)
-        .glassCard()
-    }
-}
-
-private struct SettingsIconBadge: View {
-    let icon: String
-    let color: Color
-
-    var body: some View {
-        Image(systemName: icon)
-            .font(.subheadline)
-            .foregroundStyle(.white)
-            .frame(width: 30, height: 30)
-            .background(color, in: .rect(cornerRadius: 7))
-    }
-}
-
-private struct SettingsDivider: View {
-    var body: some View {
-        Divider()
-            .overlay(Theme.background.opacity(0.3))
-    }
-}
-
-private struct SettingsNavRow: View {
-    let icon: String
-    let title: String
-    var subtitle: String? = nil
-    let color: Color
-    var badge: String? = nil
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 14) {
-                SettingsIconBadge(icon: icon, color: color)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(Theme.textPrimary)
-                    if let subtitle {
-                        Text(subtitle)
-                            .font(.caption)
-                            .foregroundStyle(Theme.textSecondary)
-                    }
-                }
-                Spacer()
-                if let badge {
-                    Text(badge)
-                        .font(.system(size: 9, weight: .heavy))
-                        .foregroundStyle(color)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 3)
-                        .background(color.opacity(0.12), in: .capsule)
-                } else {
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Theme.textSecondary.opacity(0.4))
-                }
-            }
-        }
-        .buttonStyle(PressableButtonStyle())
-    }
-}
-
-private struct BudgetAlertPill: View {
-    let label: String
-    @Binding var isOn: Bool
-
-    var body: some View {
-        Button {
-            isOn.toggle()
-        } label: {
-            Text(label)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(isOn ? .white : Theme.textSecondary)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(isOn ? Theme.accent : Theme.elevated, in: .capsule)
-        }
-        .buttonStyle(PressableButtonStyle())
-        .sensoryFeedback(.selection, trigger: isOn)
-    }
-}
+// MARK: - Profile Stat Card
 
 private struct ProfileStatCard: View {
     let value: String
@@ -1168,36 +841,6 @@ private struct ProfileStatCard: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
         .glassCard(cornerRadius: 14)
-    }
-}
-
-private struct PreferenceToggle: View {
-    let icon: String
-    let title: String
-    let subtitle: String
-    @Binding var isOn: Bool
-    let color: Color
-
-    var body: some View {
-        Toggle(isOn: $isOn) {
-            HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.subheadline)
-                    .foregroundStyle(color)
-                    .frame(width: 28)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(Theme.textPrimary)
-                    Text(subtitle)
-                        .font(.caption)
-                        .foregroundStyle(Theme.textSecondary)
-                }
-            }
-        }
-        .tint(Theme.accent)
-        .sensoryFeedback(.selection, trigger: isOn)
     }
 }
 

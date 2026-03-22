@@ -42,20 +42,24 @@ struct MoneyWrappedView: View {
 
                     Spacer()
                 }
+                .zIndex(100)
 
-                HStack(spacing: 0) {
-                    Color.clear
-                        .contentShape(.rect)
-                        .onTapGesture { goBack() }
-                    Color.clear
-                        .contentShape(.rect)
-                        .onTapGesture { goForward() }
-                }
-                .simultaneousGesture(
-                    LongPressGesture(minimumDuration: 0.2)
-                        .onChanged { _ in isPaused = true }
-                        .onEnded { _ in isPaused = false }
-                )
+                Color.clear
+                    .contentShape(.rect)
+                    .onTapGesture { goForward() }
+                    .simultaneousGesture(
+                        LongPressGesture(minimumDuration: 0.2)
+                            .onChanged { _ in isPaused = true }
+                            .onEnded { _ in isPaused = false }
+                    )
+                    .gesture(
+                        DragGesture(minimumDistance: 50)
+                            .onEnded { value in
+                                if value.translation.width > 50 {
+                                    goBack()
+                                }
+                            }
+                    )
             }
         }
         .ignoresSafeArea()

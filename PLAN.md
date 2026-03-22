@@ -1,71 +1,74 @@
-# Splurj: 7 Bug Fixes + UX Improvements
+# Profile Redesign + Monthly Recap Fix + Gamified Journey
 
-## Bug 1: Currency Selection Not Applying Globally
-**Problem:** Users pick a currency during onboarding, but all amounts still show "$" and "USD" everywhere.
-
-**Fix:**
-- Replace all hardcoded "$" symbols and "USD" currency codes across ~30 files with the user's chosen currency
-- Update the shared amount display component to use the selected currency
-- Files affected: Wallet, Home, Budget Analytics, Add Expense, Recurring Expenses, Ghost Budget, Milestone Share, Weekly Summary, Character View, Evening Reflection, Money Wrapped, Spending Timeline, Quick Transaction, Add Budget, Add Income, Budget Detail, Spending Autopsy, Log Win, and more
+## Overview
+Four changes: fix Monthly Recap navigation, fix Profile title, split Profile from Settings into separate screens, and add a gamified "My Journey" section.
 
 ---
 
-## Bug 2: Impulse Cost Calculator Shows Same Amounts
-**Problem:** "Without Splurj" and "With Splurj" columns show the same number when a user has only resisted impulses (never "gave in").
+## Bug Fixes
 
-**Fix:**
-- "Without Splurj" will show the total of ALL impulse urges (what you would have spent without the app)
-- "With Splurj" will show only what you actually spent (gave in amounts)
-- Add a "You saved" indicator showing the difference between the two
+### Monthly Recap — Tap & Exit Fix
+- **Tap anywhere to advance**: Replace the invisible left/right split tap zones with a single full-screen tap that advances to the next slide
+- **Swipe right to go back**: Add a swipe-right gesture to go back one slide instead of the left-half tap
+- **Exit button always works**: Move the X close button to the highest layer so it's never blocked by the tap overlay, and make it always dismiss regardless of pause state
 
----
-
-## Bug 3: 1-Year Projection is Static
-**Problem:** The projection uses a hardcoded daily target from onboarding instead of actual savings data.
-
-**Fix:**
-- Calculate the real average daily savings based on actual user behavior
-- Show how many days of data the average is based on
-- Add an "if you save more" optimistic scenario line
-- Numbers animate smoothly when values change
+### Profile Title
+- Change the navigation title from "Settings" to "Profile"
 
 ---
 
-## Bug 4: Recurring Expenses & Ghost Budget Buttons Not Working
-**Problem:** Tapping "Recurring Expenses" or "Ghost Budget" from the Budget Analytics screen does nothing due to nested navigation issues.
+## Profile vs Settings Split
 
-**Fix:**
-- Change these from navigation links to sheet presentations
-- Each opens in its own full sheet with a close button
-- Works reliably regardless of how Budget Analytics was opened
+### Profile Screen (main tab view)
+The Profile tab becomes a personal dashboard showing:
+1. **Hero Card** — Name, personality type, level, trait pills, retake quiz, member since
+2. **Stats Row** — Day streak, total saved, wins logged (3 cards)
+3. **My Journey** — Gamified section (see below)
+4. **Share & Celebrate** — Weekly Summary, Monthly Recap, Splurj Wrapped
+5. **Referral** — Invite code + copy button
+6. **Recovery Progress** — Only for gambling/impulse path users (PGSI)
+7. **Premium** — Current plan status + upgrade button
+8. **Settings link** — A card at the bottom that navigates to the new Settings screen
 
----
-
-## Bug 5: Expenses Added on Home Not Showing in Budget
-**Problem:** Expenses added from Home don't appear in Budget because category names don't match exactly between transactions and budgets.
-
-**Fix:**
-- Ensure budget filtering matches transaction categories correctly (case-insensitive comparison)
-- Both the Home screen and Budget Analytics will use the same matching logic
-
----
-
-## Bug 6: No Back/Exit Button on Tools Sub-Pages
-**Problem:** Opening any tool from the Tools tab shows a full-screen view with no way to go back — users get stuck.
-
-**Fix:**
-- Every tool opened from the Tools tab will get an X (close) button in the top-left corner
-- Each tool view is wrapped in its own navigation container so internal links also work
-- Consistent close button styling across all 13 tool views
+### New Settings Screen (separate page, reached via Profile)
+All configuration/toggles move here:
+- **Appearance** — Theme, personality color, gentle view, simple mode, ADHD mode, high contrast
+- **Notifications** — Bill reminders, budget alerts, daily check-in, weekly digest, advanced settings
+- **Budget Preferences** — Currency, budget method, first day of month
+- **Account** — Export CSV, monthly PDF report, restore purchases
+- **About** — Version, rate, share, privacy, terms, support
+- **Data Management** — Clear all data, delete account (with confirmation dialogs)
 
 ---
 
-## Bug 7: Wallet — Add Savings Trend Graph + Future Prediction
-**Problem:** The Wallet only shows a basic weekly bar chart with no trend or projection visualization.
+## Gamified "My Journey" Section
 
-**Fix:**
-- Add a new "Savings Trend" line chart showing the last 6 months of actual savings
-- Include a dashed projection line for the next 3 months based on current trends
-- Gradient fill under the actual savings line for visual appeal
-- Legend showing "Actual" vs "Projected"
-- Placed above the existing weekly chart for better visual hierarchy
+A rich, engaging section on the Profile screen with four parts:
+
+### Character + Level Card
+- Large character avatar with a personality-colored glow ring
+- Character name (Seedling, Sprout, Guardian, etc.) and level
+- XP progress bar with a glowing fill and shadow
+- XP counter showing current/next level
+
+### Milestone Timeline
+- Horizontal scrollable cards for key achievements
+- Milestones: First Save, 7-Day Streak, $100 Club, $500 Saver, $1,000 Legend, 30-Day Warrior
+- Completed milestones glow with color; uncompleted ones are dimmed silhouettes
+- Each card shows icon, title, subtitle, and a checkmark when completed
+
+### Badge Collection Preview
+- Shows first 10 badges in a 5×2 grid
+- Earned badges glow with their category color; unearned are faded silhouettes
+- Header shows "X/Y" earned count with a chevron to open the full Badge Gallery
+
+### Share Character Card
+- A button to share the character card (uses existing share functionality)
+
+---
+
+## Files Changed
+- **Monthly Recap screen** — Fix tap gesture, exit button layering, add swipe-back
+- **Profile screen** — New title, remove settings sections, add Journey section, add Settings link
+- **New Settings screen** — All settings/toggles/account/about sections moved here
+- **New Milestone Card component** — Reusable card for the milestone timeline

@@ -63,7 +63,10 @@ struct SplurjApp: App {
             VibeCheckEntry.self,
             ScratchCard.self,
             CollectedCard.self,
-            GachaState.self
+            GachaState.self,
+            QuestProgress.self,
+            PlayerProfile.self,
+            DailyQuestSlot.self
         ])
     }
 }

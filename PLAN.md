@@ -1,25 +1,33 @@
-# Connect Scratch Card Earning to Impulse Resistance + Home Screen Prompt
+# Quest System Phase 1A — Quest Data Models
 
-**What's already done (from previous phases):**
-- Confetti celebration effects ✅
-- Pity info sheet with tracker ✅
-- The full Vault game, scratch cards, collection, gacha engine ✅
+**What this does**
 
-**What this plan adds:**
+Adds the foundational data models for the Quest System — the enums, structs, and database models that everything else will be built on.
 
-### Features
-- Every time you log a resisted impulse ("Log a Win"), you automatically earn a scratch card with a hidden gacha pull inside
-- A maximum of 5 unscratched cards can be held at once — if you already have 5, you'll see a message to go scratch them first
-- The Home screen shows a small card prompting you to scratch pending cards when you have them (tapping takes you to The Vault)
-- A small toast-style notification appears after earning a scratch card, with a special glowing version for rare pulls
+**New files created:**
 
-### Design
-- The "scratch card earned" toast slides in from the top with the app's emerald accent color
-- If the hidden card is Epic or Legendary, the toast shows "You earned a GLOWING scratch card" with a shimmer effect
-- The Home screen prompt is a compact card with the sparkles icon, showing "X card(s) to scratch" with a chevron to navigate to The Vault
-- Sits between the greeting header and the quick actions grid on the Home screen
+- **QuestCategory, QuestArchetype, QuestDifficulty, VerificationType, QuestCadence enums** — Define quest types, difficulty tiers, how quests are verified, and how often they refresh. Each has colors, icons, and multipliers matching the app's dark luxury palette.
 
-### Screens affected
-- **Wallet Log Win sheet** — after saving a win, a scratch card is created behind the scenes
-- **Home Log Win sheet** — same scratch card creation logic added here
-- **Home screen** — new pending scratch cards prompt card added to the dashboard
+- **QuestZone enum** — The 5 zones spanning 50 levels (The Awakening → The Legacy), each with a level range, boss name, boss HP, theme colors, and description.
+
+- **QuestDefinition struct** — The static quest blueprint containing title, subtitle, description, category, difficulty, XP rewards, scratch card chance, steps, zone, chain info, and seasonal availability.
+
+- **QuestStep struct** — Individual steps within multi-step quests, each with instructions and partial XP rewards.
+
+- **QuestProgress model** — Tracks per-user progress on each quest (status, current step, completion date, XP earned). Stored in the device database.
+
+- **QuestStatus enum** — Quest lifecycle states: locked → available → active → completed → claimed (plus expired and archived for graceful exits).
+
+- **PlayerProfile model** — The RPG character: level, total XP, current zone, quest streak, bosses defeated, badges, active title, avatar stage. Includes the 1.4x exponential XP curve for 50 levels.
+
+- **DailyQuestSlot model** — Tracks which 3 daily and 2 weekly quests are offered each day, including which one is the "lucky quest" with enhanced rewards.
+
+**Design details:**
+
+- All enums follow the existing pattern: `nonisolated`, `Codable`, `Sendable`
+- Colors use `Color(hex: 0x...)` UInt format matching Theme.swift
+- Color-returning properties use `@MainActor` annotation (matching CardRarity/CardSet pattern)
+- Database models use `@Model class` with default values (matching ScratchCard/CollectedCard pattern)
+- New SwiftData models are registered in the app's model container
+
+**No UI changes in this phase** — this is purely the data foundation.

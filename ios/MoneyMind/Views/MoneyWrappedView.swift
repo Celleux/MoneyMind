@@ -1,473 +1,937 @@
 import SwiftUI
-import SwiftData
 
 struct MoneyWrappedView: View {
-    let totalSaved: Double
-    let purchasesResisted: Int
-    let longestStreak: Int
-    let characterStage: CharacterStage
-    let level: Int
-    let startStage: CharacterStage
-    let categoryBreakdown: [(String, Int)]
-    let isAnnual: Bool
+    let data: WrappedData
 
     @Environment(\.dismiss) private var dismiss
-    @State private var currentPage: Int = 0
+    @State private var currentSlide: Int = 0
+    @State private var slideAppeared: [Bool] = Array(repeating: false, count: 7)
+    @State private var isPaused: Bool = false
     @State private var shareImage: UIImage?
-    @State private var showShareSheet = false
+    @State private var showShareSheet: Bool = false
+    @State private var hapticTick: Int = 0
 
-    private let pageCount = 6
-
-    private var periodLabel: String {
-        if isAnnual {
-            return String(Calendar.current.component(.year, from: Date()))
-        }
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
-        return formatter.string(from: Date())
-    }
+    private let slideCount = 7
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                pageIndicator
-                    .padding(.top, 8)
+        GeometryReader { geo in
+            ZStack {
+                Color.black.ignoresSafeArea()
 
-                TabView(selection: $currentPage) {
-                    wrappedCard1.tag(0)
-                    wrappedCard2.tag(1)
-                    wrappedCard3.tag(2)
-                    wrappedCard4.tag(3)
-                    wrappedCard5.tag(4)
-                    wrappedCard6.tag(5)
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .animation(.spring(response: 0.4, dampingFraction: 0.85), value: currentPage)
+                slideContent(for: currentSlide, size: geo.size)
+                    .id(currentSlide)
+                    .transition(.opacity.combined(with: .scale(scale: 0.96)))
 
-                shareButtons
-                    .padding(.horizontal, 32)
-                    .padding(.bottom, 16)
-            }
-            .background(Theme.background.ignoresSafeArea())
-            .navigationTitle(isAnnual ? "Money Wrapped" : "Monthly Recap")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") { dismiss() }
-                        .foregroundStyle(Theme.textSecondary)
+                VStack {
+                    storyProgressBar
+                        .padding(.horizontal, 8)
+                        .padding(.top, geo.safeAreaInsets.top + 8)
+
+                    HStack {
+                        Spacer()
+                        Button { dismiss() } label: {
+                            Image(systemName: "xmark")
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(.white.opacity(0.7))
+                                .frame(width: 32, height: 32)
+                                .background(.ultraThinMaterial, in: .circle)
+                        }
+                        .padding(.trailing, 16)
+                        .padding(.top, 4)
+                    }
+
+                    Spacer()
                 }
-            }
-            .sheet(isPresented: $showShareSheet) {
-                if let image = shareImage {
-                    ShareSheet(items: [image])
+
+                HStack(spacing: 0) {
+                    Color.clear
+                        .contentShape(.rect)
+                        .onTapGesture { goBack() }
+                    Color.clear
+                        .contentShape(.rect)
+                        .onTapGesture { goForward() }
                 }
+                .simultaneousGesture(
+                    LongPressGesture(minimumDuration: 0.2)
+                        .onChanged { _ in isPaused = true }
+                        .onEnded { _ in isPaused = false }
+                )
+            }
+        }
+        .ignoresSafeArea()
+        .preferredColorScheme(.dark)
+        .statusBarHidden()
+        .sensoryFeedback(.impact(weight: .light), trigger: hapticTick)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.3)) {
+                slideAppeared[0] = true
+            }
+        }
+        .sheet(isPresented: $showShareSheet) {
+            if let image = shareImage {
+                ShareSheet(items: [image])
             }
         }
     }
 
-    private var pageIndicator: some View {
-        HStack(spacing: 6) {
-            ForEach(0..<pageCount, id: \.self) { i in
+    private var storyProgressBar: some View {
+        HStack(spacing: 3) {
+            ForEach(0..<slideCount, id: \.self) { i in
                 Capsule()
-                    .fill(i == currentPage ? Theme.accentGreen : Theme.textSecondary.opacity(0.2))
-                    .frame(width: i == currentPage ? 24 : 8, height: 4)
-                    .animation(.spring(response: 0.3), value: currentPage)
+                    .fill(
+                        i < currentSlide ? AnyShapeStyle(data.personality.color) :
+                        i == currentSlide ? AnyShapeStyle(
+                            LinearGradient(
+                                colors: [data.personality.color, data.personality.color.opacity(0.4)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        ) : AnyShapeStyle(Color.white.opacity(0.2))
+                    )
+                    .frame(height: 2.5)
+                    .animation(.easeOut(duration: 0.3), value: currentSlide)
             }
         }
     }
 
-    private var shareButtons: some View {
-        Button {
-            shareCurrentCard()
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "square.and.arrow.up")
-                    .font(.body.weight(.semibold))
-                Text("Share This Card")
-                    .font(.headline)
-            }
-            .foregroundStyle(Theme.background)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
+    @ViewBuilder
+    private func slideContent(for index: Int, size: CGSize) -> some View {
+        let appeared = slideAppeared[index]
+        switch index {
+        case 0: WrappedSlideIntro(data: data, appeared: appeared, size: size)
+        case 1: WrappedSlideSpent(data: data, appeared: appeared, size: size)
+        case 2: WrappedSlideTopCategory(data: data, appeared: appeared, size: size)
+        case 3: WrappedSlideMoodMap(data: data, appeared: appeared, size: size)
+        case 4: WrappedSlideSavings(data: data, appeared: appeared, size: size)
+        case 5: WrappedSlideFortune(data: data, appeared: appeared, size: size)
+        case 6: WrappedSlideShareCard(data: data, appeared: appeared, size: size, onShare: shareWrapped)
+        default: EmptyView()
         }
-        .buttonStyle(PressableButtonStyle())
-        .sensoryFeedback(.impact(weight: .medium), trigger: showShareSheet)
     }
 
-    private func shareCurrentCard() {
-        let card: AnyView
-        switch currentPage {
-        case 0: card = AnyView(WrappedTitleCard(periodLabel: periodLabel, isAnnual: isAnnual))
-        case 1: card = AnyView(WrappedSavingsCard(totalSaved: totalSaved))
-        case 2: card = AnyView(WrappedResistedCard(count: purchasesResisted, breakdown: categoryBreakdown))
-        case 3: card = AnyView(WrappedStreakCard(longestStreak: longestStreak))
-        case 4: card = AnyView(WrappedEvolutionCard(from: startStage, to: characterStage, level: level))
-        case 5: card = AnyView(WrappedPercentileCard(totalSaved: totalSaved))
-        default: return
+    private func goForward() {
+        guard !isPaused else { return }
+        if currentSlide < slideCount - 1 {
+            hapticTick += 1
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                currentSlide += 1
+            }
+            withAnimation(.easeOut(duration: 0.4).delay(0.1)) {
+                slideAppeared[currentSlide] = true
+            }
         }
+    }
+
+    private func goBack() {
+        guard !isPaused else { return }
+        if currentSlide > 0 {
+            hapticTick += 1
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                currentSlide -= 1
+            }
+        }
+    }
+
+    private func shareWrapped() {
+        let card = WrappedShareImage(data: data)
         shareImage = ShareCardRenderer.render(card)
         if shareImage != nil { showShareSheet = true }
     }
-
-    private var wrappedCard1: some View {
-        WrappedTitleCard(periodLabel: periodLabel, isAnnual: isAnnual)
-            .wrappedCardFrame()
-    }
-
-    private var wrappedCard2: some View {
-        WrappedSavingsCard(totalSaved: totalSaved)
-            .wrappedCardFrame()
-    }
-
-    private var wrappedCard3: some View {
-        WrappedResistedCard(count: purchasesResisted, breakdown: categoryBreakdown)
-            .wrappedCardFrame()
-    }
-
-    private var wrappedCard4: some View {
-        WrappedStreakCard(longestStreak: longestStreak)
-            .wrappedCardFrame()
-    }
-
-    private var wrappedCard5: some View {
-        WrappedEvolutionCard(from: startStage, to: characterStage, level: level)
-            .wrappedCardFrame()
-    }
-
-    private var wrappedCard6: some View {
-        WrappedPercentileCard(totalSaved: totalSaved)
-            .wrappedCardFrame()
-    }
 }
 
-private extension View {
-    func wrappedCardFrame() -> some View {
-        self
-            .scaleEffect(0.72)
-            .frame(
-                width: ShareCardRenderer.viewSize.width * 0.72,
-                height: ShareCardRenderer.viewSize.height * 0.72
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
+// MARK: - Slide 1: Intro
 
-struct WrappedTitleCard: View {
-    let periodLabel: String
-    let isAnnual: Bool
+private struct WrappedSlideIntro: View {
+    let data: WrappedData
+    let appeared: Bool
+    let size: CGSize
+
+    @State private var iconPulse: Bool = false
+    @State private var meshPhase: CGFloat = 0
 
     var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
+        ZStack {
+            wrappedMeshBg(accent: data.personality.color, phase: meshPhase)
 
-            VStack(spacing: 28) {
-                Image(systemName: "leaf.fill")
-                    .font(.system(size: 44))
-                    .foregroundStyle(Theme.accentGradient)
+            VStack(spacing: 0) {
+                Spacer()
 
-                VStack(spacing: 12) {
-                    Text(isAnnual ? "Your Year in" : "Your Month in")
+                Image(systemName: data.personality.icon)
+                    .font(.system(size: 64))
+                    .foregroundStyle(data.personality.color)
+                    .scaleEffect(iconPulse ? 1.15 : 0.9)
+                    .opacity(appeared ? 1 : 0)
+                    .animation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true), value: iconPulse)
+
+                Spacer().frame(height: 40)
+
+                VStack(spacing: 14) {
+                    Text(data.isAnnual ? "Your Year in" : "Your Month in")
                         .font(.system(.title2, design: .rounded, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.7))
+                        .foregroundStyle(.white.opacity(0.6))
+                        .opacity(appeared ? 1 : 0)
+                        .offset(y: appeared ? 0 : 20)
 
                     Text("MoneyMind")
-                        .font(.system(size: 40, weight: .bold, design: .rounded))
+                        .font(.system(size: 42, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
+                        .opacity(appeared ? 1 : 0)
+                        .offset(y: appeared ? 0 : 20)
 
-                    Text(periodLabel)
+                    Text(data.periodLabel)
                         .font(.system(.title3, design: .rounded, weight: .semibold))
-                        .foregroundStyle(Theme.accentGreen)
+                        .foregroundStyle(data.personality.color)
+                        .opacity(appeared ? 1 : 0)
+                        .offset(y: appeared ? 0 : 20)
                 }
+
+                Spacer()
+
+                Text("Tap to continue")
+                    .font(.system(.caption, design: .rounded, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.3))
+                    .padding(.bottom, 60)
+                    .opacity(appeared ? 1 : 0)
             }
-
-            Spacer()
-
-            CardWatermark()
-                .padding(.bottom, 40)
         }
-        .frame(width: ShareCardRenderer.viewSize.width, height: ShareCardRenderer.viewSize.height)
-        .background(
-            ZStack {
-                Theme.background
-                MeshGradient(
-                    width: 3, height: 3,
-                    points: [
-                        [0.0, 0.0], [0.5, 0.0], [1.0, 0.0],
-                        [0.0, 0.5], [0.5, 0.5], [1.0, 0.5],
-                        [0.0, 1.0], [0.5, 1.0], [1.0, 1.0]
-                    ],
-                    colors: [
-                        Theme.accentGreen.opacity(0.15), .clear, Theme.teal.opacity(0.12),
-                        .clear, Theme.accentGreen.opacity(0.08), .clear,
-                        Theme.teal.opacity(0.1), .clear, Theme.accentGreen.opacity(0.1)
-                    ]
-                )
+        .frame(width: size.width, height: size.height)
+        .onAppear {
+            iconPulse = true
+            withAnimation(.linear(duration: 8).repeatForever(autoreverses: true)) {
+                meshPhase = 1
             }
-        )
-        .clipShape(.rect(cornerRadius: 24))
+        }
     }
 }
 
-struct WrappedSavingsCard: View {
-    let totalSaved: Double
+// MARK: - Slide 2: Total Spent
+
+private struct WrappedSlideSpent: View {
+    let data: WrappedData
+    let appeared: Bool
+    let size: CGSize
+
+    @State private var animatedAmount: Double = 0
 
     var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
+        ZStack {
+            wrappedMeshBg(accent: data.personality.color, secondary: .green.opacity(0.6))
 
-            VStack(spacing: 24) {
-                Text("YOU SAVED")
-                    .font(.system(.caption, design: .rounded, weight: .bold))
-                    .foregroundStyle(Theme.accentGreen)
-                    .tracking(4)
+            VStack(spacing: 0) {
+                Spacer()
 
-                Text(totalSaved, format: .currency(code: "USD").precision(.fractionLength(0)))
-                    .font(.system(size: 52, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                VStack(spacing: 28) {
+                    Text(data.isAnnual ? "YOU SAVED" : "TOTAL SPENT")
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .foregroundStyle(data.personality.color)
+                        .tracking(4)
+                        .opacity(appeared ? 1 : 0)
 
-                Image(systemName: "dollarsign.circle.fill")
-                    .font(.system(size: 60))
-                    .foregroundStyle(Theme.accentGradient)
-            }
-
-            Spacer()
-
-            CardWatermark()
-                .padding(.bottom, 40)
-        }
-        .frame(width: ShareCardRenderer.viewSize.width, height: ShareCardRenderer.viewSize.height)
-        .background(CardBackground(accentColor: Theme.accentGreen, secondaryColor: .green.opacity(0.6)))
-        .clipShape(.rect(cornerRadius: 24))
-    }
-}
-
-struct WrappedResistedCard: View {
-    let count: Int
-    let breakdown: [(String, Int)]
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
-
-            VStack(spacing: 24) {
-                Text("YOU RESISTED")
-                    .font(.system(.caption, design: .rounded, weight: .bold))
-                    .foregroundStyle(Theme.teal)
-                    .tracking(4)
-
-                VStack(spacing: 4) {
-                    Text("\(count)")
-                        .font(.system(size: 60, weight: .bold, design: .rounded))
+                    Text(animatedAmount, format: .currency(code: "USD").precision(.fractionLength(0)))
+                        .font(.system(size: 56, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
+                        .contentTransition(.numericText(value: animatedAmount))
 
-                    Text("purchases")
-                        .font(.system(.title3, design: .rounded, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.6))
-                }
-
-                if !breakdown.isEmpty {
-                    VStack(spacing: 8) {
-                        ForEach(breakdown.prefix(5), id: \.0) { category, count in
-                            HStack {
-                                Text(category)
-                                    .font(.system(.subheadline, design: .rounded, weight: .medium))
-                                    .foregroundStyle(.white.opacity(0.7))
-                                Spacer()
-                                Text("\(count)")
-                                    .font(.system(.subheadline, design: .rounded, weight: .bold))
-                                    .foregroundStyle(Theme.teal)
-                            }
-                            .padding(.horizontal, 20)
+                    if data.spendingChangePercent != 0 {
+                        let isUp = data.spendingChangePercent > 0
+                        HStack(spacing: 6) {
+                            Image(systemName: isUp ? "arrow.up.right" : "arrow.down.right")
+                                .font(.subheadline.weight(.bold))
+                            Text("\(abs(Int(data.spendingChangePercent)))% \(isUp ? "more" : "less") than last month")
+                                .font(.system(.subheadline, design: .rounded, weight: .medium))
                         }
+                        .foregroundStyle(isUp ? Theme.danger : Theme.success)
+                        .opacity(appeared ? 1 : 0)
+                        .animation(.easeOut(duration: 0.5).delay(0.8), value: appeared)
                     }
-                    .padding(.vertical, 16)
-                    .background(.white.opacity(0.04), in: .rect(cornerRadius: 14))
-                    .padding(.horizontal, 24)
-                }
-            }
 
-            Spacer()
-
-            CardWatermark()
-                .padding(.bottom, 40)
-        }
-        .frame(width: ShareCardRenderer.viewSize.width, height: ShareCardRenderer.viewSize.height)
-        .background(CardBackground(accentColor: Theme.teal, secondaryColor: .cyan.opacity(0.5)))
-        .clipShape(.rect(cornerRadius: 24))
-    }
-}
-
-struct WrappedStreakCard: View {
-    let longestStreak: Int
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
-
-            VStack(spacing: 24) {
-                Text("LONGEST STREAK")
-                    .font(.system(.caption, design: .rounded, weight: .bold))
-                    .foregroundStyle(.orange)
-                    .tracking(4)
-
-                HStack(alignment: .lastTextBaseline, spacing: 4) {
-                    Text("\(longestStreak)")
-                        .font(.system(size: 72, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-
-                    Text("days")
-                        .font(.system(.title2, design: .rounded, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.6))
-                }
-
-                Image(systemName: "flame.fill")
-                    .font(.system(size: 56))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.red, .orange, .yellow],
-                            startPoint: .bottom,
-                            endPoint: .top
+                    Image(systemName: "dollarsign.circle.fill")
+                        .font(.system(size: 52))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [data.personality.color, Theme.secondary],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
                         )
-                    )
+                        .scaleEffect(appeared ? 1 : 0.5)
+                        .opacity(appeared ? 1 : 0)
+                        .animation(.spring(response: 0.6, dampingFraction: 0.6).delay(0.5), value: appeared)
+                }
+
+                Spacer()
             }
-
-            Spacer()
-
-            CardWatermark()
-                .padding(.bottom, 40)
         }
-        .frame(width: ShareCardRenderer.viewSize.width, height: ShareCardRenderer.viewSize.height)
-        .background(CardBackground(accentColor: .orange, secondaryColor: .red.opacity(0.5)))
-        .clipShape(.rect(cornerRadius: 24))
+        .frame(width: size.width, height: size.height)
+        .onChange(of: appeared) { _, newValue in
+            if newValue {
+                let target = data.isAnnual ? data.totalSaved : data.totalSpent
+                withAnimation(.easeOut(duration: 1.2)) {
+                    animatedAmount = target
+                }
+            }
+        }
     }
 }
 
-struct WrappedEvolutionCard: View {
-    let from: CharacterStage
-    let to: CharacterStage
-    let level: Int
+// MARK: - Slide 3: Top Category
+
+private struct WrappedSlideTopCategory: View {
+    let data: WrappedData
+    let appeared: Bool
+    let size: CGSize
+
+    @State private var ringProgress: Double = 0
 
     var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
+        ZStack {
+            wrappedMeshBg(accent: Theme.secondary, secondary: data.personality.color.opacity(0.5))
 
-            VStack(spacing: 28) {
-                Text("CHARACTER EVOLUTION")
-                    .font(.system(.caption, design: .rounded, weight: .bold))
-                    .foregroundStyle(to.primaryColor)
-                    .tracking(4)
+            VStack(spacing: 0) {
+                Spacer()
 
-                HStack(spacing: 32) {
-                    VStack(spacing: 8) {
-                        ZStack {
-                            Circle()
-                                .fill(from.primaryColor.opacity(0.12))
-                                .frame(width: 72, height: 72)
-                            Image(systemName: from.bodyIcon)
-                                .font(.system(size: 32))
-                                .foregroundStyle(from.primaryColor.opacity(0.5))
+                VStack(spacing: 28) {
+                    Text("TOP CATEGORY")
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .foregroundStyle(Theme.secondary)
+                        .tracking(4)
+                        .opacity(appeared ? 1 : 0)
+
+                    ZStack {
+                        ForEach(Array(data.categoryBreakdown.prefix(5).enumerated()), id: \.offset) { index, cat in
+                            let total = data.categoryBreakdown.prefix(5).reduce(0.0) { $0 + $1.amount }
+                            let fraction = total > 0 ? cat.amount / total : 0.2
+                            let startAngle = startAngleFor(index: index, in: data.categoryBreakdown.prefix(5).map(\.amount))
+
+                            PieSlice(startAngle: .degrees(startAngle), endAngle: .degrees(startAngle + fraction * 360))
+                                .fill(Color(hex: UInt(cat.color, radix: 16) ?? 0x6C5CE7))
+                                .opacity(index == 0 ? 1.0 : 0.6)
+                                .scaleEffect(appeared ? 1 : 0.3)
+                                .opacity(appeared ? 1 : 0)
+                                .animation(
+                                    .spring(response: 0.6, dampingFraction: 0.7)
+                                    .delay(Double(index) * 0.12),
+                                    value: appeared
+                                )
                         }
-                        Text(from.name)
-                            .font(.system(.caption, design: .rounded, weight: .medium))
-                            .foregroundStyle(.white.opacity(0.4))
-                    }
 
-                    VStack(spacing: 4) {
-                        Image(systemName: "arrow.right")
-                            .font(.title2.weight(.bold))
-                            .foregroundStyle(to.primaryColor)
+                        if data.categoryBreakdown.isEmpty {
+                            Circle()
+                                .fill(Theme.elevated)
+                        }
                     }
+                    .frame(width: 160, height: 160)
 
-                    VStack(spacing: 8) {
-                        ZStack {
-                            Circle()
-                                .fill(to.primaryColor.opacity(0.15))
-                                .frame(width: 80, height: 80)
-                            Circle()
-                                .fill(to.primaryColor.opacity(0.06))
-                                .frame(width: 96, height: 96)
-                            Image(systemName: to.bodyIcon)
+                    if let top = data.topCategory {
+                        VStack(spacing: 10) {
+                            Text(top.category)
+                                .font(.system(.title2, design: .rounded, weight: .bold))
+                                .foregroundStyle(.white)
+
+                            Text("was your biggest spend at \(top.amount, format: .currency(code: "USD").precision(.fractionLength(0)))")
+                                .font(.system(.subheadline, design: .rounded, weight: .medium))
+                                .foregroundStyle(.white.opacity(0.6))
+                                .multilineTextAlignment(.center)
+
+                            HStack(spacing: 6) {
+                                Image(systemName: "cup.and.saucer.fill")
+                                    .foregroundStyle(Theme.secondary)
+                                Text("That's \(data.coffeEquivalent) cups of coffee")
+                                    .font(.system(.footnote, design: .rounded, weight: .semibold))
+                                    .foregroundStyle(Theme.secondary)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(Theme.secondary.opacity(0.1), in: .capsule)
+                        }
+                        .opacity(appeared ? 1 : 0)
+                        .offset(y: appeared ? 0 : 20)
+                        .animation(.easeOut(duration: 0.5).delay(0.6), value: appeared)
+                    }
+                }
+                .padding(.horizontal, 32)
+
+                Spacer()
+            }
+        }
+        .frame(width: size.width, height: size.height)
+    }
+
+    private func startAngleFor(index: Int, in amounts: [Double]) -> Double {
+        let total = amounts.reduce(0, +)
+        guard total > 0 else { return 0 }
+        var angle: Double = -90
+        for i in 0..<index {
+            angle += (amounts[i] / total) * 360
+        }
+        return angle
+    }
+}
+
+private struct PieSlice: Shape {
+    var startAngle: Angle
+    var endAngle: Angle
+
+    nonisolated func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        let radius = min(rect.width, rect.height) / 2
+        path.move(to: center)
+        path.addArc(center: center, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: false)
+        path.closeSubpath()
+        return path
+    }
+}
+
+// MARK: - Slide 4: Mood Map
+
+private struct WrappedSlideMoodMap: View {
+    let data: WrappedData
+    let appeared: Bool
+    let size: CGSize
+
+    private let defaultMoods: [(emoji: String, count: Int)] = [
+        ("😌", 5), ("😬", 3), ("😤", 2), ("✅", 8), ("💪", 4)
+    ]
+
+    private var moods: [(emoji: String, count: Int)] {
+        data.moodBreakdown.isEmpty ? defaultMoods : data.moodBreakdown
+    }
+
+    private var topMood: (emoji: String, count: Int) {
+        moods.max(by: { $0.count < $1.count }) ?? ("😌", 0)
+    }
+
+    private var totalCount: Int {
+        moods.reduce(0) { $0 + $1.count }
+    }
+
+    var body: some View {
+        ZStack {
+            wrappedMeshBg(accent: .purple, secondary: data.personality.color.opacity(0.4))
+
+            VStack(spacing: 0) {
+                Spacer()
+
+                VStack(spacing: 28) {
+                    Text("SPENDING MOODS")
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .foregroundStyle(.purple)
+                        .tracking(4)
+                        .opacity(appeared ? 1 : 0)
+
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 4), spacing: 12) {
+                        ForEach(Array(moodGrid.enumerated()), id: \.offset) { index, emoji in
+                            Text(emoji)
                                 .font(.system(size: 36))
-                                .foregroundStyle(to.primaryColor)
+                                .scaleEffect(appeared ? 1 : 0)
+                                .animation(
+                                    .spring(response: 0.4, dampingFraction: 0.6)
+                                    .delay(Double(index) * 0.04),
+                                    value: appeared
+                                )
                         }
-                        Text(to.name)
-                            .font(.system(.subheadline, design: .rounded, weight: .bold))
+                    }
+                    .padding(.horizontal, 24)
+
+                    VStack(spacing: 10) {
+                        Text(topMood.emoji)
+                            .font(.system(size: 52))
+                            .scaleEffect(appeared ? 1 : 0.3)
+                            .animation(.spring(response: 0.5, dampingFraction: 0.5).delay(0.6), value: appeared)
+
+                        let pct = totalCount > 0 ? Int((Double(topMood.count) / Double(totalCount)) * 100) : 0
+                        Text("Your top vibe \(pct)% of purchases")
+                            .font(.system(.subheadline, design: .rounded, weight: .medium))
+                            .foregroundStyle(.white.opacity(0.6))
+                            .multilineTextAlignment(.center)
+                            .opacity(appeared ? 1 : 0)
+                            .animation(.easeOut(duration: 0.4).delay(0.8), value: appeared)
+                    }
+                }
+
+                Spacer()
+            }
+        }
+        .frame(width: size.width, height: size.height)
+    }
+
+    private var moodGrid: [String] {
+        var grid: [String] = []
+        for mood in moods {
+            for _ in 0..<min(mood.count, 6) {
+                grid.append(mood.emoji)
+            }
+        }
+        return Array(grid.shuffled().prefix(16))
+    }
+}
+
+// MARK: - Slide 5: Savings
+
+private struct WrappedSlideSavings: View {
+    let data: WrappedData
+    let appeared: Bool
+    let size: CGSize
+
+    @State private var ringFill: Double = 0
+    @State private var showConfetti: Bool = false
+    @State private var confettiParticles: [ConfettiPiece] = []
+
+    var body: some View {
+        ZStack {
+            wrappedMeshBg(accent: Theme.success, secondary: Theme.secondary.opacity(0.5))
+
+            ForEach(confettiParticles) { piece in
+                Circle()
+                    .fill(piece.color)
+                    .frame(width: piece.size, height: piece.size)
+                    .position(piece.position)
+                    .opacity(showConfetti ? 0 : 1)
+                    .animation(.easeOut(duration: piece.duration), value: showConfetti)
+            }
+
+            VStack(spacing: 0) {
+                Spacer()
+
+                VStack(spacing: 28) {
+                    Text("SAVINGS PROGRESS")
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .foregroundStyle(Theme.success)
+                        .tracking(4)
+                        .opacity(appeared ? 1 : 0)
+
+                    ZStack {
+                        Circle()
+                            .stroke(Theme.elevated, lineWidth: 12)
+                            .frame(width: 180, height: 180)
+
+                        Circle()
+                            .trim(from: 0, to: ringFill)
+                            .stroke(
+                                AngularGradient(
+                                    colors: [Theme.success, Theme.secondary, Theme.success],
+                                    center: .center
+                                ),
+                                style: StrokeStyle(lineWidth: 12, lineCap: .round)
+                            )
+                            .frame(width: 180, height: 180)
+                            .rotationEffect(.degrees(-90))
+
+                        VStack(spacing: 4) {
+                            Text("\(Int(data.savingsProgress * 100))%")
+                                .font(.system(size: 44, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white)
+
+                            Text("of goal")
+                                .font(.system(.caption, design: .rounded, weight: .medium))
+                                .foregroundStyle(.white.opacity(0.5))
+                        }
+                    }
+
+                    if data.savingsGoal > 0 {
+                        Text("\(data.totalSaved, format: .currency(code: "USD").precision(.fractionLength(0))) of \(data.savingsGoal, format: .currency(code: "USD").precision(.fractionLength(0)))")
+                            .font(.system(.body, design: .rounded, weight: .medium))
+                            .foregroundStyle(.white.opacity(0.7))
+                    }
+
+                    if data.goalMet {
+                        HStack(spacing: 8) {
+                            Image(systemName: "party.popper.fill")
+                            Text("Goal Reached!")
+                        }
+                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .foregroundStyle(Theme.gold)
+                        .scaleEffect(appeared ? 1 : 0.5)
+                        .animation(.spring(response: 0.5, dampingFraction: 0.5).delay(1.2), value: appeared)
+                    }
+                }
+
+                Spacer()
+            }
+        }
+        .frame(width: size.width, height: size.height)
+        .onChange(of: appeared) { _, newValue in
+            if newValue {
+                withAnimation(.easeOut(duration: 1.4)) {
+                    ringFill = data.savingsProgress
+                }
+                if data.goalMet {
+                    spawnConfetti(in: size)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                        showConfetti = true
+                    }
+                }
+            }
+        }
+    }
+
+    private func spawnConfetti(in size: CGSize) {
+        let colors: [Color] = [Theme.success, Theme.secondary, Theme.gold, .white, data.personality.color]
+        confettiParticles = (0..<40).map { _ in
+            ConfettiPiece(
+                position: CGPoint(
+                    x: CGFloat.random(in: 40...(size.width - 40)),
+                    y: CGFloat.random(in: (size.height * 0.2)...(size.height * 0.7))
+                ),
+                color: colors.randomElement() ?? .white,
+                size: CGFloat.random(in: 4...10),
+                duration: Double.random(in: 1.5...3.0)
+            )
+        }
+    }
+}
+
+nonisolated struct ConfettiPiece: Identifiable, Sendable {
+    let id = UUID()
+    let position: CGPoint
+    let color: Color
+    let size: CGFloat
+    let duration: Double
+}
+
+// MARK: - Slide 6: Fortune
+
+private struct WrappedSlideFortune: View {
+    let data: WrappedData
+    let appeared: Bool
+    let size: CGSize
+
+    @State private var glowPhase: Bool = false
+
+    var body: some View {
+        ZStack {
+            wrappedMeshBg(accent: data.personality.color, secondary: .indigo.opacity(0.4))
+
+            VStack(spacing: 0) {
+                Spacer()
+
+                VStack(spacing: 24) {
+                    Text("FINANCIAL FORTUNE")
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .foregroundStyle(data.personality.color)
+                        .tracking(4)
+                        .opacity(appeared ? 1 : 0)
+
+                    Image(systemName: "sparkle")
+                        .font(.system(size: 40))
+                        .foregroundStyle(data.personality.color)
+                        .scaleEffect(glowPhase ? 1.2 : 0.9)
+                        .opacity(appeared ? 1 : 0)
+
+                    VStack(spacing: 20) {
+                        Text(data.fortune)
+                            .font(.system(.body, design: .serif, weight: .regular))
+                            .foregroundStyle(.white.opacity(0.85))
+                            .multilineTextAlignment(.center)
+                            .lineSpacing(6)
+                            .padding(.horizontal, 8)
+                    }
+                    .padding(28)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Theme.elevated.opacity(0.6))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .strokeBorder(
+                                LinearGradient(
+                                    colors: [
+                                        data.personality.color.opacity(glowPhase ? 0.6 : 0.2),
+                                        data.personality.color.opacity(0.1),
+                                        data.personality.color.opacity(glowPhase ? 0.6 : 0.2)
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+                    .shadow(color: data.personality.color.opacity(glowPhase ? 0.3 : 0.1), radius: 20)
+                    .rotationEffect(.degrees(-1.5))
+                    .scaleEffect(appeared ? 1 : 0.85)
+                    .opacity(appeared ? 1 : 0)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.7).delay(0.2), value: appeared)
+                }
+                .padding(.horizontal, 32)
+
+                Spacer()
+            }
+        }
+        .frame(width: size.width, height: size.height)
+        .onAppear {
+            withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
+                glowPhase = true
+            }
+        }
+    }
+}
+
+// MARK: - Slide 7: Share Card
+
+private struct WrappedSlideShareCard: View {
+    let data: WrappedData
+    let appeared: Bool
+    let size: CGSize
+    let onShare: () -> Void
+
+    var body: some View {
+        ZStack {
+            wrappedMeshBg(accent: data.personality.color, secondary: Theme.secondary.opacity(0.3))
+
+            VStack(spacing: 0) {
+                Spacer()
+
+                VStack(spacing: 20) {
+                    HStack(spacing: 8) {
+                        Image(systemName: data.personality.icon)
+                            .font(.title3)
+                            .foregroundStyle(data.personality.color)
+                        Text(data.periodLabel)
+                            .font(.system(.headline, design: .rounded, weight: .bold))
                             .foregroundStyle(.white)
                     }
-                }
+                    .opacity(appeared ? 1 : 0)
 
-                Text("Level \(level)")
-                    .font(.system(.title3, design: .rounded, weight: .bold))
-                    .foregroundStyle(to.primaryColor)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 8)
-                    .background(to.primaryColor.opacity(0.12), in: .capsule)
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 14) {
+                        StatMini(
+                            label: data.isAnnual ? "Saved" : "Spent",
+                            value: (data.isAnnual ? data.totalSaved : data.totalSpent).formatted(.currency(code: "USD").precision(.fractionLength(0))),
+                            icon: "dollarsign.circle.fill",
+                            color: Theme.success,
+                            appeared: appeared,
+                            delay: 0.1
+                        )
+                        StatMini(
+                            label: "Resisted",
+                            value: "\(data.purchasesResisted)",
+                            icon: "hand.raised.fill",
+                            color: Theme.secondary,
+                            appeared: appeared,
+                            delay: 0.2
+                        )
+                        StatMini(
+                            label: "Streak",
+                            value: "\(data.longestStreak) days",
+                            icon: "flame.fill",
+                            color: .orange,
+                            appeared: appeared,
+                            delay: 0.3
+                        )
+                        StatMini(
+                            label: "Level",
+                            value: "\(data.level) \(data.characterStage.name)",
+                            icon: data.characterStage.bodyIcon,
+                            color: data.characterStage.primaryColor,
+                            appeared: appeared,
+                            delay: 0.4
+                        )
+                    }
+                    .padding(.horizontal, 8)
+                }
+                .padding(24)
+                .background(Theme.card.opacity(0.8), in: .rect(cornerRadius: 20))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .strokeBorder(data.personality.color.opacity(0.15), lineWidth: 1)
+                )
+                .padding(.horizontal, 24)
+                .scaleEffect(appeared ? 1 : 0.9)
+                .opacity(appeared ? 1 : 0)
+                .animation(.spring(response: 0.5, dampingFraction: 0.8), value: appeared)
+
+                Spacer().frame(height: 32)
+
+                VStack(spacing: 14) {
+                    Button(action: onShare) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "square.and.arrow.up")
+                                .font(.body.weight(.semibold))
+                            Text("Share Your Wrapped")
+                                .font(.system(.headline, design: .rounded))
+                        }
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(
+                            LinearGradient(
+                                colors: [data.personality.color, data.personality.color.opacity(0.7)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            in: .rect(cornerRadius: 14)
+                        )
+                    }
+                    .buttonStyle(PressableButtonStyle())
+                }
+                .padding(.horizontal, 32)
+                .opacity(appeared ? 1 : 0)
+                .animation(.easeOut(duration: 0.4).delay(0.5), value: appeared)
+
+                Spacer()
+            }
+        }
+        .frame(width: size.width, height: size.height)
+    }
+}
+
+private struct StatMini: View {
+    let label: String
+    let value: String
+    let icon: String
+    let color: Color
+    let appeared: Bool
+    let delay: Double
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundStyle(color)
+
+            Text(value)
+                .font(.system(.headline, design: .rounded, weight: .bold))
+                .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+
+            Text(label)
+                .font(.system(.caption2, design: .rounded, weight: .medium))
+                .foregroundStyle(.white.opacity(0.5))
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 14)
+        .background(Theme.elevated.opacity(0.5), in: .rect(cornerRadius: 12))
+        .scaleEffect(appeared ? 1 : 0.8)
+        .opacity(appeared ? 1 : 0)
+        .animation(.spring(response: 0.4, dampingFraction: 0.7).delay(delay), value: appeared)
+    }
+}
+
+// MARK: - Share Image (1080x1920)
+
+struct WrappedShareImage: View {
+    let data: WrappedData
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                HStack(spacing: 6) {
+                    Image(systemName: "leaf.fill")
+                        .foregroundStyle(Theme.accentGreen)
+                    Text("MoneyMind")
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .foregroundStyle(.white.opacity(0.6))
+                }
+                Spacer()
+                Text(data.periodLabel)
+                    .font(.system(.caption2, design: .rounded, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.4))
+            }
+            .padding(.horizontal, 28)
+            .padding(.top, 48)
+
+            Spacer()
+
+            VStack(spacing: 32) {
+                Image(systemName: data.personality.icon)
+                    .font(.system(size: 48))
+                    .foregroundStyle(data.personality.color)
+
+                Text(data.isAnnual ? "Year in Review" : "Monthly Wrapped")
+                    .font(.system(.title, design: .rounded, weight: .bold))
+                    .foregroundStyle(.white)
+
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                    ShareStatCell(label: data.isAnnual ? "Saved" : "Spent", value: (data.isAnnual ? data.totalSaved : data.totalSpent).formatted(.currency(code: "USD").precision(.fractionLength(0))), color: Theme.success)
+                    ShareStatCell(label: "Resisted", value: "\(data.purchasesResisted)", color: Theme.secondary)
+                    ShareStatCell(label: "Streak", value: "\(data.longestStreak) days", color: .orange)
+                    ShareStatCell(label: "Level", value: "\(data.level)", color: data.personality.color)
+                }
+                .padding(.horizontal, 20)
+
+                if let top = data.topCategory {
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(Color(hex: UInt(top.color, radix: 16) ?? 0x6C5CE7))
+                            .frame(width: 10, height: 10)
+                        Text("Top: \(top.category)")
+                            .font(.system(.footnote, design: .rounded, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.6))
+                    }
+                }
             }
 
             Spacer()
 
-            CardWatermark()
-                .padding(.bottom, 40)
+            VStack(spacing: 8) {
+                Text("Get MoneyMind")
+                    .font(.system(.caption, design: .rounded, weight: .bold))
+                    .foregroundStyle(data.personality.color)
+                CardWatermark()
+            }
+            .padding(.bottom, 48)
         }
         .frame(width: ShareCardRenderer.viewSize.width, height: ShareCardRenderer.viewSize.height)
-        .background(CardBackground(accentColor: to.primaryColor, secondaryColor: to.secondaryColor))
+        .background(CardBackground(accentColor: data.personality.color, secondaryColor: Theme.secondary))
         .clipShape(.rect(cornerRadius: 24))
     }
 }
 
-struct WrappedPercentileCard: View {
-    let totalSaved: Double
-
-    private var percentile: Int {
-        switch totalSaved {
-        case ..<50: 40
-        case 50..<200: 55
-        case 200..<500: 68
-        case 500..<1_000: 78
-        case 1_000..<5_000: 88
-        case 5_000..<10_000: 94
-        default: 97
-        }
-    }
+private struct ShareStatCell: View {
+    let label: String
+    let value: String
+    let color: Color
 
     var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
-
-            VStack(spacing: 24) {
-                Text("YOU DID AMAZING")
-                    .font(.system(.caption, design: .rounded, weight: .bold))
-                    .foregroundStyle(Theme.gold)
-                    .tracking(4)
-
-                VStack(spacing: 8) {
-                    Text("You saved more than")
-                        .font(.system(.body, design: .rounded, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.7))
-
-                    Text("\(percentile)%")
-                        .font(.system(size: 64, weight: .bold, design: .rounded))
-                        .foregroundStyle(Theme.goldGradient)
-
-                    Text("of MoneyMind users")
-                        .font(.system(.body, design: .rounded, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.7))
-                }
-
-                Image(systemName: "star.fill")
-                    .font(.system(size: 44))
-                    .foregroundStyle(Theme.gold)
-            }
-
-            Spacer()
-
-            CardWatermark()
-                .padding(.bottom, 40)
+        VStack(spacing: 6) {
+            Text(value)
+                .font(.system(.title2, design: .rounded, weight: .bold))
+                .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+            Text(label)
+                .font(.system(.caption2, design: .rounded, weight: .medium))
+                .foregroundStyle(.white.opacity(0.5))
         }
-        .frame(width: ShareCardRenderer.viewSize.width, height: ShareCardRenderer.viewSize.height)
-        .background(CardBackground(accentColor: Theme.gold, secondaryColor: .orange))
-        .clipShape(.rect(cornerRadius: 24))
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(color.opacity(0.08), in: .rect(cornerRadius: 14))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .strokeBorder(color.opacity(0.12), lineWidth: 1)
+        )
+    }
+}
+
+// MARK: - Shared Mesh Background
+
+private func wrappedMeshBg(accent: Color, secondary: Color? = nil, phase: CGFloat = 0) -> some View {
+    let sec = secondary ?? accent.opacity(0.5)
+    return ZStack {
+        Theme.background.ignoresSafeArea()
+
+        MeshGradient(
+            width: 3, height: 3,
+            points: [
+                [0.0, 0.0], [Float(0.5 + phase * 0.1), 0.0], [1.0, 0.0],
+                [0.0, 0.5], [0.5, Float(0.5 + phase * 0.05)], [1.0, 0.5],
+                [0.0, 1.0], [0.5, 1.0], [1.0, 1.0]
+            ],
+            colors: [
+                .clear, accent.opacity(0.12), .clear,
+                sec.opacity(0.08), .clear, accent.opacity(0.06),
+                .clear, sec.opacity(0.1), .clear
+            ]
+        )
+        .ignoresSafeArea()
+
+        RadialGradient(
+            colors: [accent.opacity(0.08), .clear],
+            center: .center,
+            startRadius: 20,
+            endRadius: 400
+        )
+        .ignoresSafeArea()
     }
 }

@@ -7,6 +7,8 @@ struct ProfileView: View {
     @Query private var checkIns: [DailyCheckIn]
     @Query(sort: \PGSIAssessment.date) private var pgsiAssessments: [PGSIAssessment]
     @Query private var referrals: [ReferralCode]
+    @Query private var quizResults: [QuizResult]
+    @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
     @State private var showPGSI = false
     @State private var showWeeklySummary = false
     @State private var showMoneyWrapped = false
@@ -69,33 +71,11 @@ struct ProfileView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
             }
-            .sheet(isPresented: $showMoneyWrapped) {
-                MoneyWrappedView(
-                    totalSaved: monthSaved,
-                    purchasesResisted: monthResisted,
-                    longestStreak: profile?.longestStreak ?? 0,
-                    characterStage: characterStage,
-                    level: characterLevel,
-                    startStage: .seedling,
-                    categoryBreakdown: categoryBreakdown,
-                    isAnnual: false
-                )
-                .presentationDetents([.large])
-                .presentationDragIndicator(.visible)
+            .fullScreenCover(isPresented: $showMoneyWrapped) {
+                MoneyWrappedView(data: monthlyWrappedData)
             }
-            .sheet(isPresented: $showAnnualWrapped) {
-                MoneyWrappedView(
-                    totalSaved: profile?.totalSaved ?? 0,
-                    purchasesResisted: impulseLogs.filter(\.resisted).count,
-                    longestStreak: profile?.longestStreak ?? 0,
-                    characterStage: characterStage,
-                    level: characterLevel,
-                    startStage: .seedling,
-                    categoryBreakdown: allTimeCategoryBreakdown,
-                    isAnnual: true
-                )
-                .presentationDetents([.large])
-                .presentationDragIndicator(.visible)
+            .fullScreenCover(isPresented: $showAnnualWrapped) {
+                MoneyWrappedView(data: annualWrappedData)
             }
         }
     }
@@ -120,25 +100,82 @@ struct ProfileView: View {
         return impulseLogs.filter { $0.resisted && $0.date >= monthAgo }.count
     }
 
-    private var categoryBreakdown: [(String, Int)] {
-        let monthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
-        let recent = impulseLogs.filter { $0.resisted && $0.date >= monthAgo }
-        var counts: [String: Int] = [:]
-        for log in recent {
-            let cat = log.emotionalTrigger.isEmpty ? "General" : log.emotionalTrigger
-            counts[cat, default: 0] += 1
-        }
-        return counts.sorted { $0.value > $1.value }
+    private var personality: MoneyPersonality {
+        quizResults.first?.personality ?? .builder
     }
 
-    private var allTimeCategoryBreakdown: [(String, Int)] {
-        let resisted = impulseLogs.filter(\.resisted)
-        var counts: [String: Int] = [:]
-        for log in resisted {
-            let cat = log.emotionalTrigger.isEmpty ? "General" : log.emotionalTrigger
-            counts[cat, default: 0] += 1
+    private var monthlyWrappedData: WrappedData {
+        let cal = Calendar.current
+        let monthAgo = cal.date(byAdding: .month, value: -1, to: Date()) ?? Date()
+        let twoMonthsAgo = cal.date(byAdding: .month, value: -2, to: Date()) ?? Date()
+        let monthTx = transactions.filter { $0.transactionType == .expense && $0.date >= monthAgo }
+        let lastMonthTx = transactions.filter { $0.transactionType == .expense && $0.date >= twoMonthsAgo && $0.date < monthAgo }
+        let monthSpent = monthTx.reduce(0) { $0 + $1.amount }
+        let lastMonthSpent = lastMonthTx.reduce(0) { $0 + $1.amount }
+        let catAmounts = buildCategoryBreakdown(from: monthTx)
+        let moods = buildMoodBreakdown(from: monthTx)
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM yyyy"
+        return WrappedData(
+            periodLabel: formatter.string(from: Date()),
+            isAnnual: false,
+            totalSpent: monthSpent,
+            lastPeriodSpent: lastMonthSpent,
+            totalSaved: monthSaved,
+            savingsGoal: 1000,
+            purchasesResisted: monthResisted,
+            longestStreak: profile?.longestStreak ?? 0,
+            currentStreak: profile?.currentStreak ?? 0,
+            characterStage: characterStage,
+            startStage: .seedling,
+            level: characterLevel,
+            personality: personality,
+            categoryBreakdown: catAmounts,
+            moodBreakdown: moods
+        )
+    }
+
+    private var annualWrappedData: WrappedData {
+        let expenseTx = transactions.filter { $0.transactionType == .expense }
+        let catAmounts = buildCategoryBreakdown(from: expenseTx)
+        let moods = buildMoodBreakdown(from: expenseTx)
+        let totalSpent = expenseTx.reduce(0) { $0 + $1.amount }
+        return WrappedData(
+            periodLabel: String(Calendar.current.component(.year, from: Date())),
+            isAnnual: true,
+            totalSpent: totalSpent,
+            lastPeriodSpent: 0,
+            totalSaved: profile?.totalSaved ?? 0,
+            savingsGoal: 5000,
+            purchasesResisted: impulseLogs.filter(\.resisted).count,
+            longestStreak: profile?.longestStreak ?? 0,
+            currentStreak: profile?.currentStreak ?? 0,
+            characterStage: characterStage,
+            startStage: .seedling,
+            level: characterLevel,
+            personality: personality,
+            categoryBreakdown: catAmounts,
+            moodBreakdown: moods
+        )
+    }
+
+    private func buildCategoryBreakdown(from txs: [Transaction]) -> [(category: String, amount: Double, color: String)] {
+        var amounts: [String: Double] = [:]
+        var colors: [String: String] = [:]
+        for tx in txs {
+            let cat = tx.transactionCategory
+            amounts[cat.rawValue, default: 0] += tx.amount
+            colors[cat.rawValue] = cat.color
         }
-        return counts.sorted { $0.value > $1.value }
+        return amounts.sorted { $0.value > $1.value }.map { (category: $0.key, amount: $0.value, color: colors[$0.key] ?? "6C5CE7") }
+    }
+
+    private func buildMoodBreakdown(from txs: [Transaction]) -> [(emoji: String, count: Int)] {
+        var counts: [String: Int] = [:]
+        for tx in txs where !tx.moodEmoji.isEmpty {
+            counts[tx.moodEmoji, default: 0] += 1
+        }
+        return counts.sorted { $0.value > $1.value }.map { (emoji: $0.key, count: $0.value) }
     }
 
     private var pgsiPromptCard: some View {

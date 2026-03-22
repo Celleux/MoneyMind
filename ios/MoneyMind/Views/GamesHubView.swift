@@ -2,8 +2,10 @@ import SwiftUI
 import SwiftData
 
 struct GamesHubView: View {
+    @Environment(\.modelContext) private var modelContext
     @Query private var scratchCards: [ScratchCard]
     @Query private var cardCollection: [CollectedCard]
+    @Query private var playerProfiles: [PlayerProfile]
 
     private var pendingCards: Int {
         scratchCards.filter { !$0.isScratched }.count
@@ -11,6 +13,11 @@ struct GamesHubView: View {
 
     private var collectionCount: Int {
         cardCollection.count
+    }
+
+    private var questBadgeCount: Int {
+        let engine = QuestEngine(modelContext: modelContext)
+        return engine.pendingQuestCount()
     }
 
     var body: some View {
@@ -31,6 +38,19 @@ struct GamesHubView: View {
                             color: Theme.gold
                         )
                     }
+                    .padding(.horizontal)
+
+                    NavigationLink(destination: QuestHubView()) {
+                        GameCard(
+                            title: "Quests",
+                            subtitle: "Real-World Missions",
+                            description: "Complete real-life financial quests, earn XP, level up, fight bosses, earn gacha tickets",
+                            icon: "map.fill",
+                            badgeCount: questBadgeCount,
+                            accentColor: Theme.accent
+                        )
+                    }
+                    .buttonStyle(.plain)
                     .padding(.horizontal)
 
                     NavigationLink(destination: VaultGameView()) {

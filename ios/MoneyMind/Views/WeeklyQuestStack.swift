@@ -1,0 +1,116 @@
+import SwiftUI
+import SwiftData
+
+struct WeeklyQuestStack: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query(filter: #Predicate<DailyQuestSlot> { $0.cadence == "weekly" },
+           sort: \DailyQuestSlot.offeredDate, order: .reverse)
+    private var allWeeklySlots: [DailyQuestSlot]
+
+    @State private var expandedQuestID: String?
+    @State private var showRewardCelebration: Bool = false
+    @State private var lastReward: QuestReward?
+
+    private var currentWeekSlots: [DailyQuestSlot] {
+        let today = Calendar.current.startOfDay(for: Date())
+        let weekday = Calendar.current.component(.weekday, from: today)
+        let daysBack = (weekday + 5) % 7
+        let monday = Calendar.current.date(byAdding: .day, value: -daysBack, to: today) ?? today
+        return allWeeklySlots.filter { $0.offeredDate >= monday }
+    }
+
+    private var weeklyQuests: [(slot: DailyQuestSlot, quest: QuestDefinition)] {
+        currentWeekSlots.compactMap { slot in
+            guard let quest = QuestDatabase.quest(byID: slot.questID) else { return nil }
+            return (slot, quest)
+        }
+    }
+
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack {
+                Image(systemName: "calendar")
+                    .foregroundStyle(Color(hex: 0x60A5FA))
+                Text("This Week's Quests")
+                    .font(.system(size: 15, weight: .heavy))
+                    .foregroundStyle(.white)
+                Spacer()
+                Text("Resets Monday")
+                    .font(.system(size: 10))
+                    .foregroundStyle(Theme.textMuted)
+            }
+            .padding(.horizontal, 20)
+
+            if weeklyQuests.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "hourglass")
+                        .font(.system(size: 32))
+                        .foregroundStyle(Theme.textMuted)
+                    Text("Weekly quests refresh on Monday")
+                        .font(.system(size: 13))
+                        .foregroundStyle(Theme.textSecondary)
+                }
+                .padding(.vertical, 40)
+                .frame(maxWidth: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Theme.surface)
+                )
+                .padding(.horizontal, 16)
+            } else {
+                ForEach(weeklyQuests, id: \.quest.id) { item in
+                    let engine = QuestEngine(modelContext: modelContext)
+                    let progress = engine.questProgress(for: item.quest.id)
+                    let isCompleted = progress?.questStatus == .completed || progress?.questStatus == .claimed
+
+                    if !isCompleted {
+                        QuestCard(
+                            quest: item.quest,
+                            isLucky: false,
+                            isExpanded: expandedQuestID == item.quest.id,
+                            progress: progress,
+                            onTap: {
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+                                    expandedQuestID = expandedQuestID == item.quest.id ? nil : item.quest.id
+                                }
+                            },
+                            onComplete: {
+                                completeQuest(item.quest.id)
+                            }
+                        )
+                        .padding(.horizontal, 16)
+                    }
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $showRewardCelebration) {
+            if let reward = lastReward {
+                QuestRewardCelebration(reward: reward)
+            }
+        }
+    }
+
+    private func completeQuest(_ questID: String) {
+        let engine = QuestEngine(modelContext: modelContext)
+        let playerDescriptor = FetchDescriptor<PlayerProfile>()
+        guard let player = try? modelContext.fetch(playerDescriptor).first else { return }
+
+        let quest = QuestDatabase.quest(byID: questID)
+        if let quest, quest.steps.count > 1 {
+            let allDone = engine.advanceQuestStep(questID)
+            if !allDone { return }
+        }
+
+        let reward = engine.completeQuest(questID, player: player)
+        lastReward = reward
+        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+            expandedQuestID = nil
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            showRewardCelebration = true
+        }
+    }
+}

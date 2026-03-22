@@ -1,33 +1,55 @@
-# Build the Quest Engine — Selection, Rotation, Rewards, and Level-Up Logic
+# Quest Hub UI — RPG Command Center (Phase 4)
 
 
 ## What's Being Built
 
-The Quest Engine is the brain behind the quest system — it selects which quests to show each day/week, handles quest completion with XP and rewards, manages leveling up, and connects to the existing gacha/scratch card system.
+The full Quest Hub UI — the RPG command center inside the Games tab. This is where the app transforms into a game, with dark moody backgrounds, glowing elements, animated quest cards, and dramatic boss previews.
 
 ---
 
-### Features
+## Features
 
-- **Daily quest rotation**: Each morning (or on first app open), 3 daily quests are selected based on the player's level and zone, with one marked as "lucky" for bonus rewards
-- **Weekly quest rotation**: Every Monday, 2 harder weekly quests appear — these always guarantee a scratch card
-- **Smart quest selection**: Quests are chosen based on the player's current zone, avoiding already-completed quests and respecting seasonal availability
-- **Sawtooth difficulty**: After completing a hard quest, the engine favors easier quests next — creating a satisfying challenge rhythm
-- **Quest completion with rewards**: Completing a quest awards XP (with streak and lucky bonuses), essence, boss damage, and a chance at a scratch card
-- **Level-up system**: XP accumulates and triggers level-ups (50 levels across 5 zones), with avatar evolution every 10 levels
-- **Streak tracking**: Consecutive days of completing at least one quest are tracked, with bonus multipliers at 7-day and 30-day streaks
-- **Boss damage integration**: Every quest deals damage to the current zone's boss (XP ÷ 10 = damage)
-- **Gacha integration**: Scratch cards are created through the existing gacha engine when earned from quests
-- **Quest step progression**: Multi-step quests can be advanced one step at a time
-- **Quest archiving**: The "Write-Off Decision" — users can gracefully archive a quest without penalty
-- **Expired quest cleanup**: Daily/weekly quests that weren't completed are automatically marked as expired
+- **Hero Header** with evolving avatar icon, level display, animated XP progress bar with shimmer effect, and a streak flame counter
+- **Zone Banner** showing the player's current zone name, level range, theme description, and a zone icon — tappable to open a quest map (placeholder for now)
+- **Quest Tab Bar** with animated underline switching between Daily, Weekly, Chains, and Boss tabs
+- **Daily Quest Cards** — expandable cards showing quest title, category icon, difficulty badge, XP reward, estimated impact, time estimate, quest steps, reward chips, and a glowing "Complete Quest" button. Lucky quests get a golden border and sparkle badge
+- **Weekly Quest Cards** — same style as daily, pulled from weekly quest slots
+- **Quest Chain Grid** — 2-column grid of the 5 story chains showing progress bars and chain names
+- **Boss Battle Preview Card** — shows current zone boss name, HP bar with damage progress, and a "Fight Boss" button when enough damage is dealt
+- **All Quests Complete** empty state — motivational card when all daily/weekly quests are done
+- **Quest Reward Celebration** — full-screen animated overlay showing XP earned, scratch card drops, essence gains, boss damage, level-up announcements, and streak updates
+- **Updated Games Hub** — adds a Quests entry point card alongside The Vault, with a badge showing pending quest count
 
 ---
 
-### How It Works
+## Design
 
-- A new `QuestEngine` service file handles all quest logic
-- A `QuestReward` data type captures everything earned from completing a quest (XP, scratch card, essence, level-up info, boss damage, shareable moment)
-- The engine reads from the existing quest database (110+ quests already created) and player profile
-- It writes to existing models: `DailyQuestSlot`, `QuestProgress`, `PlayerProfile`, `ScratchCard`, `GachaState`
-- The engine is created with a SwiftData model context so it can read and write data directly
+- Dark RPG aesthetic using the Splurj dark luxury palette (backgrounds #0B0E14, #12161F, #1A1F2E)
+- Zone-specific gradient backgrounds that shift color based on the player's current zone
+- Emerald (#34D399) for actions and progress, gold (#F5C542) for achievements and lucky quests
+- Animated XP bar with a moving shimmer highlight
+- Quest cards with glass-like dark surfaces, category-colored icon rings, and spring expand/collapse animations
+- Lucky quest cards glow gold with a pulsing sparkle badge
+- Boss HP bar that changes color as it drains (red → yellow → green)
+- Haptic feedback on card taps, quest completion, and boss interactions
+- Matched geometry animated tab indicator
+- Quest reward celebration with sequential fade-in animations for each reward element
+
+---
+
+## Screens / Views
+
+- **GamesHubView** (updated) — adds a "Quests" navigation card with pending quest badge count
+- **QuestHubView** — main quest screen with hero header, zone banner, tab bar, and quest content
+- **QuestHeroHeader** — avatar ring, level, XP bar, streak flame
+- **ZoneBanner** — current zone info card with gradient border
+- **QuestTabBar** — 4-tab selector with animated underline
+- **DailyQuestStack** — list of today's quest cards with section header
+- **WeeklyQuestStack** — list of this week's quest cards
+- **QuestChainGrid** — 2-column grid of 5 story chain cards with progress
+- **BossBattleCard** — boss preview with HP bar and fight button
+- **QuestCard** — expandable quest card with steps, rewards, and complete button
+- **QuestStepRow** — individual step inside an expanded quest card
+- **RewardChip** — small pill showing reward type (XP, card, essence)
+- **AllQuestsCompleteCard** — empty state when all quests are done
+- **QuestRewardCelebration** — full-screen reward animation overlay

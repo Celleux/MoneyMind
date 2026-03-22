@@ -154,6 +154,6 @@ class UserProfile {
 
     private static func generateReferralCode() -> String {
         let chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-        return "MM-" + String((0..<6).map { _ in chars.randomElement()! })
+        return "SP-" + String((0..<6).map { _ in chars.randomElement()! })
     }
 }

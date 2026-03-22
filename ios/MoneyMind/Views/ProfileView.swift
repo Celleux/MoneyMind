@@ -25,7 +25,7 @@ struct ProfileView: View {
     @State private var showClearDataConfirm = false
     @State private var showDeleteAccountAlert = false
     @State private var showDeleteAccountConfirm = false
-    @State private var sectionAppeared: [Bool] = Array(repeating: false, count: 12)
+    @State private var sectionAppeared: [Bool] = Array(repeating: false, count: 8)
 
     private var profile: UserProfile? { profiles.first }
 
@@ -46,41 +46,29 @@ struct ProfileView: View {
         quizResults.first?.personality ?? .builder
     }
 
+    private var showRecoveryContent: Bool {
+        let path = profile?.userPath ?? .generalSaver
+        return path == .gambling || path == .impulseShopper
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    personalityHeroCard
+                    profileHeroCard
                         .sectionFadeIn(index: 0, appeared: $sectionAppeared)
                     statsGrid
                         .sectionFadeIn(index: 1, appeared: $sectionAppeared)
-                    characterCardSection
-                        .sectionFadeIn(index: 2, appeared: $sectionAppeared)
                     appearanceSection
-                        .sectionFadeIn(index: 3, appeared: $sectionAppeared)
+                        .sectionFadeIn(index: 2, appeared: $sectionAppeared)
                     notificationsSection
+                        .sectionFadeIn(index: 3, appeared: $sectionAppeared)
+                    journeySection
                         .sectionFadeIn(index: 4, appeared: $sectionAppeared)
-                    budgetPreferencesSection
+                    accountSection
                         .sectionFadeIn(index: 5, appeared: $sectionAppeared)
-                    sharingSection
-                        .sectionFadeIn(index: 6, appeared: $sectionAppeared)
-                    ReferralSectionView(
-                        referralCode: profile?.referralCode ?? "MM-XXXXX",
-                        referralCount: referrals.count
-                    )
-                    .sectionFadeIn(index: 7, appeared: $sectionAppeared)
-                    PGSITrendChart(assessments: pgsiAssessments)
-                        .sectionFadeIn(index: 7, appeared: $sectionAppeared)
-                    pgsiPromptCard
-                    BadgeGalleryView()
-                    dataSection
-                        .sectionFadeIn(index: 8, appeared: $sectionAppeared)
-                    premiumSection
-                        .sectionFadeIn(index: 9, appeared: $sectionAppeared)
                     aboutSection
-                        .sectionFadeIn(index: 10, appeared: $sectionAppeared)
-                    dangerZoneSection
-                        .sectionFadeIn(index: 11, appeared: $sectionAppeared)
+                        .sectionFadeIn(index: 6, appeared: $sectionAppeared)
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 80)
@@ -155,47 +143,40 @@ struct ProfileView: View {
         }
     }
 
-    // MARK: - Personality Hero Card
+    // MARK: - Profile Hero Card
 
-    private var personalityHeroCard: some View {
-        VStack(spacing: 20) {
-            ZStack {
-                Circle()
-                    .fill(personality.color.opacity(0.05))
-                    .frame(width: 140, height: 140)
-
-                Circle()
-                    .fill(personality.color.opacity(0.1))
-                    .frame(width: 100, height: 100)
-
-                Circle()
-                    .fill(personality.color.opacity(0.18))
-                    .frame(width: 68, height: 68)
-
-                Image(systemName: personality.icon)
-                    .font(.system(size: 30, weight: .semibold))
-                    .foregroundStyle(personality.color)
-                    .symbolEffect(.pulse, options: .repeating.speed(0.4))
-            }
-
-            VStack(spacing: 6) {
+    private var profileHeroCard: some View {
+        VStack(spacing: 16) {
+            HStack(spacing: 10) {
                 Text(profile?.name ?? "User")
                     .font(.system(.title2, design: .rounded, weight: .bold))
                     .foregroundStyle(Theme.textPrimary)
 
+                Text("·")
+                    .foregroundStyle(Theme.textMuted)
+
                 Text(personality.rawValue)
-                    .font(.system(.subheadline, weight: .semibold))
-                    .foregroundStyle(personality.color)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Theme.accent)
+
+                Text("·")
+                    .foregroundStyle(Theme.textMuted)
+
+                Text("Lv. \(characterLevel)")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Theme.accent)
             }
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
 
             HStack(spacing: 8) {
                 ForEach(personality.traits, id: \.self) { trait in
                     Text(trait)
                         .font(.caption2.weight(.semibold))
-                        .foregroundStyle(personality.color)
+                        .foregroundStyle(Theme.accent)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
-                        .background(personality.color.opacity(0.1), in: .capsule)
+                        .background(Theme.accent.opacity(0.1), in: .capsule)
                 }
             }
 
@@ -204,7 +185,7 @@ struct ProfileView: View {
             } label: {
                 Text("Retake Quiz")
                     .font(.caption.weight(.medium))
-                    .foregroundStyle(Theme.secondary)
+                    .foregroundStyle(Theme.textSecondary)
             }
 
             if let startDate = profile?.startDate {
@@ -214,7 +195,7 @@ struct ProfileView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 28)
+        .padding(.vertical, 24)
         .padding(.horizontal, 20)
         .glassCard(cornerRadius: 20)
     }
@@ -227,83 +208,21 @@ struct ProfileView: View {
                 value: "\(profile?.currentStreak ?? 0)",
                 label: "Day Streak",
                 icon: "flame.fill",
-                color: .orange
+                color: Theme.accent
             )
             ProfileStatCard(
                 value: profile?.totalSaved.formatted(.currency(code: profile?.defaultCurrency ?? "USD").precision(.fractionLength(0))) ?? "$0",
                 label: "Total Saved",
                 icon: "dollarsign.circle.fill",
-                color: Theme.accentGreen
+                color: Theme.accent
             )
             ProfileStatCard(
                 value: "\(impulseLogs.count)",
                 label: "Wins Logged",
                 icon: "star.fill",
-                color: Theme.gold
+                color: Theme.accent
             )
         }
-    }
-
-    // MARK: - Character Card
-
-    private var characterCardSection: some View {
-        VStack(spacing: 16) {
-            HStack {
-                Image(systemName: "person.crop.circle.badge.checkmark.fill")
-                    .foregroundStyle(characterStage.primaryColor)
-                Text("Your Companion")
-                    .font(.headline)
-                    .foregroundStyle(Theme.textPrimary)
-                Spacer()
-                Text("Level \(characterLevel)")
-                    .font(.system(.caption, design: .rounded, weight: .bold))
-                    .foregroundStyle(characterStage.primaryColor)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(characterStage.primaryColor.opacity(0.12), in: .capsule)
-            }
-
-            HStack(spacing: 16) {
-                CharacterView(stage: characterStage, reaction: .idle, level: characterLevel)
-                    .scaleEffect(0.7)
-                    .frame(width: 80, height: 80)
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(characterStage.name)
-                        .font(.system(.title3, design: .rounded, weight: .bold))
-                        .foregroundStyle(Theme.textPrimary)
-
-                    Text("\(profile?.xpPoints ?? 0) XP")
-                        .font(.caption)
-                        .foregroundStyle(Theme.textSecondary)
-
-                    XPProgressBar(
-                        progress: {
-                            let xp = profile?.xpPoints ?? 0
-                            let lvl = CharacterStage.level(from: xp)
-                            let cur = CharacterStage.xpForLevel(lvl)
-                            let nxt = CharacterStage.xpForNextLevel(lvl)
-                            let range = nxt - cur
-                            guard range > 0 else { return 1.0 }
-                            return Double(xp - cur) / Double(range)
-                        }(),
-                        level: characterLevel,
-                        stage: characterStage,
-                        currentXP: profile?.xpPoints ?? 0
-                    )
-                }
-            }
-
-            ShareCharacterButton(
-                stage: characterStage,
-                level: characterLevel,
-                totalSaved: profile?.totalSaved ?? 0,
-                streak: profile?.currentStreak ?? 0,
-                dayCount: dayCount
-            )
-        }
-        .padding(16)
-        .glassCard()
     }
 
     // MARK: - Appearance
@@ -312,7 +231,7 @@ struct ProfileView: View {
         SettingsSection(title: "Appearance", icon: "paintbrush.fill", iconColor: Theme.accent) {
             if let profile {
                 HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "moon.fill", color: Color(hex: 0x5B21B6))
+                    SettingsIconBadge(icon: "moon.fill", color: Theme.accent)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Theme")
                             .font(.subheadline.weight(.medium))
@@ -333,7 +252,7 @@ struct ProfileView: View {
                 SettingsDivider()
 
                 HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "paintpalette.fill", color: personality.color)
+                    SettingsIconBadge(icon: "paintpalette.fill", color: Theme.accent)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Personality Color")
                             .font(.subheadline.weight(.medium))
@@ -359,7 +278,7 @@ struct ProfileView: View {
                         get: { profile.gentleViewMode },
                         set: { profile.gentleViewMode = $0 }
                     ),
-                    color: Theme.teal
+                    color: Theme.accent
                 )
 
                 SettingsDivider()
@@ -372,7 +291,7 @@ struct ProfileView: View {
                         get: { profile.simpleMode },
                         set: { profile.simpleMode = $0 }
                     ),
-                    color: Color(red: 0.4, green: 0.6, blue: 1.0)
+                    color: Theme.accent
                 )
 
                 SettingsDivider()
@@ -385,7 +304,7 @@ struct ProfileView: View {
                         get: { profile.adhdMode },
                         set: { profile.adhdMode = $0 }
                     ),
-                    color: Theme.accentGreen
+                    color: Theme.accent
                 )
 
                 SettingsDivider()
@@ -398,7 +317,7 @@ struct ProfileView: View {
                         get: { profile.highContrastMode },
                         set: { profile.highContrastMode = $0 }
                     ),
-                    color: Theme.gold
+                    color: Theme.accent
                 )
             }
         }
@@ -407,7 +326,7 @@ struct ProfileView: View {
     // MARK: - Notifications
 
     private var notificationsSection: some View {
-        SettingsSection(title: "Notifications", icon: "bell.badge.fill", iconColor: Theme.danger) {
+        SettingsSection(title: "Notifications", icon: "bell.badge.fill", iconColor: Theme.accent) {
             if let profile {
                 PreferenceToggle(
                     icon: "creditcard.fill",
@@ -417,7 +336,7 @@ struct ProfileView: View {
                         get: { profile.billRemindersEnabled },
                         set: { profile.billRemindersEnabled = $0 }
                     ),
-                    color: Theme.warning
+                    color: Theme.accent
                 )
 
                 SettingsDivider()
@@ -469,7 +388,7 @@ struct ProfileView: View {
                         get: { profile.dailyCheckInNotif },
                         set: { profile.dailyCheckInNotif = $0 }
                     ),
-                    color: Theme.accentGreen
+                    color: Theme.accent
                 )
 
                 SettingsDivider()
@@ -482,7 +401,7 @@ struct ProfileView: View {
                         get: { profile.weeklyDigestNotif },
                         set: { profile.weeklyDigestNotif = $0 }
                     ),
-                    color: Theme.teal
+                    color: Theme.accent
                 )
 
                 SettingsDivider()
@@ -503,13 +422,96 @@ struct ProfileView: View {
         }
     }
 
-    // MARK: - Budget Preferences
+    // MARK: - My Journey
 
-    private var budgetPreferencesSection: some View {
-        SettingsSection(title: "Budget", icon: "chart.pie.fill", iconColor: Theme.accentGreen) {
+    private var journeySection: some View {
+        SettingsSection(title: "My Journey", icon: "leaf.fill", iconColor: Theme.accent) {
+            NavigationLink(destination: CharacterDetailView()) {
+                HStack(spacing: 14) {
+                    CharacterView(stage: characterStage, reaction: .idle, level: characterLevel)
+                        .scaleEffect(0.35)
+                        .frame(width: 36, height: 36)
+                        .clipShape(.rect(cornerRadius: 8))
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("My Character")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(Theme.textPrimary)
+                        Text("\(characterStage.name) · Level \(characterLevel)")
+                            .font(.caption)
+                            .foregroundStyle(Theme.textSecondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Theme.textSecondary.opacity(0.4))
+                }
+            }
+
+            SettingsDivider()
+
+            NavigationLink(destination: BadgeGalleryView()) {
+                HStack(spacing: 14) {
+                    SettingsIconBadge(icon: "medal.fill", color: Theme.accent)
+                    Text("Badges")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(Theme.textPrimary)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Theme.textSecondary.opacity(0.4))
+                }
+            }
+
+            SettingsDivider()
+
+            SettingsNavRow(icon: "calendar", title: "Weekly Summary", subtitle: "Share your 7-day highlights", color: Theme.accent) {
+                showWeeklySummary = true
+            }
+
+            SettingsDivider()
+
+            SettingsNavRow(icon: "sparkles", title: "Monthly Recap", subtitle: "Your month in 6 story cards", color: Theme.accent, badge: "NEW") {
+                showMoneyWrapped = true
+            }
+
+            SettingsDivider()
+
+            SettingsNavRow(icon: "gift.fill", title: "Splurj Wrapped", subtitle: "Your all-time journey in cards", color: Theme.accent) {
+                showAnnualWrapped = true
+            }
+
+            SettingsDivider()
+
+            ReferralInlineView(
+                referralCode: profile?.referralCode ?? "SP-XXXXX",
+                referralCount: referrals.count
+            )
+
+            if showRecoveryContent {
+                SettingsDivider()
+
+                SettingsNavRow(icon: "chart.line.downtrend.xyaxis", title: "Recovery Progress", subtitle: "PGSI assessments & trends", color: Theme.accent) {
+                    showPGSI = true
+                }
+
+                if !pgsiAssessments.isEmpty {
+                    PGSITrendChart(assessments: pgsiAssessments)
+                        .padding(.top, 8)
+                }
+
+                pgsiPromptCard
+            }
+        }
+    }
+
+    // MARK: - Account
+
+    private var accountSection: some View {
+        SettingsSection(title: "Account", icon: "gearshape.fill", iconColor: Theme.accent) {
             if let profile {
                 HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "dollarsign.circle.fill", color: Theme.accentGreen)
+                    SettingsIconBadge(icon: "dollarsign.circle.fill", color: Theme.accent)
                     Text("Default Currency")
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(Theme.textPrimary)
@@ -525,9 +527,10 @@ struct ProfileView: View {
                         Text("AUD").tag("AUD")
                         Text("JPY").tag("JPY")
                         Text("INR").tag("INR")
+                        Text("THB").tag("THB")
                     }
                     .pickerStyle(.menu)
-                    .tint(Theme.accentGreen)
+                    .tint(Theme.accent)
                 }
 
                 SettingsDivider()
@@ -553,7 +556,7 @@ struct ProfileView: View {
                 SettingsDivider()
 
                 HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "calendar", color: Theme.teal)
+                    SettingsIconBadge(icon: "calendar", color: Theme.accent)
                     Text("First Day of Month")
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(Theme.textPrimary)
@@ -567,71 +570,39 @@ struct ProfileView: View {
                         }
                     }
                     .pickerStyle(.menu)
-                    .tint(Theme.teal)
+                    .tint(Theme.accent)
                 }
             }
-        }
-    }
 
-    // MARK: - Sharing
-
-    private var sharingSection: some View {
-        SettingsSection(title: "Share & Celebrate", icon: "square.and.arrow.up.fill", iconColor: Theme.accentGreen) {
-            SettingsNavRow(icon: "calendar", title: "Weekly Summary", subtitle: "Share your 7-day highlights", color: Theme.teal) {
-                showWeeklySummary = true
-            }
             SettingsDivider()
-            SettingsNavRow(icon: "sparkles", title: "Monthly Recap", subtitle: "Your month in 6 story cards", color: Theme.accentGreen, badge: "NEW") {
-                showMoneyWrapped = true
-            }
-            SettingsDivider()
-            SettingsNavRow(icon: "gift.fill", title: "Money Wrapped", subtitle: "Your all-time journey in cards", color: Theme.gold) {
-                showAnnualWrapped = true
-            }
-        }
-    }
 
-    // MARK: - Data
-
-    private var dataSection: some View {
-        SettingsSection(title: "Data", icon: "externaldrive.fill", iconColor: Theme.secondary) {
-            SettingsNavRow(icon: "tablecells.fill", title: "Export Transactions", subtitle: "Download as CSV file", color: Theme.accentGreen) {
+            SettingsNavRow(icon: "tablecells.fill", title: "Export Transactions", subtitle: "Download as CSV file", color: Theme.accent) {
                 if let url = ExportService.exportCSV(transactions: Array(transactions)) {
                     exportURL = url
                     showExportCSVShare = true
                 }
             }
+
             SettingsDivider()
+
             SettingsNavRow(icon: "doc.richtext.fill", title: "Monthly Report", subtitle: "Generate PDF report", color: Theme.accent) {
                 if let url = ExportService.exportPDF(transactions: Array(transactions), profile: profile) {
                     exportURL = url
                     showExportPDFShare = true
                 }
             }
+
             SettingsDivider()
-            Button {
-                showClearDataAlert = true
-            } label: {
-                HStack(spacing: 14) {
-                    SettingsIconBadge(icon: "trash.fill", color: Theme.textSecondary)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Clear All Data")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(Theme.textSecondary)
-                        Text("Remove all transactions and progress")
-                            .font(.caption)
-                            .foregroundStyle(Theme.textMuted)
-                    }
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Theme.textSecondary.opacity(0.4))
-                }
-            }
+
+            premiumInlineSection
+
+            SettingsDivider()
+
+            dataManagementInline
         }
     }
 
-    // MARK: - Premium
+    // MARK: - Premium (inline)
 
     private var premiumStatusText: String {
         if premiumManager.isPremium {
@@ -645,21 +616,19 @@ struct ProfileView: View {
     }
 
     private var premiumStatusColor: Color {
-        if premiumManager.isPremium {
-            return Theme.accent
-        } else if premiumManager.isInTrial {
+        if premiumManager.isPremium || premiumManager.isInTrial {
             return Theme.accent
         } else {
             return Theme.textSecondary
         }
     }
 
-    private var premiumSection: some View {
-        SettingsSection(title: "Premium", icon: "crown.fill", iconColor: Theme.gold) {
+    private var premiumInlineSection: some View {
+        VStack(spacing: 14) {
             HStack(spacing: 14) {
-                SettingsIconBadge(icon: "checkmark.seal.fill", color: premiumStatusColor)
+                SettingsIconBadge(icon: "crown.fill", color: Theme.gold)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Current Plan")
+                    Text("Premium")
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(Theme.textPrimary)
                     Text(premiumStatusText)
@@ -685,7 +654,6 @@ struct ProfileView: View {
             }
 
             if !premiumManager.hasFullAccess {
-                SettingsDivider()
                 Button {
                     showPaywall = true
                 } label: {
@@ -705,8 +673,6 @@ struct ProfileView: View {
                 .buttonStyle(PressableButtonStyle())
             }
 
-            SettingsDivider()
-
             Button {
                 premiumManager.restore()
             } label: {
@@ -721,62 +687,10 @@ struct ProfileView: View {
         }
     }
 
-    // MARK: - About
+    // MARK: - Data Management (inline)
 
-    private var aboutSection: some View {
-        SettingsSection(title: "About", icon: "info.circle.fill", iconColor: Theme.textSecondary) {
-            HStack(spacing: 14) {
-                SettingsIconBadge(icon: "number", color: Theme.textMuted)
-                Text("Version")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(Theme.textPrimary)
-                Spacer()
-                Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
-                    .font(.subheadline)
-                    .foregroundStyle(Theme.textSecondary)
-            }
-
-            SettingsDivider()
-
-            SettingsNavRow(icon: "star.fill", title: "Rate on App Store", color: .orange) {
-                if let url = URL(string: "https://apps.apple.com/app/splurj") {
-                    UIApplication.shared.open(url)
-                }
-            }
-            SettingsDivider()
-            SettingsNavRow(icon: "square.and.arrow.up", title: "Share Splurj", color: Theme.accentGreen) {
-                let url = URL(string: "https://splurj.app")!
-                let av = UIActivityViewController(activityItems: ["Check out Splurj — Don't splurge. Splurj.", url], applicationActivities: nil)
-                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let root = scene.windows.first?.rootViewController {
-                    root.present(av, animated: true)
-                }
-            }
-            SettingsDivider()
-            SettingsNavRow(icon: "lock.shield.fill", title: "Privacy Policy", color: .blue) {
-                if let url = URL(string: "https://moneymind.app/privacy") {
-                    UIApplication.shared.open(url)
-                }
-            }
-            SettingsDivider()
-            SettingsNavRow(icon: "doc.text.fill", title: "Terms of Service", color: Theme.textSecondary) {
-                if let url = URL(string: "https://moneymind.app/terms") {
-                    UIApplication.shared.open(url)
-                }
-            }
-            SettingsDivider()
-            SettingsNavRow(icon: "envelope.fill", title: "Contact Support", color: Theme.teal) {
-                if let url = URL(string: "mailto:support@moneymind.app") {
-                    UIApplication.shared.open(url)
-                }
-            }
-        }
-    }
-
-    // MARK: - Danger Zone
-
-    private var dangerZoneSection: some View {
-        SettingsSection(title: "Data Management", icon: "externaldrive.fill", iconColor: Theme.textSecondary) {
+    private var dataManagementInline: some View {
+        VStack(spacing: 14) {
             Button {
                 showClearDataAlert = true
             } label: {
@@ -823,12 +737,64 @@ struct ProfileView: View {
         }
     }
 
-    // MARK: - PGSI
+    // MARK: - About
+
+    private var aboutSection: some View {
+        SettingsSection(title: "About", icon: "info.circle.fill", iconColor: Theme.textSecondary) {
+            HStack(spacing: 14) {
+                SettingsIconBadge(icon: "number", color: Theme.textMuted)
+                Text("Version")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(Theme.textPrimary)
+                Spacer()
+                Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.textSecondary)
+            }
+
+            SettingsDivider()
+
+            SettingsNavRow(icon: "star.fill", title: "Rate on App Store", color: Theme.accent) {
+                if let url = URL(string: "https://apps.apple.com/app/splurj") {
+                    UIApplication.shared.open(url)
+                }
+            }
+            SettingsDivider()
+            SettingsNavRow(icon: "square.and.arrow.up", title: "Share Splurj", color: Theme.accent) {
+                let url = URL(string: "https://splurj.app")!
+                let av = UIActivityViewController(activityItems: ["Check out Splurj — Don't splurge. Splurj.", url], applicationActivities: nil)
+                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let root = scene.windows.first?.rootViewController {
+                    root.present(av, animated: true)
+                }
+            }
+            SettingsDivider()
+            SettingsNavRow(icon: "lock.shield.fill", title: "Privacy Policy", color: Theme.accent) {
+                if let url = URL(string: "https://splurj.app/privacy") {
+                    UIApplication.shared.open(url)
+                }
+            }
+            SettingsDivider()
+            SettingsNavRow(icon: "doc.text.fill", title: "Terms of Service", color: Theme.textSecondary) {
+                if let url = URL(string: "https://splurj.app/terms") {
+                    UIApplication.shared.open(url)
+                }
+            }
+            SettingsDivider()
+            SettingsNavRow(icon: "envelope.fill", title: "Contact Support", color: Theme.accent) {
+                if let url = URL(string: "mailto:support@splurj.app") {
+                    UIApplication.shared.open(url)
+                }
+            }
+        }
+    }
+
+    // MARK: - PGSI Prompt
 
     private var pgsiPromptCard: some View {
         Group {
             let showPrompt: Bool = {
-                guard let reason = profile?.selectedReason, reason.lowercased().contains("gambl") else { return false }
+                guard showRecoveryContent else { return false }
                 let day = Calendar.current.component(.day, from: Date())
                 guard day <= 7 else { return false }
                 let thisMonth = Calendar.current.startOfDay(for: Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date()))!)
@@ -839,38 +805,30 @@ struct ProfileView: View {
                 Button {
                     showPGSI = true
                 } label: {
-                    HStack(spacing: 14) {
-                        ZStack {
-                            Circle()
-                                .fill(Theme.teal.opacity(0.15))
-                                .frame(width: 44, height: 44)
-                            Image(systemName: "chart.line.downtrend.xyaxis")
-                                .font(.title3)
-                                .foregroundStyle(Theme.teal)
-                        }
-
-                        VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "chart.line.downtrend.xyaxis")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.accent)
+                            .frame(width: 28)
+                        VStack(alignment: .leading, spacing: 2) {
                             Text("Monthly Check-In")
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(Theme.textPrimary)
-                            Text("Track your recovery progress with the PGSI")
+                            Text("Track your recovery progress")
                                 .font(.caption)
                                 .foregroundStyle(Theme.textSecondary)
                         }
-
                         Spacer()
-
                         Text("Optional")
                             .font(.caption2.weight(.medium))
-                            .foregroundStyle(Theme.teal)
+                            .foregroundStyle(Theme.accent)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Theme.teal.opacity(0.1), in: .capsule)
+                            .background(Theme.accent.opacity(0.1), in: .capsule)
                     }
-                    .padding(16)
-                    .glassCard()
                 }
                 .buttonStyle(PressableButtonStyle())
+                .padding(.top, 8)
             }
         }
     }
@@ -1026,6 +984,54 @@ struct ProfileView: View {
                 profile.totalConsciousChoices = 0
             }
         } catch { }
+    }
+}
+
+// MARK: - Referral Inline View
+
+private struct ReferralInlineView: View {
+    let referralCode: String
+    let referralCount: Int
+    @State private var copied = false
+
+    var body: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 14) {
+                SettingsIconBadge(icon: "person.badge.plus", color: Theme.accent)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Invite Friends")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(Theme.textPrimary)
+                    Text(referralCode)
+                        .font(.system(.caption, design: .monospaced, weight: .bold))
+                        .foregroundStyle(Theme.textSecondary)
+                }
+                Spacer()
+                if referralCount > 0 {
+                    Text("\(referralCount) invited")
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(Theme.accent)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Theme.accent.opacity(0.12), in: .capsule)
+                }
+                Button {
+                    UIPasteboard.general.string = referralCode
+                    withAnimation(.spring(response: 0.3)) { copied = true }
+                    Task {
+                        try? await Task.sleep(for: .seconds(2))
+                        withAnimation { copied = false }
+                    }
+                } label: {
+                    Image(systemName: copied ? "checkmark" : "doc.on.doc.fill")
+                        .font(.caption)
+                        .foregroundStyle(copied ? Theme.accent : Theme.textSecondary)
+                        .frame(width: 32, height: 32)
+                        .background(Theme.elevated, in: .circle)
+                }
+                .sensoryFeedback(.selection, trigger: copied)
+            }
+        }
     }
 }
 
@@ -1190,7 +1196,7 @@ private struct PreferenceToggle: View {
                 }
             }
         }
-        .tint(Theme.accentGreen)
+        .tint(Theme.accent)
         .sensoryFeedback(.selection, trigger: isOn)
     }
 }

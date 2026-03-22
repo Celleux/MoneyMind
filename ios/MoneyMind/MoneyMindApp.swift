@@ -51,7 +51,9 @@ struct MoneyMindApp: App {
             AccountabilityPartner.self,
             PartnerCheckIn.self,
             ChallengeGroup.self,
-            ReferralCode.self
+            ReferralCode.self,
+            Transaction.self,
+            BudgetCategory.self
         ])
     }
 }

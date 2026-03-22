@@ -4,104 +4,125 @@ import SwiftData
 struct HomeView: View {
     @Query private var profiles: [UserProfile]
     @Query(sort: \ImpulseLog.date, order: .reverse) private var impulseLogs: [ImpulseLog]
+    @Query(sort: \Transaction.date, order: .reverse) private var transactions: [Transaction]
+    @Query private var budgets: [BudgetCategory]
+    @Query private var quizResults: [QuizResult]
     @State private var showLogWin = false
-    @State private var showEveningReflection = false
-    @State private var showUrgeSurf = false
+    @State private var showAddExpense = false
+    @State private var showAddIncome = false
     @State private var showCoach = false
+    @State private var showUrgeSurf = false
     @State private var appeared = false
     @State private var streakBounce = 0
     @State private var characterVM = CharacterViewModel()
-    @State private var healthVM = HealthViewModel()
-    @Query(sort: \EveningReflection.date, order: .reverse) private var reflections: [EveningReflection]
-    @Query(sort: \HALTCheckIn.date, order: .reverse) private var haltCheckIns: [HALTCheckIn]
-    @Query(sort: \UrgeSurfSession.date, order: .reverse) private var urgeSessions: [UrgeSurfSession]
+    @State private var selectedBudget: BudgetCategory?
+    @State private var selectedBudgetSpent: Double = 0
+    @State private var isLoading = true
+    @State private var refreshRotation: Double = 0
     @Environment(\.modelContext) private var modelContext
 
     private var profile: UserProfile? { profiles.first }
-    private var greeting: String {
-        let hour = Calendar.current.component(.hour, from: Date())
-        switch hour {
-        case 0..<12: return "Good morning"
-        case 12..<17: return "Good afternoon"
-        default: return "Good evening"
-        }
+
+    private var personality: MoneyPersonality {
+        quizResults.first?.personality ?? .builder
     }
 
-    private var dayCount: Int {
-        guard let start = profile?.startDate else { return 0 }
-        return Calendar.current.dateComponents([.day], from: start, to: Date()).day ?? 0
+    private var totalBalance: Double {
+        let income = transactions.filter { $0.transactionType == .income }.reduce(0) { $0 + $1.amount }
+        let expenses = transactions.filter { $0.transactionType == .expense }.reduce(0) { $0 + $1.amount }
+        let saved = profile?.totalSaved ?? 0
+        return income - expenses + saved
+    }
+
+    private var lastWeekBalance: Double {
+        let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
+        let oldTransactions = transactions.filter { $0.date < weekAgo }
+        let income = oldTransactions.filter { $0.transactionType == .income }.reduce(0) { $0 + $1.amount }
+        let expenses = oldTransactions.filter { $0.transactionType == .expense }.reduce(0) { $0 + $1.amount }
+        return income - expenses + (profile?.totalSaved ?? 0)
+    }
+
+    private var trendPercentage: Double {
+        guard lastWeekBalance != 0 else { return 0 }
+        return ((totalBalance - lastWeekBalance) / abs(lastWeekBalance)) * 100
+    }
+
+    private var recentItems: [DashboardTransaction] {
+        let expenseItems = transactions.prefix(10).map { t in
+            DashboardTransaction(
+                id: t.persistentModelID.hashValue,
+                name: t.note.isEmpty ? t.transactionCategory.rawValue : t.note,
+                amount: t.amount,
+                isIncome: t.transactionType == .income,
+                category: t.transactionCategory,
+                date: t.date,
+                moodEmoji: t.moodEmoji
+            )
+        }
+
+        let resistedItems = impulseLogs.prefix(5).map { log in
+            DashboardTransaction(
+                id: log.persistentModelID.hashValue,
+                name: log.note.isEmpty ? "Resisted purchase" : log.note,
+                amount: log.amount,
+                isIncome: false,
+                category: .savings,
+                date: log.date,
+                moodEmoji: "",
+                isResisted: true
+            )
+        }
+
+        return (expenseItems + resistedItems)
+            .sorted { $0.date > $1.date }
+            .prefix(5)
+            .map { $0 }
+    }
+
+    private var weeklySpending: ([Double], [String], Int) {
+        let calendar = Calendar.current
+        let today = Date()
+        let weekday = calendar.component(.weekday, from: today)
+        let mondayOffset = (weekday == 1) ? -6 : (2 - weekday)
+        let monday = calendar.date(byAdding: .day, value: mondayOffset, to: calendar.startOfDay(for: today))!
+
+        var amounts: [Double] = Array(repeating: 0, count: 7)
+        let labels = ["M", "T", "W", "T", "F", "S", "S"]
+
+        let weekExpenses = transactions.filter {
+            $0.transactionType == .expense && $0.date >= monday
+        }
+
+        for expense in weekExpenses {
+            let dayDiff = calendar.dateComponents([.day], from: monday, to: expense.date).day ?? 0
+            if dayDiff >= 0 && dayDiff < 7 {
+                amounts[dayDiff] += expense.amount
+            }
+        }
+
+        let currentIndex = calendar.dateComponents([.day], from: monday, to: today).day ?? 0
+        return (amounts, labels, min(currentIndex, 6))
     }
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
-                    headerSection
-
-                    if profile?.simpleMode == true {
-                        SimpleModeView(
-                            dayCount: dayCount,
-                            totalSaved: profile?.totalSaved ?? 0,
-                            level: characterVM.level
-                        )
-                        .opacity(appeared ? 1 : 0)
-                        .offset(y: appeared ? 0 : 15)
-                        .animation(.spring(response: 0.5).delay(0.1), value: appeared)
-                    } else {
-                        characterSection
-                        xpSection
-                    }
-
-                    DailyPledgeCard()
-                        .opacity(appeared ? 1 : 0)
-                        .offset(y: appeared ? 0 : 15)
-                        .animation(.spring(response: 0.5).delay(0.12), value: appeared)
-
-                    EMACheckInCard()
-                        .opacity(appeared ? 1 : 0)
-                        .offset(y: appeared ? 0 : 15)
-                        .animation(.spring(response: 0.5).delay(0.14), value: appeared)
-
-                    NotificationPermissionCard()
-                        .opacity(appeared ? 1 : 0)
-                        .offset(y: appeared ? 0 : 15)
-                        .animation(.spring(response: 0.5).delay(0.15), value: appeared)
-
-                    streakCard
-
-                    hrvSection
-
-                    if !healthVM.jitaiSuggestions.isEmpty {
-                        JITAIRecommendationCard(
-                            suggestions: healthVM.jitaiSuggestions,
-                            onSelectTool: handleJITAITool
-                        )
-                        .opacity(appeared ? 1 : 0)
-                        .offset(y: appeared ? 0 : 15)
-                        .animation(.spring(response: 0.5).delay(0.23), value: appeared)
-                    }
-
-                    if let sdtMsg = characterVM.sdtMessage(profile: profile ?? UserProfile(name: "")) {
-                        sdtInsightCard(sdtMsg)
-                    }
-
-                    moneySavedCard
-
-                    eveningReflectionPrompt
-
-                    CurriculumSectionView(dayCount: dayCount)
-                        .opacity(appeared ? 1 : 0)
-                        .offset(y: appeared ? 0 : 15)
-                        .animation(.spring(response: 0.5).delay(0.28), value: appeared)
-
-                    coachShortcutCard
-
-                    quickActionsRow
-                    socialProofSection
-                    dailyInsightCard
+                if isLoading {
+                    DashboardSkeletonView()
+                        .padding(.horizontal)
+                        .transition(.opacity)
+                } else if transactions.isEmpty && impulseLogs.isEmpty {
+                    emptyState
+                } else {
+                    dashboardContent
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 80)
+            }
+            .scrollIndicators(.hidden)
+            .refreshable {
+                withAnimation(.linear(duration: 0.6)) {
+                    refreshRotation += 360
+                }
+                try? await Task.sleep(for: .seconds(0.5))
             }
             .background(Theme.background.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
@@ -110,13 +131,20 @@ struct HomeView: View {
                     .presentationDetents([.medium])
                     .presentationDragIndicator(.visible)
             }
-            .sheet(isPresented: $showEveningReflection) {
-                EveningReflectionSheet()
+            .sheet(isPresented: $showAddExpense) {
+                AddExpenseSheet()
                     .presentationDetents([.large])
                     .presentationDragIndicator(.visible)
             }
-            .navigationDestination(for: Int.self) { sessionNumber in
-                CurriculumSessionDetailView(sessionNumber: sessionNumber)
+            .sheet(isPresented: $showAddIncome) {
+                AddIncomeSheet()
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+            }
+            .sheet(item: $selectedBudget) { budget in
+                BudgetDetailSheet(budget: budget, spent: selectedBudgetSpent)
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
             }
             .sheet(isPresented: $showUrgeSurf) {
                 UrgeSurfView()
@@ -131,22 +159,12 @@ struct HomeView: View {
                     profile.lastOpenDate = Date()
                     NotificationService.shared.scheduleAllNotifications(profile: profile)
                 }
+                ensureDefaultBudgets()
                 Task {
-                    await healthVM.requestAuthAndLoad()
-                    await NotificationService.shared.checkAuthorizationStatus()
-                    healthVM.analyzePatterns(
-                        haltCheckIns: haltCheckIns,
-                        reflections: reflections,
-                        urgeSessions: urgeSessions,
-                        profile: profile,
-                        modelContext: modelContext
-                    )
-                    healthVM.collectDailyCrisisData(
-                        haltCheckIns: haltCheckIns,
-                        urgeSessions: urgeSessions,
-                        profile: profile,
-                        modelContext: modelContext
-                    )
+                    try? await Task.sleep(for: .seconds(0.4))
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        isLoading = false
+                    }
                 }
             }
             .onChange(of: profile?.xpPoints) { _, _ in
@@ -157,95 +175,340 @@ struct HomeView: View {
         }
     }
 
-    private var headerSection: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("\(greeting),")
-                    .font(.title2)
-                    .foregroundStyle(Theme.textSecondary)
-                Text(profile?.name ?? "Friend")
-                    .font(Theme.headingFont(.largeTitle))
-                    .foregroundStyle(Theme.textPrimary)
+    // MARK: - Dashboard Content
+
+    private var dashboardContent: some View {
+        VStack(spacing: 20) {
+            topBar
+            heroBalance
+            quickActionsRow
+            budgetRingsSection
+            spendingTimeline
+            recentTransactionsSection
+            streakCard
+            DailyPledgeCard()
+                .staggerIn(appeared: appeared, delay: 0.42)
+            coachShortcutCard
+            dailyInsightCard
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 80)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.1)) {
+                appeared = true
             }
+        }
+    }
+
+    // MARK: - Empty State
+
+    private var emptyState: some View {
+        VStack(spacing: 28) {
+            topBar
+                .padding(.horizontal)
+
             Spacer()
-            Text(Date(), format: .dateTime.month(.abbreviated).day())
-                .font(.subheadline)
-                .foregroundStyle(Theme.textSecondary)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(.ultraThinMaterial, in: .capsule)
+                .frame(height: 40)
+
+            VStack(spacing: 20) {
+                ZStack {
+                    Circle()
+                        .fill(Theme.accent.opacity(0.08))
+                        .frame(width: 120, height: 120)
+                    Circle()
+                        .fill(Theme.accent.opacity(0.04))
+                        .frame(width: 160, height: 160)
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 52))
+                        .foregroundStyle(Theme.accent)
+                        .symbolEffect(.pulse, options: .repeating)
+                }
+
+                Text("Start Your Journey")
+                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .foregroundStyle(Theme.textPrimary)
+
+                Text("Add your first transaction or log a win\nto see your dashboard come alive")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+            }
+
+            VStack(spacing: 12) {
+                Button {
+                    showAddExpense = true
+                } label: {
+                    Label("Add an Expense", systemImage: "arrow.down.circle.fill")
+                        .font(.system(.body, design: .rounded, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(Theme.accent, in: .rect(cornerRadius: 14))
+                }
+                .buttonStyle(PressableButtonStyle())
+
+                Button {
+                    showLogWin = true
+                } label: {
+                    Label("Log a Win", systemImage: "star.fill")
+                        .font(.system(.body, design: .rounded, weight: .semibold))
+                        .foregroundStyle(Theme.accentGreen)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(Theme.accentGreen.opacity(0.12), in: .rect(cornerRadius: 14))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .strokeBorder(Theme.accentGreen.opacity(0.2), lineWidth: 1)
+                        )
+                }
+                .buttonStyle(PressableButtonStyle())
+            }
+            .padding(.horizontal, 32)
+
+            Spacer()
         }
         .padding(.top, 16)
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 10)
-        .animation(.spring(response: 0.5).delay(0.05), value: appeared)
-        .onAppear { appeared = true }
     }
 
-    private var characterSection: some View {
-        VStack(spacing: 12) {
+    // MARK: - Top Bar
+
+    private var topBar: some View {
+        HStack {
+            Text("MoneyMind")
+                .font(.system(size: 17, weight: .semibold, design: .rounded))
+                .foregroundStyle(Theme.textPrimary)
+
+            Spacer()
+
             ZStack {
-                CharacterView(
-                    stage: characterVM.stage,
-                    reaction: characterVM.currentReaction,
-                    level: characterVM.level
-                )
-                .sensoryFeedback(.impact(weight: .light), trigger: characterVM.currentReaction)
+                Circle()
+                    .fill(personality.color.opacity(0.12))
+                    .frame(width: 36, height: 36)
+                Image(systemName: personality.icon)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(personality.color)
+            }
+        }
+        .padding(.top, 12)
+        .staggerIn(appeared: appeared, delay: 0.0)
+    }
 
-                if characterVM.showXPGain {
-                    Text("+\(characterVM.lastXPGain) XP")
-                        .font(.system(.caption, design: .rounded, weight: .bold))
-                        .foregroundStyle(characterVM.stage.primaryColor)
-                        .offset(y: -70)
-                        .transition(.asymmetric(
-                            insertion: .scale.combined(with: .opacity).combined(with: .move(edge: .bottom)),
-                            removal: .opacity.combined(with: .move(edge: .top))
-                        ))
-                }
+    // MARK: - Hero Balance
 
-                if characterVM.showReactionMessage {
-                    ReactionMessageBubble(
-                        message: characterVM.reactionMessage,
-                        stage: characterVM.stage
-                    )
-                    .offset(y: 70)
-                    .transition(.scale.combined(with: .opacity))
+    private var heroBalance: some View {
+        VStack(spacing: 8) {
+            Text("Total Balance")
+                .font(.system(size: 13, weight: .regular))
+                .foregroundStyle(Theme.textMuted)
+
+            ZStack {
+                Circle()
+                    .fill(personality.color.opacity(0.05))
+                    .frame(width: 220, height: 220)
+                    .blur(radius: 40)
+
+                VStack(spacing: 6) {
+                    MMAmountDisplay(amount: totalBalance, font: Theme.amountXL)
+
+                    HStack(spacing: 4) {
+                        Image(systemName: trendPercentage >= 0 ? "arrow.up.right" : "arrow.down.right")
+                            .font(.system(size: 12, weight: .bold))
+                        Text("\(abs(trendPercentage), specifier: "%.1f")%")
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    }
+                    .foregroundStyle(trendPercentage >= 0 ? Theme.accentGreen : Theme.danger)
                 }
             }
-            .frame(height: 180)
-            .frame(maxWidth: .infinity)
-
-            ShareCharacterButton(
-                stage: characterVM.stage,
-                level: characterVM.level,
-                totalSaved: profile?.totalSaved ?? 0,
-                streak: profile?.currentStreak ?? 0,
-                dayCount: dayCount
-            )
         }
-        .padding(.vertical, 8)
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.1), value: appeared)
+        .frame(maxWidth: .infinity)
+        .staggerIn(appeared: appeared, delay: 0.05)
     }
 
-    private var xpSection: some View {
-        XPProgressBar(
-            progress: characterVM.levelProgress,
-            level: characterVM.level,
-            stage: characterVM.stage,
-            currentXP: characterVM.currentXP
-        )
-        .padding(16)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(characterVM.stage.primaryColor.opacity(0.1), lineWidth: 1)
-        )
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.15), value: appeared)
+    // MARK: - Quick Actions
+
+    private var quickActionsRow: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 20) {
+                DashboardQuickAction(icon: "star.fill", label: "Log a Win", color: Theme.accentGreen) {
+                    showLogWin = true
+                }
+                DashboardQuickAction(icon: "arrow.down.circle.fill", label: "Expense", color: Theme.danger) {
+                    showAddExpense = true
+                }
+                DashboardQuickAction(icon: "wind", label: "Breathe", color: Color(hex: 0x6699FF)) {
+                    showUrgeSurf = true
+                }
+                DashboardQuickAction(icon: "brain.head.profile", label: "Coach", color: Theme.teal) {
+                    showCoach = true
+                }
+            }
+            .padding(.horizontal, 4)
+        }
+        .contentMargins(.horizontal, 0)
+        .staggerIn(appeared: appeared, delay: 0.1)
     }
+
+    // MARK: - Budget Rings
+
+    private var budgetRingsSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("Budgets")
+                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(Theme.textPrimary)
+                Spacer()
+
+                Button {
+                    showAddExpense = true
+                } label: {
+                    Text("Add")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(Theme.secondary)
+                }
+            }
+
+            HStack(spacing: 0) {
+                ForEach(budgets.prefix(3)) { budget in
+                    let spent = spentForBudget(budget)
+                    let progress = budget.monthlyLimit > 0 ? spent / budget.monthlyLimit : 0
+
+                    Button {
+                        selectedBudgetSpent = spent
+                        selectedBudget = budget
+                    } label: {
+                        VStack(spacing: 10) {
+                            ZStack {
+                                MMProgressRing(progress: min(progress, 1.0), lineWidth: 6, size: 64)
+
+                                Image(systemName: budget.icon)
+                                    .font(.system(size: 18))
+                                    .foregroundStyle(Color(hex: UInt(budget.colorHex, radix: 16) ?? 0x6C5CE7))
+                            }
+
+                            Text(budget.name)
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundStyle(Theme.textPrimary)
+
+                            Text("\(Int(spent))/\(Int(budget.monthlyLimit))")
+                                .font(.system(size: 11, weight: .regular, design: .rounded))
+                                .foregroundStyle(Theme.textMuted)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(PressableButtonStyle())
+                }
+            }
+        }
+        .padding(20)
+        .background(Theme.card, in: .rect(cornerRadius: 20))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .strokeBorder(Theme.border, lineWidth: 0.5)
+        )
+        .staggerIn(appeared: appeared, delay: 0.18)
+    }
+
+    // MARK: - Spending Timeline
+
+    private var spendingTimeline: some View {
+        let (amounts, labels, currentDay) = weeklySpending
+        return SpendingTimelineChart(
+            dailyAmounts: amounts,
+            dayLabels: labels,
+            currentDayIndex: currentDay
+        )
+        .staggerIn(appeared: appeared, delay: 0.24)
+    }
+
+    // MARK: - Recent Transactions
+
+    private var recentTransactionsSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("Recent")
+                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(Theme.textPrimary)
+                Spacer()
+                Text("See All")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(Theme.secondary)
+            }
+
+            if recentItems.isEmpty {
+                HStack {
+                    Spacer()
+                    VStack(spacing: 8) {
+                        Image(systemName: "tray")
+                            .font(.title2)
+                            .foregroundStyle(Theme.textMuted)
+                        Text("No transactions yet")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.textSecondary)
+                    }
+                    .padding(.vertical, 20)
+                    Spacer()
+                }
+            } else {
+                VStack(spacing: 2) {
+                    ForEach(recentItems) { item in
+                        transactionRow(item)
+                    }
+                }
+            }
+        }
+        .padding(20)
+        .background(Theme.card, in: .rect(cornerRadius: 20))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .strokeBorder(Theme.border, lineWidth: 0.5)
+        )
+        .staggerIn(appeared: appeared, delay: 0.30)
+    }
+
+    private func transactionRow(_ item: DashboardTransaction) -> some View {
+        HStack(spacing: 12) {
+            Circle()
+                .fill(Color(hex: UInt(item.category.color, radix: 16) ?? 0x64748B))
+                .frame(width: 10, height: 10)
+
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 4) {
+                    Text(item.name)
+                        .font(.system(size: 15, weight: .regular))
+                        .foregroundStyle(Theme.textPrimary)
+                        .lineLimit(1)
+                    if item.isResisted {
+                        Image(systemName: "checkmark.shield.fill")
+                            .font(.system(size: 10))
+                            .foregroundStyle(Theme.accentGreen)
+                    }
+                    if !item.moodEmoji.isEmpty {
+                        Text(item.moodEmoji)
+                            .font(.system(size: 12))
+                    }
+                }
+                Text(item.date, format: .dateTime.hour().minute())
+                    .font(.system(size: 13))
+                    .foregroundStyle(Theme.textMuted)
+            }
+
+            Spacer()
+
+            Text(item.isIncome ? "+$\(item.amount, specifier: "%.0f")" :
+                    item.isResisted ? "Saved $\(item.amount, specifier: "%.0f")" :
+                    "-$\(item.amount, specifier: "%.0f")")
+                .font(.system(size: 17, weight: .semibold, design: .rounded))
+                .foregroundStyle(
+                    item.isIncome ? Theme.accentGreen :
+                        item.isResisted ? Theme.teal :
+                        Theme.textPrimary
+                )
+        }
+        .padding(.vertical, 10)
+    }
+
+    // MARK: - Streak Card
 
     private var flameSize: CGFloat {
         let streak = profile?.currentStreak ?? 0
@@ -296,170 +559,15 @@ struct HomeView: View {
             }
         }
         .padding(20)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 20))
+        .background(Theme.card, in: .rect(cornerRadius: 20))
         .overlay(
             RoundedRectangle(cornerRadius: 20)
                 .strokeBorder(Theme.teal.opacity(0.15), lineWidth: 1)
         )
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.2), value: appeared)
+        .staggerIn(appeared: appeared, delay: 0.36)
     }
 
-    private var hrvSection: some View {
-        HRVCardView(
-            hrvData: healthVM.hrvData,
-            trend: healthVM.hrvTrend,
-            todayHRV: healthVM.todayHRV,
-            weekAvgHRV: healthVM.weekAvgHRV,
-            isStressDetected: healthVM.isStressDetected,
-            onSurfUrge: { showUrgeSurf = true }
-        )
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.21), value: appeared)
-    }
-
-    private func handleJITAITool(_ toolType: JITAIToolType) {
-        switch toolType {
-        case .urgeSurf:
-            showUrgeSurf = true
-        case .haltCheck, .coolingOff, .breathing, .implementationIntention:
-            break
-        case .eveningReflection:
-            showEveningReflection = true
-        }
-    }
-
-    private var hasCompletedEveningReflection: Bool {
-        let today = Calendar.current.startOfDay(for: Date())
-        return reflections.contains { Calendar.current.isDate($0.date, inSameDayAs: today) }
-    }
-
-    private var eveningReflectionPrompt: some View {
-        Group {
-            let hour = Calendar.current.component(.hour, from: Date())
-            if hour >= 19 && !hasCompletedEveningReflection {
-                Button {
-                    showEveningReflection = true
-                } label: {
-                    HStack(spacing: 14) {
-                        ZStack {
-                            Circle()
-                                .fill(Color(red: 0.4, green: 0.5, blue: 0.9).opacity(0.15))
-                                .frame(width: 44, height: 44)
-                            Image(systemName: "moon.stars.fill")
-                                .font(.title3)
-                                .foregroundStyle(Color(red: 0.4, green: 0.5, blue: 0.9))
-                        }
-
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text("Evening Reflection")
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(Theme.textPrimary)
-                            Text("How was your day? Take a moment to reflect.")
-                                .font(.caption)
-                                .foregroundStyle(Theme.textSecondary)
-                        }
-
-                        Spacer()
-
-                        Image(systemName: "chevron.right")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(Theme.textSecondary.opacity(0.4))
-                    }
-                    .padding(16)
-                    .background(
-                        LinearGradient(
-                            colors: [Color(red: 0.4, green: 0.5, blue: 0.9).opacity(0.08), Theme.cardSurface],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        in: .rect(cornerRadius: 16)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .strokeBorder(Color(red: 0.4, green: 0.5, blue: 0.9).opacity(0.15), lineWidth: 1)
-                    )
-                }
-                .buttonStyle(PressableButtonStyle())
-                .sensoryFeedback(.selection, trigger: showEveningReflection)
-                .accessibilityLabel("Open evening reflection")
-                .opacity(appeared ? 1 : 0)
-                .offset(y: appeared ? 0 : 15)
-                .animation(.spring(response: 0.5).delay(0.26), value: appeared)
-            }
-        }
-    }
-
-    private func sdtInsightCard(_ message: String) -> some View {
-        HStack(spacing: 14) {
-            Image(systemName: "sparkles")
-                .font(.title3)
-                .foregroundStyle(Theme.gold)
-
-            Text(message)
-                .font(.subheadline)
-                .foregroundStyle(Theme.textPrimary.opacity(0.85))
-                .lineSpacing(3)
-        }
-        .padding(16)
-        .background(
-            LinearGradient(
-                colors: [Theme.gold.opacity(0.08), Theme.cardSurface],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ),
-            in: .rect(cornerRadius: 16)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Theme.gold.opacity(0.12), lineWidth: 1)
-        )
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.22), value: appeared)
-    }
-
-    private var moneySavedCard: some View {
-        VStack(spacing: 12) {
-            HStack {
-                Image(systemName: "dollarsign.circle.fill")
-                    .font(.title2)
-                    .foregroundStyle(Theme.accentGreen)
-                Text("Money Saved")
-                    .font(.headline)
-                    .foregroundStyle(Theme.textPrimary)
-                Spacer()
-            }
-
-            Text(profile?.totalSaved ?? 0, format: .currency(code: "USD"))
-                .font(.system(size: 36, weight: .bold, design: .rounded))
-                .foregroundStyle(Theme.textPrimary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            Text("by resisting impulse spending")
-                .font(.caption)
-                .foregroundStyle(Theme.textSecondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(20)
-        .background(
-            LinearGradient(
-                colors: [Theme.accentGreen.opacity(0.1), Theme.cardSurface],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ),
-            in: .rect(cornerRadius: 20)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.accentGreen.opacity(0.1), lineWidth: 1)
-        )
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.25), value: appeared)
-    }
+    // MARK: - Coach Shortcut
 
     private var coachShortcutCard: some View {
         Button {
@@ -493,7 +601,7 @@ struct HomeView: View {
             .padding(16)
             .background(
                 LinearGradient(
-                    colors: [Theme.teal.opacity(0.08), Theme.cardSurface],
+                    colors: [Theme.teal.opacity(0.08), Theme.card],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 ),
@@ -506,58 +614,22 @@ struct HomeView: View {
         }
         .buttonStyle(PressableButtonStyle())
         .sensoryFeedback(.impact(weight: .medium), trigger: showCoach)
-        .accessibilityLabel("Open MoneyMind Coach")
-        .accessibilityHint("Talk through what you're feeling with your AI wellness coach")
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.29), value: appeared)
+        .staggerIn(appeared: appeared, delay: 0.48)
     }
 
-    private var quickActionsRow: some View {
-        HStack(spacing: 12) {
-            QuickActionButton(icon: "star.fill", title: "Log a Win", color: Theme.accentGreen) {
-                showLogWin = true
-            }
-            QuickActionButton(icon: "heart.text.clipboard", title: "Check In", color: Theme.teal) { }
-            QuickActionButton(icon: "wind", title: "Breathe", color: Color(red: 0.4, green: 0.6, blue: 1.0)) { }
-        }
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.3), value: appeared)
-    }
+    // MARK: - Daily Insight
 
-    private var socialProofSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: "person.3.fill")
-                    .foregroundStyle(Theme.teal)
-                Text("Community")
-                    .font(.headline)
-                    .foregroundStyle(Theme.textPrimary)
-            }
+    private let insights: [(String, String)] = [
+        ("The urge to spend impulsively is like a wave — it rises, peaks, and falls. You don't have to act on it.", "Cognitive Behavioral Therapy"),
+        ("Between stimulus and response there is a space. In that space lies our freedom and power to choose.", "Viktor Frankl"),
+        ("It's not about perfect control — it's about conscious choices, one at a time.", "Mindful Spending"),
+        ("Every dollar you don't spend impulsively is a vote for the person you want to become.", "Financial Wellness"),
+        ("The feeling will pass. It always does. Your future self will thank you for waiting.", "Urge Surfing"),
+    ]
 
-            ForEach(characterVM.socialProofStats, id: \.0) { stat in
-                SocialProofCard(icon: stat.0, message: stat.1)
-            }
-
-            Button {
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "hands.clap.fill")
-                    Text("Celebrate Others")
-                        .font(.subheadline.weight(.medium))
-                }
-                .foregroundStyle(Theme.teal)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(Theme.teal.opacity(0.1), in: .rect(cornerRadius: 12))
-            }
-            .buttonStyle(PressableButtonStyle())
-            .accessibilityLabel("Celebrate others in the community")
-        }
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.35), value: appeared)
+    private var todayInsight: (String, String) {
+        let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
+        return insights[dayOfYear % insights.count]
     }
 
     private var dailyInsightCard: some View {
@@ -570,56 +642,112 @@ struct HomeView: View {
                     .foregroundStyle(Theme.textPrimary)
             }
 
-            Text("\"The urge to spend impulsively is like a wave — it rises, peaks, and falls. You don't have to act on it. Just ride it out.\"")
+            Text("\"\(todayInsight.0)\"")
                 .font(.subheadline)
                 .foregroundStyle(Theme.textPrimary.opacity(0.75))
                 .lineSpacing(4)
 
-            Text("— Cognitive Behavioral Therapy")
+            Text("— \(todayInsight.1)")
                 .font(.caption)
                 .foregroundStyle(Theme.teal)
         }
         .padding(20)
-        .background(Theme.cardSurface, in: .rect(cornerRadius: 20))
+        .background(Theme.card, in: .rect(cornerRadius: 20))
         .overlay(
             RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Theme.cardSurface.opacity(0.5), lineWidth: 1)
+                .strokeBorder(Theme.border, lineWidth: 0.5)
         )
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 15)
-        .animation(.spring(response: 0.5).delay(0.4), value: appeared)
+        .staggerIn(appeared: appeared, delay: 0.54)
+    }
+
+    // MARK: - Helpers
+
+    private func spentForBudget(_ budget: BudgetCategory) -> Double {
+        let calendar = Calendar.current
+        let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: Date()))!
+        return transactions
+            .filter { $0.transactionType == .expense && $0.category == budget.name && $0.date >= startOfMonth }
+            .reduce(0) { $0 + $1.amount }
+    }
+
+    private func ensureDefaultBudgets() {
+        guard budgets.isEmpty else { return }
+        for (i, def) in BudgetCategory.defaults.enumerated() {
+            let budget = BudgetCategory(
+                name: def.0,
+                icon: def.1,
+                colorHex: def.2,
+                monthlyLimit: def.3,
+                sortOrder: i
+            )
+            modelContext.insert(budget)
+        }
     }
 }
 
-struct QuickActionButton: View {
+// MARK: - Dashboard Quick Action Button
+
+struct DashboardQuickAction: View {
     let icon: String
-    let title: String
+    let label: String
     let color: Color
     let action: () -> Void
 
+    @State private var hapticTrigger = false
+
     var body: some View {
-        Button(action: action) {
-            VStack(spacing: 10) {
-                Image(systemName: icon)
-                    .font(.title2)
-                    .foregroundStyle(color)
-                Text(title)
-                    .font(.caption)
-                    .fontWeight(.medium)
+        Button {
+            hapticTrigger.toggle()
+            action()
+        } label: {
+            VStack(spacing: 8) {
+                ZStack {
+                    Circle()
+                        .fill(Theme.card)
+                        .frame(width: 56, height: 56)
+                        .overlay(
+                            Circle()
+                                .strokeBorder(color.opacity(0.15), lineWidth: 1)
+                        )
+                    Image(systemName: icon)
+                        .font(.system(size: 20))
+                        .foregroundStyle(color)
+                }
+                Text(label)
+                    .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(Theme.textPrimary.opacity(0.8))
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 18)
-            .background(Theme.cardSurface, in: .rect(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(color.opacity(0.15), lineWidth: 1)
-            )
         }
         .buttonStyle(PressableButtonStyle())
-        .accessibilityLabel(title)
+        .sensoryFeedback(.impact(weight: .light), trigger: hapticTrigger)
     }
 }
+
+// MARK: - Dashboard Transaction Model
+
+struct DashboardTransaction: Identifiable {
+    let id: Int
+    let name: String
+    let amount: Double
+    let isIncome: Bool
+    let category: TransactionCategory
+    let date: Date
+    let moodEmoji: String
+    var isResisted: Bool = false
+}
+
+// MARK: - Stagger Animation Modifier
+
+extension View {
+    func staggerIn(appeared: Bool, delay: Double) -> some View {
+        self
+            .opacity(appeared ? 1 : 0)
+            .offset(y: appeared ? 0 : 15)
+            .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(delay), value: appeared)
+    }
+}
+
+// MARK: - LogWinSheet (kept)
 
 struct LogWinSheet: View {
     @Environment(\.dismiss) private var dismiss

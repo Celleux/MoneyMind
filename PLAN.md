@@ -1,34 +1,33 @@
-# Fast Transaction Entry with FAB, Custom Numpad & Vibe Check
-
+# Budget Rings & Analytics Screen
 
 ## Features
 
-- **Floating Action Button (FAB)** on the Home tab — a glowing purple circle in the bottom-right corner that bounces on tap with haptic feedback
-- **Quick Transaction Sheet** slides up from the bottom with a spring animation when tapping the FAB
-- **Large Amount Display** — big centered dollar amount that updates as you type, with a blinking cursor effect
-- **Custom Dark Numpad** — 4×3 grid of dark keys (0–9, decimal, backspace) with press animations and haptic on every key tap
-- **Horizontal Category Scroller** — swipeable row of emoji + label pills (Food, Transport, Shopping, Bills, Entertainment, Health, Education, Other); selected pill glows purple with a subtle scale-up
-- **Recent Categories** — your last 3 used categories appear as a pinned "Recent" row above all categories for faster selection
-- **Smart Category Suggestion** — when you type a common amount (e.g. $4–5 range), a suggestion like "Coffee?" appears that you can tap to auto-select
-- **Expense / Income Toggle** — segmented control at the top to switch between expense and income mode; changes the save button color (red vs green)
-- **Quick Date Picker** — defaults to "Today" with a one-tap "Yesterday" shortcut and a calendar button for other dates
-- **Note Field** — single-line dark input with placeholder text
-- **Vibe Check** — row of 5 emoji mood buttons (🤑 Worth it, 😐 Meh, 😬 Regret, ✅ Necessary, 💪 Flex); tapped emoji bounces up with haptic
-- **Save Button** — full-width purple button; on save plays a success haptic and the sheet dismisses with a satisfying animation
-- **Dismiss Protection** — swiping down on the sheet asks for confirmation if any data has been entered
+- **Month navigation** — Swipe or tap arrows to browse budgets by month (e.g. "< March 2026 >")
+- **Overall budget ring** — Large animated ring showing total spent vs. total budget, with remaining amount in the center and "X days left" below
+- **Category budget grid** — 2-column grid of cards, each with a mini progress ring color-coded by category, showing spent/budget amounts
+- **Over-budget warnings** — Categories exceeding their limit turn red with a danger ring; a vibration haptic fires if any category is over budget
+- **Donut chart breakdown** — "Where Your Money Goes" animated donut chart with clockwise segment animation, tap a segment to highlight it and show the amount
+- **6-month spending trend** — Line chart showing monthly spending totals with gradient stroke, filled circles at data points, and a dashed projection for the current month
+- **Empty states** — "Set Your First Budget" card with a suggested 50/30/20 template when no budgets exist; motivational message when budgets exist but no transactions yet
+- **Edit budgets** — Tap any category card to open the existing budget detail sheet; long-press to edit the monthly limit inline
+- **Add new budget category** — "+" button in the category grid header to create a custom budget category
 
 ## Design
 
-- Dark theme matching the existing MoneyMind design system (#0A0F1E background, #111827 cards, #6C5CE7 purple accent)
-- FAB: 56pt purple circle with a soft purple glow shadow, white "+" icon, positioned above the existing SOS button area
-- Sheet has a subtle drag handle at the top, dark card-style numpad keys with rounded corners
-- Category pills use the existing MMCategoryPill style with emoji icons and color coding
-- Vibe Check emojis are large and spaced evenly; selected one scales up with a spring bounce
-- All animations use the app's standard spring (response: 0.35, damping: 0.7)
-- Custom numpad replaces the system keyboard for a faster, more immersive feel
+- **Dark theme** — Consistent with the existing MoneyMind OLED-optimized dark design system (#0A0F1E background, #111827 cards)
+- **Large overview ring** — 120pt diameter with purple-to-cyan gradient stroke, remaining amount in 28pt Bold white centered inside
+- **Category cards** — MMCard style with subtle border, mini 48pt progress rings colored per category (green under 50%, gradient 50–100%, red over 100%)
+- **Donut chart** — Segments animate clockwise from 12 o'clock with 0.8s staggered timing; legend below with color dots, names, amounts, and percentages
+- **Trend line** — Gradient stroke from purple to cyan, filled circle data points, current month shown as a dashed line projection
+- **Staggered entrance** — Each section fades in and slides up sequentially on appear, matching the existing dashboard animation pattern
+- **Haptics** — Warning vibration when over-budget banner appears; light impact on month change
 
-## Screens / Sections
+## Screens
 
-- **Home Tab** — gains a new FAB (floating purple "+" button) in the bottom-right area, replacing the current separate "Expense" quick action approach
-- **Transaction Entry Sheet** — a single bottom sheet that handles both expenses and income via a toggle, containing: amount display → numpad → category row → date shortcuts → note → vibe check → save button
-- The existing Add Expense and Add Income sheets remain available from other entry points but this new FAB sheet becomes the primary fast-entry path
+- **Budget & Analytics screen** — Accessed via a "See All" or "Budgets" link from the dashboard's budget rings section, or from a new navigation path
+  - Top: Month selector with left/right arrows
+  - Hero: Large total budget progress ring with remaining amount and days left
+  - Category grid: 2-column LazyVGrid of budget category cards with mini rings
+  - Donut chart: Animated spending breakdown with tappable segments and legend
+  - Trend section: 6-month line chart with gradient stroke and current-month projection
+  - Empty state: Onboarding card when no budgets are configured

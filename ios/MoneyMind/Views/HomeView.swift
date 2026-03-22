@@ -17,6 +17,7 @@ struct HomeView: View {
     @State private var characterVM = CharacterViewModel()
     @State private var selectedBudget: BudgetCategory?
     @State private var selectedBudgetSpent: Double = 0
+    @State private var showBudgetAnalytics = false
     @State private var isLoading = true
     @State private var refreshRotation: Double = 0
     @Environment(\.modelContext) private var modelContext
@@ -152,6 +153,11 @@ struct HomeView: View {
             }
             .fullScreenCover(isPresented: $showCoach) {
                 CoachChatView()
+            }
+            .navigationDestination(for: String.self) { value in
+                if value == "budgetAnalytics" {
+                    BudgetAnalyticsView()
+                }
             }
             .onAppear {
                 if let profile {
@@ -359,10 +365,8 @@ struct HomeView: View {
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
 
-                Button {
-                    showAddExpense = true
-                } label: {
-                    Text("Add")
+                NavigationLink(value: "budgetAnalytics") {
+                    Text("See All")
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(Theme.secondary)
                 }

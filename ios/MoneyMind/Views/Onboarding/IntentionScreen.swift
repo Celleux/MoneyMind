@@ -13,7 +13,7 @@ struct IntentionScreen: View {
 
     private let prefilledOptions = [
         "Take 3 deep breaths and wait 10 minutes",
-        "Open MoneyMind and log the urge",
+        "Open Splurj and log the urge",
         "Call my accountability partner"
     ]
 

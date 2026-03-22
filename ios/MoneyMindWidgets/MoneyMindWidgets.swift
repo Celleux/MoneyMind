@@ -1,24 +1,24 @@
 import WidgetKit
 import SwiftUI
 
-nonisolated struct MoneyMindEntry: TimelineEntry {
+nonisolated struct SplurjEntry: TimelineEntry {
     let date: Date
     let data: WidgetData
 }
 
-nonisolated struct MoneyMindProvider: TimelineProvider {
-    func placeholder(in context: Context) -> MoneyMindEntry {
-        MoneyMindEntry(date: .now, data: .placeholder)
+nonisolated struct SplurjProvider: TimelineProvider {
+    func placeholder(in context: Context) -> SplurjEntry {
+        SplurjEntry(date: .now, data: .placeholder)
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (MoneyMindEntry) -> Void) {
+    func getSnapshot(in context: Context, completion: @escaping (SplurjEntry) -> Void) {
         let data = WidgetData.load() ?? .placeholder
-        completion(MoneyMindEntry(date: .now, data: data))
+        completion(SplurjEntry(date: .now, data: data))
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<MoneyMindEntry>) -> Void) {
+    func getTimeline(in context: Context, completion: @escaping (Timeline<SplurjEntry>) -> Void) {
         let data = WidgetData.load() ?? .placeholder
-        let entry = MoneyMindEntry(date: .now, data: data)
+        let entry = SplurjEntry(date: .now, data: data)
         let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: .now)!
         completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
     }
@@ -55,7 +55,7 @@ nonisolated struct WidgetColors: Sendable {
 // MARK: - Small Widget
 
 struct SmallWidgetView: View {
-    let entry: MoneyMindEntry
+    let entry: SplurjEntry
 
     private var personalityColor: Color {
         WidgetColors.personalityColor(hex: entry.data.personalityColorHex)
@@ -113,14 +113,14 @@ struct SmallWidgetView: View {
             }
         }
         .containerBackground(WidgetColors.card, for: .widget)
-        .widgetURL(URL(string: "moneymind://wallet"))
+        .widgetURL(URL(string: "splurj://wallet"))
     }
 }
 
 // MARK: - Medium Widget
 
 struct MediumWidgetView: View {
-    let entry: MoneyMindEntry
+    let entry: SplurjEntry
 
     private var personalityColor: Color {
         WidgetColors.personalityColor(hex: entry.data.personalityColorHex)
@@ -181,7 +181,7 @@ struct MediumWidgetView: View {
             }
         }
         .containerBackground(WidgetColors.card, for: .widget)
-        .widgetURL(URL(string: "moneymind://add-expense"))
+        .widgetURL(URL(string: "splurj://add-expense"))
     }
 }
 
@@ -221,7 +221,7 @@ struct CategoryRowWidget: View {
 // MARK: - Large Widget
 
 struct LargeWidgetView: View {
-    let entry: MoneyMindEntry
+    let entry: SplurjEntry
 
     private var personalityColor: Color {
         WidgetColors.personalityColor(hex: entry.data.personalityColorHex)
@@ -304,7 +304,7 @@ struct LargeWidgetView: View {
             }
         }
         .containerBackground(WidgetColors.card, for: .widget)
-        .widgetURL(URL(string: "moneymind://home"))
+        .widgetURL(URL(string: "splurj://home"))
     }
 }
 
@@ -350,7 +350,7 @@ struct LargeCategoryRow: View {
 // MARK: - Lock Screen Circular
 
 struct CircularWidgetView: View {
-    let entry: MoneyMindEntry
+    let entry: SplurjEntry
 
     var body: some View {
         Gauge(value: min(entry.data.budgetProgress, 1.0)) {
@@ -361,14 +361,14 @@ struct CircularWidgetView: View {
                 .privacySensitive()
         }
         .gaugeStyle(.accessoryCircular)
-        .widgetURL(URL(string: "moneymind://wallet"))
+        .widgetURL(URL(string: "splurj://wallet"))
     }
 }
 
 // MARK: - Lock Screen Rectangular
 
 struct RectangularWidgetView: View {
-    let entry: MoneyMindEntry
+    let entry: SplurjEntry
 
     var body: some View {
         HStack(spacing: 6) {
@@ -383,14 +383,14 @@ struct RectangularWidgetView: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .widgetURL(URL(string: "moneymind://challenges"))
+        .widgetURL(URL(string: "splurj://challenges"))
     }
 }
 
 // MARK: - Lock Screen Inline
 
 struct InlineWidgetView: View {
-    let entry: MoneyMindEntry
+    let entry: SplurjEntry
 
     var body: some View {
         HStack(spacing: 4) {
@@ -398,15 +398,15 @@ struct InlineWidgetView: View {
             Text("Budget: \(formattedAmount(entry.data.budgetRemaining)) remaining")
                 .privacySensitive()
         }
-        .widgetURL(URL(string: "moneymind://wallet"))
+        .widgetURL(URL(string: "splurj://wallet"))
     }
 }
 
 // MARK: - Adaptive Widget View
 
-struct MoneyMindWidgetView: View {
+struct SplurjWidgetView: View {
     @Environment(\.widgetFamily) private var family
-    let entry: MoneyMindEntry
+    let entry: SplurjEntry
 
     var body: some View {
         switch family {
@@ -430,14 +430,14 @@ struct MoneyMindWidgetView: View {
 
 // MARK: - Widget Definition
 
-struct MoneyMindBudgetWidget: Widget {
-    let kind = "MoneyMindBudget"
+struct SplurjBudgetWidget: Widget {
+    let kind = "SplurjBudget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: MoneyMindProvider()) { entry in
-            MoneyMindWidgetView(entry: entry)
+        StaticConfiguration(kind: kind, provider: SplurjProvider()) { entry in
+            SplurjWidgetView(entry: entry)
         }
-        .configurationDisplayName("MoneyMind Budget")
+        .configurationDisplayName("Splurj Budget")
         .description("Track your spending and budget at a glance.")
         .supportedFamilies([
             .systemSmall,

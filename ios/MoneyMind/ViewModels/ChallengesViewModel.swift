@@ -68,13 +68,13 @@ class ChallengesViewModel {
         let type = challenge.challengeType
         switch type {
         case .envelope100:
-            return "I've saved $\(Int(challenge.totalSaved)) in the 100 Envelope Challenge on MoneyMind! \(challenge.completedItems.count)/100 envelopes opened. Join me: \(challenge.inviteCode)"
+            return "I've saved $\(Int(challenge.totalSaved)) in the 100 Envelope Challenge on Splurj! \(challenge.completedItems.count)/100 envelopes opened. Join me: \(challenge.inviteCode)"
         case .week52:
-            return "I've saved $\(Int(challenge.totalSaved)) in the 52-Week Savings Challenge on MoneyMind! Week \(challenge.completedItems.count)/52. Join me: \(challenge.inviteCode)"
+            return "I've saved $\(Int(challenge.totalSaved)) in the 52-Week Savings Challenge on Splurj! Week \(challenge.completedItems.count)/52. Join me: \(challenge.inviteCode)"
         case .noSpend:
-            return "Day \(challenge.noSpendDays.count) of my No-Spend Challenge on MoneyMind! Current streak: \(challenge.noSpendStreak) days. Join me: \(challenge.inviteCode)"
+            return "Day \(challenge.noSpendDays.count) of my No-Spend Challenge on Splurj! Current streak: \(challenge.noSpendStreak) days. Join me: \(challenge.inviteCode)"
         case .roundUp:
-            return "I've saved $\(String(format: "%.2f", challenge.roundUpTotal)) from round-ups on MoneyMind! Every penny counts. Join me: \(challenge.inviteCode)"
+            return "I've saved $\(String(format: "%.2f", challenge.roundUpTotal)) from round-ups on Splurj! Every penny counts. Join me: \(challenge.inviteCode)"
         }
     }
 

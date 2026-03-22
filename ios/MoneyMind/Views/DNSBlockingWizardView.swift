@@ -165,7 +165,7 @@ struct DNSBlockingWizardView: View {
                             .font(Theme.headingFont(.title3))
                             .foregroundStyle(Theme.textPrimary)
 
-                        Text("MoneyMind will set up secure DNS filtering to block known gambling domains on your device.")
+                        Text("Splurj will set up secure DNS filtering to block known gambling domains on your device.")
                             .font(.subheadline)
                             .foregroundStyle(Theme.textSecondary)
                             .multilineTextAlignment(.center)

@@ -191,8 +191,8 @@ private struct BadgeDetailSheetView: View {
                 .background(badgeColor.opacity(0.12), in: .capsule)
 
             ShareLink(
-                item: "I earned the \"\(badge.name)\" badge on MoneyMind! \(badge.badgeDescription)",
-                subject: Text("MoneyMind Badge"),
+                item: "I earned the \"\(badge.name)\" badge on Splurj! \(badge.badgeDescription)",
+                subject: Text("Splurj Badge"),
                 message: Text("Check out my achievement!")
             ) {
                 HStack(spacing: 6) {

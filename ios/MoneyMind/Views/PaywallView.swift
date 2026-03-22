@@ -168,7 +168,7 @@ struct PaywallView: View {
                     .foregroundStyle(Theme.textMuted)
             }
 
-            Text("Join 10,000+ MoneyMind Premium members")
+            Text("Join 10,000+ Splurj Premium members")
                 .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(Theme.textSecondary)
         }

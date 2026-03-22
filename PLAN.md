@@ -1,31 +1,60 @@
-# Comprehensive Notification System with In-App Notification Center
+# Global Rebrand: MoneyMind → Splurj
 
-## Features
+## What's Changing
 
-- **Budget Alerts**: Automatic notifications when spending hits 50%, 80%, and 100% of any budget category — yellow warning at 80%, red alert at 100%
-- **Bill Reminders**: "Netflix ($15.99) is due tomorrow" with configurable lead time (already partially built, will be integrated into the unified system)
-- **Savings Celebrations**: Confetti-worthy notifications for milestones like "$50 saved today!" and "10-day no-spend streak!" 🎉
-- **Daily Check-In**: Evening reflection prompt at a configurable time — "How was your spending today?"
-- **Weekly Digest**: Sunday morning summary — "Last week: spent $X, saved $Y, top category: Z"
-- **Smart JITAI Nudges**: Pattern-based alerts like "It's Friday evening — your spending tends to increase. Set a weekend budget?" using existing HighRiskPattern data
-- **In-App Notification Center**: Bell icon on the dashboard with unread count badge, scrollable list of all recent notifications, swipe to dismiss, tap to navigate to the relevant screen
-- **Quiet Hours**: Respected across all notification types (default 10pm–8am)
-- **Frequency Cap**: Maximum 3 push notifications per day to avoid overwhelming users
+A complete text rebrand across the entire app — every place the user sees or shares "MoneyMind" will now say **"Splurj"**.
 
-## Design
+---
 
-- **Bell Icon**: Appears in the dashboard top bar next to the personality icon — subtle unread count badge in the app's accent color with a bounce animation when new notifications arrive
-- **Notification Center Sheet**: Dark card-based list matching the existing MoneyMind design system (#111827 cards on #0A0F1E background). Each notification shows an icon, color-coded by type, title, body, and relative timestamp ("2h ago")
-- **Color Coding**: Budget alerts use yellow (#FF9100) at 80% and red (#FF5252) at 100%. Savings celebrations use green (#00E676). Bill reminders use teal (#00D2FF). JITAI nudges use the existing teal brain icon style
-- **Swipe Actions**: Swipe left to dismiss a notification, with a smooth spring animation
-- **Empty State**: Friendly "All caught up!" message with a checkmark icon when no notifications exist
-- **Celebration Notifications**: Savings milestones show with confetti-style star icons and the accent gradient
+### **User-Facing Text Updates (29 files)**
 
-## Screens & Components
+All screens, share cards, exports, and Siri shortcuts will be updated:
 
-- **In-App Notification Center (new sheet)**: Presented from the bell icon on the dashboard — a scrollable list of `InAppNotification` items grouped by today / earlier, with swipe-to-dismiss and tap-to-navigate deep linking
-- **Dashboard Top Bar (updated)**: Bell icon with unread badge added next to the existing personality icon
-- **NotificationService (enhanced)**: New methods for budget threshold checking, savings celebration triggers, daily check-in scheduling, weekly digest scheduling, and frequency cap enforcement
-- **InAppNotification Model (new)**: SwiftData model storing notification type, title, body, timestamp, read status, and deep link destination
-- **NotificationSettingsView (enhanced)**: Budget alert threshold toggles and daily check-in time picker integrated into the existing notification settings (some already exist in Profile settings — will wire them into the scheduling engine)
-- **Deep Linking**: Tapping a notification navigates to the relevant screen (budget → budget analytics, bill → recurring expenses, savings → wallet, etc.)
+- **Home screen** — "MoneyMind" header and coach label → "Splurj"
+- **Coach chat** — "MoneyMind Coach" → "Splurj Coach"
+- **Wallet** — "Without/With MoneyMind" comparison → "Without/With Splurj"
+- **Community** — community branding and guidelines → "Splurj community"
+- **Profile / Settings** — "Share MoneyMind" → "Share Splurj"
+- **Paywall** — "Join 10,000+ MoneyMind Premium members" → "Splurj Premium"
+- **Money Wrapped** — "MoneyMind" branding → "Splurj" throughout
+- **Share cards** (Milestone, Character, Ghost Budget, Weekly Summary) — all footers → "Splurj" / "splurj.app"
+- **Badge descriptions** — "MoneyMind Program" → "Splurj Program"
+- **Challenges** — share text references → "Splurj"
+- **Character** — community stat text → "Splurj community"
+- **Referral** — invite links and share text → "Splurj" + splurj.app URLs
+- **Curriculum content** — all 10+ educational text references → "Splurj"
+- **Curriculum section header** — "Your MoneyMind Program" → "Your Splurj Program"
+- **Session details** — share text and program name → "Splurj Program"
+- **Badge gallery** — share text → "Splurj"
+- **Onboarding screens** — Social proof stats, intention option, quiz share text → "Splurj"
+- **Breathing guide** — setup instructions → "Splurj"
+- **DNS Wizard** — description text → "Splurj"
+- **Referral gate** — disclaimer → "Splurj Coach"
+- **Export service** — CSV filename and PDF headers/footers → "Splurj"
+- **Siri shortcuts** — intent name, description, and phrases → "Splurj"
+
+---
+
+### **Code-Level Renames**
+
+- `MoneyMindApp` struct → `SplurjApp`
+- `MoneyMindWidgetsBundle` struct → `SplurjWidgetsBundle`
+- `MoneyMindBudgetWidget` → `SplurjBudgetWidget`
+- `MoneyMindWidgetView` → `SplurjWidgetView`
+- `MoneyMindEntry` → `SplurjEntry`
+- `MoneyMindProvider` → `SplurjProvider`
+- `MoneyMindCheckInIntent` → `SplurjCheckInIntent`
+- `MoneyMindShortcuts` → `SplurjShortcuts`
+- Widget kind string: `"MoneyMindBudget"` → `"SplurjBudget"`
+- Widget display name: `"MoneyMind Budget"` → `"Splurj Budget"`
+- Widget deep link URLs: `moneymind://` → `splurj://` (5 links)
+
+---
+
+### **What Stays the Same**
+
+- `MoneyPersonality.swift` — "Money Personality" is a feature name, not the app
+- `MoneyPersonalityQuizView.swift` — same reason
+- `MoneyWrappedView.swift` — file name stays, only internal strings change
+- All visual design (colors, fonts, animations, layout) — untouched
+- All app logic and data models — untouched

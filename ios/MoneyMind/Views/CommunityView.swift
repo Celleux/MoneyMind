@@ -143,7 +143,7 @@ struct CommunityView: View {
             icon: "bubble.left.and.text.bubble.right.fill",
             secondaryIcon: "person.2.fill",
             headline: "Be the First to Share",
-            subtext: "Start a conversation and connect\nwith the MoneyMind community",
+            subtext: "Start a conversation and connect\nwith the Splurj community",
             buttonLabel: "Create a Post",
             buttonIcon: "square.and.pencil"
         ) {

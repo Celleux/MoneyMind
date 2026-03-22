@@ -57,7 +57,7 @@ struct CoachChatView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "brain.head.profile")
                             .foregroundStyle(Theme.teal)
-                        Text("MoneyMind Coach")
+                        Text("Splurj Coach")
                             .font(.headline)
                             .foregroundStyle(Theme.textPrimary)
                     }
@@ -116,7 +116,7 @@ struct CoachChatView: View {
                         .foregroundStyle(Theme.teal)
                 }
 
-                Text("MoneyMind Coach")
+                Text("Splurj Coach")
                     .font(Theme.headingFont(.title))
                     .foregroundStyle(Theme.textPrimary)
 

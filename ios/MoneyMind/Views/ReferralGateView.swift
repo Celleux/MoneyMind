@@ -68,7 +68,7 @@ struct ReferralGateView: View {
 
             Spacer()
 
-            Text("The MoneyMind Coach is an AI wellness tool, not a substitute for professional care.")
+            Text("The Splurj Coach is an AI wellness tool, not a substitute for professional care.")
                 .font(.caption2)
                 .foregroundStyle(Theme.textSecondary.opacity(0.5))
                 .multilineTextAlignment(.center)

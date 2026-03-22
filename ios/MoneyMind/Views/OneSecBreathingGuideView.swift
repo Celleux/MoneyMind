@@ -157,7 +157,7 @@ struct OneSecBreathingGuideView: View {
                 number: 4,
                 icon: "wind",
                 title: "Add the Breathing Action",
-                description: "For the action, choose \"Open App\" and select MoneyMind. When you open a trigger app, you'll be guided to take a breath first.",
+                description: "For the action, choose \"Open App\" and select Splurj. When you open a trigger app, you'll be guided to take a breath first.",
                 isCompleted: completedSteps.contains(4),
                 isExpanded: expandedStep == 3,
                 accentColor: breathGreen,

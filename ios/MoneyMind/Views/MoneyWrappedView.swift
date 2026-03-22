@@ -172,7 +172,7 @@ private struct WrappedSlideIntro: View {
                         .opacity(appeared ? 1 : 0)
                         .offset(y: appeared ? 0 : 20)
 
-                    Text("MoneyMind")
+                    Text("Splurj")
                         .font(.system(size: 42, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                         .opacity(appeared ? 1 : 0)
@@ -819,7 +819,7 @@ struct WrappedShareImage: View {
                 HStack(spacing: 6) {
                     Image(systemName: "leaf.fill")
                         .foregroundStyle(Theme.accentGreen)
-                    Text("MoneyMind")
+                    Text("Splurj")
                         .font(.system(.caption, design: .rounded, weight: .bold))
                         .foregroundStyle(.white.opacity(0.6))
                 }
@@ -865,7 +865,7 @@ struct WrappedShareImage: View {
             Spacer()
 
             VStack(spacing: 8) {
-                Text("Get MoneyMind")
+                Text("Get Splurj")
                     .font(.system(.caption, design: .rounded, weight: .bold))
                     .foregroundStyle(data.personality.color)
                 CardWatermark()

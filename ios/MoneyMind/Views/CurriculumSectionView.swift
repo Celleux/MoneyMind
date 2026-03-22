@@ -25,7 +25,7 @@ struct CurriculumSectionView: View {
                 HStack {
                     Image(systemName: "book.fill")
                         .foregroundStyle(Theme.teal)
-                    Text("Your MoneyMind Program")
+                    Text("Your Splurj Program")
                         .font(Theme.headingFont(.headline))
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()

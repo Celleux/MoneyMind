@@ -268,7 +268,7 @@ struct HomeView: View {
 
     private var topBar: some View {
         HStack {
-            Text("MoneyMind")
+            Text("Splurj")
                 .font(.system(size: 17, weight: .semibold, design: .rounded))
                 .foregroundStyle(Theme.textPrimary)
 
@@ -755,7 +755,7 @@ struct HomeView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("MoneyMind Coach")
+                    Text("Splurj Coach")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Theme.textPrimary)
                     Text("Talk through what you're feeling")

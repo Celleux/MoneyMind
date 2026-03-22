@@ -290,7 +290,7 @@ struct MoneyPersonalityQuizView: View {
                     ShareLink(
                         item: personalityShareText(personality),
                         preview: SharePreview(
-                            "My MoneyMind Personality",
+                            "My Money Personality",
                             image: Image(systemName: personality.icon)
                         )
                     ) {
@@ -386,7 +386,7 @@ struct MoneyPersonalityQuizView: View {
     }
 
     private func personalityShareText(_ personality: MoneyPersonality) -> String {
-        "I'm \(personality.rawValue) 🧠\n\n\(personality.traits.joined(separator: " · "))\n\n\(personality.description)\n\nDiscover yours on MoneyMind!"
+        "I'm \(personality.rawValue) 🧠\n\n\(personality.traits.joined(separator: " · "))\n\n\(personality.description)\n\nDiscover yours on Splurj!"
     }
 }
 

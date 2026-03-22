@@ -22,7 +22,7 @@ struct WeeklySummaryCardView: View {
                         .font(.system(.caption, design: .rounded, weight: .medium))
                         .foregroundStyle(Theme.teal)
 
-                    Text("My Week in MoneyMind")
+                    Text("My Week in Splurj")
                         .font(.system(size: 26, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                 }

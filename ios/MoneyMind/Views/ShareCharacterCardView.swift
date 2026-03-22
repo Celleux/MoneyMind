@@ -12,7 +12,7 @@ struct ShareCharacterCardView: View {
             Spacer()
 
             VStack(spacing: 28) {
-                Text("MoneyMind")
+                Text("Splurj")
                     .font(.system(.caption, design: .rounded, weight: .bold))
                     .foregroundStyle(.white.opacity(0.5))
                     .tracking(3)

@@ -19,7 +19,7 @@ struct ExportService {
             csv += "\(date),\(type),\(category),\(amount),\(note),\(mood)\n"
         }
 
-        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("MoneyMind_Transactions.csv")
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("Splurj_Transactions.csv")
         do {
             try csv.write(to: tempURL, atomically: true, encoding: .utf8)
             return tempURL
@@ -60,7 +60,7 @@ struct ExportService {
 
             var y: CGFloat = margin
 
-            let title = "MoneyMind Monthly Report"
+            let title = "Splurj Monthly Report"
             title.draw(at: CGPoint(x: margin, y: y), withAttributes: [.font: titleFont, .foregroundColor: textColor])
             y += 36
 
@@ -129,7 +129,7 @@ struct ExportService {
             }
         }
 
-        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("MoneyMind_Report.pdf")
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("Splurj_Report.pdf")
         do {
             try data.write(to: tempURL)
             return tempURL

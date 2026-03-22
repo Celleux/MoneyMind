@@ -89,7 +89,7 @@ struct CommunityGuidelinesOverlay: View {
     }
 
     private var disclaimerSection: some View {
-        Text("MoneyMind is a peer support community, not a substitute for professional help. If you're in crisis, tap the SOS button anytime.")
+        Text("Splurj is a peer support community, not a substitute for professional help. If you're in crisis, tap the SOS button anytime.")
             .font(.caption)
             .foregroundStyle(Theme.textSecondary.opacity(0.7))
             .multilineTextAlignment(.center)

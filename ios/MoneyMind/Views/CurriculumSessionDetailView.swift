@@ -389,7 +389,7 @@ struct ProgramCertificateSheet: View {
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
 
-                    Text("MoneyMind Program")
+                    Text("Splurj Program")
                         .font(Theme.headingFont(.title2))
                         .foregroundStyle(
                             LinearGradient(
@@ -455,8 +455,8 @@ struct ProgramCertificateSheet: View {
                     .padding(.horizontal)
 
                 ShareLink(
-                    item: "I completed all 8 sessions of the MoneyMind Program! Building healthier money habits one day at a time.",
-                    subject: Text("MoneyMind Program Complete"),
+                    item: "I completed all 8 sessions of the Splurj Program! Building healthier money habits one day at a time.",
+                    subject: Text("Splurj Program Complete"),
                     message: Text("I'm proud of this milestone!")
                 ) {
                     HStack(spacing: 8) {

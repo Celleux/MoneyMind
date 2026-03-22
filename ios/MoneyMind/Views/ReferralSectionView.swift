@@ -8,7 +8,7 @@ struct ReferralSectionView: View {
     @State private var showShareSheet = false
 
     private var shareText: String {
-        "Join me on MoneyMind — build a healthier relationship with money! Use my code: \(referralCode)\n\nhttps://moneymind.app/invite/\(referralCode)"
+        "Join me on Splurj — build a healthier relationship with money! Use my code: \(referralCode)\n\nhttps://splurj.app/invite/\(referralCode)"
     }
 
     var body: some View {

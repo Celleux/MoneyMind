@@ -15,7 +15,7 @@ struct GamblingUrgeIntent: AppIntent {
     }
 }
 
-struct MoneyMindCheckInIntent: AppIntent {
+struct SplurjCheckInIntent: AppIntent {
     static var title: LocalizedStringResource = "Daily Check In"
     static var description = IntentDescription("Opens your daily pledge and check-in.")
     static var openAppWhenRun: Bool = true
@@ -30,7 +30,7 @@ struct MoneyMindCheckInIntent: AppIntent {
 
 struct CheckSavingsIntent: AppIntent {
     static var title: LocalizedStringResource = "Check My Savings"
-    static var description = IntentDescription("Tells you how much money you've saved with MoneyMind.")
+    static var description = IntentDescription("Tells you how much money you've saved with Splurj.")
 
     func perform() async throws -> some IntentResult & ReturnsValue<String> {
         let container = try ModelContainer(for: UserProfile.self)
@@ -39,12 +39,12 @@ struct CheckSavingsIntent: AppIntent {
         let profiles = try context.fetch(descriptor)
         let saved = profiles.first?.totalSaved ?? 0
         let formatted = saved.formatted(.currency(code: "USD").precision(.fractionLength(0)))
-        let message = "You've saved \(formatted) with MoneyMind. Keep going!"
+        let message = "You've saved \(formatted) with Splurj. Keep going!"
         return .result(value: message, dialog: IntentDialog(stringLiteral: message))
     }
 }
 
-struct MoneyMindShortcuts: AppShortcutsProvider {
+struct SplurjShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
             intent: GamblingUrgeIntent(),
@@ -57,7 +57,7 @@ struct MoneyMindShortcuts: AppShortcutsProvider {
             systemImageName: "water.waves"
         )
         AppShortcut(
-            intent: MoneyMindCheckInIntent(),
+            intent: SplurjCheckInIntent(),
             phrases: [
                 "\(.applicationName) check in",
                 "Check in with \(.applicationName)",

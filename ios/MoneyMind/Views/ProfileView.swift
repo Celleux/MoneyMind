@@ -726,14 +726,14 @@ struct ProfileView: View {
             SettingsDivider()
 
             SettingsNavRow(icon: "star.fill", title: "Rate on App Store", color: .orange) {
-                if let url = URL(string: "https://apps.apple.com/app/moneymind") {
+                if let url = URL(string: "https://apps.apple.com/app/splurj") {
                     UIApplication.shared.open(url)
                 }
             }
             SettingsDivider()
-            SettingsNavRow(icon: "square.and.arrow.up", title: "Share MoneyMind", color: Theme.accentGreen) {
-                let url = URL(string: "https://moneymind.app")!
-                let av = UIActivityViewController(activityItems: ["Check out MoneyMind!", url], applicationActivities: nil)
+            SettingsNavRow(icon: "square.and.arrow.up", title: "Share Splurj", color: Theme.accentGreen) {
+                let url = URL(string: "https://splurj.app")!
+                let av = UIActivityViewController(activityItems: ["Check out Splurj — Don't splurge. Splurj.", url], applicationActivities: nil)
                 if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                    let root = scene.windows.first?.rootViewController {
                     root.present(av, animated: true)

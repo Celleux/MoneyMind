@@ -155,7 +155,7 @@ class CharacterViewModel {
         let streakCount = "3,247"
         let percentile = "32"
         return [
-            ("dollarsign.circle.fill", "MoneyMind community saved $\(totalSaved) this month"),
+            ("dollarsign.circle.fill", "Splurj community saved $\(totalSaved) this month"),
             ("flame.fill", "\(streakCount) people maintained their streak today"),
             ("chart.bar.fill", "You're in the top \(percentile)% of consistent savers")
         ]

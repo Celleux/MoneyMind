@@ -2,8 +2,8 @@ import WidgetKit
 import SwiftUI
 
 @main
-struct MoneyMindWidgetsBundle: WidgetBundle {
+struct SplurjWidgetsBundle: WidgetBundle {
     var body: some Widget {
-        MoneyMindBudgetWidget()
+        SplurjBudgetWidget()
     }
 }

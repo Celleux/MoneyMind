@@ -18,7 +18,7 @@ struct GhostBudgetShareCard: View {
                     HStack(spacing: 6) {
                         Image(systemName: "leaf.fill")
                             .foregroundStyle(Theme.success)
-                        Text("MoneyMind")
+                        Text("Splurj")
                             .font(.system(size: 14, weight: .semibold, design: .rounded))
                             .foregroundStyle(.white.opacity(0.5))
                     }

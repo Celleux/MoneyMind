@@ -6,7 +6,7 @@ struct SocialProofScreen: View {
     @State private var appeared = false
 
     private let stats: [(String, String, String)] = [
-        ("12,847", "people using MoneyMind", "person.3.fill"),
+        ("12,847", "people using Splurj", "person.3.fill"),
         ("$2.4M", "saved by our community", "dollarsign.circle.fill"),
         ("89%", "report feeling more in control", "chart.line.uptrend.xyaxis"),
     ]

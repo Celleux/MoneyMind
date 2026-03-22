@@ -54,7 +54,7 @@ struct MilestoneShareCardView: View {
                         .font(.system(size: 52, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
 
-                    Text("saved with MoneyMind")
+                    Text("saved with Splurj")
                         .font(.system(.body, design: .rounded, weight: .medium))
                         .foregroundStyle(.white.opacity(0.6))
                 }
@@ -63,7 +63,7 @@ struct MilestoneShareCardView: View {
                     Text("Can you beat my savings?")
                         .font(.system(.subheadline, design: .rounded, weight: .semibold))
                         .foregroundStyle(.white.opacity(0.7))
-                    Text("Download MoneyMind and find out")
+                    Text("Download Splurj and find out")
                         .font(.system(.caption, design: .rounded, weight: .medium))
                         .foregroundStyle(.white.opacity(0.4))
                 }

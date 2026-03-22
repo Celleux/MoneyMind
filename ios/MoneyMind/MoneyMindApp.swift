@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct MoneyMindApp: App {
+struct SplurjApp: App {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var premiumManager = PremiumManager()
 

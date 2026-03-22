@@ -62,7 +62,7 @@ nonisolated enum BadgeDefinition: Sendable {
         BadgeInfo(name: "Session 8 Complete", category: "Skill", description: "Built your relapse prevention plan", icon: "shield.checkered"),
         BadgeInfo(name: "Honest Reflection", category: "Skill", description: "Completed your first spending autopsy", icon: "magnifyingglass"),
         BadgeInfo(name: "If-Then Planner", category: "Skill", description: "Created your first implementation intention", icon: "arrow.triangle.branch"),
-        BadgeInfo(name: "Program Graduate", category: "Skill", description: "Completed all 8 sessions of the MoneyMind Program", icon: "graduationcap.fill"),
-        BadgeInfo(name: "Connector", category: "Skill", description: "Invited a friend to MoneyMind", icon: "person.badge.plus"),
+        BadgeInfo(name: "Program Graduate", category: "Skill", description: "Completed all 8 sessions of the Splurj Program", icon: "graduationcap.fill"),
+        BadgeInfo(name: "Connector", category: "Skill", description: "Invited a friend to Splurj", icon: "person.badge.plus"),
     ]
 }

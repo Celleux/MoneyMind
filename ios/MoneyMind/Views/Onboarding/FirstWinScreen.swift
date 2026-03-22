@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct FirstWinScreen: View {
+    let personality: MoneyPersonality
     @Binding var savedAmount: Double
     let onNext: () -> Void
 
@@ -16,6 +17,16 @@ struct FirstWinScreen: View {
 
     private var enteredAmount: Double {
         Double(amountText) ?? 0
+    }
+
+    private var personalityPrompt: String {
+        switch personality {
+        case .hustler: "That impulse Amazon order? The 2 AM Uber Eats?"
+        case .generous: "That gift you almost bought? The extra round of drinks?"
+        case .saver: "Even you have weak moments. That streaming subscription upgrade?"
+        case .minimalist: "That 'just one more thing' you almost added to cart?"
+        case .builder: "That crypto dip you almost FOMO'd into?"
+        }
     }
 
     var body: some View {
@@ -73,14 +84,20 @@ struct FirstWinScreen: View {
     private var inputView: some View {
         VStack(spacing: 32) {
             VStack(spacing: 12) {
-                Text("Your First Win")
+                Text("Log Your First Save")
                     .font(Theme.headingFont(.title))
                     .foregroundStyle(Theme.gold)
 
-                Text("Think of something you almost\nbought today but didn't need.")
+                Text("Think of something you resisted\nbuying recently. How much was it?")
                     .font(.subheadline)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
+
+                Text(personalityPrompt)
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .foregroundStyle(personality.color.opacity(0.8))
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 4)
             }
 
             VStack(spacing: 8) {

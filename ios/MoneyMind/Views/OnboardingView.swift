@@ -57,28 +57,28 @@ struct OnboardingView: View {
                 }
 
             case .lossVisualization:
-                LossVisualizationScreen {
+                LossVisualizationScreen(personality: personality) {
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                         currentScreen = .firstWin
                     }
                 }
 
             case .firstWin:
-                FirstWinScreen(savedAmount: $savedAmount) {
+                FirstWinScreen(personality: personality, savedAmount: $savedAmount) {
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                         currentScreen = .socialProof
                     }
                 }
 
             case .socialProof:
-                SocialProofScreen {
+                SocialProofScreen(personality: personality) {
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                         currentScreen = .intentionSetup
                     }
                 }
 
             case .intentionSetup:
-                IntentionScreen(modelContext: modelContext, onComplete: onComplete)
+                IntentionScreen(personality: personality, modelContext: modelContext, onComplete: onComplete)
             }
         }
         .sheet(isPresented: $showUrgeSurf) {

@@ -2,6 +2,8 @@ import SwiftUI
 
 struct MoneyPersonalityQuizView: View {
     let onComplete: (QuizResult) -> Void
+    var skipWelcome: Bool = false
+    var skipResult: Bool = false
 
     @State private var phase: QuizPhase = .welcome
     @State private var currentQuestion: Int = 0
@@ -43,6 +45,11 @@ struct MoneyPersonalityQuizView: View {
             case .welcome:
                 welcomeScreen
                     .transition(.opacity)
+                    .onAppear {
+                        if skipWelcome {
+                            phase = .quiz
+                        }
+                    }
             case .quiz:
                 quizScreen
                     .transition(.asymmetric(
@@ -172,12 +179,17 @@ struct MoneyPersonalityQuizView: View {
                 } else {
                     let personality = QuizResult.computePersonality(answers: answers)
                     computedPersonality = personality
-                    withAnimation(.easeInOut(duration: 0.4)) {
-                        phase = .revealing
-                    }
-                    try? await Task.sleep(for: .seconds(2))
-                    withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                        phase = .result
+                    if skipResult {
+                        let result = QuizResult(answers: answers)
+                        onComplete(result)
+                    } else {
+                        withAnimation(.easeInOut(duration: 0.4)) {
+                            phase = .revealing
+                        }
+                        try? await Task.sleep(for: .seconds(2))
+                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                            phase = .result
+                        }
                     }
                 }
             }

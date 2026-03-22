@@ -1,60 +1,53 @@
-# Global Rebrand: MoneyMind → Splurj
+# Evidence-Based Onboarding Rewrite — Screens 1-3
 
 ## What's Changing
 
-A complete text rebrand across the entire app — every place the user sees or shares "MoneyMind" will now say **"Splurj"**.
+Replacing the current onboarding flow (Splash → Loss → FirstWin → Branching → Quiz → Social → Account → Intention) with a new evidence-based 7-screen flow. **This prompt covers screens 1–3 only** — the remaining screens will be updated in the next prompt.
 
 ---
 
-### **User-Facing Text Updates (29 files)**
+### **Screen 1: Welcome (New)**
+- **What it does:** Hooks the user with a curiosity-driven question — "What's your Money Personality?" — instead of a feature tour
+- **Design:** Dark background with floating particle animation (reusing the existing Canvas particle effect from the quiz). Animated Splurj logo icon scales in with a bouncy spring. Large bold heading and subtitle fade in after. Green full-width "Discover Mine" button slides up from below
+- **Copy:** "Are you a Saver, Builder, Hustler, Minimalist, or Generous? Find out in 60 seconds." Below the button: "Takes less than a minute · No signup needed"
+- **Animations:** Logo spring (0.8 response, 0.6 damping), text fade 0.3s delay, button slide 0.3s after text, continuous floating particles
 
-All screens, share cards, exports, and Siri shortcuts will be updated:
+### **Screen 2: Money Personality Quiz (Modified)**
+- **What changes:** The existing quiz is already great — only minor enhancements:
+  - Progress bar already exists and works well — keep as-is
+  - Haptic feedback on selection already exists — keep as-is
+  - The quiz now passes the computed personality forward to the new Personality Reveal screen (screen 3) instead of showing the built-in result screen
+  - The quiz's internal welcome screen is **skipped** since Screen 1 (Welcome) replaces it — quiz starts directly in question mode
 
-- **Home screen** — "MoneyMind" header and coach label → "Splurj"
-- **Coach chat** — "MoneyMind Coach" → "Splurj Coach"
-- **Wallet** — "Without/With MoneyMind" comparison → "Without/With Splurj"
-- **Community** — community branding and guidelines → "Splurj community"
-- **Profile / Settings** — "Share MoneyMind" → "Share Splurj"
-- **Paywall** — "Join 10,000+ MoneyMind Premium members" → "Splurj Premium"
-- **Money Wrapped** — "MoneyMind" branding → "Splurj" throughout
-- **Share cards** (Milestone, Character, Ghost Budget, Weekly Summary) — all footers → "Splurj" / "splurj.app"
-- **Badge descriptions** — "MoneyMind Program" → "Splurj Program"
-- **Challenges** — share text references → "Splurj"
-- **Character** — community stat text → "Splurj community"
-- **Referral** — invite links and share text → "Splurj" + splurj.app URLs
-- **Curriculum content** — all 10+ educational text references → "Splurj"
-- **Curriculum section header** — "Your MoneyMind Program" → "Your Splurj Program"
-- **Session details** — share text and program name → "Splurj Program"
-- **Badge gallery** — share text → "Splurj"
-- **Onboarding screens** — Social proof stats, intention option, quiz share text → "Splurj"
-- **Breathing guide** — setup instructions → "Splurj"
-- **DNS Wizard** — description text → "Splurj"
-- **Referral gate** — disclaimer → "Splurj Coach"
-- **Export service** — CSV filename and PDF headers/footers → "Splurj"
-- **Siri shortcuts** — intent name, description, and phrases → "Splurj"
+### **Screen 3: Personality Reveal (New)**
+- **What it does:** The "AHA moment" — shows the user their personality type with rich personalization
+- **Design:**
+  - Full-screen with personality-colored gradient background (15% opacity)
+  - Large personality icon scales in from zero with a spring + confetti burst
+  - "You're a [TYPE]" in large bold text with personality color
+  - 3 trait cards animate in from the right, staggered 0.15s each:
+    - "Your Strength" — first trait from personality
+    - "Watch Out For" — a personality-specific vulnerability
+    - "Your Splurj Plan" — personalized one-liner (e.g. Hustler: "Splurj will make sure impulse buys don't eat your hustle")
+  - Share button with personality-branded share text
+  - Green CTA: "See What This Costs You →"
+- **Confetti:** Reuses the confetti pattern from FirstWinScreen — colorful dots burst outward when the personality icon appears
 
----
+### **Updated Flow Controller**
+- New screen order: Welcome → Quiz → Reveal → Loss → FirstWin → Social → Intention
+- The old Splash screen, Account Creation screen, and Branching screen are **removed from the flow**
+  - Branching screen file is kept (not deleted) for potential reuse as a contextual modal post-onboarding
+  - Splash and Account Creation files are kept but no longer referenced
+- Quiz result (personality type) is now passed through to all subsequent screens for personalization
+- The quiz skips its internal welcome/result screens — it completes after the last question and hands off the personality to the Reveal screen
 
-### **Code-Level Renames**
+### **Files Created**
+- `SplurjWelcomeScreen.swift` — Screen 1
+- `SplurjPersonalityRevealScreen.swift` — Screen 3
 
-- `MoneyMindApp` struct → `SplurjApp`
-- `MoneyMindWidgetsBundle` struct → `SplurjWidgetsBundle`
-- `MoneyMindBudgetWidget` → `SplurjBudgetWidget`
-- `MoneyMindWidgetView` → `SplurjWidgetView`
-- `MoneyMindEntry` → `SplurjEntry`
-- `MoneyMindProvider` → `SplurjProvider`
-- `MoneyMindCheckInIntent` → `SplurjCheckInIntent`
-- `MoneyMindShortcuts` → `SplurjShortcuts`
-- Widget kind string: `"MoneyMindBudget"` → `"SplurjBudget"`
-- Widget display name: `"MoneyMind Budget"` → `"Splurj Budget"`
-- Widget deep link URLs: `moneymind://` → `splurj://` (5 links)
+### **Files Modified**
+- `OnboardingView.swift` — New flow enum, new screen routing, personality state passed through
+- `MoneyPersonalityQuizView.swift` — Skip internal welcome screen, skip internal result screen, hand off personality after last question
 
----
-
-### **What Stays the Same**
-
-- `MoneyPersonality.swift` — "Money Personality" is a feature name, not the app
-- `MoneyPersonalityQuizView.swift` — same reason
-- `MoneyWrappedView.swift` — file name stays, only internal strings change
-- All visual design (colors, fonts, animations, layout) — untouched
-- All app logic and data models — untouched
+### **No Files Deleted**
+- Old screens (Splash, AccountCreation, Branching) remain in the project but are no longer in the onboarding flow

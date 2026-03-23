@@ -3,96 +3,844 @@ import SwiftData
 
 struct GamesHubView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Query private var scratchCards: [ScratchCard]
     @Query private var cardCollection: [CollectedCard]
     @Query private var playerProfiles: [PlayerProfile]
+    @Query private var gachaStates: [GachaState]
+    @Query(filter: #Predicate<DailyQuestSlot> { $0.cadence == "daily" },
+           sort: \DailyQuestSlot.offeredDate, order: .reverse)
+    private var allDailySlots: [DailyQuestSlot]
+    @Query private var weeklyChallenges: [WeeklyChallenge]
 
-    private var pendingCards: Int {
-        scratchCards.filter { !$0.isScratched }.count
+    @State private var tickerOffset: CGFloat = 0
+    @State private var showQuickComplete: Bool = false
+    @State private var selectedQuickQuestID: String?
+    @State private var showRewardCelebration: Bool = false
+    @State private var lastReward: QuestReward?
+    @State private var animateStats: Bool = false
+    @State private var meshPhase: Double = 0
+
+    private var player: PlayerProfile { playerProfiles.first ?? PlayerProfile() }
+    private var pendingCards: Int { scratchCards.filter { !$0.isScratched }.count }
+    private var essence: Int { gachaStates.first?.totalEssence ?? 0 }
+
+    private var todaysSlots: [DailyQuestSlot] {
+        let today = Calendar.current.startOfDay(for: Date())
+        return allDailySlots.filter { $0.offeredDate >= today }
     }
 
-    private var collectionCount: Int {
-        cardCollection.count
+    private var todaysQuests: [(slot: DailyQuestSlot, quest: QuestDefinition)] {
+        todaysSlots.compactMap { slot in
+            guard let quest = QuestDatabase.quest(byID: slot.questID) else { return nil }
+            return (slot, quest)
+        }
     }
 
-    private var questBadgeCount: Int {
+    private var completedDailyCount: Int {
         let engine = QuestEngine(modelContext: modelContext)
-        return engine.pendingQuestCount()
+        return todaysQuests.filter { engine.isQuestCompleted($0.quest.id) }.count
+    }
+
+    private var currentWeeklyChallenge: WeeklyChallenge? {
+        let manager = WeeklyChallengeManager(modelContext: modelContext)
+        return manager.currentChallenge()
     }
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    HStack(spacing: 12) {
-                        StatPill(
-                            icon: "sparkles.rectangle.stack",
-                            value: "\(pendingCards)",
-                            label: "To Scratch",
-                            color: Theme.accent
-                        )
-                        StatPill(
-                            icon: "rectangle.stack.fill",
-                            value: "\(collectionCount)",
-                            label: "Collected",
-                            color: Theme.gold
-                        )
-                    }
-                    .padding(.horizontal)
-
-                    NavigationLink(destination: QuestHubView()) {
-                        GameCard(
-                            title: "Quests",
-                            subtitle: "Real-World Missions",
-                            description: "Complete real-life financial quests, earn XP, level up, fight bosses, earn gacha tickets",
-                            icon: "map.fill",
-                            badgeCount: questBadgeCount,
-                            accentColor: Theme.accent
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.horizontal)
-
-                    NavigationLink(destination: VaultGameView()) {
-                        GameCard(
-                            title: "The Vault",
-                            subtitle: "Scratch & Collect",
-                            description: "Resist impulses, earn scratch cards, reveal gacha pulls, collect financial literacy cards",
-                            icon: "sparkles.rectangle.stack",
-                            badgeCount: pendingCards,
-                            accentColor: Theme.accent
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.horizontal)
-
-                    GameCard(
-                        title: "Savings Roulette",
-                        subtitle: "Coming Soon",
-                        description: "Daily spin wheel with savings challenges",
-                        icon: "arrow.trianglehead.2.clockwise.rotate.90.circle",
-                        badgeCount: 0,
-                        accentColor: Theme.textMuted,
-                        isLocked: true
-                    )
-                    .padding(.horizontal)
-
-                    GameCard(
-                        title: "Battle Pass",
-                        subtitle: "Coming Soon",
-                        description: "30-day seasons with 50 tiers of rewards",
-                        icon: "flag.checkered",
-                        badgeCount: 0,
-                        accentColor: Theme.textMuted,
-                        isLocked: true
-                    )
-                    .padding(.horizontal)
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 16) {
+                    playerCommandBar
+                    liveTicker
+                    todaysMissions
+                    gameCards
+                    weeklyChallengeBanner
+                    statsDashboard
                 }
-                .padding(.vertical)
+                .padding(.bottom, 32)
             }
-            .background(Theme.background)
+            .background(
+                ZStack {
+                    Theme.background.ignoresSafeArea()
+                    if !reduceMotion {
+                        TimelineView(.animation(minimumInterval: 1.0 / 15.0)) { timeline in
+                            let t = timeline.date.timeIntervalSinceReferenceDate
+                            MeshGradient(
+                                width: 3, height: 3,
+                                points: [
+                                    [0.0, 0.0], [0.5, 0.0], [1.0, 0.0],
+                                    [Float(0.0 + sin(t * 0.3) * 0.05), 0.5],
+                                    [Float(0.5 + cos(t * 0.2) * 0.05), Float(0.5 + sin(t * 0.25) * 0.05)],
+                                    [Float(1.0 + sin(t * 0.35) * 0.05), 0.5],
+                                    [0.0, 1.0], [0.5, 1.0], [1.0, 1.0]
+                                ],
+                                colors: [
+                                    .clear, .clear, .clear,
+                                    Theme.accent.opacity(0.03), .clear, Theme.neonGold.opacity(0.02),
+                                    .clear, Theme.accent.opacity(0.02), .clear
+                                ]
+                            )
+                            .ignoresSafeArea()
+                            .allowsHitTesting(false)
+                        }
+                    }
+                }
+            )
             .navigationTitle("Games")
             .toolbarColorScheme(.dark, for: .navigationBar)
+            .onAppear {
+                ensurePlayerAndQuests()
+                withAnimation(.easeOut(duration: 0.8).delay(0.3)) {
+                    animateStats = true
+                }
+            }
+            .fullScreenCover(isPresented: $showRewardCelebration) {
+                if let reward = lastReward {
+                    QuestRewardCelebration(reward: reward)
+                }
+            }
         }
+    }
+
+    // MARK: - Player Command Bar
+
+    private var playerCommandBar: some View {
+        HStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .stroke(
+                        AngularGradient(
+                            colors: [Theme.accent, Theme.neonGold, Theme.accent],
+                            center: .center
+                        ),
+                        lineWidth: 2.5
+                    )
+                    .frame(width: 52, height: 52)
+
+                Image(systemName: avatarIcon(stage: player.avatarStage))
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [Theme.accent, Theme.neonGold],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 44, height: 44)
+                    .background(Theme.elevated)
+                    .clipShape(Circle())
+            }
+
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 6) {
+                    Text("Lv.\(player.level)")
+                        .font(.system(size: 16, weight: .black, design: .rounded))
+                        .foregroundStyle(.white)
+
+                    Text(player.activeTitle)
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(Theme.accent)
+                        .lineLimit(1)
+                }
+
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Theme.elevated)
+                            .frame(height: 8)
+
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Theme.accentGradient)
+                            .frame(width: geo.size.width * player.xpProgressFraction, height: 8)
+
+                        Text("\(player.xpProgressInCurrentLevel)/\(player.xpForCurrentLevel)")
+                            .font(.system(size: 7, weight: .bold, design: .monospaced))
+                            .foregroundStyle(.white.opacity(0.8))
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+                .frame(height: 8)
+            }
+
+            Spacer(minLength: 4)
+
+            HStack(spacing: 12) {
+                if player.questStreak > 0 {
+                    HStack(spacing: 3) {
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 14))
+                            .foregroundStyle(Color(hex: 0xFB923C))
+                            .symbolEffect(.pulse, isActive: player.questStreak >= 7 && !reduceMotion)
+                        Text("\(player.questStreak)")
+                            .font(.system(size: 13, weight: .black, design: .rounded))
+                            .foregroundStyle(.white)
+                    }
+                }
+
+                HStack(spacing: 3) {
+                    Image(systemName: "diamond.fill")
+                        .font(.system(size: 11))
+                        .foregroundStyle(Theme.neonPurple)
+                    Text("\(essence)")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                }
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(Theme.surface.opacity(0.6), in: .rect(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(Theme.glassBorder, lineWidth: 0.5)
+        )
+        .padding(.horizontal, 16)
+        .padding(.top, 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Level \(player.level), \(player.xpProgressInCurrentLevel) of \(player.xpForCurrentLevel) XP, \(player.questStreak) day streak, \(essence) essence")
+    }
+
+    // MARK: - Live Ticker
+
+    private var liveTicker: some View {
+        let events = tickerEvents()
+        return ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 24) {
+                ForEach(Array(events.enumerated()), id: \.offset) { _, event in
+                    HStack(spacing: 6) {
+                        Text(event.icon)
+                            .font(.system(size: 12))
+                        Text(event.text)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(Theme.textSecondary)
+                            .lineLimit(1)
+                    }
+                }
+            }
+            .padding(.horizontal, 20)
+        }
+        .contentMargins(.horizontal, 0)
+        .frame(height: 28)
+    }
+
+    // MARK: - Today's Missions
+
+    private var todaysMissions: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                sectionHeader("TODAY'S MISSIONS")
+                Spacer()
+                Text("\(completedDailyCount)/\(todaysQuests.count) done")
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundStyle(completedDailyCount == todaysQuests.count ? Theme.accent : Theme.textMuted)
+            }
+            .padding(.horizontal, 20)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(todaysQuests, id: \.quest.id) { item in
+                        let engine = QuestEngine(modelContext: modelContext)
+                        let isComplete = engine.isQuestCompleted(item.quest.id)
+
+                        CompactMissionCard(
+                            quest: item.quest,
+                            isLucky: item.slot.isLuckyQuest,
+                            isComplete: isComplete,
+                            onTap: {
+                                if !isComplete {
+                                    selectedQuickQuestID = item.quest.id
+                                    showQuickComplete = true
+                                }
+                            }
+                        )
+                    }
+
+                    if todaysQuests.isEmpty {
+                        VStack(spacing: 8) {
+                            Image(systemName: "checkmark.seal.fill")
+                                .font(.title2)
+                                .foregroundStyle(Theme.accent)
+                            Text("Quests loading...")
+                                .font(.caption)
+                                .foregroundStyle(Theme.textMuted)
+                        }
+                        .frame(width: 140, height: 120)
+                        .glassCard()
+                    }
+                }
+                .padding(.vertical, 2)
+            }
+            .contentMargins(.horizontal, 20)
+        }
+        .sheet(isPresented: $showQuickComplete) {
+            if let questID = selectedQuickQuestID,
+               let quest = QuestDatabase.quest(byID: questID) {
+                QuickMissionSheet(quest: quest) {
+                    completeQuest(questID)
+                    showQuickComplete = false
+                }
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+            }
+        }
+    }
+
+    // MARK: - Game Cards
+
+    private var gameCards: some View {
+        VStack(spacing: 12) {
+            sectionHeader("YOUR GAMES")
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 20)
+
+            NavigationLink(destination: QuestHubView()) {
+                ArcadeGameCard(
+                    icon: "map.fill",
+                    title: "QUESTS",
+                    subtitle: "Real-World Missions",
+                    accentColor: Theme.accent,
+                    badgeCount: QuestEngine(modelContext: modelContext).pendingQuestCount(),
+                    statLabel: "Boss: \(player.currentQuestZone.bossName)",
+                    statProgress: bossProgressFraction
+                )
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 16)
+
+            NavigationLink(destination: VaultGameView()) {
+                ArcadeGameCard(
+                    icon: "sparkles.rectangle.stack",
+                    title: "THE VAULT",
+                    subtitle: "Scratch & Collect",
+                    accentColor: Theme.neonPurple,
+                    badgeCount: pendingCards,
+                    statLabel: "Collection: \(cardCollection.count)/\(CardDatabase.totalCards)",
+                    statProgress: CardDatabase.totalCards > 0 ? Double(cardCollection.count) / Double(CardDatabase.totalCards) : 0
+                )
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 16)
+        }
+    }
+
+    // MARK: - Weekly Challenge Banner
+
+    @ViewBuilder
+    private var weeklyChallengeBanner: some View {
+        if let challenge = currentWeeklyChallenge {
+            VStack(spacing: 10) {
+                sectionHeader("WEEKLY CHALLENGE")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: "trophy.fill")
+                            .font(.system(size: 16))
+                            .foregroundStyle(Theme.neonGold)
+
+                        Text(challenge.title)
+                            .font(.system(size: 15, weight: .heavy, design: .rounded))
+                            .foregroundStyle(.white)
+
+                        Spacer()
+
+                        Text(challenge.timeRemaining)
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(Theme.textMuted)
+                    }
+
+                    Text(challenge.challengeDescription)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(Theme.textSecondary)
+
+                    HStack(spacing: 12) {
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                RoundedRectangle(cornerRadius: 5)
+                                    .fill(Theme.elevated)
+                                    .frame(height: 10)
+
+                                RoundedRectangle(cornerRadius: 5)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [Theme.neonGold, Theme.neonGold.opacity(0.7)],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .frame(width: geo.size.width * challenge.progressFraction, height: 10)
+                            }
+                        }
+                        .frame(height: 10)
+
+                        Text("\(challenge.current)/\(challenge.target)")
+                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                            .foregroundStyle(.white)
+                    }
+
+                    HStack(spacing: 6) {
+                        Image(systemName: challenge.rewardIcon)
+                            .font(.system(size: 12))
+                            .foregroundStyle(Theme.neonGold)
+                        Text("Reward: \(challenge.rewardLabel)")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(Theme.neonGold)
+                    }
+                }
+                .padding(16)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Theme.surface)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        colors: [Theme.neonGold.opacity(0.3), Theme.neonGold.opacity(0.05)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 0.5
+                                )
+                        )
+                        .shadow(color: Theme.neonGold.opacity(0.08), radius: 12, y: 4)
+                )
+            }
+            .padding(.horizontal, 20)
+        }
+    }
+
+    // MARK: - Stats Dashboard
+
+    private var statsDashboard: some View {
+        VStack(spacing: 10) {
+            sectionHeader("LIFETIME STATS")
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 20)
+
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                ArcadeStatCard(
+                    icon: "dollarsign.circle.fill",
+                    value: animateStats ? formatCurrency(player.totalMoneySaved) : "$0",
+                    label: "Total Saved",
+                    color: Theme.accent
+                )
+                ArcadeStatCard(
+                    icon: "checkmark.seal.fill",
+                    value: animateStats ? "\(player.totalQuestsCompleted)" : "0",
+                    label: "Quests Done",
+                    color: Theme.neonBlue
+                )
+                ArcadeStatCard(
+                    icon: "rectangle.stack.fill",
+                    value: animateStats ? "\(cardCollection.count)/\(CardDatabase.totalCards)" : "0",
+                    label: "Cards Found",
+                    color: Theme.neonPurple
+                )
+                ArcadeStatCard(
+                    icon: "flame.fill",
+                    value: animateStats ? "\(player.questStreak) days" : "0",
+                    label: "Current Streak",
+                    color: Color(hex: 0xFB923C)
+                )
+            }
+            .padding(.horizontal, 16)
+        }
+    }
+
+    // MARK: - Helpers
+
+    private var bossProgressFraction: Double {
+        let zone = player.currentQuestZone
+        guard zone.bossHP > 0 else { return 0 }
+        return min(1.0, Double(player.currentBossDamageDealt) / Double(zone.bossHP))
+    }
+
+    private func sectionHeader(_ text: String) -> some View {
+        Text(text)
+            .font(.system(size: 11, weight: .heavy, design: .rounded))
+            .foregroundStyle(Theme.textMuted)
+            .tracking(2)
+    }
+
+    private func avatarIcon(stage: Int) -> String {
+        switch stage {
+        case 0: return "shield.fill"
+        case 1: return "bolt.shield.fill"
+        case 2: return "building.columns.fill"
+        case 3: return "crown.fill"
+        default: return "star.fill"
+        }
+    }
+
+    private func formatCurrency(_ amount: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.maximumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: amount)) ?? "$0"
+    }
+
+    private func tickerEvents() -> [(icon: String, text: String)] {
+        var events: [(String, String)] = []
+
+        if player.questStreak > 0 {
+            events.append(("🔥", "You're on a \(player.questStreak)-day streak!"))
+        }
+        if player.totalQuestsCompleted > 0 {
+            events.append(("⚔️", "\(player.totalQuestsCompleted) quests conquered"))
+        }
+        if pendingCards > 0 {
+            events.append(("🎴", "\(pendingCards) cards waiting in The Vault"))
+        }
+        if player.totalMoneySaved > 0 {
+            events.append(("💰", "You've saved \(formatCurrency(player.totalMoneySaved)) total"))
+        }
+
+        let bossZone = player.currentQuestZone
+        let bossPercent = Int(bossProgressFraction * 100)
+        if bossPercent > 0 {
+            events.append(("🗡️", "\(bossZone.bossName) at \(100 - bossPercent)% HP"))
+        }
+
+        if events.isEmpty {
+            events.append(("✨", "Welcome to the Arcade! Start your first quest"))
+            events.append(("💡", "Complete quests to earn scratch cards"))
+            events.append(("🎯", "Daily quests refresh at midnight"))
+        }
+
+        return events
+    }
+
+    private func ensurePlayerAndQuests() {
+        let engine = QuestEngine(modelContext: modelContext)
+        let p = engine.getOrCreatePlayer()
+        engine.refreshDailyQuests(player: p)
+        engine.refreshWeeklyQuests(player: p)
+        _ = WeeklyChallengeManager(modelContext: modelContext).currentChallenge()
+    }
+
+    private func completeQuest(_ questID: String) {
+        let engine = QuestEngine(modelContext: modelContext)
+        let playerDescriptor = FetchDescriptor<PlayerProfile>()
+        guard let p = try? modelContext.fetch(playerDescriptor).first else { return }
+
+        let quest = QuestDatabase.quest(byID: questID)
+        if let quest, quest.steps.count > 1 {
+            let allDone = engine.advanceQuestStep(questID)
+            if !allDone { return }
+        }
+
+        let reward = engine.completeQuest(questID, player: p)
+        lastReward = reward
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            showRewardCelebration = true
+        }
+    }
+}
+
+// MARK: - Compact Mission Card
+
+private struct CompactMissionCard: View {
+    let quest: QuestDefinition
+    let isLucky: Bool
+    let isComplete: Bool
+    let onTap: () -> Void
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(quest.difficulty.color)
+                        .frame(width: 6, height: 6)
+
+                    if isLucky {
+                        Image(systemName: "sparkle")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(Theme.neonGold)
+                    }
+
+                    Spacer()
+
+                    Text("+\(quest.baseXP) XP")
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .foregroundStyle(Theme.accent)
+                }
+
+                Text(quest.title)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+
+                Spacer(minLength: 0)
+
+                HStack(spacing: 4) {
+                    Image(systemName: quest.category.icon)
+                        .font(.system(size: 9))
+                        .foregroundStyle(quest.category.color)
+                    Text(quest.estimatedTime)
+                        .font(.system(size: 9))
+                        .foregroundStyle(Theme.textMuted)
+                }
+            }
+            .padding(12)
+            .frame(width: 140, height: 120)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(Theme.surface)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .strokeBorder(
+                        isLucky
+                        ? AnyShapeStyle(LinearGradient(colors: [Theme.neonGold.opacity(0.6), Theme.neonGold.opacity(0.1)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                        : AnyShapeStyle(Theme.glassBorder),
+                        lineWidth: isLucky ? 1 : 0.5
+                    )
+            )
+            .shadow(color: isLucky ? Theme.neonGold.opacity(0.15) : .clear, radius: 8, y: 2)
+            .overlay {
+                if isComplete {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(Theme.accent.opacity(0.2))
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 32))
+                            .foregroundStyle(Theme.accent)
+                    }
+                }
+            }
+        }
+        .disabled(isComplete)
+        .accessibilityLabel("\(quest.title), \(quest.difficulty.rawValue), \(quest.baseXP) XP\(isLucky ? ", Lucky quest" : "")\(isComplete ? ", Completed" : "")")
+    }
+}
+
+// MARK: - Arcade Game Card
+
+private struct ArcadeGameCard: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    let accentColor: Color
+    let badgeCount: Int
+    let statLabel: String
+    let statProgress: Double
+
+    var body: some View {
+        HStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .fill(accentColor.opacity(0.12))
+                    .frame(width: 52, height: 52)
+                    .shadow(color: accentColor.opacity(0.2), radius: 8)
+
+                Image(systemName: icon)
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundStyle(accentColor)
+            }
+
+            VStack(alignment: .leading, spacing: 5) {
+                HStack(spacing: 8) {
+                    Text(title)
+                        .font(.system(size: 15, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.white)
+
+                    if badgeCount > 0 {
+                        Text("\(badgeCount)")
+                            .font(.system(size: 10, weight: .black, design: .rounded))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 2)
+                            .background(accentColor, in: Capsule())
+                    }
+                }
+
+                Text(subtitle)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(accentColor.opacity(0.8))
+
+                HStack(spacing: 8) {
+                    Text(statLabel)
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundStyle(Theme.textMuted)
+                        .lineLimit(1)
+
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(Theme.elevated)
+                                .frame(height: 6)
+
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(accentColor.opacity(0.8))
+                                .frame(width: max(0, geo.size.width * statProgress), height: 6)
+                        }
+                    }
+                    .frame(height: 6)
+                    .frame(maxWidth: 80)
+
+                    Text("\(Int(statProgress * 100))%")
+                        .font(.system(size: 9, weight: .bold, design: .monospaced))
+                        .foregroundStyle(Theme.textMuted)
+                }
+            }
+
+            Spacer(minLength: 4)
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(Theme.textMuted)
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Theme.surface)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [accentColor.opacity(0.25), accentColor.opacity(0.03)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 0.5
+                        )
+                )
+                .shadow(color: accentColor.opacity(0.08), radius: 12, y: 4)
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title), \(subtitle), \(statLabel), \(Int(statProgress * 100)) percent")
+    }
+}
+
+// MARK: - Arcade Stat Card
+
+private struct ArcadeStatCard: View {
+    let icon: String
+    let value: String
+    let label: String
+    let color: Color
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.system(size: 20))
+                .foregroundStyle(color)
+
+            Text(value)
+                .font(.system(size: 18, weight: .black, design: .rounded))
+                .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+
+            Text(label)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(Theme.textMuted)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(Theme.surface, in: .rect(cornerRadius: 14))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .strokeBorder(color.opacity(0.15), lineWidth: 0.5)
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(label): \(value)")
+    }
+}
+
+// MARK: - Quick Mission Sheet
+
+private struct QuickMissionSheet: View {
+    let quest: QuestDefinition
+    let onComplete: () -> Void
+
+    var body: some View {
+        VStack(spacing: 20) {
+            VStack(spacing: 8) {
+                HStack(spacing: 6) {
+                    Image(systemName: quest.category.icon)
+                        .foregroundStyle(quest.category.color)
+                    Text(quest.category.rawValue)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(quest.category.color)
+                }
+
+                Text(quest.title)
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+
+                Text(quest.description)
+                    .font(.system(size: 14))
+                    .foregroundStyle(Theme.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(3)
+            }
+
+            HStack(spacing: 16) {
+                VStack(spacing: 2) {
+                    Text("+\(quest.baseXP)")
+                        .font(.system(size: 20, weight: .black, design: .rounded))
+                        .foregroundStyle(Theme.accent)
+                    Text("XP")
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundStyle(Theme.textMuted)
+                }
+
+                VStack(spacing: 2) {
+                    Text(quest.difficulty.rawValue)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(quest.difficulty.color)
+                    Text("Difficulty")
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundStyle(Theme.textMuted)
+                }
+
+                VStack(spacing: 2) {
+                    Text(quest.estimatedTime)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(.white)
+                    Text("Time")
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundStyle(Theme.textMuted)
+                }
+            }
+            .padding(.vertical, 12)
+
+            if quest.steps.count > 1 {
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(quest.steps) { step in
+                        HStack(spacing: 8) {
+                            Image(systemName: "circle")
+                                .font(.system(size: 10))
+                                .foregroundStyle(Theme.textMuted)
+                            Text(step.instruction)
+                                .font(.system(size: 13))
+                                .foregroundStyle(Theme.textSecondary)
+                        }
+                    }
+                }
+                .padding(.horizontal, 8)
+            }
+
+            Spacer()
+
+            Button(action: onComplete) {
+                Text(quest.steps.count <= 1 ? "Complete Quest" : "Start Quest")
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
+            }
+            .sensoryFeedback(.success, trigger: false)
+        }
+        .padding(24)
+        .background(Theme.background)
     }
 }

@@ -37,6 +37,15 @@ enum Theme {
     static let border = Color(hex: 0x1F2937)
     static let divider = Color(hex: 0x1F2937, opacity: 0.5)
 
+    // MARK: - Games Neon Accents
+
+    static let neonEmerald = Color(hex: 0x00FF88)
+    static let neonGold = Color(hex: 0xFFD700)
+    static let neonPurple = Color(hex: 0xBB86FC)
+    static let neonBlue = Color(hex: 0x00B4FF)
+    static let neonRed = Color(hex: 0xFF4466)
+    static let neonPink = Color(hex: 0xFF6EB4)
+
     // MARK: - Glass Material
 
     static let glass = Color.white.opacity(0.05)

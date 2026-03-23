@@ -274,68 +274,82 @@ struct DNARadarShape: View {
     let dna: FinancialDNA
     let animated: Bool
 
+    private var values: [Double] {
+        animated
+            ? [dna.spendingAxis, dna.emotionalAxis, dna.riskAxis, dna.socialAxis]
+            : [0.0, 0.0, 0.0, 0.0]
+    }
+
     var body: some View {
         Canvas { context, size in
             let center = CGPoint(x: size.width / 2, y: size.height / 2)
-            let maxR = min(size.width, size.height) / 2 * 0.85
-
-            let values = animated
-                ? [dna.spendingAxis, dna.emotionalAxis, dna.riskAxis, dna.socialAxis]
-                : [0.0, 0.0, 0.0, 0.0]
-
-            for ring in stride(from: 0.25, through: 1.0, by: 0.25) {
-                var ringPath = Path()
-                for i in 0..<4 {
-                    let angle = Double(i) * (.pi / 2) - .pi / 2
-                    let x = center.x + cos(angle) * maxR * ring
-                    let y = center.y + sin(angle) * maxR * ring
-                    if i == 0 { ringPath.move(to: CGPoint(x: x, y: y)) }
-                    else { ringPath.addLine(to: CGPoint(x: x, y: y)) }
-                }
-                ringPath.closeSubpath()
-                context.stroke(ringPath, with: .color(Theme.elevated), lineWidth: 0.5)
-            }
-
-            for i in 0..<4 {
-                let angle = Double(i) * (.pi / 2) - .pi / 2
-                var line = Path()
-                line.move(to: center)
-                line.addLine(to: CGPoint(
-                    x: center.x + cos(angle) * maxR,
-                    y: center.y + sin(angle) * maxR
-                ))
-                context.stroke(line, with: .color(Theme.elevated.opacity(0.5)), lineWidth: 0.5)
-            }
-
-            var shape = Path()
-            for i in 0..<4 {
-                let angle = Double(i) * (.pi / 2) - .pi / 2
-                let r = maxR * max(0.1, values[i])
-                let point = CGPoint(
-                    x: center.x + cos(angle) * r,
-                    y: center.y + sin(angle) * r
-                )
-                if i == 0 { shape.move(to: point) }
-                else { shape.addLine(to: point) }
-            }
-            shape.closeSubpath()
-
-            let archColor = dna.primaryArchetype.color
-            context.fill(shape, with: .color(archColor.opacity(0.2)))
-            context.stroke(shape, with: .color(archColor.opacity(0.8)), lineWidth: 2)
-
-            for i in 0..<4 {
-                let angle = Double(i) * (.pi / 2) - .pi / 2
-                let r = maxR * max(0.1, values[i])
-                let point = CGPoint(
-                    x: center.x + cos(angle) * r,
-                    y: center.y + sin(angle) * r
-                )
-                var dot = Path()
-                dot.addEllipse(in: CGRect(x: point.x - 4, y: point.y - 4, width: 8, height: 8))
-                context.fill(dot, with: .color(archColor))
-            }
+            let halfSize = min(size.width, size.height) / 2
+            let maxR: CGFloat = halfSize * 0.85
+            drawRings(context: context, center: center, maxR: maxR)
+            drawAxes(context: context, center: center, maxR: maxR)
+            drawShape(context: context, center: center, maxR: maxR)
+            drawDots(context: context, center: center, maxR: maxR)
         }
         .animation(.spring(response: 1.2, dampingFraction: 0.6), value: animated)
+    }
+
+    private func angleFor(_ index: Int) -> Double {
+        Double(index) * (.pi / 2) - .pi / 2
+    }
+
+    private func pointOnCircle(center: CGPoint, radius: CGFloat, index: Int) -> CGPoint {
+        let angle: CGFloat = CGFloat(angleFor(index))
+        return CGPoint(x: center.x + Foundation.cos(angle) * radius, y: center.y + Foundation.sin(angle) * radius)
+    }
+
+    private func drawRings(context: GraphicsContext, center: CGPoint, maxR: CGFloat) {
+        let elevatedColor = Theme.elevated
+        for ring in stride(from: CGFloat(0.25), through: 1.0, by: 0.25) {
+            var ringPath = Path()
+            for i in 0..<4 {
+                let pt = pointOnCircle(center: center, radius: maxR * ring, index: i)
+                if i == 0 { ringPath.move(to: pt) }
+                else { ringPath.addLine(to: pt) }
+            }
+            ringPath.closeSubpath()
+            context.stroke(ringPath, with: .color(elevatedColor), lineWidth: 0.5)
+        }
+    }
+
+    private func drawAxes(context: GraphicsContext, center: CGPoint, maxR: CGFloat) {
+        let lineColor = Theme.elevated.opacity(0.5)
+        for i in 0..<4 {
+            let pt = pointOnCircle(center: center, radius: maxR, index: i)
+            var line = Path()
+            line.move(to: center)
+            line.addLine(to: pt)
+            context.stroke(line, with: .color(lineColor), lineWidth: 0.5)
+        }
+    }
+
+    private func drawShape(context: GraphicsContext, center: CGPoint, maxR: CGFloat) {
+        var shape = Path()
+        for i in 0..<4 {
+            let r = maxR * CGFloat(max(0.1, values[i]))
+            let pt = pointOnCircle(center: center, radius: r, index: i)
+            if i == 0 { shape.move(to: pt) }
+            else { shape.addLine(to: pt) }
+        }
+        shape.closeSubpath()
+        let archColor = dna.primaryArchetype.color
+        context.fill(shape, with: .color(archColor.opacity(0.2)))
+        context.stroke(shape, with: .color(archColor.opacity(0.8)), lineWidth: 2)
+    }
+
+    private func drawDots(context: GraphicsContext, center: CGPoint, maxR: CGFloat) {
+        let archColor = dna.primaryArchetype.color
+        for i in 0..<4 {
+            let r = maxR * CGFloat(max(0.1, values[i]))
+            let pt = pointOnCircle(center: center, radius: r, index: i)
+            let dotRect = CGRect(x: pt.x - 4, y: pt.y - 4, width: 8, height: 8)
+            var dot = Path()
+            dot.addEllipse(in: dotRect)
+            context.fill(dot, with: .color(archColor))
+        }
     }
 }

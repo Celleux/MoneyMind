@@ -8,9 +8,13 @@ struct QuestCard: View {
     let onTap: () -> Void
     let onComplete: () -> Void
     var onArchive: (() -> Void)?
+    var appearIndex: Int = 0
 
     @State private var showCompletionAnimation: Bool = false
     @State private var showArchiveConfirmation: Bool = false
+    @State private var swipeOffset: CGFloat = 0
+    @State private var showRewardTooltip: Bool = false
+    @State private var appeared: Bool = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var currentStep: Int { progress?.currentStepIndex ?? 0 }
@@ -18,8 +22,80 @@ struct QuestCard: View {
     private var completedStepCount: Int {
         quest.steps.count > 1 ? completions.filter(\.value).count : 0
     }
+    private var isSingleStep: Bool { quest.steps.count <= 1 }
+    private var swipeThreshold: CGFloat { 120 }
+    private var swipeProgress: CGFloat { min(1, max(0, swipeOffset / swipeThreshold)) }
 
     var body: some View {
+        ZStack {
+            if isSingleStep && swipeOffset > 0 {
+                swipeRevealBackground
+            }
+
+            mainCard
+                .offset(x: isSingleStep ? swipeOffset : 0)
+                .opacity(appeared ? 1 : 0)
+                .offset(x: appeared ? 0 : 60)
+                .animation(
+                    reduceMotion ? .none : .spring(response: 0.5, dampingFraction: 0.8).delay(Double(appearIndex) * 0.05),
+                    value: appeared
+                )
+        }
+        .onAppear {
+            if !reduceMotion {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    appeared = true
+                }
+            } else {
+                appeared = true
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(questAccessibilityLabel)
+        .accessibilityHint(isExpanded ? "Double tap to collapse" : "Double tap to expand")
+        .accessibilityAction(named: "Complete quest") {
+            if isSingleStep { onComplete() }
+        }
+    }
+
+    // MARK: - Swipe Reveal Background
+
+    private var swipeRevealBackground: some View {
+        HStack {
+            HStack(spacing: 8) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundStyle(.white)
+                    .scaleEffect(swipeProgress > 0.8 ? 1.2 : 0.8)
+                    .opacity(Double(swipeProgress))
+
+                if swipeProgress > 0.5 {
+                    Text("Complete")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(.white)
+                        .transition(.opacity)
+                }
+            }
+            .padding(.leading, 20)
+
+            Spacer()
+        }
+        .frame(maxHeight: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(
+                    LinearGradient(
+                        colors: [Theme.accent, Theme.accent.opacity(0.7)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+        )
+    }
+
+    // MARK: - Main Card
+
+    private var mainCard: some View {
         ZStack {
             VStack(spacing: 0) {
                 collapsedHeader
@@ -31,19 +107,21 @@ struct QuestCard: View {
                 }
             }
             .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Theme.surface)
-                    .shadow(color: isLucky ? Theme.gold.opacity(0.3) : .clear, radius: isLucky ? 12 : 0)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Theme.surface)
+
+                    HStack(spacing: 0) {
+                        difficultyStrip
+                        Spacer()
+                    }
+                }
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(
-                        isLucky
-                        ? AnyShapeStyle(LinearGradient(colors: [Theme.gold, Theme.gold.opacity(0.3)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        : AnyShapeStyle(Theme.elevated.opacity(0.5)),
-                        lineWidth: isLucky ? 1.5 : 0.5
-                    )
-            )
+            .overlay(cardBorder)
+
+            if isLucky && !reduceMotion {
+                luckyGlowBorder
+            }
 
             if showCompletionAnimation {
                 QuestCompleteCheckmark(xpEarned: quest.baseXP) {
@@ -53,12 +131,171 @@ struct QuestCard: View {
                 .clipShape(RoundedRectangle(cornerRadius: 16))
             }
         }
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .shadow(color: isLucky ? Theme.gold.opacity(0.25) : .clear, radius: isLucky ? 12 : 0)
         .contentShape(Rectangle())
+        .simultaneousGesture(swipeGesture)
         .onTapGesture(perform: onTap)
+        .onLongPressGesture(minimumDuration: 0.5, perform: {}) { pressing in
+            withAnimation(.spring(response: 0.3)) {
+                showRewardTooltip = pressing
+            }
+        }
+        .overlay(alignment: .top) {
+            if showRewardTooltip {
+                rewardTooltip
+                    .offset(y: -70)
+                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+            }
+        }
         .sensoryFeedback(.impact(weight: .light), trigger: isExpanded)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(questAccessibilityLabel)
-        .accessibilityHint(isExpanded ? "Double tap to collapse" : "Double tap to expand")
+    }
+
+    // MARK: - Difficulty Strip
+
+    private var difficultyStrip: some View {
+        Group {
+            if quest.difficulty == .legendary && !reduceMotion {
+                TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
+                    let elapsed = timeline.date.timeIntervalSinceReferenceDate
+                    let hue = (elapsed * 0.3).truncatingRemainder(dividingBy: 1.0)
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(
+                            LinearGradient(
+                                colors: [Theme.gold, Color(hex: 0xFB923C), Theme.gold],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .frame(width: 4)
+                        .shadow(color: Theme.gold.opacity(0.5), radius: 4)
+                }
+            } else {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(quest.difficulty.color)
+                    .frame(width: 4)
+            }
+        }
+    }
+
+    // MARK: - Card Border
+
+    private var cardBorder: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .stroke(
+                isLucky
+                ? AnyShapeStyle(Theme.gold.opacity(0.4))
+                : AnyShapeStyle(Theme.elevated.opacity(0.5)),
+                lineWidth: isLucky ? 1.5 : 0.5
+            )
+    }
+
+    // MARK: - Lucky Glow Border
+
+    private var luckyGlowBorder: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
+            let elapsed = timeline.date.timeIntervalSinceReferenceDate
+            let angle = (elapsed / 3.0).truncatingRemainder(dividingBy: 1.0) * 360
+
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(
+                    AngularGradient(
+                        colors: [
+                            Theme.gold.opacity(0.5),
+                            Theme.gold.opacity(0.1),
+                            Theme.gold.opacity(0.3),
+                            Theme.gold.opacity(0.1),
+                            Theme.gold.opacity(0.5)
+                        ],
+                        center: .center,
+                        startAngle: .degrees(angle),
+                        endAngle: .degrees(angle + 360)
+                    ),
+                    lineWidth: 2
+                )
+                .shadow(color: Theme.gold.opacity(0.3), radius: 8)
+        }
+        .allowsHitTesting(false)
+    }
+
+    // MARK: - Swipe Gesture
+
+    private var swipeGesture: some Gesture {
+        DragGesture(minimumDistance: 20)
+            .onChanged { value in
+                guard isSingleStep else { return }
+                let translation = max(0, value.translation.width)
+                swipeOffset = translation
+            }
+            .onEnded { value in
+                guard isSingleStep else { return }
+                if swipeOffset >= swipeThreshold {
+                    SplurjHaptics.swipeComplete()
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        swipeOffset = UIScreen.main.bounds.width
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        onComplete()
+                    }
+                } else {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                        swipeOffset = 0
+                    }
+                }
+            }
+    }
+
+    // MARK: - Reward Tooltip
+
+    private var rewardTooltip: some View {
+        HStack(spacing: 10) {
+            HStack(spacing: 3) {
+                Image(systemName: "star.fill")
+                    .font(.system(size: 9))
+                Text("+\(quest.baseXP) XP")
+                    .font(.system(size: 10, weight: .bold))
+            }
+            .foregroundStyle(Theme.gold)
+
+            if quest.scratchCardChance > 0 {
+                HStack(spacing: 3) {
+                    Image(systemName: "creditcard.fill")
+                        .font(.system(size: 9))
+                    Text("\(Int(quest.scratchCardChance * 100))%")
+                        .font(.system(size: 10, weight: .bold))
+                }
+                .foregroundStyle(Theme.accent)
+            }
+
+            if quest.essenceReward > 0 {
+                HStack(spacing: 3) {
+                    Image(systemName: "diamond.fill")
+                        .font(.system(size: 9))
+                    Text("+\(quest.essenceReward)")
+                        .font(.system(size: 10, weight: .bold))
+                }
+                .foregroundStyle(Color(hex: 0xA78BFA))
+            }
+
+            HStack(spacing: 3) {
+                Image(systemName: "bolt.fill")
+                    .font(.system(size: 9))
+                Text("\(quest.baseXP / 10) dmg")
+                    .font(.system(size: 10, weight: .bold))
+            }
+            .foregroundStyle(Color(hex: 0xF87171))
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(.ultraThinMaterial)
+                .shadow(color: .black.opacity(0.3), radius: 12, y: 4)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Theme.elevated, lineWidth: 0.5)
+        )
     }
 
     // MARK: - Collapsed Header
@@ -132,15 +369,45 @@ struct QuestCard: View {
                     }
                     .foregroundStyle(Theme.textMuted)
                 }
+
+                if quest.steps.count > 1 {
+                    stepIndicatorDots
+                        .padding(.top, 2)
+                }
             }
 
             Spacer()
 
-            Image(systemName: "chevron.down")
-                .font(.system(size: 14, weight: .bold))
-                .foregroundStyle(Theme.textMuted)
-                .rotationEffect(.degrees(isExpanded ? 180 : 0))
-                .accessibilityHidden(true)
+            if isSingleStep && !isExpanded {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(Theme.textMuted.opacity(0.5))
+                    .accessibilityHidden(true)
+            } else {
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(Theme.textMuted)
+                    .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                    .accessibilityHidden(true)
+            }
+        }
+    }
+
+    // MARK: - Step Indicator Dots
+
+    private var stepIndicatorDots: some View {
+        HStack(spacing: 4) {
+            ForEach(0..<quest.steps.count, id: \.self) { i in
+                Circle()
+                    .fill(
+                        i < completedStepCount
+                        ? Theme.accent
+                        : i == currentStep
+                        ? Theme.accent.opacity(0.5)
+                        : Theme.elevated
+                    )
+                    .frame(width: 5, height: 5)
+            }
         }
     }
 
@@ -214,7 +481,7 @@ struct QuestCard: View {
             if onArchive != nil {
                 if showArchiveConfirmation {
                     VStack(spacing: 8) {
-                        Text("That's okay \u{2014} you tried, and that took courage.")
+                        Text("That\u{2019}s okay \u{2014} you tried, and that took courage.")
                             .font(.system(size: 11))
                             .foregroundStyle(Theme.textSecondary)
                             .multilineTextAlignment(.center)
@@ -269,7 +536,7 @@ struct QuestCard: View {
 
     private func triggerCompletion() {
         if quest.steps.count > 1 && currentStep < quest.steps.count - 1 {
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            SplurjHaptics.stepComplete()
             onComplete()
         } else {
             showCompletionAnimation = true
@@ -285,6 +552,9 @@ struct QuestCard: View {
         }
         if quest.steps.count > 1 {
             label += " Step \(currentStep + 1) of \(quest.steps.count)."
+        }
+        if isSingleStep {
+            label += " Swipe right to complete."
         }
         return label
     }

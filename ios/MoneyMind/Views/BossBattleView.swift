@@ -12,7 +12,10 @@ struct BossBattleView: View {
     @State private var particles: [BossDamageParticle] = []
     @State private var bossBreathing: Bool = false
     @State private var glowPulsing: Bool = false
-    @State private var damageShown: Bool = false
+    @State private var screenShakeX: CGFloat = 0
+    @State private var screenShakeY: CGFloat = 0
+    @State private var crackOpacity: Double = 0
+    @State private var flickering: Bool = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var damagePercent: CGFloat {
@@ -25,6 +28,10 @@ struct BossBattleView: View {
 
     private var canDefeat: Bool {
         player.currentBossDamageDealt >= zone.bossHP
+    }
+
+    private var hpFraction: CGFloat {
+        max(0, 1.0 - damagePercent)
     }
 
     var body: some View {
@@ -79,22 +86,28 @@ struct BossBattleView: View {
 
             ForEach(particles) { particle in
                 Text("-\(particle.damage)")
-                    .font(.system(size: 18, weight: .black, design: .rounded))
+                    .font(.system(size: particle.fontSize, weight: .black, design: .rounded))
                     .foregroundStyle(Color(hex: 0xF87171))
                     .shadow(color: Color(hex: 0xF87171).opacity(0.6), radius: 8)
                     .offset(x: particle.x, y: particle.y)
                     .opacity(particle.opacity)
             }
         }
+        .offset(x: screenShakeX, y: screenShakeY)
         .onAppear {
             if !reduceMotion {
                 bossBreathing = true
                 glowPulsing = true
+                updateCrackState()
             }
             if player.currentBossDamageDealt > 0 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                     showDamageParticles()
                 }
+            }
+
+            if !reduceMotion && hpFraction < 0.1 && hpFraction > 0 {
+                startFlickering()
             }
         }
         .fullScreenCover(isPresented: $showDefeatCelebration) {
@@ -167,22 +180,68 @@ struct BossBattleView: View {
                 .scaleEffect(bossBreathing ? 1.05 : 0.95)
                 .animation(reduceMotion ? nil : .easeInOut(duration: 3).repeatForever(autoreverses: true), value: bossBreathing)
 
-            Image(systemName: bossIcon)
-                .font(.system(size: 80, weight: .bold))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [Color(hex: 0xF87171), Color(hex: 0x991B1B)],
-                        startPoint: .top,
-                        endPoint: .bottom
+            ZStack {
+                Image(systemName: bossIcon)
+                    .font(.system(size: 80, weight: .bold))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [Color(hex: 0xF87171), Color(hex: 0x991B1B)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
                     )
-                )
-                .shadow(color: Color(hex: 0xF87171).opacity(0.6), radius: 30)
-                .offset(x: shaking ? -5 : 5)
-                .scaleEffect(reduceMotion ? 1.0 : (bossBreathing ? 1.02 : 0.98))
-                .animation(reduceMotion ? nil : .easeInOut(duration: 3).repeatForever(autoreverses: true), value: bossBreathing)
-                .animation(.easeInOut(duration: 0.06).repeatCount(8, autoreverses: true), value: shaking)
-                .opacity(attackFlash ? 0.3 : 1.0)
-                .animation(.easeOut(duration: 0.08), value: attackFlash)
+                    .shadow(color: Color(hex: 0xF87171).opacity(0.6), radius: 30)
+                    .offset(x: shaking ? -5 : 5)
+                    .scaleEffect(reduceMotion ? 1.0 : (bossBreathing ? 1.02 : 0.98))
+                    .animation(reduceMotion ? nil : .easeInOut(duration: 3).repeatForever(autoreverses: true), value: bossBreathing)
+                    .animation(.easeInOut(duration: 0.06).repeatCount(8, autoreverses: true), value: shaking)
+                    .opacity(flickering ? 0.3 : (attackFlash ? 0.3 : 1.0))
+                    .animation(.easeOut(duration: 0.08), value: attackFlash)
+
+                if crackOpacity > 0 {
+                    crackOverlay
+                }
+            }
+        }
+    }
+
+    // MARK: - Crack Overlay
+
+    private var crackOverlay: some View {
+        ZStack {
+            if damagePercent >= 0.5 {
+                Image(systemName: "bolt.fill")
+                    .font(.system(size: 30))
+                    .foregroundStyle(Color(hex: 0xF87171).opacity(0.3))
+                    .rotationEffect(.degrees(-30))
+                    .offset(x: 15, y: -10)
+                    .opacity(crackOpacity)
+            }
+
+            if damagePercent >= 0.75 {
+                Image(systemName: "bolt.fill")
+                    .font(.system(size: 24))
+                    .foregroundStyle(Color(hex: 0xF87171).opacity(0.4))
+                    .rotationEffect(.degrees(45))
+                    .offset(x: -20, y: 15)
+                    .opacity(crackOpacity)
+
+                Image(systemName: "bolt.fill")
+                    .font(.system(size: 18))
+                    .foregroundStyle(Color(hex: 0xF87171).opacity(0.35))
+                    .rotationEffect(.degrees(-60))
+                    .offset(x: 25, y: 20)
+                    .opacity(crackOpacity)
+            }
+
+            if damagePercent >= 0.9 {
+                Image(systemName: "bolt.fill")
+                    .font(.system(size: 20))
+                    .foregroundStyle(Color(hex: 0xF87171).opacity(0.5))
+                    .rotationEffect(.degrees(120))
+                    .offset(x: -10, y: -25)
+                    .opacity(crackOpacity)
+            }
         }
     }
 
@@ -194,10 +253,10 @@ struct BossBattleView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "heart.fill")
                         .font(.system(size: 10))
-                        .foregroundStyle(Color(hex: 0xF87171))
+                        .foregroundStyle(hpBarColors.first ?? Color(hex: 0xF87171))
                     Text("HP")
                         .font(.system(size: 11, weight: .black))
-                        .foregroundStyle(Color(hex: 0xF87171))
+                        .foregroundStyle(hpBarColors.first ?? Color(hex: 0xF87171))
                 }
                 Spacer()
                 Text("\(remainingHP) / \(zone.bossHP)")
@@ -215,21 +274,20 @@ struct BossBattleView: View {
                         .frame(height: 24)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color(hex: 0xF87171).opacity(0.1), lineWidth: 0.5)
+                                .stroke(hpBarColors.first?.opacity(0.15) ?? Color.clear, lineWidth: 0.5)
                         )
 
-                    let hpFraction = max(0, 1.0 - damagePercent)
                     RoundedRectangle(cornerRadius: 10)
                         .fill(
                             LinearGradient(
-                                colors: hpColors(percent: hpFraction),
+                                colors: hpBarColors,
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
                         .frame(width: geo.size.width * hpFraction, height: 24)
                         .animation(.spring(response: 0.8), value: damagePercent)
-                        .shadow(color: hpColors(percent: hpFraction).first?.opacity(0.4) ?? .clear, radius: 8)
+                        .shadow(color: hpBarColors.first?.opacity(0.4) ?? .clear, radius: 8)
 
                     if hpFraction > 0 && hpFraction < 1 {
                         RoundedRectangle(cornerRadius: 10)
@@ -255,7 +313,7 @@ struct BossBattleView: View {
                 if !canDefeat {
                     Text("\(remainingHP) HP remaining")
                         .font(.system(size: 10, weight: .medium))
-                        .foregroundStyle(Color(hex: 0xF87171).opacity(0.7))
+                        .foregroundStyle(hpBarColors.first?.opacity(0.7) ?? Color.clear)
                 } else {
                     Text("Ready to defeat")
                         .font(.system(size: 10, weight: .bold))
@@ -366,10 +424,12 @@ struct BossBattleView: View {
     // MARK: - Actions
 
     private func deliverFinalBlow() {
-        triggerBossDefeatHaptics()
+        SplurjHaptics.bossDefeated()
 
         shaking = true
         attackFlash = true
+
+        triggerScreenShake()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             attackFlash = false
@@ -394,33 +454,78 @@ struct BossBattleView: View {
         }
     }
 
+    private func triggerScreenShake() {
+        guard !reduceMotion else { return }
+        let shakeCount = 10
+        for i in 0..<shakeCount {
+            let delay = Double(i) * 0.04
+            let intensity: CGFloat = max(0.5, 1.0 - CGFloat(i) / CGFloat(shakeCount))
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                withAnimation(.linear(duration: 0.04)) {
+                    screenShakeX = CGFloat.random(in: -4...4) * intensity
+                    screenShakeY = CGFloat.random(in: -2...2) * intensity
+                }
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(shakeCount) * 0.04) {
+            withAnimation(.spring(response: 0.2)) {
+                screenShakeX = 0
+                screenShakeY = 0
+            }
+        }
+    }
+
     private func showDamageParticles() {
         let centerX: CGFloat = 0
         let centerY: CGFloat = -40
 
         for i in 0..<5 {
-            let delay = Double(i) * 0.12
+            let delay = Double(i) * 0.15
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                var particle = BossDamageParticle(
+                let damage = Int.random(in: 3...max(5, player.currentBossDamageDealt / 5))
+                let fontSize: CGFloat = CGFloat.random(in: 16...24)
+                let particle = BossDamageParticle(
                     x: centerX + CGFloat.random(in: -60...60),
-                    y: centerY + CGFloat.random(in: -30...30),
-                    damage: Int.random(in: 5...25),
-                    opacity: 1.0
+                    y: centerY + CGFloat.random(in: -20...20),
+                    damage: damage,
+                    opacity: 1.0,
+                    fontSize: fontSize
                 )
                 particles.append(particle)
 
                 let idx = particles.count - 1
-                withAnimation(.easeOut(duration: 1.5)) {
+                withAnimation(.easeOut(duration: 1.8)) {
                     if idx < particles.count {
-                        particles[idx].y -= 80
+                        particles[idx].y -= 100
                         particles[idx].opacity = 0
                     }
                 }
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
             particles.removeAll()
+        }
+    }
+
+    private func updateCrackState() {
+        withAnimation(.easeOut(duration: 0.5)) {
+            if damagePercent >= 0.5 {
+                crackOpacity = min(1.0, Double(damagePercent - 0.5) * 4.0)
+            } else {
+                crackOpacity = 0
+            }
+        }
+    }
+
+    private func startFlickering() {
+        Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { timer in
+            if hpFraction >= 0.1 || hpFraction <= 0 {
+                timer.invalidate()
+                flickering = false
+                return
+            }
+            flickering.toggle()
         }
     }
 
@@ -436,20 +541,9 @@ struct BossBattleView: View {
         }
     }
 
-    private func triggerBossDefeatHaptics() {
-        let heavy = UIImpactFeedbackGenerator(style: .heavy)
-        heavy.prepare()
-        heavy.impactOccurred(intensity: 1.0)
-        for i in 1...8 {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.1) {
-                heavy.impactOccurred(intensity: max(0.3, 1.0 - Double(i) * 0.08))
-            }
-        }
-    }
-
-    private func hpColors(percent: CGFloat) -> [Color] {
-        if percent > 0.5 { return [Color(hex: 0xF87171), Color(hex: 0xDC2626)] }
-        if percent > 0.25 { return [Color(hex: 0xFB923C), Color(hex: 0xF59E0B)] }
+    private var hpBarColors: [Color] {
+        if hpFraction > 0.5 { return [Color(hex: 0xF87171), Color(hex: 0xDC2626)] }
+        if hpFraction > 0.25 { return [Color(hex: 0xFB923C), Color(hex: 0xF59E0B)] }
         return [Color(hex: 0x34D399), Color(hex: 0x10B981)]
     }
 }
@@ -460,4 +554,5 @@ private struct BossDamageParticle: Identifiable {
     var y: CGFloat
     var damage: Int
     var opacity: Double
+    var fontSize: CGFloat = 18
 }

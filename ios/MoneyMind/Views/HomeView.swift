@@ -867,7 +867,7 @@ struct LogWinSheet: View {
                 }
                 .buttonStyle(PressableButtonStyle())
                 .disabled(amount.isEmpty)
-                .sensoryFeedback(.success, trigger: amount)
+                .sensoryFeedback(.success, trigger: note)
             }
             .padding()
             .navigationTitle("Log a Win")

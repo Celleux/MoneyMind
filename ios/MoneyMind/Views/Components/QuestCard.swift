@@ -162,7 +162,7 @@ struct QuestCard: View {
     private var difficultyStrip: some View {
         Group {
             if quest.difficulty == .legendary && !reduceMotion {
-                TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
+                TimelineView(.animation(minimumInterval: 1.0 / 10.0)) { timeline in
                     let elapsed = timeline.date.timeIntervalSinceReferenceDate
                     let hue = (elapsed * 0.3).truncatingRemainder(dividingBy: 1.0)
                     RoundedRectangle(cornerRadius: 16)
@@ -199,7 +199,7 @@ struct QuestCard: View {
     // MARK: - Lucky Glow Border
 
     private var luckyGlowBorder: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
+        TimelineView(.animation(minimumInterval: 1.0 / 10.0)) { timeline in
             let elapsed = timeline.date.timeIntervalSinceReferenceDate
             let angle = (elapsed / 3.0).truncatingRemainder(dividingBy: 1.0) * 360
 

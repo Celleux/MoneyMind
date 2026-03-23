@@ -20,7 +20,7 @@ struct ParticleBurstView: View {
 
     var body: some View {
         if reduceMotion { Color.clear.frame(width: 0, height: 0) } else {
-        TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { timeline in
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
             Canvas { context, size in
                 let elapsed = timeline.date.timeIntervalSince(startTime)
                 guard elapsed < duration + 1.0 else { return }
@@ -214,7 +214,7 @@ struct GlowBorderView: View {
     var body: some View {
         Group {
             if animated && !reduceMotion {
-                TimelineView(.animation) { timeline in
+                TimelineView(.animation(minimumInterval: 1.0 / 10.0)) { timeline in
                     let elapsed = timeline.date.timeIntervalSinceReferenceDate
                     let angle = (elapsed / speed).truncatingRemainder(dividingBy: 1.0) * 360
 

@@ -18,7 +18,7 @@ struct AddExpenseSheet: View {
     private var currencySymbol: String { CurrencyHelper.symbol(for: profiles.first?.defaultCurrency ?? "USD") }
 
     private let categories = TransactionCategory.expenseCategories
-    private let engine = CategoryMLEngine()
+    @State private var engine = CategoryMLEngine()
 
     private var smartSuggestions: [TransactionCategory] {
         let recentCats = recentTransactions

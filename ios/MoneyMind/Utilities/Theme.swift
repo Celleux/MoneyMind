@@ -276,7 +276,7 @@ struct HolographicSheenModifier: ViewModifier {
     func body(content: Content) -> some View {
         if isActive && !reduceMotion {
             content.overlay {
-                TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
+                TimelineView(.animation(minimumInterval: 1.0 / 10.0)) { timeline in
                     let t = timeline.date.timeIntervalSinceReferenceDate
                     let angle = Angle.degrees((t / 3.0).truncatingRemainder(dividingBy: 1.0) * 360)
                     RoundedRectangle(cornerRadius: Theme.Radius.card)

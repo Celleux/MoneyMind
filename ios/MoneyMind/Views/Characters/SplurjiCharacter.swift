@@ -9,7 +9,6 @@ struct SplurjiCharacter: View {
     @State private var bounceOffset: CGFloat = 0
     @State private var blinkScale: CGFloat = 1.0
     @State private var pupilOffset: CGSize = .zero
-    @State private var sparkleAngle: Double = 0
     @State private var tearOffset: CGFloat = 0
     @State private var tearOpacity: Double = 0
     @State private var zzzOffset: CGFloat = 0
@@ -18,6 +17,7 @@ struct SplurjiCharacter: View {
     @State private var crownGlow: Double = 0.3
     @State private var questionMarkOffset: CGFloat = 0
     @State private var questionMarkOpacity: Double = 0
+    @State private var animationTasks: [Task<Void, Never>] = []
 
     private var bodySize: CGFloat { size * 0.75 }
     private var eyeWidth: CGFloat { bodySize * 0.18 }
@@ -54,12 +54,19 @@ struct SplurjiCharacter: View {
         .frame(width: size, height: size)
         .saturation(mood == .sad || mood == .sleeping ? 0.8 : 1.0)
         .onAppear { startAnimations() }
-        .onChange(of: mood) { _, _ in startAnimations() }
+        .onDisappear { cancelAllTasks() }
+        .onChange(of: mood) { _, _ in
+            cancelAllTasks()
+            startAnimations()
+        }
         .drawingGroup()
         .accessibilityLabel("Splurji mascot, current mood: \(mood.rawValue)")
     }
 
-    // MARK: - Body
+    private func cancelAllTasks() {
+        for task in animationTasks { task.cancel() }
+        animationTasks.removeAll()
+    }
 
     private var characterBody: some View {
         ZStack {
@@ -91,8 +98,6 @@ struct SplurjiCharacter: View {
                 .frame(width: bodySize, height: bodySize)
         }
     }
-
-    // MARK: - Eyes
 
     private var eyesView: some View {
         HStack(spacing: bodySize * 0.12) {
@@ -137,8 +142,6 @@ struct SplurjiCharacter: View {
         default: return 0
         }
     }
-
-    // MARK: - Mouth
 
     private var mouthView: some View {
         Group {
@@ -190,8 +193,6 @@ struct SplurjiCharacter: View {
             .frame(width: bodySize * 0.15, height: max(1.5, bodySize * 0.015))
     }
 
-    // MARK: - Crown
-
     private var crownAccessory: some View {
         ZStack {
             Image(systemName: "crown.fill")
@@ -207,8 +208,6 @@ struct SplurjiCharacter: View {
         }
     }
 
-    // MARK: - Hand (thinking)
-
     private var handView: some View {
         Circle()
             .fill(Theme.accent)
@@ -216,12 +215,10 @@ struct SplurjiCharacter: View {
             .offset(x: bodySize * 0.2, y: bodySize * 0.08)
     }
 
-    // MARK: - Sparkle Orbit
-
     private var sparkleOrbit: some View {
         Group {
             if !reduceMotion && (mood != .sleeping && mood != .sad) {
-                TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
+                TimelineView(.animation(minimumInterval: 1.0 / 20.0)) { timeline in
                     let t = timeline.date.timeIntervalSinceReferenceDate
                     Canvas { context, canvasSize in
                         let center = CGPoint(x: canvasSize.width / 2, y: canvasSize.height / 2)
@@ -245,8 +242,6 @@ struct SplurjiCharacter: View {
             }
         }
     }
-
-    // MARK: - Mood Overlays
 
     @ViewBuilder
     private var moodOverlays: some View {
@@ -286,8 +281,6 @@ struct SplurjiCharacter: View {
         }
     }
 
-    // MARK: - Computed Transforms
-
     private var breathScaleX: CGFloat {
         mood == .proud ? breathScale * 1.05 : breathScale
     }
@@ -300,8 +293,6 @@ struct SplurjiCharacter: View {
     private var sleepTilt: Angle {
         mood == .sleeping ? .degrees(5) : .zero
     }
-
-    // MARK: - Animations
 
     private func startAnimations() {
         guard !reduceMotion else { return }
@@ -346,18 +337,18 @@ struct SplurjiCharacter: View {
         blinkScale = 1.0
         guard mood != .sleeping else { return }
 
-        func blink() {
-            let delay = Double.random(in: 3...5)
-            Task { @MainActor in
+        let task = Task { @MainActor in
+            while !Task.isCancelled {
+                let delay = Double.random(in: 3...5)
                 try? await Task.sleep(for: .seconds(delay))
-                guard !Task.isCancelled else { return }
+                guard !Task.isCancelled else { break }
                 withAnimation(.easeInOut(duration: 0.08)) { blinkScale = 0.05 }
                 try? await Task.sleep(for: .seconds(0.08))
+                guard !Task.isCancelled else { break }
                 withAnimation(.easeInOut(duration: 0.08)) { blinkScale = 1.0 }
-                blink()
             }
         }
-        blink()
+        animationTasks.append(task)
     }
 
     private func startPupilMovement() {
@@ -373,10 +364,10 @@ struct SplurjiCharacter: View {
             return
         }
 
-        func drift() {
-            Task { @MainActor in
+        let task = Task { @MainActor in
+            while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(Double.random(in: 2...4)))
-                guard !Task.isCancelled else { return }
+                guard !Task.isCancelled else { break }
                 let maxDrift = pupilSize * 0.3
                 withAnimation(.easeInOut(duration: 0.8)) {
                     pupilOffset = CGSize(
@@ -384,10 +375,9 @@ struct SplurjiCharacter: View {
                         height: CGFloat.random(in: -maxDrift * 0.5...maxDrift * 0.5)
                     )
                 }
-                drift()
             }
         }
-        drift()
+        animationTasks.append(task)
     }
 
     private func startCrownGlow() {
@@ -402,27 +392,25 @@ struct SplurjiCharacter: View {
         bounceOffset = 0
         celebrateBounceCount = 0
 
-        func bounce() {
-            guard celebrateBounceCount < 3 else {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                    bounceOffset = 0
+        let task = Task { @MainActor in
+            for _ in 0..<3 {
+                guard !Task.isCancelled else { break }
+                withAnimation(.spring(response: 0.2, dampingFraction: 0.4)) {
+                    bounceOffset = -15
                 }
-                return
-            }
-            withAnimation(.spring(response: 0.2, dampingFraction: 0.4)) {
-                bounceOffset = -15
-            }
-            Task { @MainActor in
                 try? await Task.sleep(for: .seconds(0.2))
+                guard !Task.isCancelled else { break }
                 withAnimation(.spring(response: 0.2, dampingFraction: 0.5)) {
                     bounceOffset = 0
                 }
-                celebrateBounceCount += 1
                 try? await Task.sleep(for: .seconds(0.2))
-                bounce()
+            }
+            guard !Task.isCancelled else { return }
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                bounceOffset = 0
             }
         }
-        bounce()
+        animationTasks.append(task)
     }
 
     private func startHappyBounce() {
@@ -436,63 +424,60 @@ struct SplurjiCharacter: View {
         tearOffset = 0
         tearOpacity = 0
 
-        func dropTear() {
-            Task { @MainActor in
+        let task = Task { @MainActor in
+            while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(Double.random(in: 3...6)))
-                guard !Task.isCancelled else { return }
+                guard !Task.isCancelled else { break }
                 tearOffset = 0
                 tearOpacity = 0.8
                 withAnimation(.easeIn(duration: 1.2)) {
                     tearOffset = bodySize * 0.3
                     tearOpacity = 0
                 }
-                dropTear()
+                try? await Task.sleep(for: .seconds(1.2))
             }
         }
-        dropTear()
+        animationTasks.append(task)
     }
 
     private func startZzz() {
         zzzOffset = 0
         zzzOpacity = 0
 
-        func floatZzz() {
-            Task { @MainActor in
+        let task = Task { @MainActor in
+            while !Task.isCancelled {
                 zzzOffset = 0
                 withAnimation(.easeOut(duration: 0.3)) { zzzOpacity = 0.7 }
                 withAnimation(.easeOut(duration: 2.0)) { zzzOffset = -bodySize * 0.2 }
                 try? await Task.sleep(for: .seconds(1.5))
+                guard !Task.isCancelled else { break }
                 withAnimation(.easeIn(duration: 0.5)) { zzzOpacity = 0 }
                 try? await Task.sleep(for: .seconds(1.0))
-                guard !Task.isCancelled else { return }
-                floatZzz()
             }
         }
-        floatZzz()
+        animationTasks.append(task)
     }
 
     private func startQuestionMark() {
         questionMarkOffset = 0
         questionMarkOpacity = 0
 
-        func floatQuestion() {
-            Task { @MainActor in
+        let task = Task { @MainActor in
+            while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(Double.random(in: 2...4)))
-                guard !Task.isCancelled else { return }
+                guard !Task.isCancelled else { break }
                 questionMarkOffset = 0
                 withAnimation(.easeOut(duration: 0.3)) { questionMarkOpacity = 1.0 }
                 withAnimation(.easeOut(duration: 1.5)) { questionMarkOffset = -bodySize * 0.15 }
                 try? await Task.sleep(for: .seconds(1.2))
+                guard !Task.isCancelled else { break }
                 withAnimation(.easeIn(duration: 0.3)) { questionMarkOpacity = 0 }
                 try? await Task.sleep(for: .seconds(0.5))
-                floatQuestion()
             }
         }
-        floatQuestion()
+        animationTasks.append(task)
     }
 }
-
-// MARK: - Mouth Arc Shape
 
 private struct MouthArc: Shape {
     let smile: Bool

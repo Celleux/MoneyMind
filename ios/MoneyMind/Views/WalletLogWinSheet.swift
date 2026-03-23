@@ -114,7 +114,7 @@ struct WalletLogWinSheet: View {
                     .buttonStyle(PressableButtonStyle())
                     .disabled(amount.isEmpty)
                     .opacity(amount.isEmpty ? 0.5 : 1)
-                    .sensoryFeedback(.impact(weight: .medium), trigger: amount)
+                    .sensoryFeedback(.impact(weight: .medium), trigger: savedAmount)
                     .accessibilityLabel("Save this win")
                 }
                 .padding(.horizontal, 20)

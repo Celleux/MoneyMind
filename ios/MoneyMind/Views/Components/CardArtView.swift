@@ -129,7 +129,7 @@ struct CardArtView: View {
                     .stroke(Color(hex: 0xA78BFA), lineWidth: 2)
                     .shadow(color: Color(hex: 0xA78BFA).opacity(0.35), radius: 8)
             } else {
-                TimelineView(.animation) { timeline in
+                TimelineView(.animation(minimumInterval: 1.0 / 15.0)) { timeline in
                     let elapsed = timeline.date.timeIntervalSinceReferenceDate
                     let angle = (elapsed / 3.0).truncatingRemainder(dividingBy: 1.0) * 360
                     RoundedRectangle(cornerRadius: 12)
@@ -151,7 +151,7 @@ struct CardArtView: View {
                     .stroke(Theme.gold, lineWidth: 3)
                     .shadow(color: Theme.gold.opacity(0.5), radius: 16)
             } else {
-                TimelineView(.animation) { timeline in
+                TimelineView(.animation(minimumInterval: 1.0 / 15.0)) { timeline in
                     let elapsed = timeline.date.timeIntervalSinceReferenceDate
                     let angle = (elapsed / 2.5).truncatingRemainder(dividingBy: 1.0) * 360
                     RoundedRectangle(cornerRadius: 12)
@@ -173,7 +173,7 @@ struct CardArtView: View {
     @ViewBuilder
     private var legendaryHoloOverlay: some View {
         if card.rarity == .legendary {
-            TimelineView(.animation) { timeline in
+            TimelineView(.animation(minimumInterval: 1.0 / 15.0)) { timeline in
                 let elapsed = timeline.date.timeIntervalSinceReferenceDate
                 let hue = (elapsed / 6.0).truncatingRemainder(dividingBy: 1.0) * 360
                 RoundedRectangle(cornerRadius: 12)

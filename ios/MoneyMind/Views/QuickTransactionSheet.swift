@@ -24,7 +24,7 @@ struct QuickTransactionSheet: View {
     @State private var learnMerchantName: String = ""
     @State private var learnCategory: TransactionCategory = .other
 
-    private let engine = CategoryMLEngine()
+    @State private var engine = CategoryMLEngine()
 
     private var hasData: Bool {
         !amountString.isEmpty || !note.isEmpty || selectedVibe != ""

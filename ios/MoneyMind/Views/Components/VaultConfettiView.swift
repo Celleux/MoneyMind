@@ -5,7 +5,7 @@ struct VaultConfettiView: View {
     @State private var isAnimating: Bool = false
 
     var body: some View {
-        TimelineView(.animation) { timeline in
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
             Canvas { context, size in
                 let now = timeline.date.timeIntervalSinceReferenceDate
                 for particle in particles {

@@ -183,7 +183,7 @@ struct ScratchCardView: View {
                         .shadow(color: Theme.gold.opacity(0.5), radius: 16)
                         .frame(width: cardWidth, height: cardHeight)
                 } else {
-                TimelineView(.animation) { timeline in
+                TimelineView(.animation(minimumInterval: 1.0 / 15.0)) { timeline in
                     let elapsed = timeline.date.timeIntervalSinceReferenceDate
                     let angle = elapsed.truncatingRemainder(dividingBy: 4.0) / 4.0 * 360
                     RoundedRectangle(cornerRadius: 16)

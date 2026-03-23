@@ -60,12 +60,18 @@ struct SpendingPatternCardsView: View {
             if showSwipeHint {
                 swipeHandHint
                     .transition(.opacity)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 12)
+            }
+
+            if currentCard < scenarios.count {
+                choiceButtons
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 12)
             }
 
             swipeHints
                 .padding(.horizontal, 32)
-                .padding(.bottom, 40)
+                .padding(.bottom, 32)
         }
     }
 
@@ -82,32 +88,105 @@ struct SpendingPatternCardsView: View {
     }
 
     private var swipeHandHint: some View {
-        HStack(spacing: 24) {
-            Image(systemName: "arrow.left")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(Color(hex: 0x60A5FA).opacity(0.6))
-                .offset(x: swipeHintPhase ? -4 : 0)
+        VStack(spacing: 8) {
+            Text("Swipe the card or tap a button")
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .foregroundStyle(Theme.textMuted)
 
-            Image(systemName: "hand.point.up.fill")
-                .font(.system(size: 28))
-                .foregroundStyle(.white.opacity(0.7))
-                .offset(x: swipeHintPhase ? 30 : -30)
-                .animation(
-                    .easeInOut(duration: 1.2).repeatForever(autoreverses: true),
-                    value: swipeHintPhase
-                )
+            HStack(spacing: 0) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(Color(hex: 0x60A5FA))
+                    .opacity(swipeHintPhase ? 0.3 : 0.8)
+                    .offset(x: swipeHintPhase ? -6 : 0)
 
-            Image(systemName: "arrow.right")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(Color(hex: 0xFB923C).opacity(0.6))
-                .offset(x: swipeHintPhase ? 4 : 0)
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(Color(hex: 0x60A5FA))
+                    .opacity(swipeHintPhase ? 0.6 : 0.3)
+                    .offset(x: swipeHintPhase ? -3 : 0)
+
+                Spacer().frame(width: 16)
+
+                ZStack {
+                    Circle()
+                        .fill(.white.opacity(0.08))
+                        .frame(width: 44, height: 44)
+                        .scaleEffect(swipeHintPhase ? 1.15 : 1.0)
+
+                    Image(systemName: "hand.draw.fill")
+                        .font(.system(size: 22))
+                        .foregroundStyle(.white.opacity(0.8))
+                        .offset(x: swipeHintPhase ? 14 : -14)
+                }
+
+                Spacer().frame(width: 16)
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(Color(hex: 0xFB923C))
+                    .opacity(swipeHintPhase ? 0.6 : 0.3)
+                    .offset(x: swipeHintPhase ? 3 : 0)
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(Color(hex: 0xFB923C))
+                    .opacity(swipeHintPhase ? 0.3 : 0.8)
+                    .offset(x: swipeHintPhase ? 6 : 0)
+            }
+            .animation(
+                .easeInOut(duration: 1.0).repeatForever(autoreverses: true),
+                value: swipeHintPhase
+            )
         }
-        .animation(
-            .easeInOut(duration: 1.2).repeatForever(autoreverses: true),
-            value: swipeHintPhase
-        )
         .onAppear {
             swipeHintPhase = true
+        }
+    }
+
+    private var choiceButtons: some View {
+        HStack(spacing: 12) {
+            Button {
+                triggerChoice(swipedRight: false)
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "arrow.left")
+                        .font(.system(size: 12, weight: .bold))
+                    Text(currentCard < scenarios.count ? scenarios[currentCard].leftShort : "")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .lineLimit(1)
+                }
+                .foregroundStyle(Color(hex: 0x60A5FA))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(Color(hex: 0x60A5FA).opacity(0.12), in: .rect(cornerRadius: 12))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(Color(hex: 0x60A5FA).opacity(0.3), lineWidth: 1)
+                )
+            }
+            .buttonStyle(PressableButtonStyle())
+
+            Button {
+                triggerChoice(swipedRight: true)
+            } label: {
+                HStack(spacing: 6) {
+                    Text(currentCard < scenarios.count ? scenarios[currentCard].rightShort : "")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .lineLimit(1)
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 12, weight: .bold))
+                }
+                .foregroundStyle(Color(hex: 0xFB923C))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(Color(hex: 0xFB923C).opacity(0.12), in: .rect(cornerRadius: 12))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(Color(hex: 0xFB923C).opacity(0.3), lineWidth: 1)
+                )
+            }
+            .buttonStyle(PressableButtonStyle())
         }
     }
 
@@ -184,6 +263,38 @@ struct SpendingPatternCardsView: View {
                     }
                 }
             }
+    }
+
+    @State private var isAnimatingChoice = false
+
+    private func triggerChoice(swipedRight: Bool) {
+        guard !isAnimatingChoice, currentCard < scenarios.count else { return }
+        isAnimatingChoice = true
+
+        recordAnswer(scenario: scenarios[currentCard], swipedRight: swipedRight)
+        hapticTrigger += 1
+
+        if showSwipeHint {
+            withAnimation(.easeOut(duration: 0.3)) {
+                showSwipeHint = false
+            }
+        }
+
+        withAnimation(.spring(response: 0.3)) {
+            dragOffset = CGSize(width: swipedRight ? 500 : -500, height: 0)
+            cardRotation = swipedRight ? 15 : -15
+        }
+
+        Task {
+            try? await Task.sleep(for: .milliseconds(300))
+            dragOffset = .zero
+            cardRotation = 0
+            currentCard += 1
+            isAnimatingChoice = false
+            if currentCard >= scenarios.count {
+                onComplete()
+            }
+        }
     }
 
     private func recordAnswer(scenario: SpendingScenario, swipedRight: Bool) {

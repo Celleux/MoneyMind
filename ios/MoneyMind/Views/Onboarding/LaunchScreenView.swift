@@ -11,6 +11,7 @@ struct LaunchScreenView: View {
     @State private var notificationsEnabled = false
     @State private var notificationRequested = false
     @State private var appeared = false
+    @State private var cursorVisible: Bool = true
     @FocusState private var nameFocused: Bool
 
     private var archetype: FinancialArchetype { dna.primaryArchetype }
@@ -25,18 +26,44 @@ struct LaunchScreenView: View {
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundStyle(Theme.textSecondary)
 
-                    TextField("Your name", text: $name)
-                        .font(.system(size: 32, weight: .black, design: .rounded))
-                        .foregroundStyle(.white)
-                        .multilineTextAlignment(.center)
-                        .tint(Theme.accent)
-                        .focused($nameFocused)
-                        .padding(.horizontal, 40)
+                    ZStack {
+                        if name.isEmpty && !nameFocused {
+                            HStack(spacing: 0) {
+                                Text("Tap to enter name")
+                                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                                    .foregroundStyle(Theme.textMuted.opacity(0.5))
+
+                                Rectangle()
+                                    .fill(Theme.accent)
+                                    .frame(width: 2, height: 28)
+                                    .opacity(cursorVisible ? 1 : 0)
+                                    .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: cursorVisible)
+                                    .padding(.leading, 2)
+                            }
+                            .onTapGesture { nameFocused = true }
+                        }
+
+                        TextField("", text: $name)
+                            .font(.system(size: 32, weight: .black, design: .rounded))
+                            .foregroundStyle(.white)
+                            .multilineTextAlignment(.center)
+                            .tint(Theme.accent)
+                            .focused($nameFocused)
+                            .padding(.horizontal, 40)
+                            .opacity(name.isEmpty && !nameFocused ? 0 : 1)
+                    }
 
                     Rectangle()
                         .fill(Theme.accent.opacity(name.isEmpty ? 0.3 : 0.6))
                         .frame(width: 160, height: 2)
                         .animation(.easeOut(duration: 0.2), value: name)
+
+                    if name.isEmpty {
+                        Text("Enter your name to continue")
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .foregroundStyle(Theme.accent.opacity(0.7))
+                            .padding(.top, 4)
+                    }
                 }
                 .opacity(appeared ? 1 : 0)
                 .offset(y: appeared ? 0 : 15)
@@ -142,6 +169,7 @@ struct LaunchScreenView: View {
             withAnimation(.spring(response: 0.5)) {
                 appeared = true
             }
+            cursorVisible = false
         }
     }
 

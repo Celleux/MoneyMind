@@ -25,6 +25,7 @@ struct VaultGameView: View {
     @State private var showXPBonus: Bool = false
     @State private var showSetComplete: Bool = false
     @State private var completedSetName: String = ""
+    @State private var splurjiMood: SplurjiMood = .thinking
 
     private var gachaState: GachaState? { gachaStates.first }
 
@@ -39,6 +40,11 @@ struct VaultGameView: View {
 
             ScrollView {
                 VStack(spacing: 24) {
+                    HStack {
+                        Spacer()
+                        SplurjiCharacterView(mood: splurjiMood, size: 50)
+                            .padding(.trailing, 16)
+                    }
                     statsBar
                     scratchArea
                     collectionButton

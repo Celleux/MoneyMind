@@ -8,6 +8,8 @@ struct QuestHubView: View {
     @State private var showBossBattle: Bool = false
     @State private var showQuestMap: Bool = false
     @State private var showBuddy: Bool = false
+    @State private var showSplurjiBubble: Bool = false
+    @State private var splurjiEngine = SplurjiMoodEngine()
     @Namespace private var animation
 
     private var player: PlayerProfile {
@@ -17,6 +19,31 @@ struct QuestHubView: View {
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 0) {
+                HStack(alignment: .top) {
+                    Spacer()
+                    VStack(spacing: 2) {
+                        if showSplurjiBubble {
+                            SpeechBubble(message: splurjiEngine.moodMessage) {
+                                showSplurjiBubble = false
+                            }
+                            .frame(maxWidth: 180)
+                            .transition(.scale.combined(with: .opacity))
+                        }
+                        SplurjiCharacterView(mood: splurjiEngine.currentMood, size: 60)
+                            .onTapGesture {
+                                splurjiEngine.showRandomMessage()
+                                showSplurjiBubble = true
+                                Task { @MainActor in
+                                    try? await Task.sleep(for: .seconds(4))
+                                    withAnimation { showSplurjiBubble = false }
+                                }
+                            }
+                    }
+                    .animation(.spring(response: 0.4, dampingFraction: 0.7), value: showSplurjiBubble)
+                    .padding(.trailing, 16)
+                    .padding(.top, 8)
+                }
+
                 QuestHeroHeader(player: player)
                     .padding(.bottom, 16)
 
@@ -74,6 +101,18 @@ struct QuestHubView: View {
         }
         .onAppear {
             ensurePlayerAndQuests()
+            splurjiEngine.setContext(.quests)
+            splurjiEngine.update(
+                streakDays: player.questStreak,
+                questCompletedRecently: false,
+                leveledUpRecently: false,
+                streakJustBroken: false
+            )
+            showSplurjiBubble = true
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(4))
+                withAnimation { showSplurjiBubble = false }
+            }
         }
         .fullScreenCover(isPresented: $showBossBattle) {
             BossBattleView(player: player, zone: player.currentQuestZone)

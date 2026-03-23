@@ -91,38 +91,6 @@ struct RiveMascotView: View {
     }
 
     private var fallbackMascot: some View {
-        ZStack {
-            Circle()
-                .fill(
-                    RadialGradient(
-                        colors: [Theme.neonEmerald.opacity(0.3), Theme.accent.opacity(0.1)],
-                        center: .center,
-                        startRadius: 0,
-                        endRadius: size.dimension / 2
-                    )
-                )
-
-            Image(systemName: moodIcon)
-                .font(.system(size: size.dimension * 0.4, weight: .bold))
-                .foregroundStyle(Theme.accent)
-                .symbolEffect(
-                    .pulse,
-                    options: reduceMotion ? .nonRepeating : .repeating,
-                    isActive: mood == .celebrating || mood == .happy
-                )
-        }
-    }
-
-    private var moodIcon: String {
-        switch mood {
-        case .idle: return "face.smiling"
-        case .happy: return "face.smiling.fill"
-        case .celebrating: return "party.popper"
-        case .sad: return "face.dashed"
-        case .thinking: return "brain.head.profile"
-        case .sleeping: return "zzz"
-        case .encouraging: return "hand.thumbsup.fill"
-        case .proud: return "star.fill"
-        }
+        SplurjiCharacter(mood: mood, size: size.dimension)
     }
 }

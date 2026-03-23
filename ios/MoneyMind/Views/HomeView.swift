@@ -26,6 +26,8 @@ struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(PremiumManager.self) private var premiumManager
     @State private var showPaywall = false
+    @State private var splurjiEngine = SplurjiMoodEngine()
+    @State private var showSplurjiBubble = false
 
     private var profile: UserProfile? { profiles.first }
     private var currencyCode: String { profile?.defaultCurrency ?? "USD" }
@@ -222,6 +224,21 @@ struct HomeView: View {
                         )
                     }
                 }
+                splurjiEngine.setContext(.home)
+                splurjiEngine.update(
+                    streakDays: profile?.currentStreak ?? 0,
+                    questCompletedRecently: false,
+                    leveledUpRecently: false,
+                    streakJustBroken: false
+                )
+                splurjiEngine.showGreetingIfNeeded()
+                if splurjiEngine.shouldShowSpeechBubble {
+                    showSplurjiBubble = true
+                    Task { @MainActor in
+                        try? await Task.sleep(for: .seconds(4))
+                        withAnimation { showSplurjiBubble = false }
+                    }
+                }
                 ensureDefaultBudgets()
                 Task {
                     try? await Task.sleep(for: .seconds(0.4))
@@ -378,7 +395,27 @@ struct HomeView: View {
 
             Spacer()
 
-            RiveMascotView(mood: mascotMood, size: .small)
+            VStack(spacing: 2) {
+                if showSplurjiBubble {
+                    SpeechBubble(message: splurjiEngine.moodMessage) {
+                        showSplurjiBubble = false
+                        splurjiEngine.dismissBubble()
+                    }
+                    .frame(maxWidth: 180)
+                    .transition(.scale.combined(with: .opacity))
+                }
+                SplurjiCharacterView(mood: mascotMood, size: 50)
+                    .onTapGesture {
+                        splurjiEngine.setContext(.home)
+                        splurjiEngine.showRandomMessage()
+                        showSplurjiBubble = true
+                        Task { @MainActor in
+                            try? await Task.sleep(for: .seconds(4))
+                            withAnimation { showSplurjiBubble = false }
+                        }
+                    }
+            }
+            .animation(.spring(response: 0.4, dampingFraction: 0.7), value: showSplurjiBubble)
 
             Button {
                 bellBounce += 1

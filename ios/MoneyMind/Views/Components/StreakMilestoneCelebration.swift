@@ -1,10 +1,17 @@
 import SwiftUI
+import SwiftData
 
 struct StreakMilestoneCelebration: View {
     let days: Int
     var onDismiss: (() -> Void)?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Query private var profiles: [UserProfile]
+    @Query private var quizResults: [QuizResult]
+
+    private var referralCode: String { profiles.first?.referralCode ?? "SP-XXXXX" }
+    private var userLevel: Int { CharacterStage.level(from: profiles.first?.xpPoints ?? 0) }
+    private var archetypeName: String { (quizResults.first?.personality ?? .builder).rawValue }
     @State private var showNumber: Bool = false
     @State private var numberScale: CGFloat = 0.3
     @State private var showTitle: Bool = false
@@ -111,6 +118,15 @@ struct StreakMilestoneCelebration: View {
                 Spacer()
 
                 if showContinue {
+                    ShareAchievementButton(
+                        type: .streakMilestone(days: days),
+                        level: userLevel,
+                        archetypeName: archetypeName,
+                        referralCode: referralCode,
+                        style: .compact
+                    )
+                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+
                     Button {
                         dismiss()
                     } label: {

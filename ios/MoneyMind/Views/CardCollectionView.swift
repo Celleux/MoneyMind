@@ -4,6 +4,12 @@ import SwiftData
 struct CardCollectionView: View {
     @Environment(\.dismiss) private var dismiss
     @Query private var collection: [CollectedCard]
+    @Query private var profiles: [UserProfile]
+    @Query private var quizResults: [QuizResult]
+
+    private var referralCode: String { profiles.first?.referralCode ?? "SP-XXXXX" }
+    private var userLevel: Int { CharacterStage.level(from: profiles.first?.xpPoints ?? 0) }
+    private var archetypeName: String { (quizResults.first?.personality ?? .builder).rawValue }
     @State private var selectedSet: CardSet?
     @State private var selectedCard: CardDefinition?
     @State private var sortMode: CollectionSortMode = .bySet
@@ -56,6 +62,7 @@ struct CardCollectionView: View {
                     setProgressRings
                     sortPicker
                     progressBar
+                    completedSetShareBanner
                     cardGrid
                 }
                 .padding(.vertical)
@@ -177,6 +184,38 @@ struct CardCollectionView: View {
             .frame(height: 8)
         }
         .padding(.horizontal)
+    }
+
+    @ViewBuilder
+    private var completedSetShareBanner: some View {
+        let completedSets = CardSet.allCases.filter { set in
+            collectedCountForSet(set) >= set.totalCards
+        }
+        if !completedSets.isEmpty {
+            VStack(spacing: 8) {
+                ForEach(completedSets, id: \.self) { set in
+                    HStack(spacing: 12) {
+                        Image(systemName: "checkmark.seal.fill")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(set.accentColor)
+                        Text("\(set.rawValue) Complete!")
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                        Spacer()
+                        ShareAchievementButton(
+                            type: .collection(collected: set.totalCards, total: set.totalCards, setName: set.rawValue),
+                            level: userLevel,
+                            archetypeName: archetypeName,
+                            referralCode: referralCode,
+                            style: .icon
+                        )
+                    }
+                    .padding(12)
+                    .glassCard()
+                }
+            }
+            .padding(.horizontal)
+        }
     }
 
     private var cardGrid: some View {

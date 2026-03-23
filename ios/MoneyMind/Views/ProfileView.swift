@@ -455,7 +455,34 @@ struct ProfileView: View {
             SettingsNavRow(icon: "gift.fill", title: "Splurj Wrapped", subtitle: "Your all-time journey in cards", color: Theme.accent) {
                 showAnnualWrapped = true
             }
+
+            SettingsDividerLine()
+
+            achievementShareRow
         }
+    }
+
+    private var achievementShareRow: some View {
+        HStack(spacing: 12) {
+            ShareAchievementButton(
+                type: .streak(days: profile?.currentStreak ?? 0),
+                level: characterLevel,
+                archetypeName: personality.rawValue,
+                referralCode: profile?.referralCode ?? "SP-XXXXX",
+                style: .pill
+            )
+
+            if totalSaved > 0 {
+                ShareAchievementButton(
+                    type: .saved(amount: totalSaved),
+                    level: characterLevel,
+                    archetypeName: personality.rawValue,
+                    referralCode: profile?.referralCode ?? "SP-XXXXX",
+                    style: .pill
+                )
+            }
+        }
+        .padding(.top, 8)
     }
 
     // MARK: - Referral

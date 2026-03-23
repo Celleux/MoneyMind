@@ -1,10 +1,18 @@
 import SwiftUI
+import SwiftData
 
 struct QuestRewardCelebration: View {
     let reward: QuestReward
+    var questName: String = "Quest"
     var onOpenVault: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Query private var profiles: [UserProfile]
+    @Query private var quizResults: [QuizResult]
+
+    private var referralCode: String { profiles.first?.referralCode ?? "SP-XXXXX" }
+    private var userLevel: Int { CharacterStage.level(from: profiles.first?.xpPoints ?? 0) }
+    private var archetypeName: String { (quizResults.first?.personality ?? .builder).rawValue }
 
     @State private var phase: CelebrationPhase = .anticipation
     @State private var canDismiss: Bool = false
@@ -436,25 +444,13 @@ struct QuestRewardCelebration: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 16)
 
-            if let moment = reward.tiktokMoment {
-                ShareLink(item: moment) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: 13, weight: .bold))
-                        Text("Share your win")
-                            .font(.system(size: 13, weight: .bold))
-                    }
-                    .foregroundStyle(Theme.accent)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .background(
-                        Capsule().fill(Theme.accent.opacity(0.15))
-                    )
-                    .overlay(
-                        Capsule().stroke(Theme.accent.opacity(0.3), lineWidth: 1)
-                    )
-                }
-            }
+            ShareAchievementButton(
+                type: .quest(name: questName),
+                level: userLevel,
+                archetypeName: archetypeName,
+                referralCode: referralCode,
+                style: .compact
+            )
         }
         .padding(.vertical, 16)
         .frame(maxWidth: .infinity)

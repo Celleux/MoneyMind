@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 struct LevelUpCeremony: View {
     let oldLevel: Int
@@ -6,6 +7,11 @@ struct LevelUpCeremony: View {
     var onDismiss: (() -> Void)?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Query private var profiles: [UserProfile]
+    @Query private var quizResults: [QuizResult]
+
+    private var referralCode: String { profiles.first?.referralCode ?? "SP-XXXXX" }
+    private var archetypeName: String { (quizResults.first?.personality ?? .builder).rawValue }
     @State private var displayLevel: Int = 0
     @State private var levelScale: CGFloat = 0
     @State private var showTitle: Bool = false
@@ -115,6 +121,15 @@ struct LevelUpCeremony: View {
                 Spacer()
 
                 if showContinue {
+                    ShareAchievementButton(
+                        type: .levelUp(level: newLevel),
+                        level: newLevel,
+                        archetypeName: archetypeName,
+                        referralCode: referralCode,
+                        style: .compact
+                    )
+                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+
                     Button {
                         dismiss()
                     } label: {

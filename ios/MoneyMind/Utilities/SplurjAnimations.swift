@@ -7,6 +7,7 @@ struct ParticleBurstView: View {
     let style: BurstStyle
     let trigger: Bool
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var particles: [BurstParticle] = []
     @State private var startTime: Date = .now
 
@@ -18,6 +19,7 @@ struct ParticleBurstView: View {
     }
 
     var body: some View {
+        if reduceMotion { Color.clear.frame(width: 0, height: 0) } else {
         TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { timeline in
             Canvas { context, size in
                 let elapsed = timeline.date.timeIntervalSince(startTime)
@@ -72,6 +74,7 @@ struct ParticleBurstView: View {
         .onAppear {
             if trigger { spawnParticles() }
         }
+        } // end else
     }
 
     private func spawnParticles() {
@@ -168,9 +171,11 @@ struct ShimmerView: View {
     let speed: Double
     let angle: Angle
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var offset: CGFloat = -1
 
     var body: some View {
+        if reduceMotion { Color.clear } else {
         GeometryReader { geo in
             let width = geo.size.width * 0.4
             Rectangle()
@@ -186,11 +191,13 @@ struct ShimmerView: View {
                 .rotationEffect(angle)
         }
         .clipped()
+        .drawingGroup()
         .onAppear {
             withAnimation(.linear(duration: speed).repeatForever(autoreverses: false)) {
                 offset = 1.5
             }
         }
+        } // end else
     }
 }
 
@@ -201,11 +208,12 @@ struct GlowBorderView: View {
     let animated: Bool
     let speed: Double
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var rotation: Double = 0
 
     var body: some View {
         Group {
-            if animated {
+            if animated && !reduceMotion {
                 TimelineView(.animation) { timeline in
                     let elapsed = timeline.date.timeIntervalSinceReferenceDate
                     let angle = (elapsed / speed).truncatingRemainder(dividingBy: 1.0) * 360
@@ -285,10 +293,12 @@ struct ConfettiCanvasView: View {
     let colors: [Color]
     let particleCount: Int
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var particles: [SplurjConfettiPiece] = []
     @State private var timer: Timer?
 
     var body: some View {
+        if reduceMotion { Color.clear.allowsHitTesting(false) } else {
         Canvas { context, size in
             for particle in particles {
                 let rect = CGRect(
@@ -312,6 +322,7 @@ struct ConfettiCanvasView: View {
         .onAppear {
             if active { startConfetti() }
         }
+        } // end else
     }
 
     private func startConfetti() {

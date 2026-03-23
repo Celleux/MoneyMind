@@ -168,14 +168,21 @@ struct ScratchCardView: View {
                 .shadow(color: Color(hex: 0xA78BFA).opacity(glowPulse ? 0.45 : 0.1), radius: 14)
                 .frame(width: cardWidth, height: cardHeight)
                 .allowsHitTesting(false)
-                .modifier(SubtleShakeModifier(active: vibrateOnAppear))
+                .modifier(SubtleShakeModifier(active: vibrateOnAppear && !reduceMotion))
                 .onAppear {
+                    guard !reduceMotion else { return }
                     withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
                         glowPulse = true
                     }
                 }
         } else if rarity == .legendary {
             ZStack {
+                if reduceMotion {
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Theme.gold, lineWidth: 3)
+                        .shadow(color: Theme.gold.opacity(0.5), radius: 16)
+                        .frame(width: cardWidth, height: cardHeight)
+                } else {
                 TimelineView(.animation) { timeline in
                     let elapsed = timeline.date.timeIntervalSinceReferenceDate
                     let angle = elapsed.truncatingRemainder(dividingBy: 4.0) / 4.0 * 360
@@ -192,13 +199,14 @@ struct ScratchCardView: View {
                         .shadow(color: Theme.gold.opacity(0.5), radius: 16)
                 }
                 .frame(width: cardWidth, height: cardHeight)
+                } // end else
 
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Theme.gold.opacity(glowPulse ? 0.06 : 0.02))
                     .frame(width: cardWidth, height: cardHeight)
             }
             .allowsHitTesting(false)
-            .modifier(SubtleShakeModifier(active: vibrateOnAppear))
+            .modifier(SubtleShakeModifier(active: vibrateOnAppear && !reduceMotion))
             .onAppear {
                 withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
                     glowPulse = true

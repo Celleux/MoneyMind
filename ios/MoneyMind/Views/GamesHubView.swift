@@ -837,6 +837,7 @@ private struct ArcadeStatCard: View {
             RoundedRectangle(cornerRadius: 14)
                 .strokeBorder(color.opacity(0.15), lineWidth: 0.5)
         )
+        .shadow(color: color.opacity(0.1), radius: 8, y: 2)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(label): \(value)")
     }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CardArtView: View {
     let card: CardDefinition
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var holoPulse: Bool = false
     @State private var patternPulse: Bool = false
 
@@ -20,8 +21,10 @@ struct CardArtView: View {
                     )
                 )
 
-            setPatternOverlay
-                .clipShape(.rect(cornerRadius: 12))
+            if !reduceMotion {
+                setPatternOverlay
+                    .clipShape(.rect(cornerRadius: 12))
+            }
 
             rarityBorder
 
@@ -38,8 +41,8 @@ struct CardArtView: View {
                         .font(.system(size: 48, weight: .light))
                         .foregroundStyle(card.rarity.color)
                         .shadow(color: card.rarity.color.opacity(card.rarity == .legendary ? 0.6 : 0.3), radius: card.rarity == .legendary ? 12 : 4)
-                        .rotationEffect(card.rarity == .legendary ? .degrees(holoPulse ? 2 : -2) : .zero)
-                        .animation(card.rarity == .legendary ? .easeInOut(duration: 3).repeatForever(autoreverses: true) : .default, value: holoPulse)
+                        .rotationEffect(card.rarity == .legendary && !reduceMotion ? .degrees(holoPulse ? 2 : -2) : .zero)
+                        .animation(card.rarity == .legendary && !reduceMotion ? .easeInOut(duration: 3).repeatForever(autoreverses: true) : .default, value: holoPulse)
                 }
 
                 Text(card.name)
@@ -69,10 +72,13 @@ struct CardArtView: View {
             }
             .padding(.vertical, 8)
 
-            legendaryHoloOverlay
+            if !reduceMotion {
+                legendaryHoloOverlay
+            }
         }
         .clipShape(.rect(cornerRadius: 12))
         .onAppear {
+            guard !reduceMotion else { return }
             holoPulse = true
             withAnimation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true)) {
                 patternPulse = true
@@ -118,36 +124,48 @@ struct CardArtView: View {
                 .strokeBorder(Color(hex: 0x60A5FA).opacity(0.6), lineWidth: 2)
                 .shadow(color: Color(hex: 0x60A5FA).opacity(0.2), radius: 4)
         case .epic:
-            TimelineView(.animation) { timeline in
-                let elapsed = timeline.date.timeIntervalSinceReferenceDate
-                let angle = (elapsed / 3.0).truncatingRemainder(dividingBy: 1.0) * 360
+            if reduceMotion {
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(
-                        AngularGradient(
-                            colors: [Color(hex: 0xA78BFA), Color(hex: 0x8B5CF6), Color(hex: 0xA78BFA)],
-                            center: .center,
-                            startAngle: .degrees(angle),
-                            endAngle: .degrees(angle + 360)
-                        ),
-                        lineWidth: 2
-                    )
+                    .stroke(Color(hex: 0xA78BFA), lineWidth: 2)
                     .shadow(color: Color(hex: 0xA78BFA).opacity(0.35), radius: 8)
+            } else {
+                TimelineView(.animation) { timeline in
+                    let elapsed = timeline.date.timeIntervalSinceReferenceDate
+                    let angle = (elapsed / 3.0).truncatingRemainder(dividingBy: 1.0) * 360
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(
+                            AngularGradient(
+                                colors: [Color(hex: 0xA78BFA), Color(hex: 0x8B5CF6), Color(hex: 0xA78BFA)],
+                                center: .center,
+                                startAngle: .degrees(angle),
+                                endAngle: .degrees(angle + 360)
+                            ),
+                            lineWidth: 2
+                        )
+                        .shadow(color: Color(hex: 0xA78BFA).opacity(0.35), radius: 8)
+                }
             }
         case .legendary:
-            TimelineView(.animation) { timeline in
-                let elapsed = timeline.date.timeIntervalSinceReferenceDate
-                let angle = (elapsed / 2.5).truncatingRemainder(dividingBy: 1.0) * 360
+            if reduceMotion {
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(
-                        AngularGradient(
-                            colors: [Theme.gold, Color(hex: 0xFFA500), Theme.gold, Color(hex: 0xFFEE58), Theme.gold],
-                            center: .center,
-                            startAngle: .degrees(angle),
-                            endAngle: .degrees(angle + 360)
-                        ),
-                        lineWidth: 3
-                    )
+                    .stroke(Theme.gold, lineWidth: 3)
                     .shadow(color: Theme.gold.opacity(0.5), radius: 16)
+            } else {
+                TimelineView(.animation) { timeline in
+                    let elapsed = timeline.date.timeIntervalSinceReferenceDate
+                    let angle = (elapsed / 2.5).truncatingRemainder(dividingBy: 1.0) * 360
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(
+                            AngularGradient(
+                                colors: [Theme.gold, Color(hex: 0xFFA500), Theme.gold, Color(hex: 0xFFEE58), Theme.gold],
+                                center: .center,
+                                startAngle: .degrees(angle),
+                                endAngle: .degrees(angle + 360)
+                            ),
+                            lineWidth: 3
+                        )
+                        .shadow(color: Theme.gold.opacity(0.5), radius: 16)
+                }
             }
         }
     }
@@ -173,6 +191,7 @@ struct CardArtView: View {
                     )
                     .hueRotation(.degrees(hue))
                     .blendMode(.overlay)
+                    .drawingGroup()
             }
         } else if card.rarity == .epic {
             RoundedRectangle(cornerRadius: 12)

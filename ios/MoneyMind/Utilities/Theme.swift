@@ -46,6 +46,15 @@ enum Theme {
     static let neonRed = Color(hex: 0xFF4466)
     static let neonPink = Color(hex: 0xFF6EB4)
 
+    static let legendaryGradient = AngularGradient(
+        colors: [Color(hex: 0xFFD700), Color(hex: 0xFFA500), Color(hex: 0xFFD700), Color(hex: 0xFFEE58), Color(hex: 0xFFD700)],
+        center: .center
+    )
+
+    static func glowColor(_ color: Color, radius: CGFloat = 8) -> some View {
+        color.opacity(0.4).blur(radius: radius)
+    }
+
     // MARK: - Glass Material
 
     static let glass = Color.white.opacity(0.05)
@@ -191,9 +200,49 @@ struct GlassCard: ViewModifier {
     }
 }
 
+struct GlassCardAccent: ViewModifier {
+    var cornerRadius: CGFloat = Theme.Radius.card
+    var accentGlow: Color?
+
+    func body(content: Content) -> some View {
+        content
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(.ultraThinMaterial.opacity(0.3))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color.white.opacity(0.08), Color.clear],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .strokeBorder(
+                                LinearGradient(
+                                    colors: [Color.white.opacity(0.12), Color.white.opacity(0.03)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 0.5
+                            )
+                    )
+                    .shadow(color: .black.opacity(0.25), radius: 12, y: 4)
+            )
+            .shadow(color: accentGlow?.opacity(0.15) ?? .clear, radius: 12, y: 2)
+    }
+}
+
 extension View {
     func glassCard(cornerRadius: CGFloat = Theme.Radius.card) -> some View {
-        modifier(GlassCard(cornerRadius: cornerRadius))
+        modifier(GlassCardAccent(cornerRadius: cornerRadius, accentGlow: nil))
+    }
+
+    func glassCard(cornerRadius: CGFloat = Theme.Radius.card, accentGlow: Color?) -> some View {
+        modifier(GlassCardAccent(cornerRadius: cornerRadius, accentGlow: accentGlow))
     }
 }
 

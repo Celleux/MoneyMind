@@ -6,13 +6,35 @@ struct CardCollectionView: View {
     @Query private var collection: [CollectedCard]
     @State private var selectedSet: CardSet?
     @State private var selectedCard: CardDefinition?
-    @State private var showSetProgress: Bool = false
+    @State private var sortMode: CollectionSortMode = .bySet
 
     private var displayedCards: [CardDefinition] {
+        let base: [CardDefinition]
         if let set = selectedSet {
-            return CardDatabase.cards(forSet: set)
+            base = CardDatabase.cards(forSet: set)
+        } else {
+            base = CardDatabase.allCards
         }
-        return CardDatabase.allCards
+
+        switch sortMode {
+        case .bySet:
+            return base
+        case .byRarity:
+            let order: [CardRarity] = [.legendary, .epic, .rare, .uncommon, .common]
+            return base.sorted { order.firstIndex(of: $0.rarity)! < order.firstIndex(of: $1.rarity)! }
+        case .byNewest:
+            return base.sorted { card1, card2 in
+                let date1 = collectedInfo(card1.id)?.obtainedAt ?? .distantPast
+                let date2 = collectedInfo(card2.id)?.obtainedAt ?? .distantPast
+                return date1 > date2
+            }
+        case .byDuplicates:
+            return base.sorted { card1, card2 in
+                let dup1 = collectedInfo(card1.id)?.duplicateCount ?? -1
+                let dup2 = collectedInfo(card2.id)?.duplicateCount ?? -1
+                return dup1 > dup2
+            }
+        }
     }
 
     private func isCollected(_ cardID: String) -> Bool {
@@ -31,14 +53,10 @@ struct CardCollectionView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    setFilterChips
+                    setProgressRings
+                    sortPicker
                     progressBar
                     cardGrid
-
-                    if let set = selectedSet {
-                        SetProgressView(set: set, collectedCount: collectedCountForSet(set))
-                            .padding(.horizontal)
-                    }
                 }
                 .padding(.vertical)
             }
@@ -58,25 +76,77 @@ struct CardCollectionView: View {
         }
     }
 
-    private var setFilterChips: some View {
+    private var setProgressRings: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                VaultFilterChip(label: "All", isSelected: selectedSet == nil) {
+            HStack(spacing: 16) {
+                setRingButton(label: "All", icon: "rectangle.stack.fill", color: Theme.accent, count: collection.count, total: CardDatabase.totalCards, isSelected: selectedSet == nil) {
                     selectedSet = nil
                 }
+
                 ForEach(CardSet.allCases, id: \.self) { set in
                     let count = collectedCountForSet(set)
-                    VaultFilterChip(
-                        label: "\(set.rawValue) \(count)/\(set.totalCards)",
-                        isSelected: selectedSet == set,
-                        color: set.accentColor
-                    ) {
+                    let total = set.totalCards
+                    let isComplete = count >= total
+                    setRingButton(label: set.rawValue.components(separatedBy: " ").first ?? "", icon: set.icon, color: set.accentColor, count: count, total: total, isSelected: selectedSet == set, isComplete: isComplete) {
                         selectedSet = set
                     }
                 }
             }
         }
         .contentMargins(.horizontal, 16)
+    }
+
+    private func setRingButton(label: String, icon: String, color: Color, count: Int, total: Int, isSelected: Bool, isComplete: Bool = false, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                ZStack {
+                    Circle()
+                        .stroke(Theme.elevated, lineWidth: 3)
+                        .frame(width: 52, height: 52)
+
+                    Circle()
+                        .trim(from: 0, to: total > 0 ? CGFloat(count) / CGFloat(total) : 0)
+                        .stroke(color, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                        .frame(width: 52, height: 52)
+                        .rotationEffect(.degrees(-90))
+
+                    if isComplete {
+                        ZStack {
+                            Circle()
+                                .fill(color)
+                                .frame(width: 48, height: 48)
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundStyle(Theme.background)
+                        }
+                    } else {
+                        Image(systemName: icon)
+                            .font(.system(size: 18))
+                            .foregroundStyle(isSelected ? color : Theme.textSecondary)
+                    }
+                }
+
+                Text(label)
+                    .font(.system(size: 10, weight: isSelected ? .bold : .medium, design: .rounded))
+                    .foregroundStyle(isSelected ? color : Theme.textMuted)
+                    .lineLimit(1)
+
+                Text("\(count)/\(total)")
+                    .font(.system(size: 9, weight: .medium, design: .rounded))
+                    .foregroundStyle(Theme.textMuted)
+            }
+        }
+        .sensoryFeedback(.selection, trigger: isSelected)
+    }
+
+    private var sortPicker: some View {
+        Picker("Sort", selection: $sortMode) {
+            ForEach(CollectionSortMode.allCases, id: \.self) { mode in
+                Text(mode.label).tag(mode)
+            }
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal)
     }
 
     private var progressBar: some View {
@@ -133,33 +203,48 @@ struct CardCollectionView: View {
 
     private func cardCell(card: CardDefinition, collected: Bool, info: CollectedCard?) -> some View {
         ZStack {
-            CardArtView(card: card)
-                .frame(height: 210)
-                .opacity(collected ? 1.0 : 0.12)
-                .saturation(collected ? 1.0 : 0)
+            if collected {
+                CardArtView(card: card)
+                    .frame(height: 210)
+            } else {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Theme.surface)
+                    .frame(height: 210)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(Theme.border.opacity(0.3), lineWidth: 0.5)
+                    )
+                    .overlay {
+                        VStack(spacing: 8) {
+                            Image(systemName: card.set.icon)
+                                .font(.system(size: 32, weight: .light))
+                                .foregroundStyle(Theme.textMuted.opacity(0.15))
 
-            if !collected {
-                VStack(spacing: 6) {
-                    Image(systemName: "questionmark")
-                        .font(.system(size: 24, weight: .medium))
-                        .foregroundStyle(Theme.textMuted)
-                    Text(card.rarity.label)
-                        .font(.system(size: 10))
-                        .foregroundStyle(Theme.textMuted)
-                }
+                            ZStack {
+                                Circle()
+                                    .fill(Theme.elevated)
+                                    .frame(width: 28, height: 28)
+                                Image(systemName: "questionmark")
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundStyle(Theme.textMuted)
+                            }
+
+                            Text(card.rarity.label)
+                                .font(.system(size: 10))
+                                .foregroundStyle(card.rarity.color.opacity(0.5))
+
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 10))
+                                .foregroundStyle(Theme.textMuted.opacity(0.5))
+                        }
+                    }
             }
 
             if let info, info.isNew {
                 VStack {
                     HStack {
                         Spacer()
-                        Text("NEW")
-                            .font(.system(size: 8, weight: .heavy, design: .rounded))
-                            .foregroundStyle(Theme.background)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(card.rarity.color, in: .capsule)
-                            .padding(6)
+                        newBadge(color: card.rarity.color)
                     }
                     Spacer()
                 }
@@ -196,6 +281,32 @@ struct CardCollectionView: View {
                     }
                 }
             }
+        }
+    }
+
+    private func newBadge(color: Color) -> some View {
+        Text("NEW")
+            .font(.system(size: 8, weight: .heavy, design: .rounded))
+            .foregroundStyle(Theme.background)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(color, in: .capsule)
+            .padding(6)
+    }
+}
+
+enum CollectionSortMode: String, CaseIterable {
+    case bySet
+    case byRarity
+    case byNewest
+    case byDuplicates
+
+    var label: String {
+        switch self {
+        case .bySet: return "Set"
+        case .byRarity: return "Rarity"
+        case .byNewest: return "Newest"
+        case .byDuplicates: return "Dupes"
         }
     }
 }

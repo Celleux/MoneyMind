@@ -67,7 +67,8 @@ struct SplurjApp: App {
             QuestProgress.self,
             PlayerProfile.self,
             DailyQuestSlot.self,
-            QuestBuddy.self
+            QuestBuddy.self,
+            FinancialDNAResult.self
         ])
     }
 }

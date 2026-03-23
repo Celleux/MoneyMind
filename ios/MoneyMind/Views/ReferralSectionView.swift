@@ -7,8 +7,24 @@ struct ReferralSectionView: View {
     @State private var copied = false
     @State private var showShareSheet = false
 
+    // TODO: Implement Universal Links with server backend
+    private var referralLink: String {
+        "https://splurj.app/join?ref=\(referralCode)&utm_source=app&utm_medium=referral&utm_campaign=invite"
+    }
+
     private var shareText: String {
-        "Join me on Splurj — build a healthier relationship with money! Use my code: \(referralCode)\n\nhttps://splurj.app/invite/\(referralCode)"
+        "Join me on Splurj — build a healthier relationship with money! Use my code: \(referralCode)\n\n\(referralLink)"
+    }
+
+    private var nextMilestone: (target: Int, label: String)? {
+        if referralCount < 1 {
+            return (1, "Invite your first friend")
+        } else if referralCount < 5 {
+            return (5, "Unlock Connector card set")
+        } else if referralCount < 10 {
+            return (10, "Unlock 1 month free Premium")
+        }
+        return nil
     }
 
     var body: some View {
@@ -62,6 +78,10 @@ struct ReferralSectionView: View {
             .padding(14)
             .background(.white.opacity(0.03), in: .rect(cornerRadius: 12))
 
+            if let milestone = nextMilestone {
+                referralProgressBar(current: referralCount, target: milestone.target, label: milestone.label)
+            }
+
             Button {
                 showShareSheet = true
             } label: {
@@ -79,19 +99,85 @@ struct ReferralSectionView: View {
             .buttonStyle(PressableButtonStyle())
             .sensoryFeedback(.impact(weight: .medium), trigger: showShareSheet)
 
-            HStack(spacing: 8) {
-                Image(systemName: "gift.fill")
-                    .font(.caption)
-                    .foregroundStyle(Theme.gold)
-                Text("Friends get 7 days of Premium free. You earn the Connector badge + 500 XP!")
-                    .font(.caption)
-                    .foregroundStyle(Theme.textSecondary)
-            }
+            rewardsBreakdown
         }
         .padding(20)
         .glassCard(cornerRadius: 20)
         .sheet(isPresented: $showShareSheet) {
             ShareSheet(items: [shareText])
         }
+    }
+
+    private func referralProgressBar(current: Int, target: Int, label: String) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text(label)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(Theme.textSecondary)
+                Spacer()
+                Text("\(current)/\(target)")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(Theme.accent)
+            }
+
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Theme.elevated)
+                        .frame(height: 6)
+
+                    Capsule()
+                        .fill(Theme.accentGradient)
+                        .frame(width: geo.size.width * min(1.0, CGFloat(current) / CGFloat(target)), height: 6)
+                        .shadow(color: Theme.accent.opacity(0.4), radius: 4)
+                }
+            }
+            .frame(height: 6)
+        }
+        .padding(12)
+        .background(.white.opacity(0.02), in: .rect(cornerRadius: 10))
+    }
+
+    private var rewardsBreakdown: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 6) {
+                Image(systemName: "gift.fill")
+                    .font(.caption)
+                    .foregroundStyle(Theme.gold)
+                Text("Rewards for each referral")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Theme.textSecondary)
+            }
+
+            HStack(spacing: 10) {
+                ReferralRewardPill(icon: "star.fill", text: "+500 XP", color: Theme.neonPurple)
+                ReferralRewardPill(icon: "creditcard.fill", text: "+3 Cards", color: Theme.accent)
+                ReferralRewardPill(icon: "crown.fill", text: "+7 Days", color: Theme.gold)
+            }
+
+            Text("Your friend also gets 7 days of Premium free!")
+                .font(.caption2)
+                .foregroundStyle(Theme.textMuted)
+        }
+    }
+}
+
+private struct ReferralRewardPill: View {
+    let icon: String
+    let text: String
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.system(size: 9))
+                .foregroundStyle(color)
+            Text(text)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(.white)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 5)
+        .background(color.opacity(0.12), in: .capsule)
     }
 }

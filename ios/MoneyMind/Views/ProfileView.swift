@@ -20,7 +20,9 @@ struct ProfileView: View {
     @State private var showPaywall = false
     @State private var showRetakeQuiz = false
     @State private var showShareCharacter = false
-    @State private var sectionAppeared: [Bool] = Array(repeating: false, count: 8)
+    @State private var showReferralCelebration = false
+    @State private var referralMilestone: ReferralMilestone?
+    @State private var sectionAppeared: [Bool] = Array(repeating: false, count: 9)
 
     private var profile: UserProfile? { profiles.first }
 
@@ -94,16 +96,18 @@ struct ProfileView: View {
                         .sectionFadeIn(index: 3, appeared: $sectionAppeared)
                     referralSection
                         .sectionFadeIn(index: 4, appeared: $sectionAppeared)
+                    referralProgressSection
+                        .sectionFadeIn(index: 5, appeared: $sectionAppeared)
 
                     if showRecoveryContent {
                         recoverySection
-                            .sectionFadeIn(index: 5, appeared: $sectionAppeared)
+                            .sectionFadeIn(index: 6, appeared: $sectionAppeared)
                     }
 
                     premiumSection
-                        .sectionFadeIn(index: 6, appeared: $sectionAppeared)
-                    settingsLink
                         .sectionFadeIn(index: 7, appeared: $sectionAppeared)
+                    settingsLink
+                        .sectionFadeIn(index: 8, appeared: $sectionAppeared)
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 80)
@@ -154,6 +158,17 @@ struct ProfileView: View {
                 )
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
+            }
+            .fullScreenCover(isPresented: $showReferralCelebration) {
+                if let milestone = referralMilestone {
+                    ReferralMilestoneCelebration(
+                        milestone: milestone,
+                        referralCount: referrals.count
+                    ) {
+                        showReferralCelebration = false
+                        referralMilestone = nil
+                    }
+                }
             }
         }
     }
@@ -494,6 +509,88 @@ struct ProfileView: View {
                 referralCount: referrals.count
             )
         }
+    }
+
+    private var referralProgressSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 10) {
+                Image(systemName: "chart.bar.fill")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.neonPurple)
+                Text("Referral Progress")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Theme.textPrimary)
+                Spacer()
+                Text("\(referrals.count) friends")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(Theme.neonPurple)
+            }
+
+            referralMilestoneRow(
+                icon: "person.badge.plus",
+                title: "First Referral",
+                subtitle: "Your network is growing",
+                target: 1,
+                color: Theme.accent
+            )
+
+            referralMilestoneRow(
+                icon: "rectangle.stack.fill",
+                title: "Connector Card Set",
+                subtitle: "5 exclusive cards unlocked",
+                target: 5,
+                color: Theme.neonPurple
+            )
+
+            referralMilestoneRow(
+                icon: "crown.fill",
+                title: "1 Month Free Premium",
+                subtitle: "The ultimate referral reward",
+                target: 10,
+                color: Theme.gold
+            )
+        }
+        .padding(16)
+        .glassCard()
+    }
+
+    private func referralMilestoneRow(icon: String, title: String, subtitle: String, target: Int, color: Color) -> some View {
+        let isCompleted = referrals.count >= target
+        return HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(isCompleted ? color.opacity(0.15) : Theme.elevated)
+                    .frame(width: 36, height: 36)
+                Image(systemName: isCompleted ? "checkmark" : icon)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(isCompleted ? color : Theme.textMuted)
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(isCompleted ? Theme.textPrimary : Theme.textSecondary)
+                Text(subtitle)
+                    .font(.caption2)
+                    .foregroundStyle(Theme.textMuted)
+            }
+
+            Spacer()
+
+            if isCompleted {
+                Text("Claimed")
+                    .font(.system(size: 9, weight: .heavy))
+                    .foregroundStyle(color)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(color.opacity(0.12), in: .capsule)
+            } else {
+                Text("\(referrals.count)/\(target)")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(Theme.textMuted)
+            }
+        }
+        .padding(.vertical, 4)
     }
 
     // MARK: - Recovery Progress

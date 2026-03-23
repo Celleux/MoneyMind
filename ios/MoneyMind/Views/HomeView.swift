@@ -28,6 +28,7 @@ struct HomeView: View {
     @State private var showPaywall = false
     @State private var splurjiEngine = SplurjiMoodEngine()
     @State private var showSplurjiBubble = false
+    @State private var showFriendActivity = false
 
     private var profile: UserProfile? { profiles.first }
     private var currencyCode: String { profile?.defaultCurrency ?? "USD" }
@@ -323,6 +324,7 @@ struct HomeView: View {
             heroSavedCard
             quickActionsGrid
             budgetBarsSection
+            friendActivitySection
             spendingTimeline
             recentTransactionsSection
             DailyPledgeCard()
@@ -591,6 +593,67 @@ struct HomeView: View {
         .padding(20)
         .glassCard(cornerRadius: 20)
         .staggerIn(appeared: appeared, delay: 0.18)
+    }
+
+    // MARK: - Friend Activity
+
+    private var friendActivitySection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("Friend Activity")
+                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(Theme.textPrimary)
+                Spacer()
+                Button {
+                    showFriendActivity = true
+                } label: {
+                    Text("See All")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(Theme.accent)
+                }
+                .buttonStyle(.plain)
+            }
+
+            VStack(spacing: 8) {
+                ForEach(FriendActivity.mockData.prefix(3)) { activity in
+                    HStack(spacing: 12) {
+                        ZStack {
+                            Circle()
+                                .fill(activity.avatarColor.opacity(0.18))
+                                .frame(width: 34, height: 34)
+                            Image(systemName: activity.avatarIcon)
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(activity.avatarColor)
+                        }
+
+                        HStack(spacing: 0) {
+                            Text(activity.username)
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(Theme.textPrimary)
+                            Text(" \(activity.activityText)")
+                                .font(.system(size: 13))
+                                .foregroundStyle(Theme.textSecondary)
+                        }
+                        .lineLimit(1)
+
+                        Spacer()
+
+                        Text(activity.timeAgo)
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(Theme.textMuted)
+                    }
+                }
+            }
+        }
+        .padding(20)
+        .glassCard(cornerRadius: 20)
+        .staggerIn(appeared: appeared, delay: 0.22)
+        .sheet(isPresented: $showFriendActivity) {
+            FriendActivityView()
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(Theme.background)
+        }
     }
 
     // MARK: - Spending Timeline

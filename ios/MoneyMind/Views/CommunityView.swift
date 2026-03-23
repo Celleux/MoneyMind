@@ -8,10 +8,12 @@ struct CommunityView: View {
     @Query private var profiles: [UserProfile]
     @Query private var partnerCheckIns: [PartnerCheckIn]
     @Query private var quizResults: [QuizResult]
+    @Query(sort: \ChallengeInvite.createdAt, order: .reverse) private var challengeInvites: [ChallengeInvite]
     @Environment(\.modelContext) private var modelContext
     @State private var vm = CommunityViewModel()
     @State private var appeared = false
     @State private var likeTrigger = 0
+    @State private var showChallengeInvite = false
 
     private var profile: UserProfile? { profiles.first }
     private var personality: MoneyPersonality { quizResults.first?.personality ?? .builder }
@@ -23,6 +25,10 @@ struct CommunityView: View {
                 VStack(spacing: 20) {
                     categoryFilter
                     shareStoryCard
+                    challengeFriendButton
+                    if !activeChallengeInvites.isEmpty {
+                        myChallengeInvitesSection
+                    }
                     feedSection
                     partnerSection
                     challengesSection
@@ -69,6 +75,11 @@ struct CommunityView: View {
                     .presentationDetents([.medium])
                     .presentationDragIndicator(.visible)
             }
+            .sheet(isPresented: $showChallengeInvite) {
+                ChallengeInviteView()
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+            }
             .overlay {
                 if let profile, !profile.hasSeenCommunityGuidelines {
                     CommunityGuidelinesOverlay {
@@ -83,6 +94,150 @@ struct CommunityView: View {
                 withAnimation(Theme.springStagger) { appeared = true }
             }
         }
+    }
+
+    private var activeChallengeInvites: [ChallengeInvite] {
+        challengeInvites.filter { $0.status == "active" || $0.status == "pending" }
+    }
+
+    // MARK: - Challenge Friend Button
+
+    private var challengeFriendButton: some View {
+        Button {
+            showChallengeInvite = true
+        } label: {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .fill(Theme.neonPurple.opacity(0.15))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "figure.2")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(Theme.neonPurple)
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Challenge a Friend")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Theme.textPrimary)
+                    Text("Compete head-to-head for bonus XP")
+                        .font(.caption)
+                        .foregroundStyle(Theme.textSecondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Theme.textMuted)
+            }
+            .padding(14)
+            .glassCard(accentGlow: Theme.neonPurple)
+        }
+        .buttonStyle(PressableButtonStyle())
+        .sensoryFeedback(.impact(weight: .light), trigger: showChallengeInvite)
+        .padding(.horizontal)
+        .accessibilityLabel("Challenge a friend to compete")
+    }
+
+    // MARK: - My Challenge Invites
+
+    private var myChallengeInvitesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "trophy.fill")
+                    .foregroundStyle(Theme.gold)
+                Text("My Challenges")
+                    .font(Theme.headingFont(.title3))
+                    .foregroundStyle(Theme.textPrimary)
+                Spacer()
+                Text("\(activeChallengeInvites.count)")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(Theme.gold)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Theme.goldDim, in: .capsule)
+            }
+            .padding(.horizontal)
+
+            ScrollView(.horizontal) {
+                HStack(spacing: 12) {
+                    ForEach(activeChallengeInvites, id: \.id) { invite in
+                        challengeInviteCard(invite)
+                    }
+                }
+            }
+            .contentMargins(.horizontal, 16)
+            .scrollIndicators(.hidden)
+        }
+        .opacity(appeared ? 1 : 0)
+        .offset(y: appeared ? 0 : 16)
+        .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.08), value: appeared)
+    }
+
+    private func challengeInviteCard(_ invite: ChallengeInvite) -> some View {
+        let type = FriendChallengeType.allCases.first { $0.rawValue == invite.challengeType }
+        let accentColor: Color = {
+            switch type {
+            case .noSpend7Day: return Theme.neonRed
+            case .save100: return Theme.neonEmerald
+            case .complete5Quests: return Theme.neonPurple
+            case .none: return Theme.accent
+            }
+        }()
+
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(accentColor.opacity(0.15))
+                        .frame(width: 36, height: 36)
+                    Image(systemName: type?.icon ?? "bolt.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(accentColor)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(invite.challengeType)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Theme.textPrimary)
+                    HStack(spacing: 4) {
+                        Image(systemName: invite.statusIcon)
+                            .font(.system(size: 8))
+                        Text(invite.status.capitalized)
+                            .font(.caption2)
+                    }
+                    .foregroundStyle(accentColor)
+                }
+            }
+
+            VStack(spacing: 4) {
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Theme.elevated)
+                            .frame(height: 5)
+                        Capsule()
+                            .fill(accentColor)
+                            .frame(width: geo.size.width * invite.creatorProgress, height: 5)
+                    }
+                }
+                .frame(height: 5)
+
+                HStack {
+                    Text("+\(invite.xpReward) XP")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(Theme.gold)
+                    Spacer()
+                    Text("\(invite.daysRemaining)d left")
+                        .font(.caption2)
+                        .foregroundStyle(Theme.textSecondary)
+                }
+            }
+        }
+        .padding(14)
+        .frame(width: 200)
+        .glassCard(accentGlow: accentColor)
     }
 
     // MARK: - Category Filter

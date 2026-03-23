@@ -69,7 +69,8 @@ struct SplurjApp: App {
             DailyQuestSlot.self,
             QuestBuddy.self,
             FinancialDNAResult.self,
-            WeeklyChallenge.self
+            WeeklyChallenge.self,
+            ChallengeInvite.self
         ])
     }
 }

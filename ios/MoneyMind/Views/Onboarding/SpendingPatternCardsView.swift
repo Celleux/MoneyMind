@@ -9,6 +9,8 @@ struct SpendingPatternCardsView: View {
     @State private var dragOffset: CGSize = .zero
     @State private var cardRotation: Double = 0
     @State private var hapticTrigger: Int = 0
+    @State private var showSwipeHint: Bool = true
+    @State private var swipeHintPhase: Bool = false
 
     private let scenarios = SpendingScenario.all
 
@@ -55,6 +57,12 @@ struct SpendingPatternCardsView: View {
 
             Spacer()
 
+            if showSwipeHint {
+                swipeHandHint
+                    .transition(.opacity)
+                    .padding(.bottom, 8)
+            }
+
             swipeHints
                 .padding(.horizontal, 32)
                 .padding(.bottom, 40)
@@ -71,6 +79,36 @@ struct SpendingPatternCardsView: View {
         if index < currentCard { return Theme.accent }
         if index == currentCard { return .white }
         return Theme.elevated
+    }
+
+    private var swipeHandHint: some View {
+        HStack(spacing: 24) {
+            Image(systemName: "arrow.left")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(Color(hex: 0x60A5FA).opacity(0.6))
+                .offset(x: swipeHintPhase ? -4 : 0)
+
+            Image(systemName: "hand.point.up.fill")
+                .font(.system(size: 28))
+                .foregroundStyle(.white.opacity(0.7))
+                .offset(x: swipeHintPhase ? 30 : -30)
+                .animation(
+                    .easeInOut(duration: 1.2).repeatForever(autoreverses: true),
+                    value: swipeHintPhase
+                )
+
+            Image(systemName: "arrow.right")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(Color(hex: 0xFB923C).opacity(0.6))
+                .offset(x: swipeHintPhase ? 4 : 0)
+        }
+        .animation(
+            .easeInOut(duration: 1.2).repeatForever(autoreverses: true),
+            value: swipeHintPhase
+        )
+        .onAppear {
+            swipeHintPhase = true
+        }
     }
 
     private var swipeHints: some View {
@@ -116,6 +154,12 @@ struct SpendingPatternCardsView: View {
                     let swipedRight = value.translation.width > 0
                     recordAnswer(scenario: scenarios[currentCard], swipedRight: swipedRight)
                     hapticTrigger += 1
+
+                    if showSwipeHint {
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            showSwipeHint = false
+                        }
+                    }
 
                     withAnimation(.spring(response: 0.3)) {
                         dragOffset = CGSize(

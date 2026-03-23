@@ -361,6 +361,26 @@ nonisolated enum CriticalScratchBonus: Sendable {
         case .doubleXP: return "2x XP on Next Quest"
         }
     }
+
+    @MainActor
+    var label: String { description }
+
+    var icon: String {
+        switch self {
+        case .bonusEssence: return "diamond.fill"
+        case .extraScratchCard: return "creditcard.fill"
+        case .doubleXP: return "bolt.fill"
+        }
+    }
+
+    @MainActor
+    var color: Color {
+        switch self {
+        case .bonusEssence: return Theme.neonPurple
+        case .extraScratchCard: return Theme.accent
+        case .doubleXP: return Theme.neonGold
+        }
+    }
 }
 
 private struct SubtleShakeModifier: ViewModifier {

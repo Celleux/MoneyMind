@@ -2,6 +2,7 @@ import SwiftUI
 
 struct QuestRewardCelebration: View {
     let reward: QuestReward
+    var onOpenVault: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -40,6 +41,9 @@ struct QuestRewardCelebration: View {
     @State private var cardZoomScale: CGFloat = 1.0
 
     @State private var showShare: Bool = false
+    @State private var showVaultPrompt: Bool = false
+    @State private var showStreakCards: Bool = false
+    @State private var showDoubleXP: Bool = false
 
     @State private var dimOverlay: Double = 0
 
@@ -99,6 +103,21 @@ struct QuestRewardCelebration: View {
             socialSection
 
             Spacer()
+
+            if reward.streakBonusCards > 0 && showStreakCards {
+                streakBonusSection
+                    .transition(.scale(scale: 0.7).combined(with: .opacity))
+            }
+
+            if reward.hasDoubleXP && showDoubleXP {
+                doubleXPBadge
+                    .transition(.scale(scale: 0.7).combined(with: .opacity))
+            }
+
+            if reward.scratchCard && showVaultPrompt && canDismiss {
+                vaultPrompt
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
 
             if canDismiss {
                 dismissButton
@@ -451,6 +470,86 @@ struct QuestRewardCelebration: View {
 
     // MARK: - Dismiss
 
+    private var streakBonusSection: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "sparkles.rectangle.stack")
+                .font(.system(size: 20))
+                .foregroundStyle(Theme.neonGold)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Streak Bonus!")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(Theme.neonGold)
+                Text("+\(reward.streakBonusCards) bonus scratch card\(reward.streakBonusCards == 1 ? "" : "s")")
+                    .font(.system(size: 12))
+                    .foregroundStyle(Theme.textSecondary)
+            }
+        }
+    }
+
+    private var doubleXPBadge: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "bolt.fill")
+                .font(.system(size: 14))
+                .foregroundStyle(Theme.neonGold)
+            Text("2x XP Active")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(Theme.neonGold)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(Theme.neonGold.opacity(0.15), in: Capsule())
+    }
+
+    private var vaultPrompt: some View {
+        VStack(spacing: 10) {
+            Text("You earned a scratch card")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(Theme.textSecondary)
+
+            HStack(spacing: 12) {
+                Button {
+                    dismiss()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        onOpenVault?()
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "sparkles.rectangle.stack")
+                            .font(.system(size: 13))
+                        Text("Open Vault")
+                            .font(.system(size: 14, weight: .bold))
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(Theme.accentGradient, in: Capsule())
+                }
+
+                Button {
+                    withAnimation {
+                        showVaultPrompt = false
+                    }
+                } label: {
+                    Text("Later")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(Theme.textSecondary)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(Theme.surface, in: Capsule())
+                        .overlay(Capsule().stroke(Theme.border, lineWidth: 0.5))
+                }
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Theme.elevated)
+                .shadow(color: .black.opacity(0.3), radius: 12)
+        )
+        .padding(.horizontal, 32)
+    }
+
     private var dismissButton: some View {
         VStack(spacing: 12) {
             Button {
@@ -649,6 +748,25 @@ struct QuestRewardCelebration: View {
             showConfetti = true
         }
 
+        // Streak bonus cards
+        if reward.streakBonusCards > 0 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                SplurjHaptics.rewardItemReveal()
+            }
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.7).delay(delay)) {
+                showStreakCards = true
+            }
+            delay += 0.3
+        }
+
+        // Double XP indicator
+        if reward.hasDoubleXP {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.7).delay(delay)) {
+                showDoubleXP = true
+            }
+            delay += 0.2
+        }
+
         // Phase 5: Social
         delay += 0.5
 
@@ -657,6 +775,14 @@ struct QuestRewardCelebration: View {
                 showShare = true
             }
             delay += 0.5
+        }
+
+        // Vault prompt
+        if reward.scratchCard && onOpenVault != nil {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.7).delay(delay)) {
+                showVaultPrompt = true
+            }
+            delay += 0.3
         }
 
         withAnimation(.easeOut(duration: 0.3).delay(delay + 0.2)) {
@@ -684,7 +810,10 @@ struct QuestRewardCelebration: View {
         }
         showStreak = true
         streakCount = 1
+        if reward.streakBonusCards > 0 { showStreakCards = true }
+        if reward.hasDoubleXP { showDoubleXP = true }
         if reward.tiktokMoment != nil { showShare = true }
+        if reward.scratchCard && onOpenVault != nil { showVaultPrompt = true }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             canDismiss = true

@@ -20,6 +20,8 @@ struct GamesHubView: View {
     @State private var lastReward: QuestReward?
     @State private var animateStats: Bool = false
     @State private var meshPhase: Double = 0
+    @State private var navigateToVault: Bool = false
+    @State private var navigationPath = NavigationPath()
 
     private var player: PlayerProfile { playerProfiles.first ?? PlayerProfile() }
     private var pendingCards: Int { scratchCards.filter { !$0.isScratched }.count }
@@ -48,7 +50,7 @@ struct GamesHubView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 16) {
                     playerCommandBar
@@ -56,6 +58,7 @@ struct GamesHubView: View {
                     todaysMissions
                     gameCards
                     weeklyChallengeBanner
+                    unifiedProgressSection
                     statsDashboard
                 }
                 .padding(.bottom, 32)
@@ -95,9 +98,19 @@ struct GamesHubView: View {
                     animateStats = true
                 }
             }
+            .navigationDestination(for: String.self) { destination in
+                if destination == "vault" {
+                    VaultGameView()
+                }
+            }
             .fullScreenCover(isPresented: $showRewardCelebration) {
                 if let reward = lastReward {
-                    QuestRewardCelebration(reward: reward)
+                    QuestRewardCelebration(reward: reward) {
+                        showRewardCelebration = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                            navigationPath.append("vault")
+                        }
+                    }
                 }
             }
         }
@@ -408,6 +421,82 @@ struct GamesHubView: View {
             }
             .padding(.horizontal, 20)
         }
+    }
+
+    // MARK: - Unified Progress
+
+    private var unifiedProgressSection: some View {
+        VStack(spacing: 10) {
+            sectionHeader("PARALLEL PROGRESS")
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 20)
+
+            HStack(spacing: 20) {
+                UnifiedProgressRing(
+                    dailyProgress: dailyProgressFraction,
+                    weeklyProgress: weeklyProgressFraction,
+                    bossProgress: bossProgressFraction,
+                    level: player.level
+                )
+
+                VStack(alignment: .leading, spacing: 8) {
+                    progressRow(
+                        color: Theme.accent,
+                        label: "Daily Quests",
+                        value: "\(completedDailyCount)/\(todaysQuests.count)"
+                    )
+                    progressRow(
+                        color: Theme.neonGold,
+                        label: "Weekly Challenge",
+                        value: weeklyProgressText
+                    )
+                    progressRow(
+                        color: Theme.neonRed,
+                        label: "Boss Damage",
+                        value: "\(Int(bossProgressFraction * 100))%"
+                    )
+                }
+
+                Spacer(minLength: 0)
+            }
+            .padding(16)
+            .background(Theme.surface, in: .rect(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(Theme.glassBorder, lineWidth: 0.5)
+            )
+            .padding(.horizontal, 16)
+        }
+    }
+
+    private func progressRow(color: Color, label: String, value: String) -> some View {
+        HStack(spacing: 8) {
+            Circle()
+                .fill(color)
+                .frame(width: 8, height: 8)
+            Text(label)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(Theme.textSecondary)
+            Spacer()
+            Text(value)
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+        }
+    }
+
+    private var dailyProgressFraction: Double {
+        guard !todaysQuests.isEmpty else { return 0 }
+        return Double(completedDailyCount) / Double(todaysQuests.count)
+    }
+
+    private var weeklyProgressFraction: Double {
+        guard let challenge = currentWeeklyChallenge else { return 0 }
+        return challenge.progressFraction
+    }
+
+    private var weeklyProgressText: String {
+        guard let challenge = currentWeeklyChallenge else { return "--" }
+        return "\(challenge.current)/\(challenge.target)"
     }
 
     // MARK: - Stats Dashboard

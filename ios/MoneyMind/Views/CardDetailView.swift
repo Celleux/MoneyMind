@@ -112,6 +112,8 @@ struct CardDetailView: View {
         }
     }
 
+    @Environment(\.modelContext) private var modelContext
+
     private func evolveCard(_ info: CollectedCard) {
         guard let currentRarity = CardRarity(rawValue: info.rarity),
               let state = gachaState else { return }
@@ -131,6 +133,9 @@ struct CardDetailView: View {
         state.totalEssence -= cost
         info.rarity = nextRarity.rawValue
         info.evolutionLevel += 1
+
+        let rewardManager = CrossGameRewardManager(modelContext: modelContext)
+        _ = rewardManager.awardEvolutionXP(evolutionLevel: info.evolutionLevel)
 
         withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
             showEvolveSuccess = true

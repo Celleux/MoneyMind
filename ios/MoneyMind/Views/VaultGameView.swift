@@ -18,6 +18,13 @@ struct VaultGameView: View {
     @State private var lootCard: CardDefinition?
     @State private var currentScratchIndex: Int = 0
     @State private var cardTransition: Bool = false
+    @State private var criticalBonus: CriticalScratchBonus?
+    @State private var showCriticalBonus: Bool = false
+    @State private var showQuestPrompt: Bool = false
+    @State private var xpBonusText: String?
+    @State private var showXPBonus: Bool = false
+    @State private var showSetComplete: Bool = false
+    @State private var completedSetName: String = ""
 
     private var gachaState: GachaState? { gachaStates.first }
 
@@ -45,6 +52,14 @@ struct VaultGameView: View {
                     .allowsHitTesting(false)
                     .ignoresSafeArea()
             }
+
+            if showCriticalBonus, let bonus = criticalBonus {
+                criticalBonusOverlay(bonus)
+            }
+
+            if showXPBonus, let text = xpBonusText {
+                xpBonusFloater(text)
+            }
         }
         .navigationTitle("The Vault")
         .navigationBarTitleDisplayMode(.large)
@@ -70,6 +85,17 @@ struct VaultGameView: View {
                     lootCard = nil
                 }
             }
+        }
+        .overlay(alignment: .bottom) {
+            if showQuestPrompt {
+                questNavigationPrompt
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .alert("Set Complete!", isPresented: $showSetComplete) {
+            Button("Awesome!") {}
+        } message: {
+            Text("You completed \(completedSetName)! +500 XP and 200 Essence awarded.")
         }
     }
 
@@ -218,6 +244,8 @@ struct VaultGameView: View {
 
     private func handleReveal(scratchCard: ScratchCard, revealed: CardDefinition) {
         scratchCard.scratchedAt = Date()
+        let rewardManager = CrossGameRewardManager(modelContext: modelContext)
+        var isNewCard = false
 
         if let existing = collection.first(where: { $0.cardID == revealed.id }) {
             existing.duplicateCount += 1
@@ -233,12 +261,41 @@ struct VaultGameView: View {
                 state.totalEssence += essenceReward
             }
         } else {
+            isNewCard = true
             let newCard = CollectedCard(
                 cardID: revealed.id,
                 rarity: revealed.rarity.rawValue,
                 setName: revealed.set.rawValue
             )
             modelContext.insert(newCard)
+
+            let xp = rewardManager.awardNewCardXP()
+            showXPBonusFloater("+\(xp) XP New Card!")
+        }
+
+        if isNewCard {
+            checkSetCompletion(setName: revealed.set.rawValue, rewardManager: rewardManager)
+        }
+
+        if let bonus = rewardManager.rollCriticalScratch() {
+            criticalBonus = bonus
+            if case .bonusEssence(let amount) = bonus {
+                if let state = gachaState {
+                    state.totalEssence += amount
+                }
+            }
+            Task {
+                try? await Task.sleep(for: .milliseconds(800))
+                withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                    showCriticalBonus = true
+                }
+                SplurjHaptics.epicReveal()
+                try? await Task.sleep(for: .seconds(3))
+                withAnimation(.easeOut(duration: 0.3)) {
+                    showCriticalBonus = false
+                }
+                criticalBonus = nil
+            }
         }
 
         if revealed.rarity == .epic || revealed.rarity == .legendary {
@@ -262,6 +319,153 @@ struct VaultGameView: View {
                 showConfetti = false
             }
         }
+
+        if pendingCards.count <= 1 {
+            showQuestPromptIfAvailable(rewardManager: rewardManager)
+        }
+    }
+
+    private func checkSetCompletion(setName: String, rewardManager: CrossGameRewardManager) {
+        let setCards = collection.filter { $0.setName == setName }
+        guard let cardSet = CardSet(rawValue: setName) else { return }
+        let setDefinitions = CardDatabase.cards(forSet: cardSet)
+        let uniqueCollectedIDs = Set(setCards.map(\.cardID))
+        let allDefinitionIDs = Set(setDefinitions.map(\.id))
+
+        let newlyComplete = allDefinitionIDs.subtracting(uniqueCollectedIDs).count <= 1
+        guard newlyComplete else { return }
+
+        _ = rewardManager.awardSetCompletionXP(setName: setName)
+        if let state = gachaState {
+            state.totalEssence += 200
+        }
+        completedSetName = setName
+        Task {
+            try? await Task.sleep(for: .seconds(1))
+            showSetComplete = true
+        }
+    }
+
+    private func showXPBonusFloater(_ text: String) {
+        xpBonusText = text
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+            showXPBonus = true
+        }
+        Task {
+            try? await Task.sleep(for: .seconds(2))
+            withAnimation(.easeOut(duration: 0.3)) {
+                showXPBonus = false
+            }
+            xpBonusText = nil
+        }
+    }
+
+    private func showQuestPromptIfAvailable(rewardManager: CrossGameRewardManager) {
+        let questCount = rewardManager.availableQuestCount()
+        guard questCount > 0 else { return }
+        Task {
+            try? await Task.sleep(for: .seconds(1.5))
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                showQuestPrompt = true
+            }
+        }
+    }
+
+    private func criticalBonusOverlay(_ bonus: CriticalScratchBonus) -> some View {
+        VStack(spacing: 8) {
+            Image(systemName: bonus.icon)
+                .font(.system(size: 32, weight: .bold))
+                .foregroundStyle(bonus.color)
+                .shadow(color: bonus.color.opacity(0.6), radius: 16)
+
+            Text("CRITICAL SCRATCH!")
+                .font(.system(size: 14, weight: .black, design: .rounded))
+                .foregroundStyle(Theme.neonGold)
+                .tracking(2)
+
+            Text(bonus.label)
+                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+        }
+        .padding(24)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Theme.surface)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [bonus.color.opacity(0.6), bonus.color.opacity(0.1)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+                .shadow(color: bonus.color.opacity(0.3), radius: 20)
+        )
+        .transition(.scale(scale: 0.5).combined(with: .opacity))
+    }
+
+    private func xpBonusFloater(_ text: String) -> some View {
+        Text(text)
+            .font(.system(size: 14, weight: .black, design: .rounded))
+            .foregroundStyle(Theme.accent)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(Theme.accent.opacity(0.15), in: Capsule())
+            .offset(y: showXPBonus ? -60 : 0)
+            .opacity(showXPBonus ? 1 : 0)
+            .transition(.opacity)
+    }
+
+    private var questNavigationPrompt: some View {
+        VStack(spacing: 12) {
+            let questCount = CrossGameRewardManager(modelContext: modelContext).availableQuestCount()
+            Text("\(questCount) quest\(questCount == 1 ? "" : "s") available today")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(Theme.textSecondary)
+
+            Text("Want to earn more cards?")
+                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+
+            HStack(spacing: 12) {
+                NavigationLink(destination: QuestHubView()) {
+                    Text("View Quests")
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
+                }
+
+                Button {
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        showQuestPrompt = false
+                    }
+                } label: {
+                    Text("Keep Scratching")
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(Theme.textSecondary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(Theme.surface, in: .rect(cornerRadius: 12))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .strokeBorder(Theme.border, lineWidth: 0.5)
+                        )
+                }
+            }
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Theme.elevated)
+                .shadow(color: .black.opacity(0.4), radius: 20, y: -5)
+        )
+        .padding(.horizontal, 16)
+        .padding(.bottom, 8)
     }
 }
 

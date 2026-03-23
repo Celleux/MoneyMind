@@ -46,6 +46,15 @@ class GachaEngine {
         totalEssence += amount
     }
 
+    func resetLegendaryPity() {
+        pullsSinceLastLegendary = 0
+        pullsSinceLastEpic = 0
+    }
+
+    func resetEpicPity() {
+        pullsSinceLastEpic = 0
+    }
+
     func spendEssence(_ amount: Int) -> Bool {
         guard totalEssence >= amount else { return false }
         totalEssence -= amount

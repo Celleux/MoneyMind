@@ -9,6 +9,8 @@ struct QuestReward {
     let isLucky: Bool
     let bossDamage: Int
     let tiktokMoment: String?
+    let streakBonusCards: Int
+    let hasDoubleXP: Bool
 
     static let empty = QuestReward(
         xp: 0,
@@ -18,6 +20,8 @@ struct QuestReward {
         newLevel: 1,
         isLucky: false,
         bossDamage: 0,
-        tiktokMoment: nil
+        tiktokMoment: nil,
+        streakBonusCards: 0,
+        hasDoubleXP: false
     )
 }

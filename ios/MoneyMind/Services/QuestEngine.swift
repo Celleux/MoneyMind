@@ -94,6 +94,10 @@ final class QuestEngine {
 
         var xp = Int(Double(quest.baseXP) * quest.difficulty.xpMultiplier)
 
+        if let doubleUntil = player.doubleXPUntil, doubleUntil > Date() {
+            xp = xp * 2
+        }
+
         if player.questStreak >= 30 {
             xp = Int(Double(xp) * 2.0)
         } else if player.questStreak >= 7 {
@@ -147,6 +151,8 @@ final class QuestEngine {
 
         try? modelContext.save()
 
+        let streakCards = checkAndAwardStreakCards(player: player)
+
         return QuestReward(
             xp: xp,
             scratchCard: earnedScratchCard,
@@ -155,7 +161,9 @@ final class QuestEngine {
             newLevel: player.level,
             isLucky: isLucky,
             bossDamage: bossDamage,
-            tiktokMoment: quest.tiktokMoment
+            tiktokMoment: quest.tiktokMoment,
+            streakBonusCards: streakCards,
+            hasDoubleXP: player.doubleXPUntil != nil && player.doubleXPUntil! > Date()
         )
     }
 
@@ -224,7 +232,8 @@ final class QuestEngine {
         let nextZone = QuestZone.allCases.first { $0.levelRange.lowerBound > zone.levelRange.upperBound }
         player.currentBossZone = nextZone?.rawValue
 
-        _ = createScratchCard()
+        let rewardManager = CrossGameRewardManager(modelContext: modelContext)
+        _ = rewardManager.awardBossDefeatCards()
 
         addEssence(100)
 
@@ -600,6 +609,13 @@ final class QuestEngine {
         )
         let completed = (try? modelContext.fetch(descriptor)) ?? []
         return Set(completed.map(\.questID))
+    }
+
+    private func checkAndAwardStreakCards(player: PlayerProfile) -> Int {
+        let milestones = [7, 21, 50, 100, 200]
+        guard milestones.contains(player.questStreak) else { return 0 }
+        let rewardManager = CrossGameRewardManager(modelContext: modelContext)
+        return rewardManager.awardStreakMilestoneCards(streak: player.questStreak)
     }
 
     func luckyQuestForToday() -> QuestDefinition? {

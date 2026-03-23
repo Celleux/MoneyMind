@@ -18,6 +18,7 @@ class PlayerProfile {
     var currentBossZone: String?
     var currentBossDamageDealt: Int = 0
     var lastQuestDate: Date?
+    var doubleXPUntil: Date?
 
     var bossesDefeated: [String] {
         get { (try? JSONDecoder().decode([String].self, from: bossesDefeatedData)) ?? [] }

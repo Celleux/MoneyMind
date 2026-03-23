@@ -540,6 +540,68 @@ final class QuestEngine {
         profile.totalSaved += amount
     }
 
+    // MARK: - Micro-Quest Support
+
+    func checkMicroQuestEligibility() -> Bool {
+        allDailyQuestsComplete()
+    }
+
+    func getMicroQuests(count: Int = 5) -> [QuestDefinition] {
+        let today = Calendar.current.startOfDay(for: Date())
+        let completedToday = todayCompletedQuestIDs()
+
+        let eligible = QuestDatabase.microQuests.filter { quest in
+            !completedToday.contains(quest.id)
+        }
+
+        guard !eligible.isEmpty else { return [] }
+
+        var rng = SeededRandomNumberGenerator(
+            seed: UInt64(deterministicSeed(for: today, playerLevel: 0, salt: "micro"))
+        )
+        return Array(eligible.shuffled(using: &rng).prefix(count))
+    }
+
+    // MARK: - Streak Milestone Support
+
+    func checkStreakMilestoneQuest(player: PlayerProfile) -> QuestDefinition? {
+        let streak = player.questStreak
+        guard QuestDatabase.streakMilestones.contains(streak) else { return nil }
+        guard let quest = QuestDatabase.streakQuest(forMilestone: streak) else { return nil }
+        guard !isQuestCompleted(quest.id) else { return nil }
+        return quest
+    }
+
+    func checkComebackQuest(player: PlayerProfile) -> QuestDefinition? {
+        guard let lastDate = player.lastQuestDate else { return nil }
+        let today = Calendar.current.startOfDay(for: Date())
+        let lastDay = Calendar.current.startOfDay(for: lastDate)
+        let daysBetween = Calendar.current.dateComponents([.day], from: lastDay, to: today).day ?? 0
+        guard daysBetween > 1 else { return nil }
+        guard player.questStreak == 0 || daysBetween > 1 else { return nil }
+        let comeback = QuestDatabase.randomComebackQuest()
+        guard !isQuestCompleted(comeback.id) else { return nil }
+        return comeback
+    }
+
+    // MARK: - Dynamic Context Quests
+
+    func availableDynamicQuests() -> [QuestDefinition] {
+        let dynamicQuests = QuestDatabase.availableDynamicQuests()
+        return dynamicQuests.filter { !isQuestCompleted($0.id) }
+    }
+
+    // MARK: - Helper
+
+    private func todayCompletedQuestIDs() -> Set<String> {
+        let today = Calendar.current.startOfDay(for: Date())
+        let descriptor = FetchDescriptor<QuestProgress>(
+            predicate: #Predicate<QuestProgress> { $0.completedAt != nil && $0.completedAt! >= today }
+        )
+        let completed = (try? modelContext.fetch(descriptor)) ?? []
+        return Set(completed.map(\.questID))
+    }
+
     func luckyQuestForToday() -> QuestDefinition? {
         let slots = todaysDailySlots()
         guard let luckySlot = slots.first(where: { $0.isLuckyQuest }) else {

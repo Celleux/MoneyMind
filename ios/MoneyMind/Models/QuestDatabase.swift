@@ -32,19 +32,29 @@ enum QuestDatabase {
         "chain_impulse_defenders"
     ]
 
-    static let allQuests: [QuestDefinition] =
+    static let coreQuests: [QuestDefinition] =
         moneyRecoveryQuests +
         spendingDefenseQuests +
         incomeEarningQuests +
         financialLiteracyQuests +
         socialQuests +
         generosityQuests +
-        seasonalQuests +
+        seasonalQuests
+
+    static let chainQuests: [QuestDefinition] =
         saversGuildChain +
         compoundPathChain +
         budgetWarriorsChain +
         debtSlayersChain +
         impulseDefendersChain
+
+    static let allQuests: [QuestDefinition] =
+        coreQuests +
+        chainQuests +
+        expandedSeasonalQuests +
+        lifeEventQuests +
+        microQuests +
+        streakQuests
 
     // MARK: - Category A: Money Recovery (10)
 

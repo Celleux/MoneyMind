@@ -27,7 +27,6 @@ nonisolated enum QuestZone: String, Codable, CaseIterable, Sendable {
         }
     }
 
-    @MainActor
     var gradientColors: [Color] {
         switch self {
         case .awakening: return [Color(hex: 0x0B0E14), Color(hex: 0x1A2332)]

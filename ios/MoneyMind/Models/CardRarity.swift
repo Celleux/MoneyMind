@@ -7,7 +7,6 @@ nonisolated enum CardRarity: String, Codable, CaseIterable, Sendable {
     case epic = "Epic"
     case legendary = "Legendary"
 
-    @MainActor
     var color: Color {
         switch self {
         case .common: return Theme.textSecondary

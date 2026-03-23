@@ -605,6 +605,11 @@ struct GamesHubView: View {
     }
 
     private func ensurePlayerAndQuests() {
+        if playerProfiles.isEmpty {
+            let profile = PlayerProfile()
+            modelContext.insert(profile)
+            try? modelContext.save()
+        }
         let engine = QuestEngine(modelContext: modelContext)
         let p = engine.getOrCreatePlayer()
         engine.refreshDailyQuests(player: p)

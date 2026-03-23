@@ -8,7 +8,6 @@ nonisolated enum QuestCategory: String, Codable, CaseIterable, Sendable {
     case socialQuests = "Social & Accountability"
     case generosity = "Generosity & Pay It Forward"
 
-    @MainActor
     var color: Color {
         switch self {
         case .moneyRecovery: return Theme.accent
@@ -57,7 +56,6 @@ nonisolated enum QuestDifficulty: String, Codable, CaseIterable, Sendable {
         }
     }
 
-    @MainActor
     var color: Color {
         switch self {
         case .easy: return Theme.accent

@@ -18,6 +18,7 @@ struct OnboardingView: View {
     @Environment(\.modelContext) private var modelContext
     let onComplete: () -> Void
 
+    @AppStorage("onboardingStep") private var savedStep: Int = 0
     @State private var currentScreen: OnboardingScreenV2 = .splash
     @State private var dna = FinancialDNA.default
     @State private var cardAnswers: [String] = []
@@ -74,6 +75,7 @@ struct OnboardingView: View {
                     )
                     modelContext.insert(result)
                     try? modelContext.save()
+                    savedStep = 0
                     onComplete()
                 }
             }
@@ -114,6 +116,14 @@ struct OnboardingView: View {
         .sheet(isPresented: $showSOSSheet) {
             UrgeSurfSheet()
                 .presentationDetents([.large])
+        }
+        .onAppear {
+            if savedStep > 0, let restored = OnboardingScreenV2(rawValue: savedStep) {
+                currentScreen = restored
+            }
+        }
+        .onChange(of: currentScreen) { _, newValue in
+            savedStep = newValue.rawValue
         }
     }
 

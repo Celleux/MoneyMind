@@ -370,7 +370,6 @@ nonisolated enum CriticalScratchBonus: Sendable {
         }
     }
 
-    @MainActor
     var label: String { description }
 
     var icon: String {
@@ -381,7 +380,6 @@ nonisolated enum CriticalScratchBonus: Sendable {
         }
     }
 
-    @MainActor
     var color: Color {
         switch self {
         case .bonusEssence: return Theme.neonPurple

@@ -17,7 +17,6 @@ nonisolated enum CardSet: String, Codable, CaseIterable, Sendable {
         }
     }
 
-    @MainActor
     var accentColor: Color {
         switch self {
         case .saversGuild: return Theme.accent

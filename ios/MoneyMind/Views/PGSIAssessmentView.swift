@@ -237,8 +237,9 @@ struct PGSITrendChart: View {
 
     private var isImproving: Bool {
         guard sortedAssessments.count >= 2 else { return false }
-        let last = sortedAssessments.suffix(2)
-        return last.last!.totalScore < last.first!.totalScore
+        let recent = sortedAssessments.suffix(2)
+        guard let latest = recent.last, let previous = recent.first else { return false }
+        return latest.totalScore < previous.totalScore
     }
 
     var body: some View {

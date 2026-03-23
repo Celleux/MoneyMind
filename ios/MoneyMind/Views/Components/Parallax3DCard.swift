@@ -6,6 +6,7 @@ struct Parallax3DCard<Content: View>: View {
     var maxRotation: Double = 15
     var enableHolographic: Bool = false
     var glowColor: Color?
+    var interactive: Bool = true
 
     @State private var dragOffset: CGSize = .zero
     @State private var isDragging: Bool = false
@@ -15,12 +16,14 @@ struct Parallax3DCard<Content: View>: View {
         maxRotation: Double = 15,
         enableHolographic: Bool = false,
         glowColor: Color? = nil,
+        interactive: Bool = true,
         @ViewBuilder content: () -> Content
     ) {
         self.content = content()
         self.maxRotation = maxRotation
         self.enableHolographic = enableHolographic
         self.glowColor = glowColor
+        self.interactive = interactive
     }
 
     private var xRotation: Double {
@@ -78,22 +81,23 @@ struct Parallax3DCard<Content: View>: View {
             axis: (x: 0, y: 1, z: 0),
             perspective: 0.5
         )
-        .gesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { value in
-                    isDragging = true
-                    withAnimation(.interactiveSpring()) {
-                        dragOffset = value.translation
+        .applyIf(interactive && !reduceMotion) { view in
+            view.gesture(
+                DragGesture(minimumDistance: 20)
+                    .onChanged { value in
+                        isDragging = true
+                        withAnimation(.interactiveSpring()) {
+                            dragOffset = value.translation
+                        }
                     }
-                }
-                .onEnded { _ in
-                    isDragging = false
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
-                        dragOffset = .zero
+                    .onEnded { _ in
+                        isDragging = false
+                        withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
+                            dragOffset = .zero
+                        }
                     }
-                }
-        )
-        .drawingGroup()
+            )
+        }
     }
 
     private var holographicOverlay: some View {
@@ -159,5 +163,14 @@ struct GyroscopeParallaxModifier: ViewModifier {
 extension View {
     func gyroscopeParallax(intensity: Double = 0.5) -> some View {
         modifier(GyroscopeParallaxModifier(intensity: intensity))
+    }
+
+    @ViewBuilder
+    func applyIf<Modified: View>(_ condition: Bool, transform: (Self) -> Modified) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
     }
 }

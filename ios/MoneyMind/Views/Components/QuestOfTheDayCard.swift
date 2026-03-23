@@ -7,30 +7,30 @@ struct QuestOfTheDayCard: View {
     @Query private var dailySlots: [DailyQuestSlot]
 
     @State private var sparkle = false
+    @State private var cachedLuckyQuest: QuestDefinition?
+    @State private var cachedAllComplete: Bool = false
+    @State private var hasLoaded: Bool = false
 
     private var player: PlayerProfile? { playerProfiles.first }
-
-    private var engine: QuestEngine {
-        QuestEngine(modelContext: modelContext)
-    }
-
-    private var luckyQuest: QuestDefinition? {
-        engine.luckyQuestForToday()
-    }
-
-    private var allComplete: Bool {
-        engine.allDailyQuestsComplete()
-    }
 
     private var questStreak: Int {
         player?.questStreak ?? 0
     }
 
     var body: some View {
-        if allComplete && !dailySlots.isEmpty {
-            completedCard
-        } else if let quest = luckyQuest {
-            questCard(quest)
+        Group {
+            if cachedAllComplete && !dailySlots.isEmpty {
+                completedCard
+            } else if let quest = cachedLuckyQuest {
+                questCard(quest)
+            }
+        }
+        .onAppear {
+            guard !hasLoaded else { return }
+            hasLoaded = true
+            let engine = QuestEngine(modelContext: modelContext)
+            cachedLuckyQuest = engine.luckyQuestForToday()
+            cachedAllComplete = engine.allDailyQuestsComplete()
         }
     }
 

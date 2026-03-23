@@ -22,6 +22,10 @@ struct GamesHubView: View {
     @State private var meshPhase: Double = 0
     @State private var navigateToVault: Bool = false
     @State private var navigationPath = NavigationPath()
+    @State private var cachedCompletedDailyCount: Int = 0
+    @State private var cachedCurrentWeeklyChallenge: WeeklyChallenge?
+    @State private var cachedPendingQuestCount: Int = 0
+    @State private var completedQuestIDs: Set<String> = []
 
     private var player: PlayerProfile { playerProfiles.first ?? PlayerProfile() }
     private var pendingCards: Int { scratchCards.filter { !$0.isScratched }.count }
@@ -39,15 +43,7 @@ struct GamesHubView: View {
         }
     }
 
-    private var completedDailyCount: Int {
-        let engine = QuestEngine(modelContext: modelContext)
-        return todaysQuests.filter { engine.isQuestCompleted($0.quest.id) }.count
-    }
-
-    private var currentWeeklyChallenge: WeeklyChallenge? {
-        let manager = WeeklyChallengeManager(modelContext: modelContext)
-        return manager.currentChallenge()
-    }
+    private var completedDailyCount: Int { cachedCompletedDailyCount }
 
     var body: some View {
         NavigationStack(path: $navigationPath) {
@@ -94,6 +90,7 @@ struct GamesHubView: View {
             .toolbarColorScheme(.dark, for: .navigationBar)
             .onAppear {
                 ensurePlayerAndQuests()
+                refreshCachedData()
                 withAnimation(.easeOut(duration: 0.8).delay(0.3)) {
                     animateStats = true
                 }
@@ -255,8 +252,7 @@ struct GamesHubView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     ForEach(todaysQuests, id: \.quest.id) { item in
-                        let engine = QuestEngine(modelContext: modelContext)
-                        let isComplete = engine.isQuestCompleted(item.quest.id)
+                        let isComplete = completedQuestIDs.contains(item.quest.id)
 
                         CompactMissionCard(
                             quest: item.quest,
@@ -310,13 +306,13 @@ struct GamesHubView: View {
                 .padding(.horizontal, 20)
 
             NavigationLink(destination: QuestHubView()) {
-                Parallax3DCard(maxRotation: 8, glowColor: Theme.accent) {
+                Parallax3DCard(maxRotation: 8, glowColor: Theme.accent, interactive: false) {
                     ArcadeGameCard(
                         icon: "map.fill",
                         title: "QUESTS",
                         subtitle: "Real-World Missions",
                         accentColor: Theme.accent,
-                        badgeCount: QuestEngine(modelContext: modelContext).pendingQuestCount(),
+                        badgeCount: cachedPendingQuestCount,
                         statLabel: "Boss: \(player.currentQuestZone.bossName)",
                         statProgress: bossProgressFraction
                     )
@@ -327,7 +323,7 @@ struct GamesHubView: View {
             .padding(.horizontal, 16)
 
             NavigationLink(destination: VaultGameView()) {
-                Parallax3DCard(maxRotation: 8, glowColor: Theme.neonPurple) {
+                Parallax3DCard(maxRotation: 8, glowColor: Theme.neonPurple, interactive: false) {
                     ArcadeGameCard(
                         icon: "sparkles.rectangle.stack",
                         title: "THE VAULT",
@@ -349,7 +345,7 @@ struct GamesHubView: View {
 
     @ViewBuilder
     private var weeklyChallengeBanner: some View {
-        if let challenge = currentWeeklyChallenge {
+        if let challenge = cachedCurrentWeeklyChallenge {
             VStack(spacing: 10) {
                 sectionHeader("WEEKLY CHALLENGE")
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -498,12 +494,12 @@ struct GamesHubView: View {
     }
 
     private var weeklyProgressFraction: Double {
-        guard let challenge = currentWeeklyChallenge else { return 0 }
+        guard let challenge = cachedCurrentWeeklyChallenge else { return 0 }
         return challenge.progressFraction
     }
 
     private var weeklyProgressText: String {
-        guard let challenge = currentWeeklyChallenge else { return "--" }
+        guard let challenge = cachedCurrentWeeklyChallenge else { return "--" }
         return "\(challenge.current)/\(challenge.target)"
     }
 
@@ -616,6 +612,15 @@ struct GamesHubView: View {
         _ = WeeklyChallengeManager(modelContext: modelContext).currentChallenge()
     }
 
+    private func refreshCachedData() {
+        let engine = QuestEngine(modelContext: modelContext)
+        let completed = Set(todaysQuests.filter { engine.isQuestCompleted($0.quest.id) }.map(\.quest.id))
+        completedQuestIDs = completed
+        cachedCompletedDailyCount = completed.count
+        cachedCurrentWeeklyChallenge = WeeklyChallengeManager(modelContext: modelContext).currentChallenge()
+        cachedPendingQuestCount = engine.pendingQuestCount()
+    }
+
     private func completeQuest(_ questID: String) {
         let engine = QuestEngine(modelContext: modelContext)
         let playerDescriptor = FetchDescriptor<PlayerProfile>()
@@ -629,6 +634,7 @@ struct GamesHubView: View {
 
         let reward = engine.completeQuest(questID, player: p)
         lastReward = reward
+        refreshCachedData()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             showRewardCelebration = true

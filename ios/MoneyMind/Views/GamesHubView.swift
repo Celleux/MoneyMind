@@ -98,6 +98,8 @@ struct GamesHubView: View {
             .navigationDestination(for: String.self) { destination in
                 if destination == "vault" {
                     VaultGameView()
+                } else if destination == "leaderboard" {
+                    LeaderboardView()
                 }
             }
             .fullScreenCover(isPresented: $showRewardCelebration) {
@@ -198,6 +200,13 @@ struct GamesHubView: View {
                         .font(.system(size: 13, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                 }
+
+                NavigationLink(destination: LeaderboardView()) {
+                    Image(systemName: "trophy.fill")
+                        .font(.system(size: 13))
+                        .foregroundStyle(Theme.neonGold)
+                }
+                .accessibilityLabel("Leaderboard")
             }
         }
         .padding(.horizontal, 20)

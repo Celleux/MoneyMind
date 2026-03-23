@@ -256,6 +256,7 @@ struct ProfileView: View {
             characterLevelCard
             milestoneTimeline
             badgeCollectionPreview
+            leaderboardLink
             shareCharacterButton
         }
     }
@@ -396,6 +397,23 @@ struct ProfileView: View {
         }
         .padding(20)
         .glassCard()
+    }
+
+    private var leaderboardLink: some View {
+        NavigationLink(destination: LeaderboardView()) {
+            HStack {
+                Image(systemName: "trophy.fill")
+                    .foregroundStyle(Theme.neonGold)
+                Text("Leaderboard")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(.white)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(Theme.textMuted)
+            }
+            .padding(16)
+            .background(Theme.elevated, in: .rect(cornerRadius: 12))
+        }
     }
 
     private var shareCharacterButton: some View {

@@ -344,6 +344,16 @@ struct HomeView: View {
 
     // MARK: - Greeting Header
 
+    private var mascotMood: SplurjiMood {
+        if !impulseLogs.isEmpty, let latest = impulseLogs.first, Calendar.current.isDateInToday(latest.date) {
+            return .celebrating
+        }
+        let hour = Calendar.current.component(.hour, from: Date())
+        if hour < 6 { return .sleeping }
+        if !transactions.isEmpty { return .happy }
+        return .idle
+    }
+
     private var greetingHeader: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
@@ -367,6 +377,8 @@ struct HomeView: View {
             }
 
             Spacer()
+
+            RiveMascotView(mood: mascotMood, size: .small)
 
             Button {
                 bellBounce += 1

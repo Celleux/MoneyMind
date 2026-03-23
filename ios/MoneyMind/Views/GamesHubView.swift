@@ -120,6 +120,8 @@ struct GamesHubView: View {
 
     private var playerCommandBar: some View {
         HStack(spacing: 14) {
+            RiveMascotView(mood: player.questStreak > 0 ? .happy : .idle, size: .small)
+
             ZStack {
                 Circle()
                     .stroke(
@@ -308,29 +310,35 @@ struct GamesHubView: View {
                 .padding(.horizontal, 20)
 
             NavigationLink(destination: QuestHubView()) {
-                ArcadeGameCard(
-                    icon: "map.fill",
-                    title: "QUESTS",
-                    subtitle: "Real-World Missions",
-                    accentColor: Theme.accent,
-                    badgeCount: QuestEngine(modelContext: modelContext).pendingQuestCount(),
-                    statLabel: "Boss: \(player.currentQuestZone.bossName)",
-                    statProgress: bossProgressFraction
-                )
+                Parallax3DCard(maxRotation: 8, glowColor: Theme.accent) {
+                    ArcadeGameCard(
+                        icon: "map.fill",
+                        title: "QUESTS",
+                        subtitle: "Real-World Missions",
+                        accentColor: Theme.accent,
+                        badgeCount: QuestEngine(modelContext: modelContext).pendingQuestCount(),
+                        statLabel: "Boss: \(player.currentQuestZone.bossName)",
+                        statProgress: bossProgressFraction
+                    )
+                }
+                .neonGlow(color: Theme.accent, radius: 12)
             }
             .buttonStyle(.plain)
             .padding(.horizontal, 16)
 
             NavigationLink(destination: VaultGameView()) {
-                ArcadeGameCard(
-                    icon: "sparkles.rectangle.stack",
-                    title: "THE VAULT",
-                    subtitle: "Scratch & Collect",
-                    accentColor: Theme.neonPurple,
-                    badgeCount: pendingCards,
-                    statLabel: "Collection: \(cardCollection.count)/\(CardDatabase.totalCards)",
-                    statProgress: CardDatabase.totalCards > 0 ? Double(cardCollection.count) / Double(CardDatabase.totalCards) : 0
-                )
+                Parallax3DCard(maxRotation: 8, glowColor: Theme.neonPurple) {
+                    ArcadeGameCard(
+                        icon: "sparkles.rectangle.stack",
+                        title: "THE VAULT",
+                        subtitle: "Scratch & Collect",
+                        accentColor: Theme.neonPurple,
+                        badgeCount: pendingCards,
+                        statLabel: "Collection: \(cardCollection.count)/\(CardDatabase.totalCards)",
+                        statProgress: CardDatabase.totalCards > 0 ? Double(cardCollection.count) / Double(CardDatabase.totalCards) : 0
+                    )
+                }
+                .neonGlow(color: Theme.neonPurple, radius: 12)
             }
             .buttonStyle(.plain)
             .padding(.horizontal, 16)

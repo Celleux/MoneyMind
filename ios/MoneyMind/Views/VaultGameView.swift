@@ -155,6 +155,7 @@ struct VaultGameView: View {
                     .zIndex(10)
                     .opacity(cardTransition ? 0 : 1)
                     .scaleEffect(cardTransition ? 0.9 : 1.0)
+                    .holographicSheen(isActive: !cardTransition)
                 } else {
                     let card = pendingCards[index]
                     let offsetY = CGFloat(index) * 5

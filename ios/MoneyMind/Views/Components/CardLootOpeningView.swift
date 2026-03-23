@@ -136,7 +136,9 @@ struct CardLootOpeningView: View {
             .rotation3DEffect(.degrees(cardRotationY), axis: (x: 0, y: 1, z: 0))
             .scaleEffect(cardScale)
             .opacity(cardOpacity)
-            .shadow(color: beamColor.opacity(0.4), radius: 24)
+            .neonGlow(color: beamColor, radius: 24)
+            .depthPop(intensity: isLegendary ? 2.0 : 1.5)
+            .holographicSheen(isActive: phase >= 4)
     }
 
     private var infoLayer: some View {

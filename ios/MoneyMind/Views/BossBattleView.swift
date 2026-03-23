@@ -148,7 +148,7 @@ struct BossBattleView: View {
                 .font(.system(size: 28, weight: .black))
                 .foregroundStyle(Color(hex: 0xF87171))
                 .tracking(3)
-                .shadow(color: Color(hex: 0xF87171).opacity(0.5), radius: 20)
+                .neonGlow(color: Theme.neonRed, radius: 20, pulses: hpFraction < 0.25)
                 .multilineTextAlignment(.center)
 
             Text("Level \(zone.levelRange.upperBound) Guardian")

@@ -133,6 +133,12 @@ struct QuestCard: View {
         }
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadow(color: isLucky ? Theme.gold.opacity(0.25) : .clear, radius: isLucky ? 12 : 0)
+        .neonGlow(
+            color: quest.archetype == .bossBattle ? Theme.neonPurple : .clear,
+            radius: quest.archetype == .bossBattle ? 14 : 0,
+            pulses: quest.archetype == .bossBattle
+        )
+        .holographicSheen(isActive: quest.chainID != nil && !reduceMotion)
         .contentShape(Rectangle())
         .simultaneousGesture(swipeGesture)
         .onTapGesture(perform: onTap)

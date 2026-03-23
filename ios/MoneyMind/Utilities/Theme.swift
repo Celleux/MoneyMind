@@ -246,6 +246,75 @@ extension View {
     }
 }
 
+// MARK: - Neon Glow Modifier
+
+struct NeonGlowModifier: ViewModifier {
+    let color: Color
+    let radius: CGFloat
+    let pulses: Bool
+    @State private var pulseRadius: CGFloat = 10
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    func body(content: Content) -> some View {
+        let effectiveRadius = pulses && !reduceMotion ? pulseRadius : radius
+        content
+            .shadow(color: color.opacity(0.4), radius: effectiveRadius)
+            .shadow(color: color.opacity(0.2), radius: effectiveRadius * 1.5)
+            .onAppear {
+                guard pulses, !reduceMotion else { return }
+                withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
+                    pulseRadius = 30
+                }
+            }
+    }
+}
+
+struct HolographicSheenModifier: ViewModifier {
+    let isActive: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    func body(content: Content) -> some View {
+        if isActive && !reduceMotion {
+            content.overlay {
+                TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
+                    let t = timeline.date.timeIntervalSinceReferenceDate
+                    let angle = Angle.degrees((t / 3.0).truncatingRemainder(dividingBy: 1.0) * 360)
+                    RoundedRectangle(cornerRadius: Theme.Radius.card)
+                        .fill(
+                            AngularGradient(
+                                colors: [
+                                    Theme.neonEmerald.opacity(0.1),
+                                    Theme.neonGold.opacity(0.1),
+                                    Theme.neonPurple.opacity(0.1),
+                                    Theme.neonBlue.opacity(0.1),
+                                    Theme.neonEmerald.opacity(0.1)
+                                ],
+                                center: .center,
+                                startAngle: angle,
+                                endAngle: angle + .degrees(360)
+                            )
+                        )
+                        .blendMode(.overlay)
+                        .allowsHitTesting(false)
+                }
+            }
+            .drawingGroup()
+        } else {
+            content
+        }
+    }
+}
+
+extension View {
+    func neonGlow(color: Color, radius: CGFloat = 20, pulses: Bool = false) -> some View {
+        modifier(NeonGlowModifier(color: color, radius: radius, pulses: pulses))
+    }
+
+    func holographicSheen(isActive: Bool = true) -> some View {
+        modifier(HolographicSheenModifier(isActive: isActive))
+    }
+}
+
 // MARK: - Button Styles
 
 struct PressableButtonStyle: ButtonStyle {

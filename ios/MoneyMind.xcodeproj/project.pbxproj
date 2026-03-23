@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		XX07F9591D65AAE9A73253XX /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = XXFB5A73B0A0BD3E9DE405XX /* Lottie */; };
+		XX613D40B4DBACE6FB1F2BXX /* SplineRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = XX954733BFE1CA5ACC7740XX /* SplineRuntime */; };
+		XXF930C0EAB5B1D4767514XX /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = XX28106667A1066B0D8C5FXX /* RiveRuntime */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -26,13 +29,11 @@
 		};
 /* End PBXContainerItemProxy section */
 
-
 /* Begin PBXFileReference section */
 		105FC57A2E9EAD3100EA8BCF /* MoneyMind.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoneyMind.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		105FC5892E9EAD3200EA8BCF /* MoneyMindTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MoneyMindTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		105FC5932E9EAD3200EA8BCF /* MoneyMindUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MoneyMindUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
-
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		105FC57C2E9EAD3100EA8BCF /* MoneyMind */ = {
@@ -57,6 +58,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				XX07F9591D65AAE9A73253XX /* Lottie in Frameworks */,
+				XXF930C0EAB5B1D4767514XX /* RiveRuntime in Frameworks */,
+				XX613D40B4DBACE6FB1F2BXX /* SplineRuntime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,6 +121,9 @@
 			);
 			name = MoneyMind;
 			packageProductDependencies = (
+				XXFB5A73B0A0BD3E9DE405XX /* Lottie */,
+				XX28106667A1066B0D8C5FXX /* RiveRuntime */,
+				XX954733BFE1CA5ACC7740XX /* SplineRuntime */,
 			);
 			productName = MoneyMind;
 			productReference = 105FC57A2E9EAD3100EA8BCF /* MoneyMind.app */;
@@ -208,6 +215,11 @@
 				105FC5792E9EAD3100EA8BCF /* MoneyMind */,
 				105FC5882E9EAD3200EA8BCF /* MoneyMindTests */,
 				105FC5922E9EAD3200EA8BCF /* MoneyMindUITests */,
+			);
+			packageReferences = (
+				XXCF86FCF3835EEA34DD78XX /* XCRemoteSwiftPackageReference "lottie-spm" */,
+				XX5B38F6F86513B216C8D6XX /* XCRemoteSwiftPackageReference "rive-ios" */,
+				XXA1E0EE6680A574826276XX /* XCRemoteSwiftPackageReference "spline-ios" */,
 			);
 		};
 /* End PBXProject section */
@@ -591,6 +603,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		XX5B38F6F86513B216C8D6XX /* XCRemoteSwiftPackageReference "rive-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rive-app/rive-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
+		XXA1E0EE6680A574826276XX /* XCRemoteSwiftPackageReference "spline-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/splinetool/spline-ios.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.2.50;
+			};
+		};
+		XXCF86FCF3835EEA34DD78XX /* XCRemoteSwiftPackageReference "lottie-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		XX28106667A1066B0D8C5FXX /* RiveRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = XX5B38F6F86513B216C8D6XX /* XCRemoteSwiftPackageReference "rive-ios" */;
+			productName = RiveRuntime;
+		};
+		XX954733BFE1CA5ACC7740XX /* SplineRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = XXA1E0EE6680A574826276XX /* XCRemoteSwiftPackageReference "spline-ios" */;
+			productName = SplineRuntime;
+		};
+		XXFB5A73B0A0BD3E9DE405XX /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = XXCF86FCF3835EEA34DD78XX /* XCRemoteSwiftPackageReference "lottie-spm" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 105FC5722E9EAD3100EA8BCF /* Project object */;
 }

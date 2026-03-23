@@ -183,7 +183,7 @@ struct QuestRewardCelebration: View {
                             )
                         )
                         .contentTransition(.numericText(value: Double(xpCounter)))
-                        .shadow(color: Theme.gold.opacity(0.4), radius: 20)
+                        .neonGlow(color: Theme.neonGold, radius: 16)
                         .scaleEffect(xpScale)
 
                     Text("EXPERIENCE POINTS")
@@ -244,7 +244,8 @@ struct QuestRewardCelebration: View {
                         .font(.system(size: 44))
                         .foregroundStyle(Theme.accent)
                         .scaleEffect(cardZoomScale)
-                        .shadow(color: Theme.accent.opacity(0.5), radius: 16)
+                        .neonGlow(color: Theme.neonEmerald, radius: 20)
+                        .depthPop(intensity: 1.5)
 
                     Text("A card awaits in The Vault")
                         .font(.system(size: 13, weight: .bold))

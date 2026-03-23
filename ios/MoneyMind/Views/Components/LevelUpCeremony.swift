@@ -277,6 +277,7 @@ struct LevelUpCeremony: View {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                 showContinue = true
             }
+            AppReviewManager.shared.requestReviewAfterDelay(seconds: 1.5)
         }
     }
 

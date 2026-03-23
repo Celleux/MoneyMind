@@ -90,6 +90,7 @@ struct QuestRewardCelebration: View {
             if canDismiss { dismiss() }
         }
         .onAppear {
+            AppReviewManager.shared.recordQuestCompletion()
             if reduceMotion {
                 startReducedSequence()
             } else {
@@ -784,6 +785,10 @@ struct QuestRewardCelebration: View {
 
         withAnimation(.easeOut(duration: 0.3).delay(delay + 0.2)) {
             canDismiss = true
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay + 1.0) {
+            AppReviewManager.shared.requestReviewAfterDelay(seconds: 0.5)
         }
     }
 

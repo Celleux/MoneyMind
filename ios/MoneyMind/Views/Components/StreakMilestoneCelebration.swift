@@ -217,6 +217,9 @@ struct StreakMilestoneCelebration: View {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.2) {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) { showContinue = true }
+            if days >= 7 {
+                AppReviewManager.shared.requestReviewAfterDelay(seconds: 1.5)
+            }
         }
     }
 

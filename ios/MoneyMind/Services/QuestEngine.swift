@@ -32,7 +32,8 @@ final class QuestEngine {
 
         guard !selected.isEmpty else { return }
 
-        let luckyIndex = Int.random(in: 0..<selected.count)
+        let daySeed = deterministicSeed(for: today, playerLevel: player.level, salt: "lucky")
+        let luckyIndex = daySeed % selected.count
 
         for (i, quest) in selected.enumerated() {
             let slot = DailyQuestSlot(
@@ -333,6 +334,11 @@ final class QuestEngine {
     private func weightedSelection(from quests: [QuestDefinition], count: Int, player: PlayerProfile) -> [QuestDefinition] {
         guard !quests.isEmpty else { return [] }
 
+        let today = Calendar.current.startOfDay(for: Date())
+        var rng = SeededRandomNumberGenerator(
+            seed: UInt64(deterministicSeed(for: today, playerLevel: player.level, salt: "selection"))
+        )
+
         let lastCompleted = lastCompletedDifficulty()
         let favorEasy = lastCompleted == .hard || lastCompleted == .legendary
 
@@ -370,7 +376,7 @@ final class QuestEngine {
             let totalWeight = adjusted.reduce(0.0) { $0 + $1.1 }
             guard totalWeight > 0 else { break }
 
-            var roll = Double.random(in: 0..<totalWeight)
+            var roll = Double.random(in: 0..<totalWeight, using: &rng)
             var picked: QuestDefinition?
 
             for (quest, w) in adjusted {
@@ -388,6 +394,18 @@ final class QuestEngine {
         }
 
         return selected
+    }
+
+    // MARK: - Deterministic Seed
+
+    private func deterministicSeed(for date: Date, playerLevel: Int, salt: String) -> Int {
+        let calendar = Calendar.current
+        let day = calendar.ordinality(of: .day, in: .era, for: date) ?? 0
+        var hasher = Hasher()
+        hasher.combine(day)
+        hasher.combine(playerLevel)
+        hasher.combine(salt)
+        return abs(hasher.finalize())
     }
 
     private func lastCompletedDifficulty() -> QuestDifficulty? {
@@ -562,5 +580,21 @@ final class QuestEngine {
         modelContext.insert(player)
         try? modelContext.save()
         return player
+    }
+}
+
+nonisolated struct SeededRandomNumberGenerator: RandomNumberGenerator, Sendable {
+    private var state: UInt64
+
+    init(seed: UInt64) {
+        state = seed == 0 ? 1 : seed
+    }
+
+    mutating func next() -> UInt64 {
+        state &+= 0x9e3779b97f4a7c15
+        var z = state
+        z = (z ^ (z >> 30)) &* 0xbf58476d1ce4e5b9
+        z = (z ^ (z >> 27)) &* 0x94d049bb133111eb
+        return z ^ (z >> 31)
     }
 }

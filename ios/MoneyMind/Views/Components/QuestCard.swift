@@ -7,8 +7,10 @@ struct QuestCard: View {
     let progress: QuestProgress?
     let onTap: () -> Void
     let onComplete: () -> Void
+    var onArchive: (() -> Void)?
 
     @State private var showCompletionAnimation: Bool = false
+    @State private var showArchiveConfirmation: Bool = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var currentStep: Int { progress?.currentStepIndex ?? 0 }
@@ -208,7 +210,58 @@ struct QuestCard: View {
             }
             .accessibilityLabel(quest.steps.count > 1 && currentStep < quest.steps.count - 1 ? "Complete current step" : "Complete quest for \(quest.baseXP) XP")
             .padding(.horizontal, 16)
-            .padding(.bottom, 16)
+
+            if onArchive != nil {
+                if showArchiveConfirmation {
+                    VStack(spacing: 8) {
+                        Text("That's okay \u{2014} you tried, and that took courage.")
+                            .font(.system(size: 11))
+                            .foregroundStyle(Theme.textSecondary)
+                            .multilineTextAlignment(.center)
+
+                        HStack(spacing: 16) {
+                            Button {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    showArchiveConfirmation = false
+                                }
+                            } label: {
+                                Text("Keep Quest")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundStyle(Theme.textSecondary)
+                            }
+
+                            Button {
+                                onArchive?()
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "leaf.fill")
+                                        .font(.system(size: 10))
+                                    Text("Archive (+15 XP)")
+                                        .font(.system(size: 12, weight: .semibold))
+                                }
+                                .foregroundStyle(Theme.accent)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 4)
+                    .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                } else {
+                    Button {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showArchiveConfirmation = true
+                        }
+                    } label: {
+                        Text("Not for me right now")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(Theme.textMuted)
+                    }
+                    .padding(.top, 4)
+                    .accessibilityLabel("Archive this quest. You'll earn 15 XP for financial wisdom.")
+                }
+            }
+
+            Spacer().frame(height: 16)
         }
     }
 

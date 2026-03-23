@@ -13,6 +13,7 @@ struct QuestChainDetailView: View {
     @State private var showRewardCelebration: Bool = false
     @State private var lastReward: QuestReward?
     @State private var shimmerOffset: CGFloat = -200
+    @State private var showChainArchiveConfirmation: Bool = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var chainQuests: [QuestDefinition] {
@@ -488,6 +489,52 @@ struct QuestChainDetailView: View {
                 .shadow(color: Theme.accent.opacity(0.4), radius: 10, y: 4)
             }
             .sensoryFeedback(.impact(weight: .medium), trigger: completedCount)
+
+            if showChainArchiveConfirmation {
+                VStack(spacing: 8) {
+                    Text("That's okay \u{2014} you tried, and that took courage.")
+                        .font(.system(size: 11))
+                        .foregroundStyle(Theme.textSecondary)
+                        .multilineTextAlignment(.center)
+
+                    HStack(spacing: 16) {
+                        Button {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showChainArchiveConfirmation = false
+                            }
+                        } label: {
+                            Text("Keep Quest")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(Theme.textSecondary)
+                        }
+
+                        Button {
+                            archiveCurrentQuest(quest)
+                        } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "leaf.fill")
+                                    .font(.system(size: 10))
+                                Text("Archive (+15 XP)")
+                                    .font(.system(size: 12, weight: .semibold))
+                            }
+                            .foregroundStyle(Theme.accent)
+                        }
+                    }
+                }
+                .padding(.top, 4)
+                .transition(.opacity.combined(with: .scale(scale: 0.95)))
+            } else {
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showChainArchiveConfirmation = true
+                    }
+                } label: {
+                    Text("Not for me right now")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(Theme.textMuted)
+                }
+                .padding(.top, 4)
+            }
         }
         .transition(.opacity.combined(with: .move(edge: .top)))
     }
@@ -652,6 +699,17 @@ struct QuestChainDetailView: View {
             }
         } else {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        }
+    }
+
+    private func archiveCurrentQuest(_ quest: QuestDefinition) {
+        let questEngine = QuestEngine(modelContext: modelContext)
+        let player = questEngine.getOrCreatePlayer()
+        questEngine.archiveQuest(quest.id, player: player)
+
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+            expandedQuestID = nil
+            showChainArchiveConfirmation = false
         }
     }
 }

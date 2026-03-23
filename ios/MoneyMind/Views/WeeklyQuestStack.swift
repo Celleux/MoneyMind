@@ -85,6 +85,9 @@ struct WeeklyQuestStack: View {
                         },
                         onComplete: {
                             completeQuest(item.quest.id)
+                        },
+                        onArchive: {
+                            archiveQuest(item.quest.id)
                         }
                     )
                     .padding(.horizontal, 16)
@@ -126,6 +129,17 @@ struct WeeklyQuestStack: View {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             showRewardCelebration = true
+        }
+    }
+
+    private func archiveQuest(_ questID: String) {
+        let engine = QuestEngine(modelContext: modelContext)
+        let player = engine.getOrCreatePlayer()
+        engine.archiveQuest(questID, player: player)
+
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+            expandedQuestID = nil
+            completedQuestIDs.insert(questID)
         }
     }
 }

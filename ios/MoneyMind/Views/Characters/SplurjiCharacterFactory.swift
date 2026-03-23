@@ -1,5 +1,4 @@
 import SwiftUI
-import RiveRuntime
 
 protocol SplurjCharacterProtocol {
     var currentMood: SplurjiMood { get }
@@ -36,20 +35,10 @@ struct SplurjiWithBubble: View {
 struct SplurjiCharacterView: View {
     let mood: SplurjiMood
     let size: CGFloat
-    @State private var hasRiveFile: Bool = false
 
     var body: some View {
-        Group {
-            if hasRiveFile {
-                SplurjRiveView(fileName: "splurji", stateMachineName: "MainState")
-            } else {
-                SplurjiCharacter(mood: mood, size: size)
-            }
-        }
-        .frame(width: size, height: size)
-        .onAppear {
-            hasRiveFile = Bundle.main.url(forResource: "splurji", withExtension: "riv") != nil
-        }
-        .accessibilityLabel("Splurji mascot, current mood: \(mood.rawValue)")
+        SplurjiCharacter(mood: mood, size: size)
+            .frame(width: size, height: size)
+            .accessibilityLabel("Splurji mascot, current mood: \(mood.rawValue)")
     }
 }

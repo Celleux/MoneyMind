@@ -1,31 +1,11 @@
 import SwiftUI
-import RiveRuntime
 
 struct SplurjRiveView: View {
     let fileName: String
     var stateMachineName: String = "MainState"
-    @State private var riveVM: RiveViewModel?
-    @State private var loadFailed: Bool = false
 
     var body: some View {
-        Group {
-            if let vm = riveVM {
-                vm.view()
-            } else if loadFailed {
-                placeholderView
-            } else {
-                Color.clear
-                    .onAppear { loadRive() }
-            }
-        }
-    }
-
-    private func loadRive() {
-        if Bundle.main.url(forResource: fileName, withExtension: "riv") != nil {
-            riveVM = RiveViewModel(fileName: fileName, stateMachineName: stateMachineName)
-        } else {
-            loadFailed = true
-        }
+        placeholderView
     }
 
     private var placeholderView: some View {
@@ -39,17 +19,9 @@ struct SplurjRiveView: View {
         }
     }
 
-    func setInput(_ name: String, boolValue: Bool) {
-        riveVM?.setInput(name, value: boolValue)
-    }
-
-    func setInput(_ name: String, doubleValue: Double) {
-        riveVM?.setInput(name, value: doubleValue)
-    }
-
-    func triggerInput(_ name: String) {
-        riveVM?.triggerInput(name)
-    }
+    func setInput(_ name: String, boolValue: Bool) {}
+    func setInput(_ name: String, doubleValue: Double) {}
+    func triggerInput(_ name: String) {}
 }
 
 enum SplurjiMood: String, CaseIterable {
@@ -72,25 +44,11 @@ struct RiveMascotView: View {
         }
     }
 
-    @State private var hasRiveFile: Bool = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        Group {
-            if hasRiveFile {
-                SplurjRiveView(fileName: "splurji", stateMachineName: "MainState")
-            } else {
-                fallbackMascot
-            }
-        }
-        .frame(width: size.dimension, height: size.dimension)
-        .onAppear {
-            hasRiveFile = Bundle.main.url(forResource: "splurji", withExtension: "riv") != nil
-        }
-        .accessibilityLabel("Splurji mascot, current mood: \(mood.rawValue)")
-    }
-
-    private var fallbackMascot: some View {
         SplurjiCharacter(mood: mood, size: size.dimension)
+            .frame(width: size.dimension, height: size.dimension)
+            .accessibilityLabel("Splurji mascot, current mood: \(mood.rawValue)")
     }
 }

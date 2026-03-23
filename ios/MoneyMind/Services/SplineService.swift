@@ -1,10 +1,7 @@
 import SwiftUI
-import SplineRuntime
 
 struct Spline3DView: View {
     let sceneSource: SceneSource
-    @State private var isLoading: Bool = true
-    @State private var loadFailed: Bool = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     enum SceneSource {
@@ -21,56 +18,7 @@ struct Spline3DView: View {
     }
 
     var body: some View {
-        Group {
-            if loadFailed {
-                fallbackView
-            } else {
-                splineContent
-                    .overlay {
-                        if isLoading {
-                            loadingPlaceholder
-                        }
-                    }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var splineContent: some View {
-        switch sceneSource {
-        case .url(let url):
-            SplineView(sceneFileURL: url)
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        isLoading = false
-                    }
-                }
-        case .local(let fileName):
-            if let fileURL = Bundle.main.url(forResource: fileName, withExtension: "splineswift") {
-                SplineView(sceneFileURL: fileURL)
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            isLoading = false
-                        }
-                    }
-            } else {
-                fallbackView
-                    .onAppear { loadFailed = true }
-            }
-        }
-    }
-
-    private var loadingPlaceholder: some View {
-        ZStack {
-            Theme.surface
-            VStack(spacing: 12) {
-                ProgressView()
-                    .tint(Theme.accent)
-                Text("Loading 3D scene...")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(Theme.textMuted)
-            }
-        }
+        fallbackView
     }
 
     private var fallbackView: some View {
@@ -84,14 +32,6 @@ struct Spline3DView: View {
                 Text("3D Scene")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(Theme.textSecondary)
-                Button {
-                    loadFailed = false
-                    isLoading = true
-                } label: {
-                    Text("Retry")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(Theme.accent)
-                }
             }
         }
     }

@@ -7,6 +7,16 @@ nonisolated enum MoneyPersonality: String, CaseIterable, Codable, Sendable {
     case minimalist = "The Minimalist"
     case generous = "The Generous"
 
+    var toArchetype: FinancialArchetype {
+        switch self {
+        case .saver: .guardian
+        case .builder: .visionary
+        case .hustler: .adventurer
+        case .minimalist: .strategist
+        case .generous: .empath
+        }
+    }
+
     var icon: String {
         switch self {
         case .saver: "leaf.fill"

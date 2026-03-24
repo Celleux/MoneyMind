@@ -51,12 +51,19 @@ struct GamesHubView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 16) {
                     playerCommandBar
+                        .staggerIn(index: 0)
                     liveTicker
+                        .staggerIn(index: 1)
                     todaysMissions
+                        .staggerIn(index: 2)
                     gameCards
+                        .staggerIn(index: 3)
                     weeklyChallengeBanner
+                        .staggerIn(index: 4)
                     unifiedProgressSection
+                        .staggerIn(index: 5)
                     statsDashboard
+                        .staggerIn(index: 6)
                 }
                 .padding(.bottom, 32)
             }

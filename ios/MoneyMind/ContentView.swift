@@ -18,21 +18,27 @@ struct ContentView: View {
         TabView(selection: $selectedTab) {
             Tab("Home", systemImage: "house", value: .home) {
                 HomeView()
+                    .transition(.opacity.combined(with: .scale(scale: 0.98)))
             }
             Tab("Wallet", systemImage: "wallet.bifold", value: .wallet) {
                 WalletView()
+                    .transition(.opacity.combined(with: .scale(scale: 0.98)))
             }
             Tab("Games", systemImage: "gamecontroller.fill", value: .games) {
                 GamesHubView()
+                    .transition(.opacity.combined(with: .scale(scale: 0.98)))
             }
             Tab("Tools", systemImage: "wrench.and.screwdriver", value: .tools) {
                 ToolkitView()
+                    .transition(.opacity.combined(with: .scale(scale: 0.98)))
             }
             Tab("Community", systemImage: "bubble.left.and.bubble.right", value: .community) {
                 CommunityView()
+                    .transition(.opacity.combined(with: .scale(scale: 0.98)))
             }
             Tab("Profile", systemImage: "person.circle", value: .profile) {
                 ProfileView()
+                    .transition(.opacity.combined(with: .scale(scale: 0.98)))
             }
         }
         .tint(Theme.accent)

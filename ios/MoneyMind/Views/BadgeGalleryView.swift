@@ -51,12 +51,13 @@ struct BadgeGalleryView: View {
                     GridItem(.flexible()),
                     GridItem(.flexible())
                 ], spacing: 16) {
-                    ForEach(categoryBadges, id: \.name) { badge in
+                    ForEach(Array(categoryBadges.enumerated()), id: \.element.name) { index, badge in
                         BadgeCellView(badge: badge) {
                             if badge.isEarned {
                                 selectedBadgeName = badge.name
                             }
                         }
+                        .staggerIn(index: index)
                     }
                 }
             }

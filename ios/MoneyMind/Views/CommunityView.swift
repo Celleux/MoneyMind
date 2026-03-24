@@ -25,14 +25,21 @@ struct CommunityView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     categoryFilter
+                        .staggerIn(index: 0)
                     shareStoryCard
+                        .staggerIn(index: 1)
                     challengeFriendButton
+                        .staggerIn(index: 2)
                     if !activeChallengeInvites.isEmpty {
                         myChallengeInvitesSection
+                            .staggerIn(index: 3)
                     }
                     feedSection
+                        .staggerIn(index: 4)
                     partnerSection
+                        .staggerIn(index: 5)
                     challengesSection
+                        .staggerIn(index: 6)
                 }
                 .padding(.bottom, 32)
             }

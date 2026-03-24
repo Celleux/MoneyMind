@@ -849,12 +849,40 @@ struct DashboardTransaction: Identifiable {
 
 // MARK: - Stagger Animation Modifier
 
+struct StaggeredAppearance: ViewModifier {
+    let index: Int
+    @State private var appeared: Bool = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(appeared ? 1 : 0)
+            .offset(y: appeared ? 0 : 20)
+            .scaleEffect(appeared ? 1 : 0.95)
+            .animation(
+                reduceMotion
+                    ? .none
+                    : .spring(response: 0.5, dampingFraction: 0.7)
+                        .delay(Double(index) * 0.08),
+                value: appeared
+            )
+            .onAppear {
+                guard !appeared else { return }
+                appeared = true
+            }
+    }
+}
+
 extension View {
+    func staggerIn(index: Int) -> some View {
+        modifier(StaggeredAppearance(index: index))
+    }
+
     func staggerIn(appeared: Bool, delay: Double) -> some View {
         self
             .opacity(appeared ? 1 : 0)
             .offset(y: appeared ? 0 : 16)
-            .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(delay), value: appeared)
+            .animation(.spring(response: 0.5, dampingFraction: 0.7).delay(delay), value: appeared)
     }
 }
 

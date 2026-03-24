@@ -47,32 +47,38 @@ struct QuestHubView: View {
 
                 QuestHeroHeader(player: player)
                     .padding(.bottom, 16)
+                    .staggerIn(index: 0)
 
                 ZoneBanner(zone: player.currentQuestZone)
                     .onTapGesture { showQuestMap = true }
                     .padding(.horizontal, 16)
                     .padding(.bottom, 20)
+                    .staggerIn(index: 1)
 
                 QuestTabBar(selectedTab: $selectedTab, namespace: animation)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 16)
+                    .staggerIn(index: 2)
 
-                switch selectedTab {
-                case .dailies:
-                    DailyQuestStack()
-                case .weekly:
-                    WeeklyQuestStack()
-                case .chains:
-                    QuestChainGrid()
-                case .boss:
-                    BossBattleCard(
-                        zone: player.currentQuestZone,
-                        damageDealt: player.currentBossDamageDealt,
-                        onFight: {
-                            showBossBattle = true
-                        }
-                    )
+                Group {
+                    switch selectedTab {
+                    case .dailies:
+                        DailyQuestStack()
+                    case .weekly:
+                        WeeklyQuestStack()
+                    case .chains:
+                        QuestChainGrid()
+                    case .boss:
+                        BossBattleCard(
+                            zone: player.currentQuestZone,
+                            damageDealt: player.currentBossDamageDealt,
+                            onFight: {
+                                showBossBattle = true
+                            }
+                        )
+                    }
                 }
+                .staggerIn(index: 3)
 
                 Spacer(minLength: 100)
             }

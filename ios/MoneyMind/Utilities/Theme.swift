@@ -553,9 +553,9 @@ struct SplurjButtonStyle: ButtonStyle {
     private func shadowColor(pressed: Bool) -> Color {
         guard !pressed else { return .clear }
         switch variant {
-        case .primary: Theme.accent.opacity(0.25)
-        case .destructive: Theme.danger.opacity(0.2)
-        default: Color.clear
+        case .primary: return Theme.accent.opacity(0.25)
+        case .destructive: return Theme.danger.opacity(0.2)
+        default: return Color.clear
         }
     }
 

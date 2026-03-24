@@ -157,7 +157,15 @@ struct HomeView: View {
                 try? await Task.sleep(for: .seconds(0.5))
             }
             .sensoryFeedback(.impact(weight: .light), trigger: refreshRotation)
-            .background(Theme.background.ignoresSafeArea())
+            .background(
+                ZStack {
+                    Theme.background.ignoresSafeArea()
+                    SplurjSwoosh()
+                        .fill(Theme.accent.opacity(0.03))
+                        .ignoresSafeArea()
+                        .allowsHitTesting(false)
+                }
+            )
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showLogWin) {
                 LogWinSheet()
@@ -460,24 +468,31 @@ struct HomeView: View {
             let minY = geo.frame(in: .named("homeScroll")).minY
             let parallax = minY * 0.2
 
-            VStack(spacing: 10) {
-                Text("Total Saved This Month")
-                    .font(Typography.bodySmall)
-                    .foregroundStyle(Theme.textSecondary)
+            ZStack {
+                SplurjSwoosh()
+                    .fill(Theme.accent.opacity(0.05))
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .allowsHitTesting(false)
 
-                MMAmountDisplay(amount: totalSavedThisMonth, font: Theme.amountXL, color: Theme.accent)
-
-                HStack(spacing: 4) {
-                    (savedDifference >= 0 ? PhIcon.arrowUpRight : PhIcon.arrowDownRight)
-                        .frame(width: 12, height: 12)
-                    Text("\(currencySymbol)\(abs(savedDifference), specifier: "%.0f") from last month")
+                VStack(spacing: 10) {
+                    Text("Total Saved This Month")
                         .font(Typography.bodySmall)
-                        .contentTransition(.numericText())
+                        .foregroundStyle(Theme.textSecondary)
+
+                    AnimatedNumber(value: totalSavedThisMonth, format: .currency, font: Typography.moneyHero, color: Theme.accent)
+
+                    HStack(spacing: 4) {
+                        (savedDifference >= 0 ? PhIcon.arrowUpRight : PhIcon.arrowDownRight)
+                            .frame(width: 12, height: 12)
+                        Text("\(currencySymbol)\(abs(savedDifference), specifier: "%.0f") from last month")
+                            .font(Typography.bodySmall)
+                            .contentTransition(.numericText())
+                    }
+                    .foregroundStyle(savedDifference >= 0 ? Theme.accent : Theme.danger)
                 }
-                .foregroundStyle(savedDifference >= 0 ? Theme.accent : Theme.danger)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 24)
             .splurjCard(.hero)
             .offset(y: parallax)
         }

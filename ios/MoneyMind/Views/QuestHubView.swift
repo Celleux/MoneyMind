@@ -78,12 +78,19 @@ struct QuestHubView: View {
             }
         }
         .background(
-            LinearGradient(
-                colors: player.currentQuestZone.gradientColors,
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            ZStack {
+                LinearGradient(
+                    colors: player.currentQuestZone.gradientColors,
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+
+                SplurjSwoosh()
+                    .fill(Theme.accent.opacity(0.03))
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+            }
         )
         .navigationTitle("Quests")
         .toolbarColorScheme(.dark, for: .navigationBar)

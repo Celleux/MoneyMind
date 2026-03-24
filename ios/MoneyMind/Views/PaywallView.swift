@@ -30,7 +30,13 @@ struct PaywallView: View {
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            Theme.background.ignoresSafeArea()
+            ZStack {
+                Theme.background.ignoresSafeArea()
+                SplurjSwoosh()
+                    .fill(Theme.accent.opacity(0.05))
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+            }
 
             ScrollView {
                 VStack(spacing: 32) {

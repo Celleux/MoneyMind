@@ -113,7 +113,15 @@ struct ProfileView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 80)
             }
-            .background(Theme.background.ignoresSafeArea())
+            .background(
+                ZStack {
+                    Theme.background.ignoresSafeArea()
+                    SplurjSwoosh()
+                        .fill(Theme.accent.opacity(0.03))
+                        .ignoresSafeArea()
+                        .allowsHitTesting(false)
+                }
+            )
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)

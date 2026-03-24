@@ -63,6 +63,10 @@ struct GamesHubView: View {
             .background(
                 ZStack {
                     Theme.background.ignoresSafeArea()
+                    SplurjSwoosh()
+                        .fill(Theme.accent.opacity(0.02))
+                        .ignoresSafeArea()
+                        .allowsHitTesting(false)
                     if !reduceMotion {
                         TimelineView(.animation(minimumInterval: 1.0 / 15.0)) { timeline in
                             let t = timeline.date.timeIntervalSinceReferenceDate

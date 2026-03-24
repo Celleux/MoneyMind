@@ -42,14 +42,11 @@ struct WalletView: View {
             ZStack(alignment: .bottom) {
                 ScrollView {
                     if impulseLogs.isEmpty && (profile?.totalSaved ?? 0) <= 2.0 {
-                        PersonalityEmptyStateView(
-                            personality: personality,
-                            icon: "wallet.bifold.fill",
-                            secondaryIcon: "sparkle",
-                            headline: "Your Wallet Awaits",
-                            subtext: "Log your first win to start\ntracking your savings journey",
-                            buttonLabel: "Log a Win",
-                            buttonIcon: "star.fill"
+                        SplurjEmptyState(
+                            icon: PhIcon.wallet,
+                            title: "No transactions yet",
+                            subtitle: "Log your first win — every saved dollar counts!",
+                            ctaTitle: "Log a Win"
                         ) {
                             vm.showLogWin = true
                         }
@@ -73,7 +70,15 @@ struct WalletView: View {
 
                 floatingActions
             }
-            .background(Theme.background.ignoresSafeArea())
+            .background(
+                ZStack {
+                    Theme.background.ignoresSafeArea()
+                    SplurjSwoosh()
+                        .fill(Theme.accent.opacity(0.03))
+                        .ignoresSafeArea()
+                        .allowsHitTesting(false)
+                }
+            )
             .navigationTitle("Wallet")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)

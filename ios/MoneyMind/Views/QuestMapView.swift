@@ -80,7 +80,7 @@ struct QuestMapView: View {
         HStack {
             Button { dismiss() } label: {
                 Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 28))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.textMuted)
             }
 
@@ -88,11 +88,11 @@ struct QuestMapView: View {
 
             VStack(spacing: 2) {
                 Text("QUEST MAP")
-                    .font(.system(size: 13, weight: .black))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(.white)
                     .tracking(3)
                 Text("Level \(player.level)")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
@@ -262,11 +262,11 @@ struct ZoneMapNode: View {
 
             if isLocked {
                 Image(systemName: "lock.fill")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textMuted)
             } else {
                 Image(systemName: zone.sfSymbol)
-                    .font(.system(size: 22, weight: .bold))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(
                         isCleared ? Theme.gold :
                         zoneAccentColor
@@ -278,7 +278,7 @@ struct ZoneMapNode: View {
     private var zoneInfo: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(zone.rawValue.uppercased())
-                .font(.system(size: 10, weight: .heavy))
+                .font(Typography.labelSmall)
                 .foregroundStyle(
                     isCleared ? Theme.gold :
                     isCurrent ? zoneAccentColor :
@@ -287,7 +287,7 @@ struct ZoneMapNode: View {
                 .tracking(1.5)
 
             Text("Levels \(zone.levelRange.lowerBound)–\(zone.levelRange.upperBound)")
-                .font(.system(size: 18, weight: .black))
+                .font(Typography.headingLarge)
                 .foregroundStyle(isLocked ? Theme.textMuted : .white)
 
             if isCurrent {
@@ -296,22 +296,22 @@ struct ZoneMapNode: View {
                         .fill(Theme.accent)
                         .frame(width: 6, height: 6)
                     Text("YOU ARE HERE")
-                        .font(.system(size: 9, weight: .black))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.accent)
                         .tracking(1)
                 }
             } else if isCleared {
                 HStack(spacing: 4) {
                     Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 10))
+                        .font(Typography.labelSmall)
                     Text("CLEARED")
-                        .font(.system(size: 9, weight: .black))
+                        .font(Typography.labelSmall)
                         .tracking(1)
                 }
                 .foregroundStyle(Theme.gold)
             } else {
                 Text("Reach Level \(zone.levelRange.lowerBound) to unlock")
-                    .font(.system(size: 10, weight: .medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
         }
@@ -322,20 +322,20 @@ struct ZoneMapNode: View {
             if isCleared {
                 ZStack {
                     Image(systemName: "shield.fill")
-                        .font(.system(size: 28))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.gold.opacity(0.2))
                     Image(systemName: "checkmark")
-                        .font(.system(size: 14, weight: .black))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.gold)
                 }
             } else if isCurrent {
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 14, weight: .bold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(zoneAccentColor.opacity(0.6))
                     .rotationEffect(.degrees(isSelected ? 180 : 0))
             } else {
                 Image(systemName: "lock.circle")
-                    .font(.system(size: 22))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.textDisabled)
             }
         }
@@ -344,7 +344,7 @@ struct ZoneMapNode: View {
     private var expandedDetails: some View {
         VStack(spacing: 14) {
             Text(zone.themeDescription)
-                .font(.system(size: 12))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -367,7 +367,7 @@ struct ZoneMapNode: View {
                 VStack(spacing: 6) {
                     HStack {
                         Text("Zone Progress")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                         Spacer()
                         Text("\(Int(progress * 100))%")
@@ -390,16 +390,16 @@ struct ZoneMapNode: View {
 
             HStack(spacing: 8) {
                 Image(systemName: bossIcon)
-                    .font(.system(size: 14))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(isCleared ? Theme.textMuted : Color(hex: 0xF87171))
                 Text(zone.bossName)
-                    .font(.system(size: 12, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(isCleared ? Theme.textMuted : .white)
                     .strikethrough(isCleared, color: Theme.gold)
                 Spacer()
                 if isCleared {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 14))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.gold.opacity(0.5))
                 }
             }
@@ -429,16 +429,16 @@ struct ZoneMapNode: View {
     private func statPill(icon: String, label: String, value: String) -> some View {
         HStack(spacing: 8) {
             Image(systemName: icon)
-                .font(.system(size: 12))
+                .font(Typography.bodySmall)
                 .foregroundStyle(zoneAccentColor.opacity(0.7))
 
             VStack(alignment: .leading, spacing: 1) {
                 Text(label.uppercased())
-                    .font(.system(size: 8, weight: .bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
                     .tracking(0.5)
                 Text(value)
-                    .font(.system(size: 13, weight: .black, design: .rounded))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(.white)
             }
         }

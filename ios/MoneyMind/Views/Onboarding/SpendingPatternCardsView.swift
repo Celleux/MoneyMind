@@ -28,7 +28,7 @@ struct SpendingPatternCardsView: View {
             .padding(.top, 20)
 
             Text("\(currentCard + 1) of \(scenarios.count)")
-                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textMuted)
                 .tracking(1)
                 .padding(.top, 10)
@@ -90,18 +90,18 @@ struct SpendingPatternCardsView: View {
     private var swipeHandHint: some View {
         VStack(spacing: 8) {
             Text("Swipe the card or tap a button")
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .font(Typography.labelMedium)
                 .foregroundStyle(Theme.textMuted)
 
             HStack(spacing: 0) {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Color(hex: 0x60A5FA))
                     .opacity(swipeHintPhase ? 0.3 : 0.8)
                     .offset(x: swipeHintPhase ? -6 : 0)
 
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Color(hex: 0x60A5FA))
                     .opacity(swipeHintPhase ? 0.6 : 0.3)
                     .offset(x: swipeHintPhase ? -3 : 0)
@@ -115,7 +115,7 @@ struct SpendingPatternCardsView: View {
                         .scaleEffect(swipeHintPhase ? 1.15 : 1.0)
 
                     Image(systemName: "hand.draw.fill")
-                        .font(.system(size: 22))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(.white.opacity(0.8))
                         .offset(x: swipeHintPhase ? 14 : -14)
                 }
@@ -123,13 +123,13 @@ struct SpendingPatternCardsView: View {
                 Spacer().frame(width: 16)
 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Color(hex: 0xFB923C))
                     .opacity(swipeHintPhase ? 0.6 : 0.3)
                     .offset(x: swipeHintPhase ? 3 : 0)
 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Color(hex: 0xFB923C))
                     .opacity(swipeHintPhase ? 0.3 : 0.8)
                     .offset(x: swipeHintPhase ? 6 : 0)
@@ -151,9 +151,9 @@ struct SpendingPatternCardsView: View {
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "arrow.left")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(Typography.labelMedium)
                     Text(currentCard < scenarios.count ? scenarios[currentCard].leftShort : "")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .font(Typography.labelMedium)
                         .lineLimit(1)
                 }
                 .foregroundStyle(Color(hex: 0x60A5FA))
@@ -165,17 +165,17 @@ struct SpendingPatternCardsView: View {
                         .strokeBorder(Color(hex: 0x60A5FA).opacity(0.3), lineWidth: 1)
                 )
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(.plain)
 
             Button {
                 triggerChoice(swipedRight: true)
             } label: {
                 HStack(spacing: 6) {
                     Text(currentCard < scenarios.count ? scenarios[currentCard].rightShort : "")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .font(Typography.labelMedium)
                         .lineLimit(1)
                     Image(systemName: "arrow.right")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(Typography.labelMedium)
                 }
                 .foregroundStyle(Color(hex: 0xFB923C))
                 .frame(maxWidth: .infinity)
@@ -186,7 +186,7 @@ struct SpendingPatternCardsView: View {
                         .strokeBorder(Color(hex: 0xFB923C).opacity(0.3), lineWidth: 1)
                 )
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(.plain)
         }
     }
 
@@ -198,7 +198,7 @@ struct SpendingPatternCardsView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
             }
-            .font(.system(size: 11, weight: .medium))
+            .font(Typography.labelSmall)
             .foregroundStyle(
                 Color(hex: 0x60A5FA).opacity(
                     abs(dragOffset.width) > 50 && dragOffset.width < 0 ? 1.0 : 0.4
@@ -213,7 +213,7 @@ struct SpendingPatternCardsView: View {
                     .minimumScaleFactor(0.7)
                 Image(systemName: "arrow.right")
             }
-            .font(.system(size: 11, weight: .medium))
+            .font(Typography.labelSmall)
             .foregroundStyle(
                 Color(hex: 0xFB923C).opacity(
                     abs(dragOffset.width) > 50 && dragOffset.width > 0 ? 1.0 : 0.4

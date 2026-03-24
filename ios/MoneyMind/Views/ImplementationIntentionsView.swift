@@ -75,14 +75,14 @@ struct ImplementationIntentionsView: View {
             Spacer()
 
             Text("If-Then Plans")
-                .font(Theme.headingFont(.headline))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             Spacer()
 
             if showCreateFlow {
                 Text("Step \(flowStep + 1)/3")
-                    .font(.caption.weight(.medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             } else {
                 Circle().fill(.clear).frame(width: 44, height: 44)
@@ -103,22 +103,22 @@ struct ImplementationIntentionsView: View {
                 } label: {
                     HStack(spacing: 12) {
                         Image(systemName: "plus.circle.fill")
-                            .font(.title2)
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.accentGreen)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Create Your If-Then Plan")
-                                .font(.subheadline.weight(.semibold))
+                                .font(Typography.headingSmall)
                                 .foregroundStyle(Theme.textPrimary)
                             Text("Build an automatic coping response")
-                                .font(.caption)
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textSecondary)
                         }
 
                         Spacer()
 
                         Image(systemName: "chevron.right")
-                            .font(.caption.weight(.semibold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary.opacity(0.5))
                     }
                     .padding(16)
@@ -128,7 +128,7 @@ struct ImplementationIntentionsView: View {
                             .strokeBorder(Theme.accentGreen.opacity(0.2), lineWidth: 1)
                     )
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .accessibilityLabel("Create a new if-then plan")
 
                 if intentions.isEmpty {
@@ -136,7 +136,7 @@ struct ImplementationIntentionsView: View {
                 } else {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Your Plans")
-                            .font(.subheadline.weight(.semibold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(Theme.textSecondary)
 
                         ForEach(intentions) { intention in
@@ -146,7 +146,7 @@ struct ImplementationIntentionsView: View {
                 }
 
                 Text("Based on Gollwitzer's research: Implementation intentions reduce unwanted behavior by 70%+.")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .padding(.top, 8)
@@ -159,15 +159,15 @@ struct ImplementationIntentionsView: View {
     private var emptyState: some View {
         VStack(spacing: 16) {
             Image(systemName: "lightbulb.fill")
-                .font(.system(size: 40))
+                .font(Typography.displayMedium)
                 .foregroundStyle(Theme.accentGreen.opacity(0.4))
 
             Text("No plans yet")
-                .font(.headline)
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textSecondary)
 
             Text("Create your first If-Then plan to build automatic coping responses for when urges strike.")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary.opacity(0.7))
                 .multilineTextAlignment(.center)
         }
@@ -179,34 +179,34 @@ struct ImplementationIntentionsView: View {
             HStack(spacing: 8) {
                 Image(systemName: intention.hasSigned ? "signature" : "lightbulb.fill")
                     .foregroundStyle(Theme.accentGreen)
-                    .font(.caption)
+                    .font(Typography.labelSmall)
 
                 Text("IF: \(intention.trigger)")
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textPrimary)
             }
 
             Text("THEN: \(intention.response)")
-                .font(.caption)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.teal)
                 .padding(.leading, 24)
 
             HStack {
                 Text(intention.createdAt.formatted(date: .abbreviated, time: .omitted))
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
 
                 Spacer()
 
                 if intention.timesActivated > 0 {
                     Text("Used \(intention.timesActivated)x")
-                        .font(.caption2.weight(.medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.gold)
                 }
             }
         }
         .padding(14)
-        .glassCard(cornerRadius: 14)
+        .splurjCard(.interactive)
         .accessibilityElement(children: .combine)
     }
 
@@ -242,11 +242,11 @@ struct ImplementationIntentionsView: View {
     private var triggerSelection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("When this happens...")
-                .font(Theme.headingFont(.title2))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
 
             Text("Select the trigger that leads to your urge")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
 
             ForEach(triggers, id: \.self) { trigger in
@@ -264,7 +264,7 @@ struct ImplementationIntentionsView: View {
                             )
 
                         Text(trigger)
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(selectedTrigger == trigger ? Theme.textPrimary : Theme.textSecondary)
 
                         Spacer()
@@ -294,7 +294,7 @@ struct ImplementationIntentionsView: View {
                         )
 
                     Text("Custom trigger...")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
 
                     Spacer()
@@ -309,9 +309,9 @@ struct ImplementationIntentionsView: View {
 
             if selectedTrigger == "custom" {
                 TextField("Describe your trigger...", text: $customTrigger)
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .padding(12)
-                    .glassCard(cornerRadius: 10)
+                    .splurjCard(.outlined)
                     .foregroundStyle(Theme.textPrimary)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
@@ -321,13 +321,13 @@ struct ImplementationIntentionsView: View {
                     withAnimation(.spring(response: 0.4)) { flowStep = 1 }
                 } label: {
                     Text("Next")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .transition(.opacity)
             }
         }
@@ -336,11 +336,11 @@ struct ImplementationIntentionsView: View {
     private var responseSelection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("I will do this instead...")
-                .font(Theme.headingFont(.title2))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
 
             Text("Choose your automatic coping response")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
 
             ForEach(responses, id: \.self) { response in
@@ -358,7 +358,7 @@ struct ImplementationIntentionsView: View {
                             )
 
                         Text(response)
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(selectedResponse == response ? Theme.textPrimary : Theme.textSecondary)
 
                         Spacer()
@@ -388,7 +388,7 @@ struct ImplementationIntentionsView: View {
                         )
 
                     Text("Custom response...")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
 
                     Spacer()
@@ -403,9 +403,9 @@ struct ImplementationIntentionsView: View {
 
             if selectedResponse == "custom" {
                 TextField("Describe your response...", text: $customResponse)
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .padding(12)
-                    .glassCard(cornerRadius: 10)
+                    .splurjCard(.outlined)
                     .foregroundStyle(Theme.textPrimary)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
@@ -415,13 +415,13 @@ struct ImplementationIntentionsView: View {
                     withAnimation(.spring(response: 0.4)) { flowStep = 2 }
                 } label: {
                     Text("Next")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .transition(.opacity)
             }
         }
@@ -430,42 +430,42 @@ struct ImplementationIntentionsView: View {
     private var commitmentStep: some View {
         VStack(spacing: 20) {
             Text("Your Commitment")
-                .font(Theme.headingFont(.title2))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
 
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 8) {
                     Text("IF")
-                        .font(.caption.weight(.bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.emergency)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(Theme.emergency.opacity(0.12), in: .capsule)
 
                     Text(activeTrigger)
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                 }
 
                 HStack(spacing: 8) {
                     Text("THEN")
-                        .font(.caption.weight(.bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.accentGreen)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(Theme.accentGreen.opacity(0.12), in: .capsule)
 
                     Text(activeResponse)
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                 }
             }
             .padding(16)
-            .glassCard(cornerRadius: 14)
+            .splurjCard(.hero)
 
             VStack(alignment: .leading, spacing: 8) {
                 Text("Sign your commitment")
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textSecondary)
 
                 signatureCanvas
@@ -476,27 +476,27 @@ struct ImplementationIntentionsView: View {
                     saveIntention()
                 } label: {
                     Text("I Commit to This Plan")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             }
 
             if isCompleted {
                 VStack(spacing: 12) {
                     Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 48))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(Theme.accentGreen)
 
                     Text("Plan Created!")
-                        .font(Theme.headingFont(.title3))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.textPrimary)
 
                     Text("+50 XP")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.gold)
                 }
                 .transition(.scale.combined(with: .opacity))
@@ -519,15 +519,15 @@ struct ImplementationIntentionsView: View {
                 }
             }
             .frame(height: 120)
-            .glassCard(cornerRadius: 12)
+            .splurjCard(.outlined)
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 14)
                     .strokeBorder(Theme.textSecondary.opacity(0.2), lineWidth: 1)
             )
             .overlay(
                 signatureLines.isEmpty
                     ? Text("Draw your signature here")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary.opacity(0.5))
                     : nil
             )
@@ -552,7 +552,7 @@ struct ImplementationIntentionsView: View {
                     signatureLines = []
                 } label: {
                     Image(systemName: "arrow.counterclockwise")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .padding(8)
                         .background(Theme.background.opacity(0.8), in: .circle)

@@ -18,7 +18,7 @@ struct CinematicSplashView: View {
 
             VStack(spacing: 16) {
                 Text("SPLURJ")
-                    .font(.system(size: 36, weight: .black, design: .rounded))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(
                         LinearGradient(
                             colors: [.white, .white.opacity(0.8)],
@@ -32,7 +32,7 @@ struct CinematicSplashView: View {
                     .animation(.spring(response: 0.8, dampingFraction: 0.6), value: phase)
 
                 Text("Your money. Unmasked.")
-                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.accent)
                     .opacity(phase >= 2 ? 1 : 0)
                     .offset(y: phase >= 2 ? 0 : 10)

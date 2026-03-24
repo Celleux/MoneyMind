@@ -42,25 +42,25 @@ struct SiriCheckInView: View {
                 if todayPledge != nil || completed {
                     VStack(spacing: 20) {
                         Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 64))
+                            .font(Typography.displayLarge)
                             .foregroundStyle(Theme.accentGreen)
 
                         Text("Already checked in today!")
-                            .font(Theme.headingFont(.title2))
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textPrimary)
 
                         Text("Your pledge is active. Keep going!")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 } else {
                     VStack(spacing: 24) {
                         HStack(spacing: 8) {
                             Image(systemName: "mic.fill")
-                                .font(.caption)
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.teal)
                             Text("Siri Check-In")
-                                .font(.caption.weight(.medium))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.teal)
                         }
                         .padding(.vertical, 6)
@@ -68,11 +68,11 @@ struct SiriCheckInView: View {
                         .background(Theme.teal.opacity(0.1), in: .capsule)
 
                         Image(systemName: "hand.raised.fill")
-                            .font(.system(size: 56))
+                            .font(Typography.displayLarge)
                             .foregroundStyle(Theme.accentGradient)
 
                         Text("Daily Pledge")
-                            .font(Theme.headingFont(.title2))
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textPrimary)
 
                         Text("\"I pledge to be mindful with my money today.\"")
@@ -82,7 +82,7 @@ struct SiriCheckInView: View {
                             .padding(.horizontal, 32)
 
                         Text(quotes.randomElement() ?? "")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
 
                         Button {
@@ -90,16 +90,16 @@ struct SiriCheckInView: View {
                         } label: {
                             HStack(spacing: 10) {
                                 Image(systemName: "checkmark")
-                                    .font(.headline)
+                                    .font(Typography.headingMedium)
                                 Text("I Pledge")
-                                    .font(.headline)
+                                    .font(Typography.headingMedium)
                             }
                             .foregroundStyle(Theme.background)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
                         }
-                        .buttonStyle(PressableButtonStyle())
+                        .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                         .padding(.horizontal, 32)
                     }
                 }
@@ -111,13 +111,13 @@ struct SiriCheckInView: View {
                         dismiss()
                     } label: {
                         Text("Done")
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.background)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                     .padding(.horizontal, 32)
                     .padding(.bottom, 32)
                 }

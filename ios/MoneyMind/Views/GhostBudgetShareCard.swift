@@ -19,12 +19,12 @@ struct GhostBudgetShareCard: View {
                         Image(systemName: "leaf.fill")
                             .foregroundStyle(Theme.success)
                         Text("Splurj")
-                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(.white.opacity(0.5))
                     }
                     Spacer()
                     Text("👻 Ghost Budget")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(.white.opacity(0.4))
                 }
                 .padding(.horizontal, 24)
@@ -33,24 +33,24 @@ struct GhostBudgetShareCard: View {
 
                 VStack(spacing: 24) {
                     Text("If I stopped spending on")
-                        .font(.system(size: 16, weight: .medium, design: .rounded))
+                        .font(Typography.labelLarge)
                         .foregroundStyle(.white.opacity(0.6))
 
                     Text(topHabit)
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(personalityColor)
 
                     VStack(spacing: 8) {
                         Text("I'd have")
-                            .font(.system(size: 15, weight: .medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(.white.opacity(0.5))
 
                         Text("$\(Int(savings))")
-                            .font(.system(size: 64, weight: .bold, design: .rounded))
+                            .font(Typography.displayLarge)
                             .foregroundStyle(Theme.success)
 
                         Text("more in \(timeframe)")
-                            .font(.system(size: 18, weight: .semibold, design: .rounded))
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.success.opacity(0.7))
                     }
                     .padding(.vertical, 32)
@@ -70,7 +70,7 @@ struct GhostBudgetShareCard: View {
                             .fill(personalityColor.opacity(0.1))
                             .frame(width: 64, height: 64)
                         Image(systemName: personalityIcon)
-                            .font(.system(size: 28))
+                            .font(Typography.displayMedium)
                             .foregroundStyle(personalityColor)
                     }
                 }
@@ -79,7 +79,7 @@ struct GhostBudgetShareCard: View {
 
                 VStack(spacing: 8) {
                     Text("Made with Splurj")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(.white.opacity(0.3))
                     CardWatermark()
                 }

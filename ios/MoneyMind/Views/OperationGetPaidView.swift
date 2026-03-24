@@ -48,7 +48,7 @@ struct OperationGetPaidView: View {
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: [Theme.background, Color(hex: 0x0d1a14)],
+                colors: [Theme.background, Color(hex: 0x1A1A10)],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -71,7 +71,7 @@ struct OperationGetPaidView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button { dismiss() } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 24))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(Theme.textMuted)
                 }
             }
@@ -97,17 +97,17 @@ struct OperationGetPaidView: View {
                     .frame(width: 72, height: 72)
 
                 Image(systemName: "dollarsign.arrow.trianglehead.counterclockwise.rotate.90")
-                    .font(.system(size: 30, weight: .bold))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.accent)
             }
 
             Text("OPERATION: GET PAID")
-                .font(.system(size: 13, weight: .black, design: .rounded))
+                .font(Typography.labelMedium)
                 .foregroundStyle(Theme.accent)
                 .tracking(3)
 
             Text("Recover money owed to you")
-                .font(.system(size: 14))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
 
             HStack(spacing: 16) {
@@ -180,7 +180,7 @@ struct OperationGetPaidView: View {
 
                     if completedSteps.contains(index) {
                         Image(systemName: "checkmark")
-                            .font(.system(size: 14, weight: .bold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(.white)
                     } else if currentStep == index {
                         Circle()
@@ -188,7 +188,7 @@ struct OperationGetPaidView: View {
                             .frame(width: 12, height: 12)
                     } else {
                         Text("\(index + 1)")
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .font(Typography.labelMedium)
                             .foregroundStyle(Theme.textMuted)
                     }
                 }
@@ -205,13 +205,13 @@ struct OperationGetPaidView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text(title)
-                        .font(.system(size: 15, weight: .bold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(currentStep >= index ? .white : Theme.textMuted)
 
                     Spacer()
 
                     Text("+\(xp) XP")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(completedSteps.contains(index) ? Theme.accent : Theme.gold)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
@@ -247,29 +247,29 @@ struct OperationGetPaidView: View {
         case 0:
             HStack(spacing: 8) {
                 Image(systemName: "person.fill")
-                    .font(.system(size: 10))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
                 Text("\(friendName) · \(formattedAmount) · \(reason.rawValue)")
-                    .font(.system(size: 11))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         case 1:
             Text("Message prepared")
-                .font(.system(size: 11))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
         case 2:
             HStack(spacing: 6) {
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 10))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.accent)
                 Text("Request sent")
-                    .font(.system(size: 11))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         case 3:
             if let outcome = selectedOutcome {
                 Text(outcome.summaryText)
-                    .font(.system(size: 11))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         default:
@@ -283,10 +283,10 @@ struct OperationGetPaidView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 10) {
                 Image(systemName: "chart.bar.fill")
-                    .font(.system(size: 14))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.accent)
                 Text("The average American is owed $926 by friends and family")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
             }
             .padding(12)
@@ -302,11 +302,11 @@ struct OperationGetPaidView: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 Text("Who owes you?")
-                    .font(.system(size: 12, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.textSecondary)
 
                 TextField("Friend's name", text: $friendName)
-                    .font(.system(size: 15))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(.white)
                     .padding(12)
                     .background(
@@ -317,16 +317,16 @@ struct OperationGetPaidView: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 Text("How much?")
-                    .font(.system(size: 12, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.textSecondary)
 
                 HStack(spacing: 8) {
                     Text("$")
-                        .font(.system(size: 18, weight: .bold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.accent)
 
                     TextField("0", text: $amountOwed)
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(.white)
                         .keyboardType(.decimalPad)
                 }
@@ -338,7 +338,7 @@ struct OperationGetPaidView: View {
 
                 if parsedAmount > 0 {
                     Text(amountTier.label)
-                        .font(.system(size: 10, weight: .bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(amountTier.color)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
@@ -348,7 +348,7 @@ struct OperationGetPaidView: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 Text("What for?")
-                    .font(.system(size: 12, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.textSecondary)
 
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -359,9 +359,9 @@ struct OperationGetPaidView: View {
                             } label: {
                                 HStack(spacing: 6) {
                                     Image(systemName: r.icon)
-                                        .font(.system(size: 12))
+                                        .font(Typography.bodySmall)
                                     Text(r.rawValue)
-                                        .font(.system(size: 12, weight: .medium))
+                                        .font(Typography.bodySmall)
                                 }
                                 .foregroundStyle(reason == r ? Theme.background : Theme.textSecondary)
                                 .padding(.horizontal, 14)
@@ -377,7 +377,7 @@ struct OperationGetPaidView: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 Text("How long ago?")
-                    .font(.system(size: 12, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.textSecondary)
 
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -387,7 +387,7 @@ struct OperationGetPaidView: View {
                                 timeElapsed = t
                             } label: {
                                 Text(t.rawValue)
-                                    .font(.system(size: 12, weight: .medium))
+                                    .font(Typography.bodySmall)
                                     .foregroundStyle(timeElapsed == t ? Theme.background : Theme.textSecondary)
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 8)
@@ -422,12 +422,12 @@ struct OperationGetPaidView: View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Tone")
-                    .font(.system(size: 12, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.textSecondary)
 
                 HStack {
                     Text("Casual")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                     Slider(value: $toneValue, in: 0...1)
                         .tint(Theme.accent)
@@ -435,13 +435,13 @@ struct OperationGetPaidView: View {
                             editedMessage = generateMessage()
                         }
                     Text("Direct")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
 
                 Toggle(isOn: $includeEmoji) {
                     Text("Include emoji")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
                 .tint(Theme.accent)
@@ -453,7 +453,7 @@ struct OperationGetPaidView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text("Your message")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(Typography.labelMedium)
                         .foregroundStyle(Theme.textSecondary)
                     Spacer()
                     Button {
@@ -461,9 +461,9 @@ struct OperationGetPaidView: View {
                     } label: {
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.counterclockwise")
-                                .font(.system(size: 10))
+                                .font(Typography.labelSmall)
                             Text("Reset")
-                                .font(.system(size: 10, weight: .medium))
+                                .font(Typography.labelSmall)
                         }
                         .foregroundStyle(Theme.textMuted)
                     }
@@ -481,9 +481,9 @@ struct OperationGetPaidView: View {
                     } label: {
                         VStack(spacing: 4) {
                             Image(systemName: variant.icon)
-                                .font(.system(size: 16))
+                                .font(Typography.labelLarge)
                             Text(variant.rawValue)
-                                .font(.system(size: 9, weight: .bold))
+                                .font(Typography.labelSmall)
                         }
                         .foregroundStyle(Theme.textSecondary)
                         .frame(maxWidth: .infinity)
@@ -514,7 +514,7 @@ struct OperationGetPaidView: View {
     private var chatBubble: some View {
         VStack(alignment: .leading, spacing: 0) {
             TextEditor(text: $editedMessage)
-                .font(.system(size: 14))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(.white)
                 .scrollContentBackground(.hidden)
                 .frame(minHeight: 80, maxHeight: 160)
@@ -540,7 +540,7 @@ struct OperationGetPaidView: View {
             if !hasSent {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Choose how to send")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(Typography.labelMedium)
                         .foregroundStyle(Theme.textSecondary)
 
                     sendOptionButton(
@@ -589,7 +589,7 @@ struct OperationGetPaidView: View {
                     UINotificationFeedbackGenerator().notificationOccurred(.success)
                 } label: {
                     Text("I've sent the request")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.accent)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
@@ -601,15 +601,15 @@ struct OperationGetPaidView: View {
             } else {
                 VStack(spacing: 12) {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 36))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.accent)
 
                     Text("The hardest part is over")
-                        .font(.system(size: 15, weight: .bold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(.white)
 
                     Text("Most people pay back within 24 hours. You showed real courage by asking.")
-                        .font(.system(size: 12))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                 }
@@ -642,23 +642,23 @@ struct OperationGetPaidView: View {
         Button(action: action) {
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.system(size: 20))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(color)
                     .frame(width: 36)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.system(size: 14, weight: .bold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(.white)
                     Text(subtitle)
-                        .font(.system(size: 11))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
 
                 Spacer()
 
                 Image(systemName: "arrow.up.right")
-                    .font(.system(size: 12, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.textMuted)
             }
             .padding(12)
@@ -677,7 +677,7 @@ struct OperationGetPaidView: View {
                 writeOffContent
             } else if selectedOutcome == nil {
                 Text("What happened?")
-                    .font(.system(size: 12, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.textSecondary)
 
                 outcomeButton(
@@ -755,15 +755,15 @@ struct OperationGetPaidView: View {
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.system(size: 20))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(color)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.system(size: 14, weight: .bold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(.white)
                     Text(subtitle)
-                        .font(.system(size: 11))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
 
@@ -783,15 +783,15 @@ struct OperationGetPaidView: View {
         case .paidFull:
             VStack(spacing: 12) {
                 Image(systemName: "party.popper.fill")
-                    .font(.system(size: 36))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.gold)
 
                 Text("You recovered \(formattedAmount)")
-                    .font(.system(size: 18, weight: .black, design: .rounded))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(.white)
 
                 Text(impactComparison)
-                    .font(.system(size: 12))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
 
@@ -804,7 +804,7 @@ struct OperationGetPaidView: View {
         case .paidPartial:
             VStack(alignment: .leading, spacing: 12) {
                 Text("Progress is progress. You took action and got a result.")
-                    .font(.system(size: 13))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
 
                 stepButton(text: "Continue", enabled: true) {
@@ -815,11 +815,11 @@ struct OperationGetPaidView: View {
         case .noResponse:
             VStack(alignment: .leading, spacing: 12) {
                 Text("Follow-up script")
-                    .font(.system(size: 12, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.textSecondary)
 
                 Text(followUpScript)
-                    .font(.system(size: 13))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(.white)
                     .padding(12)
                     .background(
@@ -828,7 +828,7 @@ struct OperationGetPaidView: View {
                     )
 
                 Text("Send this in 2-3 days if you haven't heard back. Persistence is not rude — it's responsible.")
-                    .font(.system(size: 11))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
 
                 stepButton(text: "Continue", enabled: true) {
@@ -839,11 +839,11 @@ struct OperationGetPaidView: View {
         case .cantPay:
             VStack(alignment: .leading, spacing: 12) {
                 Text("Payment plan template")
-                    .font(.system(size: 12, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.textSecondary)
 
                 Text(paymentPlanScript)
-                    .font(.system(size: 13))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(.white)
                     .padding(12)
                     .background(
@@ -857,9 +857,9 @@ struct OperationGetPaidView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "doc.on.doc")
-                            .font(.system(size: 12))
+                            .font(Typography.bodySmall)
                         Text("Copy plan")
-                            .font(.system(size: 12, weight: .medium))
+                            .font(Typography.bodySmall)
                     }
                     .foregroundStyle(Theme.accent)
                 }
@@ -879,7 +879,7 @@ struct OperationGetPaidView: View {
     private var writeOffContent: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Sometimes it doesn't work out. That's okay — you tried, and that took courage.")
-                .font(.system(size: 13))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
 
             VStack(spacing: 10) {
@@ -888,15 +888,15 @@ struct OperationGetPaidView: View {
                 } label: {
                     HStack(spacing: 12) {
                         Image(systemName: "heart.fill")
-                            .font(.system(size: 18))
+                            .font(Typography.bodyLarge)
                             .foregroundStyle(Color(hex: 0xF472B6))
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text("The Write-Off Decision")
-                                .font(.system(size: 14, weight: .bold))
+                                .font(Typography.headingSmall)
                                 .foregroundStyle(.white)
                             Text("Mark as a gift for emotional closure (+15 XP)")
-                                .font(.system(size: 11))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textMuted)
                         }
 
@@ -923,15 +923,15 @@ struct OperationGetPaidView: View {
                 } label: {
                     HStack(spacing: 12) {
                         Image(systemName: "shield.fill")
-                            .font(.system(size: 18))
+                            .font(Typography.bodyLarge)
                             .foregroundStyle(Color(hex: 0x60A5FA))
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Set a Lending Boundary")
-                                .font(.system(size: 14, weight: .bold))
+                                .font(Typography.headingSmall)
                                 .foregroundStyle(.white)
                             Text("Decide your lending limit for next time (+10 XP)")
-                                .font(.system(size: 11))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textMuted)
                         }
 
@@ -969,9 +969,9 @@ struct OperationGetPaidView: View {
         } label: {
             HStack(spacing: 6) {
                 Image(systemName: "archivebox")
-                    .font(.system(size: 12))
+                    .font(Typography.bodySmall)
                 Text("Archive this quest — no penalty")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(Typography.bodySmall)
             }
             .foregroundStyle(Theme.textMuted)
             .frame(maxWidth: .infinity)
@@ -986,36 +986,36 @@ struct OperationGetPaidView: View {
             if selectedOutcome == .refused || writeOffChoice != nil {
                 VStack(spacing: 12) {
                     Image(systemName: "brain.head.profile.fill")
-                        .font(.system(size: 36))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Color(hex: 0xA78BFA))
 
                     Text("Financial Wisdom Earned")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(.white)
 
                     Text("You faced a difficult conversation. That takes real courage, regardless of the outcome.")
-                        .font(.system(size: 12))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                 }
             } else {
                 VStack(spacing: 12) {
                     Image(systemName: "trophy.fill")
-                        .font(.system(size: 36))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.gold)
                         .symbolEffect(.bounce)
 
                     Text("Quest Complete")
-                        .font(.system(size: 18, weight: .black, design: .rounded))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(.white)
 
                     if parsedAmount > 0 {
                         Text("You recovered \(formattedAmount)")
-                            .font(.system(size: 14, weight: .bold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(Theme.accent)
 
                         Text(impactComparison)
-                            .font(.system(size: 12))
+                            .font(Typography.bodySmall)
                             .foregroundStyle(Theme.textSecondary)
                             .multilineTextAlignment(.center)
                     }
@@ -1027,9 +1027,9 @@ struct OperationGetPaidView: View {
             } label: {
                 HStack {
                     Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 18, weight: .bold))
+                        .font(Typography.headingLarge)
                     Text("Claim Rewards")
-                        .font(.system(size: 16, weight: .black))
+                        .font(Typography.headingMedium)
                 }
                 .foregroundStyle(Theme.background)
                 .frame(maxWidth: .infinity)
@@ -1052,9 +1052,9 @@ struct OperationGetPaidView: View {
             ) {
                 HStack(spacing: 6) {
                     Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 12))
+                        .font(Typography.bodySmall)
                     Text("Share your win")
-                        .font(.system(size: 13, weight: .bold))
+                        .font(Typography.labelMedium)
                 }
                 .foregroundStyle(Theme.accent)
                 .frame(maxWidth: .infinity)
@@ -1085,7 +1085,7 @@ struct OperationGetPaidView: View {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         } label: {
             Text(text)
-                .font(.system(size: 15, weight: .bold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(enabled ? Theme.background : Theme.textMuted)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 13)

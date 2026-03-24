@@ -35,18 +35,18 @@ struct MicroQuestView: View {
     private var sectionHeader: some View {
         HStack(spacing: 8) {
             Image(systemName: "bolt.circle.fill")
-                .font(.system(size: 16, weight: .bold))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.neonEmerald)
 
             Text("BONUS ROUND")
-                .font(.system(size: 11, weight: .heavy, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.neonEmerald)
                 .tracking(2)
 
             Spacer()
 
             Text("\(completedCount)/\(quests.count)")
-                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .font(Typography.moneySmall)
                 .foregroundStyle(Theme.textSecondary)
 
             if completedCount > 0 && completedCount < quests.count {
@@ -81,7 +81,7 @@ struct MicroQuestView: View {
 
                         if isCompleted {
                             Image(systemName: "checkmark")
-                                .font(.system(size: 10, weight: .bold))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(.white)
                         } else {
                             Circle()
@@ -91,7 +91,7 @@ struct MicroQuestView: View {
                     }
 
                     Text(quest.title)
-                        .font(.system(size: 13, weight: .medium))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(isCompleted ? Theme.textMuted : .white)
                         .lineLimit(1)
                         .strikethrough(isCompleted, color: Theme.textMuted)
@@ -100,7 +100,7 @@ struct MicroQuestView: View {
 
                     if !isCompleted {
                         Text("+\(quest.baseXP) XP")
-                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.gold)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
@@ -142,7 +142,7 @@ struct MicroQuestView: View {
             Divider().background(Theme.elevated)
 
             Text(quest.description)
-                .font(.system(size: 12))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
                 .padding(.horizontal, 14)
 
@@ -151,9 +151,9 @@ struct MicroQuestView: View {
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(Typography.headingSmall)
                     Text("Done")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(Typography.headingSmall)
                 }
                 .foregroundStyle(Theme.background)
                 .frame(maxWidth: .infinity)
@@ -171,17 +171,17 @@ struct MicroQuestView: View {
     private var allCompleteCard: some View {
         VStack(spacing: 8) {
             Image(systemName: "bolt.shield.fill")
-                .font(.system(size: 32))
+                .font(Typography.displayMedium)
                 .foregroundStyle(Theme.neonEmerald)
                 .symbolEffect(.bounce)
 
             Text("BONUS ROUND COMPLETE")
-                .font(.system(size: 12, weight: .black, design: .rounded))
+                .font(Typography.labelMedium)
                 .foregroundStyle(Theme.neonEmerald)
                 .tracking(2)
 
             Text("+\(quests.reduce(0) { $0 + $1.baseXP }) XP earned")
-                .font(.system(size: 14, weight: .bold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.gold)
         }
         .padding(.vertical, 20)

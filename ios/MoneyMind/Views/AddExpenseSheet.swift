@@ -40,16 +40,16 @@ struct AddExpenseSheet: View {
                 VStack(spacing: 28) {
                     VStack(spacing: 6) {
                         Text("How much?")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
 
                         HStack(alignment: .firstTextBaseline, spacing: 4) {
                             Text(currencySymbol)
-                                .font(.system(size: 36, weight: .bold, design: .rounded))
+                                .font(Typography.displayMedium)
                                 .foregroundStyle(Theme.textMuted)
                             TextField("0", text: $amount)
                                 .keyboardType(.decimalPad)
-                                .font(.system(size: 48, weight: .bold, design: .rounded))
+                                .font(Typography.displayLarge)
                                 .foregroundStyle(Theme.textPrimary)
                                 .multilineTextAlignment(.center)
                                 .frame(maxWidth: 200)
@@ -62,10 +62,10 @@ struct AddExpenseSheet: View {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack(spacing: 6) {
                                 Image(systemName: "sparkles")
-                                    .font(.system(size: 12))
+                                    .font(Typography.bodySmall)
                                     .foregroundStyle(Theme.accent)
                                 Text("Suggested")
-                                    .font(.system(size: 12, weight: .medium))
+                                    .font(Typography.bodySmall)
                                     .foregroundStyle(Theme.textMuted)
                             }
 
@@ -78,9 +78,9 @@ struct AddExpenseSheet: View {
                                     } label: {
                                         HStack(spacing: 5) {
                                             Text(cat.emoji)
-                                                .font(.system(size: 14))
+                                                .font(Typography.bodyMedium)
                                             Text(cat.rawValue)
-                                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                                .font(Typography.bodySmall)
                                                 .foregroundStyle(selectedCategory == cat ? .white : Theme.textSecondary)
                                         }
                                         .padding(.horizontal, 12)
@@ -104,7 +104,7 @@ struct AddExpenseSheet: View {
 
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Category")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
 
                         LazyVGrid(columns: [
@@ -121,10 +121,10 @@ struct AddExpenseSheet: View {
                                                 .fill(catColor.opacity(selectedCategory == cat ? 0.25 : 0.1))
                                                 .frame(width: 44, height: 44)
                                             Text(cat.emoji)
-                                                .font(.system(size: 20))
+                                                .font(Typography.headingLarge)
                                         }
                                         Text(cat.rawValue)
-                                            .font(.caption2.weight(.medium))
+                                            .font(Typography.labelSmall)
                                             .foregroundStyle(selectedCategory == cat ? Theme.textPrimary : Theme.textSecondary)
                                             .lineLimit(1)
                                     }
@@ -151,10 +151,10 @@ struct AddExpenseSheet: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Merchant / Note (optional)")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                         TextField("What was this for?", text: $note)
-                            .font(.body)
+                            .font(Typography.bodyLarge)
                             .padding(14)
                             .background(Theme.elevated, in: .rect(cornerRadius: 12))
                             .overlay(
@@ -167,13 +167,13 @@ struct AddExpenseSheet: View {
                         saveExpense()
                     } label: {
                         Text("Add Expense")
-                            .font(.system(.headline, design: .rounded, weight: .semibold))
+                            .font(Typography.headingMedium)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(Theme.danger.opacity(amount.isEmpty ? 0.4 : 1), in: .rect(cornerRadius: 14))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .destructive, size: .large))
                     .disabled(amount.isEmpty)
                     .sensoryFeedback(.impact(weight: .medium), trigger: hapticTrigger)
                 }

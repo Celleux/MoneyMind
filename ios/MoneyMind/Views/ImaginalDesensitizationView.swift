@@ -53,13 +53,13 @@ struct ImaginalDesensitizationView: View {
             Spacer()
 
             Text("Imaginal Desensitization")
-                .font(.caption.weight(.semibold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
 
             Spacer()
 
             Text("Step \(currentStep + 1)/\(steps.count)")
-                .font(.caption.weight(.medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .padding(.horizontal, 24)
@@ -93,13 +93,13 @@ struct ImaginalDesensitizationView: View {
                 Spacer().frame(height: 24)
 
                 Image(systemName: step.icon)
-                    .font(.system(size: 48))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(Color(red: 0.6, green: 0.3, blue: 0.9))
                     .frame(width: 80, height: 80)
                     .background(Color(red: 0.6, green: 0.3, blue: 0.9).opacity(0.12), in: .circle)
 
                 Text(step.title)
-                    .font(Theme.headingFont(.title2))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.textPrimary)
 
                 if currentStep == 0 {
@@ -122,12 +122,12 @@ struct ImaginalDesensitizationView: View {
     private func initialRatingView(step: GuidedStep) -> some View {
         VStack(spacing: 24) {
             Text(step.instruction)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
 
             Text("\(Int(initialRating))")
-                .font(.system(size: 56, weight: .bold, design: .rounded))
+                .font(Typography.displayLarge)
                 .foregroundStyle(Color(red: 0.6, green: 0.3, blue: 0.9))
                 .contentTransition(.numericText())
                 .animation(.default, value: Int(initialRating))
@@ -137,9 +137,9 @@ struct ImaginalDesensitizationView: View {
                 .sensoryFeedback(.selection, trigger: Int(initialRating))
 
             HStack {
-                Text("No urge").font(.caption).foregroundStyle(Theme.textSecondary)
+                Text("No urge").font(Typography.labelSmall).foregroundStyle(Theme.textSecondary)
                 Spacer()
-                Text("Extreme").font(.caption).foregroundStyle(Theme.textSecondary)
+                Text("Extreme").font(Typography.labelSmall).foregroundStyle(Theme.textSecondary)
             }
 
             Button {
@@ -147,7 +147,7 @@ struct ImaginalDesensitizationView: View {
                 startStepTimer(duration: steps[1].duration)
             } label: {
                 Text("Begin Exercise")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
@@ -159,19 +159,19 @@ struct ImaginalDesensitizationView: View {
                         in: .rect(cornerRadius: 12)
                     )
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
         }
     }
 
     private func finalRatingView(step: GuidedStep) -> some View {
         VStack(spacing: 24) {
             Text(step.instruction)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
 
             Text("\(Int(finalRating))")
-                .font(.system(size: 56, weight: .bold, design: .rounded))
+                .font(Typography.displayLarge)
                 .foregroundStyle(Color(red: 0.6, green: 0.3, blue: 0.9))
                 .contentTransition(.numericText())
                 .animation(.default, value: Int(finalRating))
@@ -181,16 +181,16 @@ struct ImaginalDesensitizationView: View {
                 .sensoryFeedback(.selection, trigger: Int(finalRating))
 
             HStack {
-                Text("No urge").font(.caption).foregroundStyle(Theme.textSecondary)
+                Text("No urge").font(Typography.labelSmall).foregroundStyle(Theme.textSecondary)
                 Spacer()
-                Text("Extreme").font(.caption).foregroundStyle(Theme.textSecondary)
+                Text("Extreme").font(Typography.labelSmall).foregroundStyle(Theme.textSecondary)
             }
 
             Button {
                 withAnimation(.spring(response: 0.5)) { currentStep = 5 }
             } label: {
                 Text("See Results")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
@@ -202,7 +202,7 @@ struct ImaginalDesensitizationView: View {
                         in: .rect(cornerRadius: 12)
                     )
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
         }
     }
 
@@ -213,43 +213,43 @@ struct ImaginalDesensitizationView: View {
             HStack(spacing: 32) {
                 VStack(spacing: 4) {
                     Text("Before")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                     Text("\(Int(initialRating))")
-                        .font(.system(size: 40, weight: .bold, design: .rounded))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.emergency)
                 }
 
                 Image(systemName: "arrow.right")
-                    .font(.title2)
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.textSecondary)
 
                 VStack(spacing: 4) {
                     Text("After")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                     Text("\(Int(finalRating))")
-                        .font(.system(size: 40, weight: .bold, design: .rounded))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.accentGreen)
                 }
             }
 
             if drop > 0 {
                 Text("Your urge dropped by \(drop) points")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.accentGreen)
             } else if drop == 0 {
                 Text("Your urge held steady — that's okay")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.gold)
             } else {
                 Text("It takes practice. Each session builds resilience.")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.teal)
             }
 
             Text("Based on Grant 2009: 79.5% of participants showed significant improvement with this technique over time.")
-                .font(.caption)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 16)
@@ -259,23 +259,23 @@ struct ImaginalDesensitizationView: View {
                     completeSession()
                 } label: {
                     Text("Complete Session")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             }
 
             if isCompleted {
                 VStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 36))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.accentGreen)
 
                     Text("+100 XP")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.gold)
                 }
                 .transition(.scale.combined(with: .opacity))
@@ -287,7 +287,7 @@ struct ImaginalDesensitizationView: View {
     private func timedStepView(step: GuidedStep) -> some View {
         VStack(spacing: 24) {
             Text(step.instruction)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
 
@@ -307,7 +307,7 @@ struct ImaginalDesensitizationView: View {
                         .animation(.linear(duration: 1), value: stepTimer)
 
                     Text(formatTime(max(0, step.duration - stepTimer)))
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(Theme.textPrimary)
                         .contentTransition(.numericText())
                         .animation(.default, value: stepTimer)
@@ -318,7 +318,7 @@ struct ImaginalDesensitizationView: View {
                         advanceStep()
                     } label: {
                         Text("Continue")
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.background)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
@@ -330,7 +330,7 @@ struct ImaginalDesensitizationView: View {
                                 in: .rect(cornerRadius: 12)
                             )
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
                     .sensoryFeedback(.impact(weight: .light), trigger: stepTimer)
                 }

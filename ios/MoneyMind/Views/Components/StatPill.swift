@@ -12,10 +12,10 @@ struct StatPill: View {
                 .foregroundStyle(color)
             VStack(alignment: .leading, spacing: 1) {
                 Text(value)
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Text(label)
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         }

@@ -30,11 +30,11 @@ struct DailyQuestStack: View {
                 Image(systemName: "sun.max.fill")
                     .foregroundStyle(Theme.gold)
                 Text("Today's Quests")
-                    .font(.system(size: 15, weight: .heavy))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(.white)
                 Spacer()
                 Text("Resets at midnight")
-                    .font(.system(size: 10))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
             .padding(.horizontal, 20)

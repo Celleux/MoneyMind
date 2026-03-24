@@ -23,7 +23,7 @@ struct QuestHeroHeader: View {
                         .animation(reduceMotion ? nil : .easeInOut(duration: 2).repeatForever(), value: avatarGlow)
 
                     Image(systemName: avatarIcon(stage: player.avatarStage))
-                        .font(.system(size: 28, weight: .bold))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [Theme.accent, Theme.gold],
@@ -38,13 +38,13 @@ struct QuestHeroHeader: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(player.activeTitle)
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.accent)
                         .tracking(1.5)
                         .textCase(.uppercase)
 
                     Text("Level \(player.level)")
-                        .font(.system(size: 24, weight: .black, design: .rounded))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(.white)
 
                     GeometryReader { geo in
@@ -89,16 +89,16 @@ struct QuestHeroHeader: View {
 
                 VStack(spacing: 2) {
                     Image(systemName: player.questStreak > 0 ? "flame.fill" : "flame")
-                        .font(.system(size: 24))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(player.questStreak > 0 ? Color(hex: 0xFB923C) : Theme.textMuted)
                         .symbolEffect(.pulse, isActive: player.questStreak >= 7 && !reduceMotion)
 
                     Text("\(player.questStreak)")
-                        .font(.system(size: 14, weight: .black, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(.white)
 
                     Text("streak")
-                        .font(.system(size: 8))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
             }

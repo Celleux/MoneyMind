@@ -70,7 +70,7 @@ struct ScratchCardView: View {
             let holoColors: [Color] = [
                 Color(hex: 0x7B2FBE),
                 Color(hex: 0x2563EB),
-                Color(hex: 0x059669),
+                Theme.accentDim,
                 Color(hex: 0xD97706),
                 Color(hex: 0x7B2FBE)
             ]
@@ -139,7 +139,7 @@ struct ScratchCardView: View {
         VStack {
             Spacer()
             Text("SCRATCH TO REVEAL")
-                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .font(Typography.labelSmall)
                 .tracking(2)
                 .foregroundStyle(Color.white.opacity(0.6))
                 .padding(.bottom, 24)
@@ -228,17 +228,17 @@ struct ScratchCardView: View {
                 VStack {
                     Spacer()
                     Text(card.rarity.label)
-                        .font(.system(size: 16, weight: .black, design: .rounded))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(card.rarity.color)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                     Text(card.name)
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.textPrimary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 16)
                         .transition(.opacity)
                     Text(card.tip)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 16)
@@ -253,7 +253,7 @@ struct ScratchCardView: View {
                     HStack {
                         Spacer()
                         Text("NEW")
-                            .font(.system(size: 10, weight: .heavy, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.background)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
@@ -270,11 +270,11 @@ struct ScratchCardView: View {
     private func criticalBonusBadge(bonus: CriticalScratchBonus) -> some View {
         VStack {
             Text("CRITICAL SCRATCH!")
-                .font(.system(size: 12, weight: .black, design: .rounded))
+                .font(Typography.labelMedium)
                 .foregroundStyle(Theme.neonGold)
                 .tracking(1)
             Text(bonus.description)
-                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.textPrimary)
         }
         .padding(.horizontal, 20)

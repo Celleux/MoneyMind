@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhosphorSwift
 
 struct CommunityView: View {
     @Query(sort: \CommunityPost.date, order: .reverse) private var posts: [CommunityPost]
@@ -45,7 +46,7 @@ struct CommunityView: View {
                     HStack(spacing: 12) {
                         if vm.canPostToday(posts) {
                             Text("\(3 - vm.postsToday(posts)) left")
-                                .font(.caption2.weight(.medium))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textSecondary)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
@@ -112,29 +113,29 @@ struct CommunityView: View {
                         .fill(Theme.neonPurple.opacity(0.15))
                         .frame(width: 44, height: 44)
                     Image(systemName: "figure.2")
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.neonPurple)
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Challenge a Friend")
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
                     Text("Compete head-to-head for bonus XP")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
 
                 Spacer()
 
-                Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
+                PhIcon.caretRight
+                    .frame(width: 12, height: 12)
                     .foregroundStyle(Theme.textMuted)
             }
             .padding(14)
-            .glassCard(accentGlow: Theme.neonPurple)
+            .splurjCard(.hero, accent: Theme.neonPurple)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
         .sensoryFeedback(.impact(weight: .light), trigger: showChallengeInvite)
         .padding(.horizontal)
         .accessibilityLabel("Challenge a friend to compete")
@@ -145,14 +146,15 @@ struct CommunityView: View {
     private var myChallengeInvitesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Image(systemName: "trophy.fill")
+                PhIcon.trophyFill
+                    .frame(width: 20, height: 20)
                     .foregroundStyle(Theme.gold)
                 Text("My Challenges")
-                    .font(Theme.headingFont(.title3))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text("\(activeChallengeInvites.count)")
-                    .font(.caption.weight(.bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.gold)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
@@ -193,19 +195,19 @@ struct CommunityView: View {
                         .fill(accentColor.opacity(0.15))
                         .frame(width: 36, height: 36)
                     Image(systemName: type?.icon ?? "bolt.fill")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(accentColor)
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(invite.challengeType)
-                        .font(.caption.weight(.semibold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textPrimary)
                     HStack(spacing: 4) {
                         Image(systemName: invite.statusIcon)
-                            .font(.system(size: 8))
+                            .font(Typography.labelSmall)
                         Text(invite.status.capitalized)
-                            .font(.caption2)
+                            .font(Typography.labelSmall)
                     }
                     .foregroundStyle(accentColor)
                 }
@@ -226,18 +228,18 @@ struct CommunityView: View {
 
                 HStack {
                     Text("+\(invite.xpReward) XP")
-                        .font(.caption2.weight(.bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.gold)
                     Spacer()
                     Text("\(invite.daysRemaining)d left")
-                        .font(.caption2)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
         }
         .padding(14)
         .frame(width: 200)
-        .glassCard(accentGlow: accentColor)
+        .splurjCard(.hero, accent: accentColor)
     }
 
     // MARK: - Category Filter
@@ -283,20 +285,20 @@ struct CommunityView: View {
                     .frame(width: 36, height: 36)
                     .overlay {
                         Image(systemName: "square.and.pencil")
-                            .font(.system(size: 14, weight: .medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.accent)
                     }
 
                 Text("Share your story...")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textMuted)
 
                 Spacer()
             }
             .padding(14)
-            .glassCard()
+            .splurjCard(.elevated)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
         .sensoryFeedback(.impact(weight: .light), trigger: vm.showCreatePost)
         .padding(.horizontal)
     }
@@ -348,7 +350,7 @@ struct CommunityView: View {
                 Image(systemName: "person.2.fill")
                     .foregroundStyle(Theme.accent)
                 Text("Accountability Partner")
-                    .font(Theme.headingFont(.title3))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
             }
             .padding(.horizontal)
@@ -376,21 +378,21 @@ struct CommunityView: View {
                                 .strokeBorder(Theme.accent.opacity(0.3), lineWidth: 1)
                         }
                     Image(systemName: "person.fill")
-                        .font(.title3)
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.accent)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(partner.partnerName)
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.textPrimary)
                     HStack(spacing: 8) {
                         Label("\(partner.streakLength)d streak", systemImage: "flame.fill")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.gold)
                         if let lastDate = partner.lastCheckInDate {
                             Text("· Last check-in \(lastDate, format: .relative(presentation: .named))")
-                                .font(.caption)
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textSecondary)
                         }
                     }
@@ -405,19 +407,19 @@ struct CommunityView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.message.fill")
                     Text("Weekly Check-In")
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                 }
                 .foregroundStyle(Theme.background)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
                 .background(Theme.accent, in: .rect(cornerRadius: 12))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(.plain)
             .sensoryFeedback(.impact(weight: .medium), trigger: vm.showPartnerCheckIn)
             .accessibilityLabel("Send weekly check-in to partner")
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
         .padding(.horizontal)
     }
 
@@ -429,16 +431,16 @@ struct CommunityView: View {
                         .strokeBorder(Theme.accent.opacity(0.3), style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
                         .frame(width: 52, height: 52)
                     Image(systemName: "person.badge.plus")
-                        .font(.title3)
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.accent.opacity(0.6))
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Find an Accountability Partner")
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
                     Text("Knowing someone is watching helps maintain commitment")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .lineLimit(2)
                 }
@@ -452,19 +454,19 @@ struct CommunityView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "magnifyingglass")
                     Text("Find a Partner")
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                 }
                 .foregroundStyle(Theme.accent)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
                 .background(Theme.accent.opacity(0.12), in: .rect(cornerRadius: 12))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(.plain)
             .sensoryFeedback(.impact(weight: .light), trigger: vm.showFindPartner)
             .accessibilityLabel("Find an accountability partner")
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
         .padding(.horizontal)
     }
 
@@ -476,7 +478,7 @@ struct CommunityView: View {
                 Image(systemName: "flag.checkered")
                     .foregroundStyle(Theme.accent)
                 Text("Active Challenges")
-                    .font(Theme.headingFont(.title3))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
             }
             .padding(.horizontal)
@@ -522,23 +524,23 @@ struct CommunityPostCard: View {
                     }
                     .overlay {
                         Text(String(post.authorName.prefix(1)))
-                            .font(.system(.caption, design: .rounded, weight: .bold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.accent)
                     }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(post.authorName)
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
                     Text(vm.timeAgo(from: post.date))
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
 
                 Spacer()
 
                 Text(post.mood)
-                    .font(.caption2.weight(.medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -546,13 +548,13 @@ struct CommunityPostCard: View {
             }
 
             Text(post.content)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textPrimary.opacity(0.85))
                 .lineSpacing(4)
 
             HStack(spacing: 4) {
                 Text(post.category)
-                    .font(.caption2.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
@@ -573,7 +575,7 @@ struct CommunityPostCard: View {
                         Text("\(post.likes)")
                             .foregroundStyle(Theme.textSecondary)
                     }
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                 }
                 .sensoryFeedback(.impact(weight: .light), trigger: likeTrigger)
                 .accessibilityLabel(post.isLikedByUser ? "Unlike" : "Like")
@@ -582,13 +584,13 @@ struct CommunityPostCard: View {
                     Image(systemName: "bubble.right")
                     Text("\(post.replyCount)")
                 }
-                .font(.caption)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
                 .padding(.leading, 8)
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 }
 
@@ -608,22 +610,22 @@ struct ChallengeCard: View {
                             .fill(Theme.accent.opacity(0.12))
                             .frame(width: 40, height: 40)
                         Image(systemName: challenge.iconName)
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.accent)
                     }
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(challenge.name)
-                            .font(.subheadline.weight(.semibold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(Theme.textPrimary)
                         Text(challenge.hashtag)
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.accent.opacity(0.8))
                     }
                 }
 
                 Text(challenge.groupDescription)
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                     .lineLimit(2)
 
@@ -642,11 +644,11 @@ struct ChallengeCard: View {
 
                     HStack {
                         Label("\(challenge.participantCount)", systemImage: "person.2.fill")
-                            .font(.caption2)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                         Spacer()
                         Text("\(challenge.daysRemaining)d left")
-                            .font(.caption2.weight(.medium))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.gold)
                     }
                 }
@@ -656,7 +658,7 @@ struct ChallengeCard: View {
                         Image(systemName: "checkmark.circle.fill")
                         Text("Joined")
                     }
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.accent)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
@@ -670,20 +672,20 @@ struct ChallengeCard: View {
                         }
                     } label: {
                         Text("Join Challenge")
-                            .font(.caption.weight(.semibold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.background)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 8)
                             .background(Theme.accentGradient, in: .rect(cornerRadius: 8))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(.plain)
                     .sensoryFeedback(.impact(weight: .medium), trigger: joinTrigger)
                     .accessibilityLabel("Join \(challenge.name) challenge")
                 }
             }
             .padding(16)
             .frame(width: 260)
-            .glassCard()
+            .splurjCard(.elevated)
         }
         .buttonStyle(.plain)
     }

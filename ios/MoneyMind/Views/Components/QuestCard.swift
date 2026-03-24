@@ -1,4 +1,5 @@
 import SwiftUI
+import PhosphorSwift
 
 struct QuestCard: View {
     let quest: QuestDefinition
@@ -63,15 +64,15 @@ struct QuestCard: View {
     private var swipeRevealBackground: some View {
         HStack {
             HStack(spacing: 8) {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 28, weight: .bold))
+                PhIcon.checkCircleFill
+                    .frame(width: 28, height: 28)
                     .foregroundStyle(.white)
                     .scaleEffect(swipeProgress > 0.8 ? 1.2 : 0.8)
                     .opacity(Double(swipeProgress))
 
                 if swipeProgress > 0.5 {
                     Text("Complete")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(.white)
                         .transition(.opacity)
                 }
@@ -256,38 +257,38 @@ struct QuestCard: View {
     private var rewardTooltip: some View {
         HStack(spacing: 10) {
             HStack(spacing: 3) {
-                Image(systemName: "star.fill")
-                    .font(.system(size: 9))
+                PhIcon.starFill
+                    .frame(width: 12, height: 12)
                 Text("+\(quest.baseXP) XP")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(Typography.labelSmall)
             }
             .foregroundStyle(Theme.gold)
 
             if quest.scratchCardChance > 0 {
                 HStack(spacing: 3) {
-                    Image(systemName: "creditcard.fill")
-                        .font(.system(size: 9))
+                    PhIcon.creditCardFill
+                        .frame(width: 12, height: 12)
                     Text("\(Int(quest.scratchCardChance * 100))%")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(Typography.labelSmall)
                 }
                 .foregroundStyle(Theme.accent)
             }
 
             if quest.essenceReward > 0 {
                 HStack(spacing: 3) {
-                    Image(systemName: "diamond.fill")
-                        .font(.system(size: 9))
+                    PhIcon.diamondFill
+                        .frame(width: 12, height: 12)
                     Text("+\(quest.essenceReward)")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(Typography.labelSmall)
                 }
                 .foregroundStyle(Color(hex: 0xA78BFA))
             }
 
             HStack(spacing: 3) {
-                Image(systemName: "bolt.fill")
-                    .font(.system(size: 9))
+                PhIcon.lightningFill
+                    .frame(width: 12, height: 12)
                 Text("\(quest.baseXP / 10) dmg")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(Typography.labelSmall)
             }
             .foregroundStyle(Color(hex: 0xF87171))
         }
@@ -318,7 +319,7 @@ struct QuestCard: View {
                     .frame(width: 48, height: 48)
 
                 Image(systemName: quest.category.icon)
-                    .font(.system(size: 20, weight: .bold))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(quest.category.color)
             }
             .accessibilityHidden(true)
@@ -326,26 +327,25 @@ struct QuestCard: View {
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
                     Text(quest.title)
-                        .font(.system(size: 15, weight: .bold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(.white)
                         .lineLimit(1)
 
                     if isLucky {
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 12))
+                        PhIcon.sparkleFill
+                            .frame(width: 14, height: 14)
                             .foregroundStyle(Theme.gold)
-                            .symbolEffect(.pulse, isActive: !reduceMotion)
                     }
                 }
 
                 Text(quest.subtitle)
-                    .font(.system(size: 12))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
                     .lineLimit(1)
 
                 HStack(spacing: 8) {
                     Text(quest.difficulty.rawValue)
-                        .font(.system(size: 9, weight: .bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(quest.difficulty.color)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 2)
@@ -354,24 +354,24 @@ struct QuestCard: View {
                         )
 
                     HStack(spacing: 2) {
-                        Image(systemName: "star.fill")
-                            .font(.system(size: 8))
+                        PhIcon.starFill
+                            .frame(width: 12, height: 12)
                         Text("+\(quest.baseXP) XP")
-                            .font(.system(size: 9, weight: .bold))
+                            .font(Typography.labelSmall)
                     }
                     .foregroundStyle(Theme.gold)
 
                     if !quest.estimatedImpact.isEmpty {
                         Text(quest.estimatedImpact)
-                            .font(.system(size: 9, weight: .medium))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.accent)
                     }
 
                     HStack(spacing: 2) {
-                        Image(systemName: "clock")
-                            .font(.system(size: 8))
+                        PhIcon.clock
+                            .frame(width: 12, height: 12)
                         Text(quest.estimatedTime)
-                            .font(.system(size: 9))
+                            .font(Typography.labelSmall)
                     }
                     .foregroundStyle(Theme.textMuted)
                 }
@@ -385,13 +385,13 @@ struct QuestCard: View {
             Spacer()
 
             if isSingleStep && !isExpanded {
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 10, weight: .bold))
+                PhIcon.caretRight
+                    .frame(width: 12, height: 12)
                     .foregroundStyle(Theme.textMuted.opacity(0.5))
                     .accessibilityHidden(true)
             } else {
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 14, weight: .bold))
+                PhIcon.caretDown
+                    .frame(width: 16, height: 16)
                     .foregroundStyle(Theme.textMuted)
                     .rotationEffect(.degrees(isExpanded ? 180 : 0))
                     .accessibilityHidden(true)
@@ -424,7 +424,7 @@ struct QuestCard: View {
             Divider().background(Theme.elevated)
 
             Text(quest.description)
-                .font(.system(size: 12))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
                 .padding(.horizontal, 16)
 
@@ -463,10 +463,10 @@ struct QuestCard: View {
                 triggerCompletion()
             } label: {
                 HStack {
-                    Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 18, weight: .bold))
+                    PhIcon.sealCheckFill
+                        .frame(width: 22, height: 22)
                     Text(quest.steps.count > 1 && currentStep < quest.steps.count - 1 ? "Complete Step" : "Complete Quest")
-                        .font(.system(size: 16, weight: .black))
+                        .font(Typography.headingMedium)
                 }
                 .foregroundStyle(Theme.background)
                 .frame(maxWidth: .infinity)
@@ -488,7 +488,7 @@ struct QuestCard: View {
                 if showArchiveConfirmation {
                     VStack(spacing: 8) {
                         Text("That\u{2019}s okay \u{2014} you tried, and that took courage.")
-                            .font(.system(size: 11))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                             .multilineTextAlignment(.center)
 
@@ -499,7 +499,7 @@ struct QuestCard: View {
                                 }
                             } label: {
                                 Text("Keep Quest")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .font(Typography.labelMedium)
                                     .foregroundStyle(Theme.textSecondary)
                             }
 
@@ -507,10 +507,10 @@ struct QuestCard: View {
                                 onArchive?()
                             } label: {
                                 HStack(spacing: 4) {
-                                    Image(systemName: "leaf.fill")
-                                        .font(.system(size: 10))
+                                    PhIcon.leafFill
+                                        .frame(width: 12, height: 12)
                                     Text("Archive (+15 XP)")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .font(Typography.labelMedium)
                                 }
                                 .foregroundStyle(Theme.accent)
                             }
@@ -526,7 +526,7 @@ struct QuestCard: View {
                         }
                     } label: {
                         Text("Not for me right now")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                     }
                     .padding(.top, 4)

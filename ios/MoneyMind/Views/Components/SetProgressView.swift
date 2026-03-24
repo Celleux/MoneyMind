@@ -19,11 +19,11 @@ struct SetProgressView: View {
                 Image(systemName: set.icon)
                     .foregroundStyle(set.accentColor)
                 Text(set.rawValue)
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text("\(collectedCount)/\(set.totalCards)")
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(set.accentColor)
             }
 
@@ -31,17 +31,17 @@ struct SetProgressView: View {
                 let achieved = collectedCount >= milestone.threshold
                 HStack(spacing: 10) {
                     Image(systemName: achieved ? "checkmark.circle.fill" : "circle")
-                        .font(.system(size: 14))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(achieved ? set.accentColor : Theme.textMuted)
 
                     Text("\(milestone.threshold)/\(set.totalCards) — \(milestone.reward)")
-                        .font(.system(size: 12, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(achieved ? Theme.textPrimary : Theme.textSecondary)
                         .strikethrough(achieved, color: Theme.textMuted)
                 }
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 }

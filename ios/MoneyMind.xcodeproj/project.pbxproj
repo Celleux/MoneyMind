@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		XXFC413690A6A66DBEA18EXX /* PhosphorSwift in Frameworks */ = {isa = PBXBuildFile; productRef = XX2522BE1C40FA3D05B082XX /* PhosphorSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,7 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-
+				XXFC413690A6A66DBEA18EXX /* PhosphorSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,6 +117,7 @@
 			);
 			name = MoneyMind;
 			packageProductDependencies = (
+				XX2522BE1C40FA3D05B082XX /* PhosphorSwift */,
 			);
 			productName = MoneyMind;
 			productReference = 105FC57A2E9EAD3100EA8BCF /* MoneyMind.app */;
@@ -209,6 +211,7 @@
 				105FC5922E9EAD3200EA8BCF /* MoneyMindUITests */,
 			);
 			packageReferences = (
+				XX24809F5D5E202E03A29AXX /* XCRemoteSwiftPackageReference "swift" */,
 			);
 		};
 /* End PBXProject section */
@@ -593,7 +596,24 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		XX24809F5D5E202E03A29AXX /* XCRemoteSwiftPackageReference "swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/phosphor-icons/swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 
+/* Begin XCSwiftPackageProductDependency section */
+		XX2522BE1C40FA3D05B082XX /* PhosphorSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = XX24809F5D5E202E03A29AXX /* XCRemoteSwiftPackageReference "swift" */;
+			productName = PhosphorSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 105FC5722E9EAD3100EA8BCF /* Project object */;
 }

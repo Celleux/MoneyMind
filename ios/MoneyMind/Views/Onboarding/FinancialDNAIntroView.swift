@@ -7,7 +7,7 @@ struct FinancialDNAIntroView: View {
     @State private var buttonPulse = false
 
     private let axes: [(title: String, icon: String, color: Color)] = [
-        ("Spending Style", "shield.lefthalf.filled", Color(hex: 0x34D399)),
+        ("Spending Style", "shield.lefthalf.filled", Theme.accent),
         ("Money Emotions", "brain.head.profile.fill", Color(hex: 0x60A5FA)),
         ("Risk Profile", "flame.fill", Color(hex: 0xFB923C)),
         ("Social Money", "person.2.fill", Color(hex: 0xF472B6)),
@@ -19,18 +19,18 @@ struct FinancialDNAIntroView: View {
 
             VStack(spacing: 12) {
                 Text("Discover Your")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.textPrimary)
 
                 Text("Financial DNA")
-                    .font(.system(size: 34, weight: .black, design: .rounded))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.accent)
             }
             .opacity(appeared ? 1 : 0)
             .offset(y: appeared ? 0 : 15)
 
             Text("A 2-minute deep scan of how\nyour brain handles money")
-                .font(.system(size: 15, weight: .medium, design: .rounded))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.top, 10)
@@ -62,7 +62,7 @@ struct FinancialDNAIntroView: View {
             Spacer().frame(height: 24)
 
             Text("Based on behavioral economics research.\nNot a personality label — a full financial fingerprint.")
-                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textMuted)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
@@ -73,14 +73,14 @@ struct FinancialDNAIntroView: View {
 
             Button(action: onComplete) {
                 Text("Start My Scan")
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 17)
                     .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
                     .scaleEffect(buttonPulse ? 1.02 : 1.0)
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .sensoryFeedback(.impact(weight: .medium), trigger: true)
             .padding(.horizontal, 32)
             .padding(.bottom, 48)

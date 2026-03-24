@@ -33,12 +33,12 @@ struct ReferralSectionView: View {
                 Image(systemName: "person.badge.plus")
                     .foregroundStyle(Theme.accentGreen)
                 Text("Invite Friends")
-                    .font(Theme.headingFont(.headline))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 if referralCount > 0 {
                     Text("\(referralCount) invited")
-                        .font(.caption.weight(.medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.accentGreen)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
@@ -49,10 +49,10 @@ struct ReferralSectionView: View {
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Your Code")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                     Text(referralCode)
-                        .font(.system(.title3, design: .monospaced, weight: .bold))
+                        .font(Typography.moneyMedium)
                         .foregroundStyle(Theme.textPrimary)
                 }
 
@@ -67,12 +67,12 @@ struct ReferralSectionView: View {
                     }
                 } label: {
                     Image(systemName: copied ? "checkmark" : "doc.on.doc.fill")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(copied ? Theme.accentGreen : Theme.textSecondary)
                         .frame(width: 40, height: 40)
                         .background(Theme.cardSurface.opacity(0.6), in: .circle)
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(.plain)
                 .sensoryFeedback(.selection, trigger: copied)
             }
             .padding(14)
@@ -87,22 +87,22 @@ struct ReferralSectionView: View {
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "square.and.arrow.up")
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                     Text("Invite a Friend")
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                 }
                 .foregroundStyle(Theme.background)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
                 .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .sensoryFeedback(.impact(weight: .medium), trigger: showShareSheet)
 
             rewardsBreakdown
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.hero)
         .sheet(isPresented: $showShareSheet) {
             ShareSheet(items: [shareText])
         }
@@ -112,11 +112,11 @@ struct ReferralSectionView: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(label)
-                    .font(.caption.weight(.medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                 Spacer()
                 Text("\(current)/\(target)")
-                    .font(.caption.weight(.bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.accent)
             }
 
@@ -142,10 +142,10 @@ struct ReferralSectionView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
                 Image(systemName: "gift.fill")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.gold)
                 Text("Rewards for each referral")
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
@@ -156,7 +156,7 @@ struct ReferralSectionView: View {
             }
 
             Text("Your friend also gets 7 days of Premium free!")
-                .font(.caption2)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
         }
     }
@@ -170,10 +170,10 @@ private struct ReferralRewardPill: View {
     var body: some View {
         HStack(spacing: 4) {
             Image(systemName: icon)
-                .font(.system(size: 9))
+                .font(Typography.labelSmall)
                 .foregroundStyle(color)
             Text(text)
-                .font(.system(size: 10, weight: .semibold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(.white)
         }
         .padding(.horizontal, 8)

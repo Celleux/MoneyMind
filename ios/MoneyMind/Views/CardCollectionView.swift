@@ -123,12 +123,12 @@ struct CardCollectionView: View {
                                 .fill(color)
                                 .frame(width: 48, height: 48)
                             Image(systemName: "checkmark")
-                                .font(.system(size: 18, weight: .bold))
+                                .font(Typography.headingLarge)
                                 .foregroundStyle(Theme.background)
                         }
                     } else {
                         Image(systemName: icon)
-                            .font(.system(size: 18))
+                            .font(Typography.bodyLarge)
                             .foregroundStyle(isSelected ? color : Theme.textSecondary)
                     }
                 }
@@ -139,7 +139,7 @@ struct CardCollectionView: View {
                     .lineLimit(1)
 
                 Text("\(count)/\(total)")
-                    .font(.system(size: 9, weight: .medium, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
         }
@@ -160,11 +160,11 @@ struct CardCollectionView: View {
         VStack(spacing: 6) {
             HStack {
                 Text("Collection Progress")
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
                 Spacer()
                 Text("\(collection.count)/\(CardDatabase.totalCards)")
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.accent)
             }
             GeometryReader { geo in
@@ -196,10 +196,10 @@ struct CardCollectionView: View {
                 ForEach(completedSets, id: \.self) { set in
                     HStack(spacing: 12) {
                         Image(systemName: "checkmark.seal.fill")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(Typography.headingMedium)
                             .foregroundStyle(set.accentColor)
                         Text("\(set.rawValue) Complete!")
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .font(Typography.labelMedium)
                             .foregroundStyle(.white)
                         Spacer()
                         ShareAchievementButton(
@@ -211,7 +211,7 @@ struct CardCollectionView: View {
                         )
                     }
                     .padding(12)
-                    .glassCard()
+                    .splurjCard(.elevated)
                 }
             }
             .padding(.horizontal)
@@ -256,7 +256,7 @@ struct CardCollectionView: View {
                     .overlay {
                         VStack(spacing: 8) {
                             Image(systemName: card.set.icon)
-                                .font(.system(size: 32, weight: .light))
+                                .font(Typography.displayMedium)
                                 .foregroundStyle(Theme.textMuted.opacity(0.15))
 
                             ZStack {
@@ -264,16 +264,16 @@ struct CardCollectionView: View {
                                     .fill(Theme.elevated)
                                     .frame(width: 28, height: 28)
                                 Image(systemName: "questionmark")
-                                    .font(.system(size: 14, weight: .medium))
+                                    .font(Typography.bodyMedium)
                                     .foregroundStyle(Theme.textMuted)
                             }
 
                             Text(card.rarity.label)
-                                .font(.system(size: 10))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(card.rarity.color.opacity(0.5))
 
                             Image(systemName: "lock.fill")
-                                .font(.system(size: 10))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textMuted.opacity(0.5))
                         }
                     }
@@ -293,7 +293,7 @@ struct CardCollectionView: View {
                 VStack {
                     HStack {
                         Text("Evo +\(info.evolutionLevel)")
-                            .font(.system(size: 8, weight: .heavy, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.background)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
@@ -311,7 +311,7 @@ struct CardCollectionView: View {
                     HStack {
                         Spacer()
                         Text("x\(info.duplicateCount + 1)")
-                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textPrimary)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 3)
@@ -325,7 +325,7 @@ struct CardCollectionView: View {
 
     private func newBadge(color: Color) -> some View {
         Text("NEW")
-            .font(.system(size: 8, weight: .heavy, design: .rounded))
+            .font(Typography.labelSmall)
             .foregroundStyle(Theme.background)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)

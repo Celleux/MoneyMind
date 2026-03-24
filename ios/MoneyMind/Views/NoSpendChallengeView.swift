@@ -42,7 +42,7 @@ struct NoSpendChallengeView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -76,10 +76,10 @@ struct NoSpendChallengeView: View {
 
                 VStack(spacing: 2) {
                     Text("\(challenge.noSpendStreak)")
-                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(personalityColor)
                     Text("day streak")
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
@@ -87,33 +87,33 @@ struct NoSpendChallengeView: View {
             HStack(spacing: 24) {
                 VStack(spacing: 4) {
                     Text("\(challenge.noSpendDays.count)")
-                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.success)
                     Text("No-Spend")
-                        .font(.caption2)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
                 VStack(spacing: 4) {
                     Text("\(challenge.spentDays.count)")
-                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.danger)
                     Text("Spent")
-                        .font(.caption2)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
                 VStack(spacing: 4) {
                     Text("\(challenge.daysActive)")
-                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.textPrimary)
                     Text("Days In")
-                        .font(.caption2)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
         }
         .padding(20)
         .frame(maxWidth: .infinity)
-        .glassCard()
+        .splurjCard(.hero)
         .padding(.top, 8)
     }
 
@@ -128,14 +128,14 @@ struct NoSpendChallengeView: View {
                                 .fill(earned ? personalityColor.opacity(0.15) : Theme.elevated)
                                 .frame(width: 44, height: 44)
                             Image(systemName: icon)
-                                .font(.system(size: 18))
+                                .font(Typography.bodyLarge)
                                 .foregroundStyle(earned ? personalityColor : Theme.textMuted)
                         }
                         Text(name)
-                            .font(.system(size: 9, weight: .semibold, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(earned ? Theme.textPrimary : Theme.textMuted)
                         Text("\(days)d")
-                            .font(.system(size: 8, weight: .medium, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                     }
                     .padding(.vertical, 8)
@@ -163,7 +163,7 @@ struct NoSpendChallengeView: View {
                     }
                 } label: {
                     Image(systemName: "chevron.left")
-                        .font(.caption.weight(.bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .frame(width: 32, height: 32)
                 }
@@ -171,7 +171,7 @@ struct NoSpendChallengeView: View {
                 Spacer()
 
                 Text(monthYearString(displayedMonth))
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
 
                 Spacer()
@@ -182,7 +182,7 @@ struct NoSpendChallengeView: View {
                     }
                 } label: {
                     Image(systemName: "chevron.right")
-                        .font(.caption.weight(.bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .frame(width: 32, height: 32)
                 }
@@ -191,7 +191,7 @@ struct NoSpendChallengeView: View {
             LazyVGrid(columns: dayColumns, spacing: 6) {
                 ForEach(weekdaySymbols, id: \.self) { symbol in
                     Text(symbol)
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                         .frame(height: 24)
                 }
@@ -222,7 +222,7 @@ struct NoSpendChallengeView: View {
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private var shareSection: some View {
@@ -233,13 +233,13 @@ struct NoSpendChallengeView: View {
                 Image(systemName: "square.and.arrow.up")
                 Text("Share Progress")
             }
-            .font(.subheadline.weight(.semibold))
+            .font(Typography.headingSmall)
             .foregroundStyle(Theme.accent)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .background(Theme.accent.opacity(0.1), in: .rect(cornerRadius: 12))
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .secondary, size: .medium))
         .sheet(isPresented: $shareTrigger) {
             let text = vm.shareChallenge(challenge)
             ShareSheetView(items: [text])

@@ -171,7 +171,7 @@ struct CharacterView: View {
                 }
 
                 Image(systemName: "shield.fill")
-                    .font(.system(size: 14))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(.white.opacity(0.8))
                     .offset(y: 6)
             }
@@ -216,7 +216,7 @@ struct CharacterView: View {
                 }
 
                 Image(systemName: "shield.checkered")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(.white.opacity(0.9))
                     .offset(y: 8)
             }
@@ -255,7 +255,7 @@ struct CharacterView: View {
                 .frame(width: stage.size * 0.78, height: stage.size * 0.88)
 
             Image(systemName: "crown.fill")
-                .font(.system(size: 18))
+                .font(Typography.bodyLarge)
                 .foregroundStyle(
                     LinearGradient(
                         colors: [.white, stage.primaryColor],
@@ -272,7 +272,7 @@ struct CharacterView: View {
                 }
 
                 Image(systemName: "crown.fill")
-                    .font(.system(size: 14))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(.white.opacity(0.6))
                     .offset(y: 10)
             }
@@ -313,7 +313,7 @@ struct CharacterView: View {
                 }
 
                 Image(systemName: "sparkles")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(.white)
                     .offset(y: 10)
             }
@@ -479,13 +479,13 @@ struct XPProgressBar: View {
         VStack(spacing: 8) {
             HStack {
                 Text("Level \(level)")
-                    .font(.system(.caption, design: .rounded, weight: .bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(stage.primaryColor)
 
                 Spacer()
 
                 Text(stage.name)
-                    .font(.caption2.weight(.medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
@@ -511,18 +511,18 @@ struct XPProgressBar: View {
 
             HStack {
                 Text("\(currentXP) XP")
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
 
                 Spacer()
 
                 if level < 50 {
                     Text("\(CharacterStage.xpForNextLevel(level)) XP")
-                        .font(.caption2)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 } else {
                     Text("MAX")
-                        .font(.caption2.weight(.bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(stage.primaryColor)
                 }
             }
@@ -545,16 +545,16 @@ struct SimpleModeView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private func simpleStat(_ text: String, icon: String) -> some View {
         HStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.caption)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.accentGreen)
             Text(text)
-                .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.textPrimary)
         }
     }
@@ -573,19 +573,19 @@ struct SocialProofCard: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.title3)
+                .font(Typography.headingLarge)
                 .foregroundStyle(Theme.teal)
                 .frame(width: 32)
 
             Text(message)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textPrimary.opacity(0.85))
                 .lineLimit(2)
 
             Spacer(minLength: 0)
         }
         .padding(16)
-        .glassCard(cornerRadius: 14)
+        .splurjCard(.subtle)
     }
 }
 
@@ -595,7 +595,7 @@ struct ReactionMessageBubble: View {
 
     var body: some View {
         Text(message)
-            .font(.subheadline.weight(.medium))
+            .font(Typography.bodyMedium)
             .foregroundStyle(Theme.textPrimary)
             .padding(.horizontal, 16)
             .padding(.vertical, 10)

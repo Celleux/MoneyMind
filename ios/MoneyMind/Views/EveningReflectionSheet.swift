@@ -51,7 +51,7 @@ struct EveningReflectionSheet: View {
     private var starsSection: some View {
         VStack(spacing: 12) {
             Text("How was your day?")
-                .font(Theme.headingFont(.title3))
+                .font(Typography.headingLarge)
                 .foregroundStyle(Theme.textPrimary)
 
             HStack(spacing: 12) {
@@ -62,7 +62,7 @@ struct EveningReflectionSheet: View {
                         }
                     } label: {
                         Image(systemName: star <= starRating ? "star.fill" : "star")
-                            .font(.system(size: 36))
+                            .font(Typography.displayMedium)
                             .foregroundStyle(star <= starRating ? Theme.gold : Theme.textSecondary.opacity(0.3))
                             .scaleEffect(star <= starRating ? 1.1 : 1.0)
                     }
@@ -78,7 +78,7 @@ struct EveningReflectionSheet: View {
     private var triggersSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Any triggers today?")
-                .font(.headline)
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             FlowLayout(spacing: 8) {
@@ -94,7 +94,7 @@ struct EveningReflectionSheet: View {
                         }
                     } label: {
                         Text(trigger)
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(isSelected ? Theme.background : Theme.textPrimary)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 10)
@@ -107,7 +107,7 @@ struct EveningReflectionSheet: View {
                                     .strokeBorder(isSelected ? Theme.accentGreen.opacity(0.3) : Theme.textSecondary.opacity(0.15), lineWidth: 1)
                             )
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(.plain)
                     .sensoryFeedback(.selection, trigger: isSelected)
                     .accessibilityLabel("\(trigger)\(isSelected ? ", selected" : "")")
                 }
@@ -119,11 +119,11 @@ struct EveningReflectionSheet: View {
         VStack(spacing: 12) {
             HStack {
                 Text("Urge intensity")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text(String(format: "%.0f", urgeIntensity))
-                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(urgeColor)
                     .contentTransition(.numericText())
             }
@@ -134,16 +134,16 @@ struct EveningReflectionSheet: View {
 
             HStack {
                 Text("None")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                 Spacer()
                 Text("Extreme")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private var urgeColor: Color {
@@ -158,14 +158,14 @@ struct EveningReflectionSheet: View {
     private var savedTodaySection: some View {
         HStack {
             Image(systemName: "dollarsign.circle.fill")
-                .font(.title2)
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.accentGreen)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Money saved today")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                 Text(todaySaved, format: .currency(code: "USD"))
-                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
             }
             Spacer()
@@ -183,13 +183,13 @@ struct EveningReflectionSheet: View {
             submit()
         } label: {
             Text("Save Reflection")
-                .font(.headline)
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.background)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
         .sensoryFeedback(.success, trigger: submitted)
         .accessibilityLabel("Save evening reflection")
     }

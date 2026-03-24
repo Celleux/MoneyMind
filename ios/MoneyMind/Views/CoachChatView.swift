@@ -58,7 +58,7 @@ struct CoachChatView: View {
                         Image(systemName: "brain.head.profile")
                             .foregroundStyle(Theme.teal)
                         Text("Splurj Coach")
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.textPrimary)
                     }
                 }
@@ -70,7 +70,7 @@ struct CoachChatView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -112,16 +112,16 @@ struct CoachChatView: View {
                         .fill(Theme.teal.opacity(0.06))
                         .frame(width: 140, height: 140)
                     Image(systemName: "brain.head.profile")
-                        .font(.system(size: 44))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(Theme.teal)
                 }
 
                 Text("Splurj Coach")
-                    .font(Theme.headingFont(.title))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.textPrimary)
 
                 Text("A supportive space to explore your relationship with money. No judgment, just understanding.")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
@@ -142,23 +142,23 @@ struct CoachChatView: View {
                         .padding(.vertical, 16)
                         .background(Theme.teal, in: .rect(cornerRadius: 14))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                     .sensoryFeedback(.impact(weight: .medium), trigger: viewModel.sessionActive)
                     .accessibilityLabel("Start coaching session")
 
                     Text("\(viewModel.sessionsRemaining) of \(viewModel.maxSessionsPerDay) sessions remaining today")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 } else {
                     VStack(spacing: 8) {
                         Image(systemName: "clock.fill")
-                            .font(.title2)
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textSecondary)
                         Text("You've used all 5 sessions today")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                         Text("Come back tomorrow for more coaching")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary.opacity(0.7))
                     }
                     .padding(.vertical, 20)
@@ -169,10 +169,10 @@ struct CoachChatView: View {
             if viewModel.sessionEnded {
                 VStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.title2)
+                        .font(Typography.displaySmall)
                         .foregroundStyle(Theme.accentGreen)
                     Text("+25 XP earned")
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.accentGreen)
                 }
             }
@@ -237,7 +237,7 @@ struct CoachChatView: View {
         HStack(spacing: 12) {
             TextField("Type a message...", text: $inputText, axis: .vertical)
                 .lineLimit(1...4)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
                 .background(Theme.cardSurface, in: .rect(cornerRadius: 22))
@@ -252,7 +252,7 @@ struct CoachChatView: View {
                 sendCurrentMessage()
             } label: {
                 Image(systemName: "arrow.up.circle.fill")
-                    .font(.system(size: 34))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Theme.textSecondary.opacity(0.3) : Theme.teal)
             }
             .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.isTyping)
@@ -267,14 +267,14 @@ struct CoachChatView: View {
     private var sessionEndedBar: some View {
         HStack {
             Text("Session complete")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
             Spacer()
             if viewModel.canStartSession {
                 Button("New Session") {
                     viewModel.startSession(modelContext: modelContext)
                 }
-                .font(.subheadline.weight(.semibold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.teal)
             }
         }
@@ -312,16 +312,16 @@ private struct MessageBubble: View {
                 if message.isDistortionFlag {
                     HStack(spacing: 6) {
                         Image(systemName: "lightbulb.fill")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.gold)
                         Text("Thought Check")
-                            .font(.caption2.weight(.semibold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.gold)
                     }
                 }
 
                 Text(message.content)
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(bubbleTextColor)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)

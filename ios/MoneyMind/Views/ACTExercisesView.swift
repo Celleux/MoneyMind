@@ -11,15 +11,15 @@ struct ACTExercisesView: View {
                 VStack(spacing: 20) {
                     VStack(spacing: 8) {
                         Image(systemName: "leaf.fill")
-                            .font(.system(size: 36))
+                            .font(Typography.displayMedium)
                             .foregroundStyle(Theme.teal)
 
                         Text("ACT Exercises")
-                            .font(Theme.headingFont(.title2))
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textPrimary)
 
                         Text("Acceptance & Commitment Therapy exercises to build psychological flexibility.")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 16)
@@ -32,17 +32,17 @@ struct ACTExercisesView: View {
                         } label: {
                             HStack(spacing: 14) {
                                 Image(systemName: type.icon)
-                                    .font(.title2)
+                                    .font(Typography.displaySmall)
                                     .foregroundStyle(Theme.teal)
                                     .frame(width: 48, height: 48)
                                     .background(Theme.teal.opacity(0.12), in: .rect(cornerRadius: 12))
 
                                 VStack(alignment: .leading, spacing: 3) {
                                     Text(type.title)
-                                        .font(.subheadline.weight(.semibold))
+                                        .font(Typography.headingSmall)
                                         .foregroundStyle(Theme.textPrimary)
                                     Text(type.subtitle)
-                                        .font(.caption)
+                                        .font(Typography.labelSmall)
                                         .foregroundStyle(Theme.textSecondary)
                                         .lineLimit(2)
                                 }
@@ -50,13 +50,13 @@ struct ACTExercisesView: View {
                                 Spacer()
 
                                 Image(systemName: "chevron.right")
-                                    .font(.caption.weight(.semibold))
+                                    .font(Typography.labelSmall)
                                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
                             }
                             .padding(16)
-                            .glassCard()
+                            .splurjCard(.interactive)
                         }
-                        .buttonStyle(PressableButtonStyle())
+                        .buttonStyle(.plain)
                         .accessibilityLabel(type.title)
                         .accessibilityHint(type.subtitle)
                     }
@@ -70,7 +70,7 @@ struct ACTExercisesView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -125,13 +125,13 @@ struct ACTExerciseFlowView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text(exerciseType.title)
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.textPrimary)
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -149,7 +149,7 @@ struct ACTExerciseFlowView: View {
                     let step = steps[currentStep]
 
                     Text(step.instruction)
-                        .font(.body)
+                        .font(Typography.bodyLarge)
                         .foregroundStyle(Theme.textPrimary)
                         .lineSpacing(4)
                         .padding(.top, 24)
@@ -173,14 +173,14 @@ struct ACTExerciseFlowView: View {
                     if let prompt = step.prompt, step.isReflection {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(prompt)
-                                .font(.subheadline.weight(.medium))
+                                .font(Typography.bodyMedium)
                                 .foregroundStyle(Theme.teal)
 
                             TextField("Your reflection...", text: $currentInput, axis: .vertical)
                                 .lineLimit(3...6)
-                                .font(.subheadline)
+                                .font(Typography.bodyMedium)
                                 .padding(14)
-                                .glassCard(cornerRadius: 12)
+                                .splurjCard(.outlined)
                                 .foregroundStyle(Theme.textPrimary)
                                 .tint(Theme.teal)
                         }
@@ -213,7 +213,7 @@ struct ACTExerciseFlowView: View {
             ForEach(Array(ACTContent.valuesAreas.enumerated()), id: \.offset) { index, area in
                 HStack {
                     Text(area)
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                         .frame(width: 160, alignment: .leading)
 
@@ -244,11 +244,11 @@ struct ACTExerciseFlowView: View {
         VStack(spacing: 12) {
             HStack {
                 Text(label)
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                 Spacer()
                 Text("\(Int(value.wrappedValue))")
-                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.teal)
             }
 
@@ -257,16 +257,16 @@ struct ACTExerciseFlowView: View {
 
             HStack {
                 Text("None")
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                 Spacer()
                 Text("Extreme")
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private var willingnessTimerSection: some View {
@@ -286,7 +286,7 @@ struct ACTExerciseFlowView: View {
                     .padding(.horizontal, 32)
                     .background(Theme.teal, in: .rect(cornerRadius: 14))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .sensoryFeedback(.impact(weight: .medium), trigger: timerActive)
             } else {
                 ZStack {
@@ -302,14 +302,14 @@ struct ACTExerciseFlowView: View {
                         .animation(.linear(duration: 1), value: timerSeconds)
 
                     Text(timerFormatted)
-                        .font(.system(.title, design: .rounded, weight: .bold))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.textPrimary)
                         .contentTransition(.numericText())
                 }
 
                 if timerSeconds <= 0 {
                     Text("Well done. Take a moment to notice how you feel.")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.teal)
                         .multilineTextAlignment(.center)
                 }
@@ -341,7 +341,7 @@ struct ACTExerciseFlowView: View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Your thought:")
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                 Text("\"\(thought)\"")
                     .font(.subheadline.italic())
@@ -350,19 +350,19 @@ struct ACTExerciseFlowView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 Text("Now reframe:")
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.teal)
                 Text("\"I notice I'm having the thought that \(thought.lowercased())\"")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.teal.opacity(0.9))
             }
 
             VStack(alignment: .leading, spacing: 6) {
                 Text("And again:")
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.teal)
                 Text("\"My mind is telling me that \(thought.lowercased())\"")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.teal.opacity(0.9))
             }
         }
@@ -386,13 +386,13 @@ struct ACTExerciseFlowView: View {
                         Image(systemName: "chevron.left")
                         Text("Back")
                     }
-                    .font(.subheadline.weight(.medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .padding(.vertical, 14)
                     .padding(.horizontal, 24)
-                    .glassCard(cornerRadius: 12)
+                    .splurjCard(.outlined)
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .ghost, size: .medium))
             }
 
             Spacer()
@@ -418,13 +418,13 @@ struct ACTExerciseFlowView: View {
                     Text(isLastStep ? "Complete" : "Next")
                     Image(systemName: isLastStep ? "checkmark" : "chevron.right")
                 }
-                .font(.subheadline.weight(.semibold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.background)
                 .padding(.vertical, 14)
                 .padding(.horizontal, 28)
                 .background(Theme.teal, in: .rect(cornerRadius: 12))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .sensoryFeedback(.impact(weight: .light), trigger: currentStep)
         }
         .padding(.horizontal)
@@ -441,16 +441,16 @@ struct ACTExerciseFlowView: View {
                     .fill(Theme.teal.opacity(0.1))
                     .frame(width: 120, height: 120)
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 56))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(Theme.teal)
             }
 
             Text("Exercise Complete")
-                .font(Theme.headingFont(.title2))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
 
             Text("Great work. Every exercise strengthens your psychological flexibility.")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -458,17 +458,17 @@ struct ACTExerciseFlowView: View {
             if exerciseType == .willingness {
                 VStack(spacing: 8) {
                     Text("Before: \(Int(initialRating)) → After: \(Int(finalRating))")
-                        .font(.system(.headline, design: .rounded))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.teal)
 
                     if finalRating < initialRating {
                         Text("Your discomfort decreased by sitting with it")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.accentGreen)
                     }
                 }
                 .padding(16)
-                .glassCard()
+                .splurjCard(.elevated)
             }
 
             Spacer()
@@ -477,13 +477,13 @@ struct ACTExerciseFlowView: View {
                 dismiss()
             } label: {
                 Text("Done")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(Theme.teal, in: .rect(cornerRadius: 14))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
         }

@@ -79,15 +79,15 @@ struct GhostBudgetView: View {
     private var header: some View {
         HStack(spacing: 10) {
             Text("👻")
-                .font(.system(size: 32))
+                .font(Typography.displayMedium)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Ghost Budget")
-                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.textPrimary)
 
                 Text("What if you changed your habits?")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textMuted)
             }
 
@@ -95,7 +95,7 @@ struct GhostBudgetView: View {
 
             if !premiumManager.hasFullAccess {
                 Label("PRO", systemImage: "crown.fill")
-                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.gold)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
@@ -111,11 +111,11 @@ struct GhostBudgetView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("Spending Habits")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text("\(vm.eliminatedCategories.count) eliminated")
-                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(vm.eliminatedCategories.isEmpty ? Theme.textMuted : Theme.accent)
             }
 
@@ -131,7 +131,7 @@ struct GhostBudgetView: View {
                     }
                 }
             }
-            .glassCard()
+            .splurjCard(.elevated)
         }
     }
 
@@ -147,16 +147,16 @@ struct GhostBudgetView: View {
                         .fill(item.isEliminated ? Theme.accent.opacity(0.15) : item.color.opacity(0.1))
                         .frame(width: 36, height: 36)
                     Image(systemName: item.icon)
-                        .font(.system(size: 15))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(item.isEliminated ? Theme.accent : item.color)
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(item.name)
-                        .font(.system(size: 15, weight: .medium, design: .rounded))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Text("~$\(Int(item.monthlyAverage))/mo avg")
-                        .font(.system(size: 12, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textMuted)
                 }
 
@@ -196,7 +196,7 @@ struct GhostBudgetView: View {
                     }
                 } label: {
                     Text(horizon.rawValue)
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(
                             vm.selectedHorizon == horizon ? .white : Theme.textSecondary
                         )
@@ -213,7 +213,7 @@ struct GhostBudgetView: View {
             }
         }
         .padding(4)
-        .glassCard(cornerRadius: 999)
+        .splurjCard(.subtle)
     }
 
     // MARK: - Savings Callout
@@ -222,7 +222,7 @@ struct GhostBudgetView: View {
         VStack(spacing: 16) {
             VStack(spacing: 6) {
                 Text("You'd have")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textMuted)
 
                 ZStack {
@@ -239,16 +239,16 @@ struct GhostBudgetView: View {
                 }
 
                 Text("more in \(vm.selectedHorizon.label)")
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.success.opacity(0.8))
             }
 
             if let equiv = vm.currentEquivalent {
                 HStack(spacing: 6) {
                     Text(equiv.emoji)
-                        .font(.system(size: 16))
+                        .font(Typography.labelLarge)
                     Text(equiv.text)
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                 }
                 .transition(.asymmetric(
@@ -261,7 +261,7 @@ struct GhostBudgetView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 28)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     // MARK: - Comparison Chart
@@ -270,7 +270,7 @@ struct GhostBudgetView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text("Balance Projection")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
             }
@@ -291,7 +291,7 @@ struct GhostBudgetView: View {
             }
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     private func chartLegendDot(color: Color, label: String) -> some View {
@@ -300,7 +300,7 @@ struct GhostBudgetView: View {
                 .fill(color)
                 .frame(width: 8, height: 8)
             Text(label)
-                .font(.system(size: 12, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textMuted)
         }
     }
@@ -312,13 +312,13 @@ struct GhostBudgetView: View {
             generateAndShare()
         } label: {
             Label("Share My Ghost Budget", systemImage: "square.and.arrow.up")
-                .font(.system(.body, design: .rounded, weight: .semibold))
+                .font(Typography.headingMedium)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(Theme.accent, in: .rect(cornerRadius: 14))
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
     }
 
     // MARK: - Prompt Card
@@ -326,19 +326,19 @@ struct GhostBudgetView: View {
     private var promptCard: some View {
         VStack(spacing: 16) {
             Image(systemName: "hand.tap.fill")
-                .font(.system(size: 36))
+                .font(Typography.displayMedium)
                 .foregroundStyle(Theme.accent.opacity(0.6))
                 .symbolEffect(.pulse, options: .repeating)
 
             Text("Toggle a spending category\nto see your ghost timeline")
-                .font(.system(size: 15, weight: .medium, design: .rounded))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     // MARK: - Empty State
@@ -501,13 +501,13 @@ struct GhostSharePreviewSheet: View {
 
                 ShareLink(item: Image(uiImage: image), preview: SharePreview("My Ghost Budget", image: Image(uiImage: image))) {
                     Label("Share Image", systemImage: "square.and.arrow.up")
-                        .font(.system(.body, design: .rounded, weight: .semibold))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Theme.accent, in: .rect(cornerRadius: 14))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .padding(.horizontal)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

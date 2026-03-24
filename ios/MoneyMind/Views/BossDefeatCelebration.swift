@@ -93,7 +93,7 @@ struct BossDefeatCelebration: View {
                         performDismiss()
                     } label: {
                         Text("Continue")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.background)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
@@ -137,7 +137,7 @@ struct BossDefeatCelebration: View {
     private var bossSection: some View {
         ZStack {
             Image(systemName: bossIcon)
-                .font(.system(size: 80, weight: .bold))
+                .font(Typography.displayLarge)
                 .foregroundStyle(Theme.neonRed)
                 .neonGlow(color: Theme.neonRed, radius: 20)
                 .offset(x: bossShakeOffset)
@@ -196,13 +196,13 @@ struct BossDefeatCelebration: View {
         VStack(spacing: 12) {
             if isFinalBoss {
                 Text("FINANCIAL FREEDOM")
-                    .font(.system(size: 14, weight: .black, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.gold)
                     .tracking(4)
             }
 
             Text("BOSS DEFEATED")
-                .font(.system(size: 36, weight: .black, design: .rounded))
+                .font(Typography.displayMedium)
                 .foregroundStyle(
                     LinearGradient(
                         colors: [Theme.gold, Color(hex: 0xFB923C)],
@@ -214,11 +214,11 @@ struct BossDefeatCelebration: View {
                 .neonGlow(color: Theme.neonGold, radius: 30)
 
             Text("You defeated \(zone.bossName)")
-                .font(.system(size: 15, weight: .medium))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
 
             Image(systemName: "trophy.fill")
-                .font(.system(size: 52))
+                .font(Typography.displayLarge)
                 .foregroundStyle(Theme.gold)
                 .symbolEffect(.bounce, value: showDefeatedText)
                 .shadow(color: Theme.gold.opacity(0.4), radius: 20)
@@ -240,16 +240,16 @@ struct BossDefeatCelebration: View {
                                     .fill(item.color.opacity(0.15))
                                     .frame(width: 40, height: 40)
                                 Image(systemName: item.icon)
-                                    .font(.system(size: 18, weight: .bold))
+                                    .font(Typography.headingLarge)
                                     .foregroundStyle(item.color)
                             }
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(item.title)
-                                    .font(.system(size: 14, weight: .bold))
+                                    .font(Typography.headingSmall)
                                     .foregroundStyle(.white)
                                 Text(item.subtitle)
-                                    .font(.system(size: 11))
+                                    .font(Typography.labelSmall)
                                     .foregroundStyle(Theme.textSecondary)
                             }
 
@@ -281,7 +281,7 @@ struct BossDefeatCelebration: View {
     private var zoneProgressSection: some View {
         VStack(spacing: 8) {
             Text("ZONE PROGRESS")
-                .font(.system(size: 10, weight: .black))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
                 .tracking(2)
 
@@ -307,7 +307,7 @@ struct BossDefeatCelebration: View {
             if let next = nextZone {
                 VStack(spacing: 8) {
                     Text("NEW ZONE UNLOCKED")
-                        .font(.system(size: 10, weight: .black))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.accent)
                         .tracking(3)
 
@@ -317,16 +317,16 @@ struct BossDefeatCelebration: View {
                                 .fill(Theme.accent.opacity(0.15))
                                 .frame(width: 44, height: 44)
                             Image(systemName: next.sfSymbol)
-                                .font(.system(size: 20, weight: .bold))
+                                .font(Typography.headingLarge)
                                 .foregroundStyle(Theme.accent)
                         }
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text(next.rawValue)
-                                .font(.system(size: 16, weight: .bold))
+                                .font(Typography.headingMedium)
                                 .foregroundStyle(.white)
                             Text("Levels \(next.levelRange.lowerBound)-\(next.levelRange.upperBound)")
-                                .font(.system(size: 12))
+                                .font(Typography.bodySmall)
                                 .foregroundStyle(Theme.textSecondary)
                         }
                     }
@@ -345,11 +345,11 @@ struct BossDefeatCelebration: View {
             } else {
                 VStack(spacing: 8) {
                     Text("ALL ZONES COMPLETE")
-                        .font(.system(size: 10, weight: .black))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.gold)
                         .tracking(3)
                     Text("You have achieved financial mastery")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }

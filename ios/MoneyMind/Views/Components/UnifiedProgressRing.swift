@@ -21,7 +21,7 @@ struct UnifiedProgressRing: View {
             ring(progress: animatedBoss, color: Theme.neonRed, radius: 38 - (ringWidth + ringSpacing) * 2)
 
             Text("\(level)")
-                .font(.system(size: 16, weight: .black, design: .rounded))
+                .font(Typography.headingMedium)
                 .foregroundStyle(.white)
         }
         .frame(width: 80, height: 80)
@@ -88,7 +88,7 @@ struct UnifiedProgressRingLegend: View {
                 .fill(color)
                 .frame(width: 6, height: 6)
             Text(label)
-                .font(.system(size: 9, weight: .medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
         }
     }

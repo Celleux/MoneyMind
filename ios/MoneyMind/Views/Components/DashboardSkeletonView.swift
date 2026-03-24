@@ -55,7 +55,7 @@ struct DashboardSkeletonView: View {
             }
             .padding(.vertical, 24)
             .frame(maxWidth: .infinity)
-            .glassCard(cornerRadius: 20)
+            .splurjCard(.elevated)
 
             LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
                 ForEach(0..<4, id: \.self) { _ in
@@ -65,7 +65,7 @@ struct DashboardSkeletonView: View {
                         Spacer()
                     }
                     .padding(14)
-                    .glassCard(cornerRadius: 14)
+                    .splurjCard(.subtle)
                 }
             }
 
@@ -87,10 +87,10 @@ struct DashboardSkeletonView: View {
                 }
             }
             .padding(20)
-            .glassCard(cornerRadius: 20)
+            .splurjCard(.elevated)
 
             skeletonBlock(width: .infinity, height: 180)
-                .glassCard(cornerRadius: 20)
+                .splurjCard(.elevated)
 
             VStack(alignment: .leading, spacing: 14) {
                 skeletonBlock(width: 60, height: 16)
@@ -108,7 +108,7 @@ struct DashboardSkeletonView: View {
                 }
             }
             .padding(20)
-            .glassCard(cornerRadius: 20)
+            .splurjCard(.elevated)
         }
     }
 

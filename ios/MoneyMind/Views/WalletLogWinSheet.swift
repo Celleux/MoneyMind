@@ -25,11 +25,11 @@ struct WalletLogWinSheet: View {
                 VStack(spacing: 28) {
                     VStack(spacing: 6) {
                         Text("What did you resist?")
-                            .font(Theme.headingFont(.title3))
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textPrimary)
 
                         Text("Every resist is a win worth celebrating")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                     }
                     .padding(.top, 8)
@@ -37,30 +37,30 @@ struct WalletLogWinSheet: View {
                     VStack(spacing: 8) {
                         HStack(spacing: 2) {
                             Text(CurrencyHelper.symbol(for: profiles.first?.defaultCurrency ?? "USD"))
-                                .font(.system(size: 36, weight: .bold, design: .rounded))
+                                .font(Typography.displayMedium)
                                 .foregroundStyle(Theme.accentGreen)
                             TextField("0", text: $amount)
                                 .keyboardType(.decimalPad)
-                                .font(.system(size: 36, weight: .bold, design: .rounded))
+                                .font(Typography.displayMedium)
                                 .foregroundStyle(Theme.textPrimary)
                                 .tint(Theme.accentGreen)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .padding(.horizontal, 24)
-                        .glassCard()
+                        .splurjCard(.elevated)
                     }
 
                     TextField("What was the temptation? (optional)", text: $note)
-                        .font(.body)
+                        .font(Typography.bodyLarge)
                         .foregroundStyle(Theme.textPrimary)
                         .tint(Theme.accentGreen)
                         .padding(16)
-                        .glassCard(cornerRadius: 12)
+                        .splurjCard(.outlined)
 
                     VStack(alignment: .leading, spacing: 10) {
                         Text("What triggered it?")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
 
                         LazyVGrid(columns: [
@@ -73,7 +73,7 @@ struct WalletLogWinSheet: View {
                                     }
                                 } label: {
                                     Text(trigger)
-                                        .font(.caption.weight(.medium))
+                                        .font(Typography.labelSmall)
                                         .foregroundStyle(selectedTrigger == trigger ? Theme.background : Theme.textPrimary)
                                         .padding(.horizontal, 14)
                                         .padding(.vertical, 10)
@@ -90,7 +90,7 @@ struct WalletLogWinSheet: View {
                                                 )
                                         )
                                 }
-                                .buttonStyle(PressableButtonStyle())
+                                .buttonStyle(.plain)
                                 .sensoryFeedback(.selection, trigger: selectedTrigger)
                                 .accessibilityLabel("Trigger: \(trigger)")
                             }
@@ -102,16 +102,16 @@ struct WalletLogWinSheet: View {
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: "star.fill")
-                                .font(.body)
+                                .font(Typography.bodyLarge)
                             Text("I Saved This!")
-                                .font(.headline)
+                                .font(Typography.headingMedium)
                         }
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(.plain)
                     .disabled(amount.isEmpty)
                     .opacity(amount.isEmpty ? 0.5 : 1)
                     .sensoryFeedback(.impact(weight: .medium), trigger: savedAmount)

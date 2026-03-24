@@ -75,10 +75,10 @@ struct ShareableAchievementCard: View {
 
                 VStack(spacing: 10) {
                     Text(type.emoji)
-                        .font(.system(size: 36))
+                        .font(Typography.displayMedium)
 
                     Text(type.headline)
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(.white)
                         .multilineTextAlignment(.center)
                         .lineLimit(3)
@@ -102,10 +102,10 @@ struct ShareableAchievementCard: View {
     private var headerBadge: some View {
         HStack(spacing: 6) {
             Image(systemName: "leaf.fill")
-                .font(.system(size: 10, weight: .bold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.accent)
             Text("SPLURJ")
-                .font(.system(size: 10, weight: .black, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(.white.opacity(0.6))
                 .tracking(3)
         }
@@ -137,7 +137,7 @@ struct ShareableAchievementCard: View {
                 )
 
             Image(systemName: type.icon)
-                .font(.system(size: 32, weight: .bold))
+                .font(Typography.displayMedium)
                 .foregroundStyle(type.accentColor)
         }
     }
@@ -161,12 +161,12 @@ struct ShareableAchievementCard: View {
     private func statItem(value: String, label: String) -> some View {
         VStack(spacing: 3) {
             Text(value)
-                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .font(Typography.headingSmall)
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
             Text(label)
-                .font(.system(size: 9, weight: .medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(.white.opacity(0.4))
         }
     }
@@ -187,12 +187,12 @@ struct ShareableAchievementCard: View {
                 Image(systemName: "leaf.fill")
                     .foregroundStyle(Theme.accent)
                 Text("Download Splurj")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(.white.opacity(0.5))
             }
 
             Text("Don't splurge. Splurj.")
-                .font(.system(size: 9, weight: .medium, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(.white.opacity(0.25))
         }
     }
@@ -264,7 +264,7 @@ struct ShareAchievementButton: View {
                 iconLabel
             }
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .secondary, size: .medium))
         .accessibilityLabel("Share achievement")
         .sheet(isPresented: $showShareSheet) {
             if let image = shareImage {
@@ -276,9 +276,9 @@ struct ShareAchievementButton: View {
     private var pillLabel: some View {
         HStack(spacing: 8) {
             Image(systemName: "square.and.arrow.up")
-                .font(.subheadline.weight(.semibold))
+                .font(Typography.headingSmall)
             Text("Share")
-                .font(.subheadline.weight(.semibold))
+                .font(Typography.headingSmall)
         }
         .foregroundStyle(Theme.textPrimary)
         .padding(.horizontal, 20)
@@ -290,9 +290,9 @@ struct ShareAchievementButton: View {
     private var compactLabel: some View {
         HStack(spacing: 6) {
             Image(systemName: "square.and.arrow.up")
-                .font(.system(size: 13, weight: .semibold))
+                .font(Typography.labelMedium)
             Text("Share")
-                .font(.system(size: 13, weight: .semibold))
+                .font(Typography.labelMedium)
         }
         .foregroundStyle(type.accentColor)
         .padding(.horizontal, 14)
@@ -302,7 +302,7 @@ struct ShareAchievementButton: View {
 
     private var iconLabel: some View {
         Image(systemName: "square.and.arrow.up")
-            .font(.system(size: 16, weight: .semibold))
+            .font(Typography.headingMedium)
             .foregroundStyle(Theme.textSecondary)
             .frame(width: 36, height: 36)
             .background(Theme.elevated, in: Circle())

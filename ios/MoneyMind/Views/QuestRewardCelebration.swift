@@ -143,14 +143,14 @@ struct QuestRewardCelebration: View {
         VStack(spacing: 8) {
             if titleOpacity > 0 {
                 Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: 36))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.accent)
                     .symbolEffect(.bounce, value: titleOpacity > 0.5)
                     .opacity(titleOpacity)
                     .scaleEffect(titleScale)
 
                 Text("QUEST COMPLETE")
-                    .font(.system(size: 14, weight: .black, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.accent)
                     .tracking(4)
                     .opacity(subtitleOpacity)
@@ -196,16 +196,16 @@ struct QuestRewardCelebration: View {
                         .scaleEffect(xpScale)
 
                     Text("EXPERIENCE POINTS")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .tracking(2)
 
                     if reward.isLucky {
                         HStack(spacing: 4) {
                             Image(systemName: "sparkles")
-                                .font(.system(size: 10))
+                                .font(Typography.labelSmall)
                             Text("LUCKY QUEST BONUS")
-                                .font(.system(size: 9, weight: .heavy))
+                                .font(Typography.labelSmall)
                                 .tracking(1)
                         }
                         .foregroundStyle(Theme.gold)
@@ -250,14 +250,14 @@ struct QuestRewardCelebration: View {
             if showCardZoom && reward.scratchCard {
                 VStack(spacing: 8) {
                     Image(systemName: "creditcard.fill")
-                        .font(.system(size: 44))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(Theme.accent)
                         .scaleEffect(cardZoomScale)
                         .neonGlow(color: Theme.neonEmerald, radius: 20)
                         .depthPop(intensity: 1.5)
 
                     Text("A card awaits in The Vault")
-                        .font(.system(size: 13, weight: .bold))
+                        .font(Typography.labelMedium)
                         .foregroundStyle(Theme.accent)
                 }
                 .transition(.scale.combined(with: .opacity))
@@ -291,7 +291,7 @@ struct QuestRewardCelebration: View {
                     .frame(width: 52, height: 52)
 
                 Image(systemName: "creditcard.fill")
-                    .font(.system(size: 24))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.accent)
                     .offset(y: cardBounce ? 0 : -30)
                     .animation(.spring(response: 0.5, dampingFraction: 0.5), value: cardBounce)
@@ -299,10 +299,10 @@ struct QuestRewardCelebration: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Scratch Card Earned")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(.white)
                 Text("Head to The Vault to reveal it")
-                    .font(.system(size: 11))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
@@ -324,14 +324,14 @@ struct QuestRewardCelebration: View {
     private var essenceReward: some View {
         HStack(spacing: 10) {
             Image(systemName: "diamond.fill")
-                .font(.system(size: 20))
+                .font(Typography.headingLarge)
                 .foregroundStyle(Color(hex: 0xA78BFA))
                 .offset(y: essenceFly ? 0 : 20)
                 .opacity(essenceFly ? 1 : 0)
                 .animation(.spring(response: 0.4, dampingFraction: 0.6), value: essenceFly)
 
             Text("+\(reward.essence) Essence")
-                .font(.system(size: 16, weight: .bold))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Color(hex: 0xA78BFA))
         }
     }
@@ -340,14 +340,14 @@ struct QuestRewardCelebration: View {
         HStack(spacing: 10) {
             ZStack {
                 Image(systemName: "bolt.fill")
-                    .font(.system(size: 22))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Color(hex: 0xF87171))
                     .rotationEffect(.degrees(swordSlash ? 0 : -45))
                     .animation(.spring(response: 0.3, dampingFraction: 0.5), value: swordSlash)
 
                 if damageFloat {
                     Text("-\(reward.bossDamage)")
-                        .font(.system(size: 14, weight: .black, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Color(hex: 0xF87171))
                         .offset(y: damageFloat ? -25 : 0)
                         .opacity(damageFloat ? 0.6 : 1)
@@ -356,7 +356,7 @@ struct QuestRewardCelebration: View {
             }
 
             Text("-\(reward.bossDamage) Boss HP")
-                .font(.system(size: 16, weight: .bold))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Color(hex: 0xF87171))
         }
     }
@@ -364,7 +364,7 @@ struct QuestRewardCelebration: View {
     private var streakReward: some View {
         HStack(spacing: 8) {
             Image(systemName: "flame.fill")
-                .font(.system(size: 22))
+                .font(Typography.displaySmall)
                 .foregroundStyle(
                     LinearGradient(
                         colors: [Color(hex: 0xFB923C), Color(hex: 0xF87171)],
@@ -375,11 +375,11 @@ struct QuestRewardCelebration: View {
                 .symbolEffect(.bounce, value: flameActive)
 
             Text("Quest Streak")
-                .font(.system(size: 14, weight: .bold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.textSecondary)
 
             Text("\(streakCount)")
-                .font(.system(size: 18, weight: .black, design: .rounded))
+                .font(Typography.headingLarge)
                 .foregroundStyle(Color(hex: 0xFB923C))
                 .contentTransition(.numericText(value: Double(streakCount)))
         }
@@ -390,7 +390,7 @@ struct QuestRewardCelebration: View {
     private var levelUpSection: some View {
         VStack(spacing: 10) {
             Text("LEVEL UP")
-                .font(.system(size: 36, weight: .black, design: .rounded))
+                .font(Typography.displayMedium)
                 .foregroundStyle(
                     LinearGradient(
                         colors: [Theme.gold, Color(hex: 0xFB923C), Theme.gold],
@@ -402,22 +402,22 @@ struct QuestRewardCelebration: View {
                 .scaleEffect(levelUpScale)
 
             Text("Level \(reward.newLevel)")
-                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .font(Typography.displaySmall)
                 .foregroundStyle(.white)
 
             if let newZone = zoneChangedTo {
                 VStack(spacing: 4) {
                     Text("NEW ZONE UNLOCKED")
-                        .font(.system(size: 10, weight: .heavy))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.accent)
                         .tracking(2)
 
                     HStack(spacing: 8) {
                         Image(systemName: newZone.sfSymbol)
-                            .font(.system(size: 16, weight: .bold))
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.accent)
                         Text(newZone.rawValue)
-                            .font(.system(size: 16, weight: .bold))
+                            .font(Typography.headingMedium)
                             .foregroundStyle(.white)
                     }
                 }
@@ -440,7 +440,7 @@ struct QuestRewardCelebration: View {
     private var shareCard: some View {
         VStack(spacing: 12) {
             Text(reward.tiktokMoment ?? "")
-                .font(.system(size: 13, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 16)
@@ -471,15 +471,15 @@ struct QuestRewardCelebration: View {
     private var streakBonusSection: some View {
         HStack(spacing: 10) {
             Image(systemName: "sparkles.rectangle.stack")
-                .font(.system(size: 20))
+                .font(Typography.headingLarge)
                 .foregroundStyle(Theme.neonGold)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Streak Bonus!")
-                    .font(.system(size: 14, weight: .bold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.neonGold)
                 Text("+\(reward.streakBonusCards) bonus scratch card\(reward.streakBonusCards == 1 ? "" : "s")")
-                    .font(.system(size: 12))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         }
@@ -488,10 +488,10 @@ struct QuestRewardCelebration: View {
     private var doubleXPBadge: some View {
         HStack(spacing: 6) {
             Image(systemName: "bolt.fill")
-                .font(.system(size: 14))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.neonGold)
             Text("2x XP Active")
-                .font(.system(size: 12, weight: .bold))
+                .font(Typography.labelMedium)
                 .foregroundStyle(Theme.neonGold)
         }
         .padding(.horizontal, 12)
@@ -502,7 +502,7 @@ struct QuestRewardCelebration: View {
     private var vaultPrompt: some View {
         VStack(spacing: 10) {
             Text("You earned a scratch card")
-                .font(.system(size: 13, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
 
             HStack(spacing: 12) {
@@ -514,9 +514,9 @@ struct QuestRewardCelebration: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "sparkles.rectangle.stack")
-                            .font(.system(size: 13))
+                            .font(Typography.bodySmall)
                         Text("Open Vault")
-                            .font(.system(size: 14, weight: .bold))
+                            .font(Typography.headingSmall)
                     }
                     .foregroundStyle(.white)
                     .padding(.horizontal, 20)
@@ -530,7 +530,7 @@ struct QuestRewardCelebration: View {
                     }
                 } label: {
                     Text("Later")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
@@ -554,7 +554,7 @@ struct QuestRewardCelebration: View {
                 dismiss()
             } label: {
                 Text("Continue")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
@@ -564,7 +564,7 @@ struct QuestRewardCelebration: View {
             .padding(.horizontal, 40)
 
             Text("Tap anywhere to dismiss")
-                .font(.system(size: 11))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
         }
     }

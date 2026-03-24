@@ -193,10 +193,10 @@ struct VaultGameView: View {
     private var cardCountLabel: some View {
         HStack(spacing: 6) {
             Image(systemName: "rectangle.stack")
-                .font(.system(size: 11))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
             Text("\(pendingCards.count) card\(pendingCards.count == 1 ? "" : "s") remaining")
-                .font(.system(size: 13, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
         }
     }
@@ -204,13 +204,13 @@ struct VaultGameView: View {
     private var emptyState: some View {
         VStack(spacing: 16) {
             Image(systemName: "sparkles.rectangle.stack")
-                .font(.system(size: 48))
+                .font(Typography.displayLarge)
                 .foregroundStyle(Theme.textMuted)
             Text("No scratch cards")
-                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .font(Typography.headingLarge)
                 .foregroundStyle(Theme.textSecondary)
             Text("Complete quests to earn scratch cards")
-                .font(.system(size: 14, design: .rounded))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textMuted)
                 .multilineTextAlignment(.center)
         }
@@ -223,7 +223,7 @@ struct VaultGameView: View {
                 Image(systemName: "rectangle.stack.fill")
                     .foregroundStyle(Theme.accent)
                 Text("View Collection")
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
 
@@ -237,14 +237,14 @@ struct VaultGameView: View {
                 }
 
                 Text("\(collection.count)/\(CardDatabase.totalCards)")
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.textMuted)
             }
             .padding(16)
-            .glassCard()
+            .splurjCard(.elevated)
         }
         .padding(.horizontal)
     }
@@ -381,17 +381,17 @@ struct VaultGameView: View {
     private func criticalBonusOverlay(_ bonus: CriticalScratchBonus) -> some View {
         VStack(spacing: 8) {
             Image(systemName: bonus.icon)
-                .font(.system(size: 32, weight: .bold))
+                .font(Typography.displayMedium)
                 .foregroundStyle(bonus.color)
                 .shadow(color: bonus.color.opacity(0.6), radius: 16)
 
             Text("CRITICAL SCRATCH!")
-                .font(.system(size: 14, weight: .black, design: .rounded))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.neonGold)
                 .tracking(2)
 
             Text(bonus.label)
-                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .font(Typography.headingMedium)
                 .foregroundStyle(.white)
         }
         .padding(24)
@@ -416,7 +416,7 @@ struct VaultGameView: View {
 
     private func xpBonusFloater(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 14, weight: .black, design: .rounded))
+            .font(Typography.headingSmall)
             .foregroundStyle(Theme.accent)
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
@@ -430,17 +430,17 @@ struct VaultGameView: View {
         VStack(spacing: 12) {
             let questCount = CrossGameRewardManager(modelContext: modelContext).availableQuestCount()
             Text("\(questCount) quest\(questCount == 1 ? "" : "s") available today")
-                .font(.system(size: 13, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
 
             Text("Want to earn more cards?")
-                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .font(Typography.headingSmall)
                 .foregroundStyle(.white)
 
             HStack(spacing: 12) {
                 NavigationLink(destination: QuestHubView()) {
                     Text("View Quests")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
@@ -453,7 +453,7 @@ struct VaultGameView: View {
                     }
                 } label: {
                     Text("Keep Scratching")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
@@ -486,20 +486,20 @@ private struct VaultStat: View {
         VStack(spacing: 4) {
             if !icon.isEmpty {
                 Image(systemName: icon)
-                    .font(.system(size: 10))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(color.opacity(0.6))
             }
             Text(value)
-                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .font(Typography.headingLarge)
                 .foregroundStyle(color)
                 .minimumScaleFactor(0.7)
                 .lineLimit(1)
             Text(label)
-                .font(.system(size: 10, weight: .medium, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 }

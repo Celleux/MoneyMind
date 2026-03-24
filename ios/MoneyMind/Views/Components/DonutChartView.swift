@@ -32,7 +32,7 @@ struct DonutChartView: View {
                 Image(systemName: "chart.pie.fill")
                     .foregroundStyle(Theme.accent)
                 Text("Where Your Money Goes")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
             }
@@ -40,10 +40,10 @@ struct DonutChartView: View {
             if segments.isEmpty || totalSpent == 0 {
                 VStack(spacing: 12) {
                     Image(systemName: "chart.pie")
-                        .font(.system(size: 36))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.textMuted)
                     Text("No spending data yet")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                 }
                 .frame(maxWidth: .infinity)
@@ -72,23 +72,23 @@ struct DonutChartView: View {
                     if let idx = selectedIndex, idx < segments.count {
                         VStack(spacing: 2) {
                             Text(segments[idx].name)
-                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                .font(Typography.bodySmall)
                                 .foregroundStyle(Theme.textSecondary)
                             Text("$\(Int(segments[idx].spent))")
-                                .font(.system(size: 22, weight: .bold, design: .rounded))
+                                .font(Typography.displaySmall)
                                 .foregroundStyle(Theme.textPrimary)
                             Text("\(Int(segments[idx].percentage))%")
-                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .font(Typography.bodySmall)
                                 .foregroundStyle(segments[idx].color)
                         }
                         .transition(.scale.combined(with: .opacity))
                     } else {
                         VStack(spacing: 2) {
                             Text("Total")
-                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                .font(Typography.bodySmall)
                                 .foregroundStyle(Theme.textSecondary)
                             Text("$\(Int(totalSpent))")
-                                .font(.system(size: 22, weight: .bold, design: .rounded))
+                                .font(Typography.displaySmall)
                                 .foregroundStyle(Theme.textPrimary)
                         }
                     }
@@ -100,7 +100,7 @@ struct DonutChartView: View {
             }
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
         .onAppear {
             guard !appeared else { return }
             appeared = true
@@ -127,17 +127,17 @@ struct DonutChartView: View {
                         .frame(width: 8, height: 8)
 
                     Text(seg.name)
-                        .font(.system(size: 13, weight: .medium))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textPrimary)
 
                     Spacer()
 
                     Text("$\(Int(seg.spent))")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .font(Typography.labelMedium)
                         .foregroundStyle(Theme.textPrimary)
 
                     Text("\(Int(seg.percentage))%")
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .frame(width: 36, alignment: .trailing)
                 }

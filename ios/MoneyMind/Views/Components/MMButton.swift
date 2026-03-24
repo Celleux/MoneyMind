@@ -30,26 +30,12 @@ struct MMButton: View {
         self.action = action
     }
 
-    private var fillColor: Color {
+    private var buttonVariant: ButtonVariant {
         switch variant {
-        case .primary: Theme.accent
-        case .secondary: .clear
-        case .danger: Theme.danger
-        case .success: Theme.success
-        }
-    }
-
-    private var textColor: Color {
-        switch variant {
-        case .primary, .danger, .success: .white
-        case .secondary: Theme.accent
-        }
-    }
-
-    private var borderColor: Color {
-        switch variant {
-        case .primary, .danger, .success: .clear
-        case .secondary: Theme.accent.opacity(0.5)
+        case .primary: .primary
+        case .secondary: .secondary
+        case .danger: .destructive
+        case .success: .primary
         }
     }
 
@@ -61,22 +47,12 @@ struct MMButton: View {
             HStack(spacing: Theme.Spacing.xxs) {
                 if let icon {
                     Image(systemName: icon)
-                        .font(.system(size: 15, weight: .semibold))
                 }
                 Text(title)
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
             }
-            .foregroundStyle(textColor)
             .frame(maxWidth: isFullWidth ? .infinity : nil)
-            .padding(.horizontal, Theme.Spacing.md)
-            .padding(.vertical, Theme.Spacing.xs)
-            .background(fillColor, in: .rect(cornerRadius: Theme.Radius.button))
-            .overlay(
-                RoundedRectangle(cornerRadius: Theme.Radius.button)
-                    .strokeBorder(borderColor, lineWidth: 1.5)
-            )
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: buttonVariant, size: .large))
         .sensoryFeedback(.impact(weight: .medium), trigger: hapticTrigger)
     }
 }

@@ -42,51 +42,51 @@ struct EvolveCardView: View {
         VStack(spacing: 14) {
             HStack(spacing: 4) {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 13))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.gold)
                 Text("Evolve")
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
             }
 
             if isMaxed {
                 Text("This card is at maximum evolution")
-                    .font(.system(size: 13, design: .rounded))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textMuted)
             } else {
                 HStack(spacing: 20) {
                     VStack(spacing: 4) {
                         Text("Current")
-                            .font(.system(size: 11, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                         Text(card.rarity)
-                            .font(.system(size: 14, weight: .bold, design: .rounded))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(currentRarity?.color ?? .white)
                     }
 
                     Image(systemName: "arrow.right")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.accent)
 
                     VStack(spacing: 4) {
                         Text("Evolved")
-                            .font(.system(size: 11, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                         Text(nextName)
-                            .font(.system(size: 14, weight: .bold, design: .rounded))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(nextColor)
                     }
                 }
 
                 HStack(spacing: 6) {
                     Image(systemName: "sparkles")
-                        .font(.system(size: 12))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.gold)
                     Text("\(essenceCost) Essence")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                     Text("(You have: \(essenceAvailable))")
-                        .font(.system(size: 12, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(essenceAvailable >= essenceCost ? Theme.accent : Theme.textMuted)
                 }
 
@@ -94,7 +94,7 @@ struct EvolveCardView: View {
                     onEvolve()
                 } label: {
                     Text("EVOLVE")
-                        .font(.system(size: 15, weight: .heavy, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(canEvolve ? Theme.background : Theme.textMuted)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
@@ -104,6 +104,6 @@ struct EvolveCardView: View {
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.interactive)
     }
 }

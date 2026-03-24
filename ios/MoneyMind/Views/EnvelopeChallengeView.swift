@@ -31,7 +31,7 @@ struct EnvelopeChallengeView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -59,10 +59,10 @@ struct EnvelopeChallengeView: View {
                 .overlay {
                     VStack(spacing: 2) {
                         Text("\(challenge.completedItems.count)")
-                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textPrimary)
                         Text("of 100")
-                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -70,18 +70,18 @@ struct EnvelopeChallengeView: View {
             VStack(alignment: .leading, spacing: 10) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Total Saved")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                     Text("$\(Int(challenge.totalSaved))")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(personalityColor)
                 }
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Remaining")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                     Text("$\(Int(5050 - challenge.totalSaved))")
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
                 }
             }
@@ -89,7 +89,7 @@ struct EnvelopeChallengeView: View {
             Spacer()
         }
         .padding(20)
-        .glassCard()
+        .splurjCard(.hero)
         .padding(.top, 8)
     }
 
@@ -98,15 +98,15 @@ struct EnvelopeChallengeView: View {
         if let suggested = challenge.dailySuggestedEnvelope {
             HStack(spacing: 12) {
                 Image(systemName: "lightbulb.fill")
-                    .font(.title3)
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.gold)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Today's Suggestion")
-                        .font(.caption.weight(.semibold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                     Text("Save $\(suggested) — tap envelope #\(suggested)")
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                 }
 
@@ -166,13 +166,13 @@ struct EnvelopeChallengeView: View {
                 Image(systemName: "square.and.arrow.up")
                 Text("Share Progress")
             }
-            .font(.subheadline.weight(.semibold))
+            .font(Typography.headingSmall)
             .foregroundStyle(Theme.accent)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .background(Theme.accent.opacity(0.1), in: .rect(cornerRadius: 12))
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .secondary, size: .medium))
         .sheet(isPresented: $shareTrigger) {
             let text = vm.shareChallenge(challenge)
             ShareSheetView(items: [text])
@@ -198,7 +198,7 @@ private struct EnvelopeCell: View {
                     RoundedRectangle(cornerRadius: 6)
                         .strokeBorder(personalityColor.opacity(0.5), lineWidth: 1)
                     Text("\(number)")
-                        .font(.system(size: 9, weight: .bold, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(personalityColor)
                 } else {
                     RoundedRectangle(cornerRadius: 6)
@@ -209,7 +209,7 @@ private struct EnvelopeCell: View {
                             lineWidth: isSuggested ? 1.5 : 0.5
                         )
                     Text("\(number)")
-                        .font(.system(size: 9, weight: .medium, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(isSuggested ? Theme.gold : Theme.textMuted)
                 }
             }

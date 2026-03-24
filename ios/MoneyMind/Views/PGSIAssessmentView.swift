@@ -26,7 +26,7 @@ struct PGSIAssessmentView: View {
                     .padding(.top, 8)
 
                 Text("Question \(currentQuestion + 1) of 9")
-                    .font(.caption.weight(.medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                     .padding(.top, 8)
 
@@ -61,13 +61,13 @@ struct PGSIAssessmentView: View {
     private var questionContent: some View {
         VStack(spacing: 24) {
             Text(PGSIQuestions.questions[currentQuestion])
-                .font(.system(.title3, design: .rounded, weight: .semibold))
+                .font(Typography.headingLarge)
                 .foregroundStyle(Theme.textPrimary)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
 
             Text("In the past 12 months...")
-                .font(.caption)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
 
             VStack(spacing: 10) {
@@ -80,7 +80,7 @@ struct PGSIAssessmentView: View {
                     } label: {
                         HStack {
                             Text(option.label)
-                                .font(.body.weight(.medium))
+                                .font(Typography.bodyLarge)
                                 .foregroundStyle(isSelected ? Theme.background : Theme.textPrimary)
                             Spacer()
                             if isSelected {
@@ -98,7 +98,7 @@ struct PGSIAssessmentView: View {
                                 .strokeBorder(isSelected ? Color.clear : Theme.textSecondary.opacity(0.1), lineWidth: 1)
                         )
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                     .sensoryFeedback(.selection, trigger: isSelected)
                     .accessibilityLabel("\(option.label)\(isSelected ? ", selected" : "")")
                 }
@@ -118,13 +118,13 @@ struct PGSIAssessmentView: View {
                         Image(systemName: "chevron.left")
                         Text("Back")
                     }
-                    .font(.subheadline.weight(.medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .glassCard(cornerRadius: 12)
+                    .splurjCard(.outlined)
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             }
 
             if currentQuestion < 8 {
@@ -137,7 +137,7 @@ struct PGSIAssessmentView: View {
                         Text("Next")
                         Image(systemName: "chevron.right")
                     }
-                    .font(.subheadline.weight(.medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
@@ -146,14 +146,14 @@ struct PGSIAssessmentView: View {
                         in: .rect(cornerRadius: 12)
                     )
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .disabled(answers[currentQuestion] < 0)
             } else {
                 Button {
                     submitAssessment()
                 } label: {
                     Text("See Results")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
@@ -162,7 +162,7 @@ struct PGSIAssessmentView: View {
                             in: .rect(cornerRadius: 12)
                         )
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .disabled(!allAnswered)
                 .sensoryFeedback(.success, trigger: showResult)
             }
@@ -186,20 +186,20 @@ struct PGSIAssessmentView: View {
                     .fill(riskColor.opacity(0.15))
                     .frame(width: 80, height: 80)
                 Text("\(totalScore)")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(riskColor)
             }
 
             Text(risk.label)
-                .font(Theme.headingFont(.title3))
+                .font(Typography.headingLarge)
                 .foregroundStyle(Theme.textPrimary)
 
             Text("Score: \(totalScore) out of 27")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
 
             Text("Lower scores indicate fewer gambling-related problems. This is a screening tool, not a diagnosis.")
-                .font(.caption)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
                 .lineSpacing(3)
@@ -209,13 +209,13 @@ struct PGSIAssessmentView: View {
                 dismiss()
             } label: {
                 Text("Done")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(riskColor, in: .rect(cornerRadius: 12))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
         }
         .padding(24)
     }
@@ -248,12 +248,12 @@ struct PGSITrendChart: View {
                 Image(systemName: "chart.line.downtrend.xyaxis")
                     .foregroundStyle(isImproving ? Theme.accentGreen : Theme.gold)
                 Text("Recovery Progress")
-                    .font(Theme.headingFont(.headline))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 if isImproving {
                     Label("Improving", systemImage: "arrow.down.right")
-                        .font(.caption.weight(.medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.accentGreen)
                 }
             }
@@ -261,10 +261,10 @@ struct PGSITrendChart: View {
             if sortedAssessments.isEmpty {
                 VStack(spacing: 8) {
                     Text("No assessments yet")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                     Text("Take the PGSI monthly to track your progress")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary.opacity(0.7))
                 }
                 .frame(maxWidth: .infinity)
@@ -274,7 +274,7 @@ struct PGSITrendChart: View {
             }
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     private var chartView: some View {
@@ -294,7 +294,7 @@ struct PGSITrendChart: View {
                             let barColor = colorForScore(assessment.totalScore)
                             VStack(spacing: 4) {
                                 Text("\(assessment.totalScore)")
-                                    .font(.system(.caption2, design: .rounded, weight: .bold))
+                                    .font(Typography.labelSmall)
                                     .foregroundStyle(barColor)
 
                                 RoundedRectangle(cornerRadius: 4)
@@ -327,7 +327,7 @@ struct PGSITrendChart: View {
             HStack {
                 ForEach(Array(points.enumerated()), id: \.offset) { _, assessment in
                     Text(assessment.date, format: .dateTime.month(.narrow))
-                        .font(.caption2)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .frame(maxWidth: .infinity)
                 }

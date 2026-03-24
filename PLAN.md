@@ -1,124 +1,69 @@
-# Splurj Onboarding V2 — Premium Interactive Personality Engine
+# Phase 1: Complete Color Palette + Theme.swift Overhaul
 
-## Overview
-
-A complete replacement of the old onboarding flow with a 10-screen premium Financial DNA assessment. The old 1-dimensional personality quiz (5 questions → 1 of 5 labels) is replaced by a 4-axis system creating 256 unique combinations.
+**Goal:** Replace the "gambling green" (#34D399) palette with warm gold (#E8B94E) for prosperity and muted teal (#4ECDC4) for growth across the entire Splurj app.
 
 ---
 
-## Phase 1: Financial DNA Model ✅
+### Step 1 — Rewrite Theme.swift Color Tokens
 
-- [x] `FinancialDNA` — 4-axis personality system (Spending, Emotion, Risk, Social) on 0.0–1.0 spectrums
-- [x] `FinancialArchetype` — 5 archetypes (Guardian, Strategist, Adventurer, Empath, Visionary)
-- [x] `FinancialDNAResult` — SwiftData model persisting all axis scores, answers, and trigger ratings
-- [x] Backward compatibility mapping on `MoneyPersonality.toArchetype`
-- [x] Registered in app's model container
+Replace all color definitions in `Utilities/Theme.swift`:
 
-## Phase 2: Cinematic Splash (Screen 1) ✅
+- **Backgrounds:** Warm charcoal tones (`#141416`, `#1E1E22`, `#262630`) replacing the cold blue-black (`#0B0E14`, `#12161F`, `#1A1F2E`). Add new `modal` color (`#303040`).
+- **Primary accent:** Gold `#E8B94E` replacing emerald `#34D399`, with pressed state (`#C49A3A`) and glow variant
+- **Secondary accent:** Teal `#4ECDC4` for health/growth features, with dim variant (`#3BADA5`)
+- **Tertiary accent:** Indigo `#6366F1` for AI coach and premium features
+- **Text:** Off-white `#E5E5E7` (not pure white), updated secondary `#8E8E93`, muted `#555560`
+- **Borders:** Updated to `#2A2A35` with gold-tinted accent border
+- **Semantic colors:** Success → teal (not green), Warning → warm amber `#F0A030`, Danger → soft coral `#F08389`
+- **Neon colors:** `neonEmerald` → renamed to `neonGold` using `#E8B94E`, `neonPurple` stays as indigo `#6366F1`
+- **Gradients:** `accentGradient` → gold gradient, `premiumGradient` → gold, `goldGradient` → gold, `successGradient` → teal
+- **MeshGradient:** Update mesh color points to use gold at 3–4% opacity and teal at 2–3% opacity
+- **Glass materials:** Update white opacity overlays to use off-white tones
+- **Legacy aliases:** `accentGreen` → gold, `teal` → secondary teal, `tabBarBg` → new background
 
-- [x] 3-second cinematic intro with timed animation phases
-- [x] Logo fade-in, scale-up with spring physics, tagline, gradient shift
-- [x] Auto-advances to next screen
+### Step 2 — Fix All Hardcoded Hex Colors Across ~30 Files
 
-## Phase 3: Financial DNA Intro (Screen 2) ✅
+Replace every hardcoded `Color(hex: 0x34D399)` and `Color(hex: 0x0B0E14)` etc. with Theme tokens:
 
-- [x] 4 animated DNA axis preview cards with shimmer effect
-- [x] Reusable `DNAAxisPreviewCard` component (used again in reveal screen)
-- [x] "Start My Scan" emerald gradient button with pulse
+- **Onboarding views** (7 files): `ScenarioCardView`, `SpendingPatternCardsView`, `UrgeSurfSheet`, `EmotionalTriggersView`, `FinancialDNACardView`, `FinancialDNAIntroView`, `FinancialDNARevealView`, `LaunchScreenView`, `MoneyMemoryView`
+- **Game views** (8 files): `Quest3DRewardSequence`, `QuestRewardCelebration`, `BossBattleView`, `BossDefeatCelebration`, `Card3DRevealSequence`, `ChallengeInviteView`, `VaultGameView`, `GamesHubView`
+- **Component views** (10 files): `ScratchCardView`, `ShareableAchievementCard`, `LevelUpCeremony`, `MicroQuestView`, `Parallax3DCard`, `QuestCard`, `BossBattleCard`, `CardLootOpeningView`, `ReferralMilestoneCelebration`, `GameCard`
+- **Main views** (8+ files): `ProfileView`, `PaywallView`, `WalletView`, `QuestChainDetailView`, `QuestMapView`, `CommunityView`, `OperationGetPaidView`, `PGSIAssessmentView`, `MoneyWrappedView`
+- **Models** (2 files): `QuestZone.swift`, `SpendingScenario.swift`
+- **Services/Utils** (2 files): `ShareCardRenderer`, `ReferralRewardManager`
 
-## Phase 4: Spending Pattern Cards (Screen 3) ✅
+### Step 3 — Update All Gradient Definitions
 
-- [x] 8 Tinder-style swipeable scenario cards
-- [x] Drag rotation, stamp overlays, snap-back physics
-- [x] Each swipe adjusts DNA axis by ±0.15 with haptic feedback
+- Savings-related gradients → gold progression
+- Health/breathing gradients → teal progression
+- Premium/AI gradients → indigo progression
+- Achievement gradients → gold → amber progression
+- All `neonEmerald` references in gradients → `neonGold`
 
-## Phase 5: Emotional Triggers Wheel (Screen 4) ✅
+### Step 4 — Update MeshGradient Colors in 6 Files
 
-- [x] 6 emotional triggers arranged in a ring around central hub (Stress, Boredom, Celebration, Social Pressure, Sadness, FOMO)
-- [x] Tap a trigger → expands with description and slider to rate intensity (0-100%)
-- [x] Trigger glow/size reflects current value
-- [x] "Next" button appears after rating all 6
-- [x] Ratings feed DNA axes (Stress+Sadness → emotional, FOMO+Social → spending)
+- `GamesHubView` — gold/teal ambient mesh
+- `LevelUpCeremony` — gold ceremony mesh
+- `MoneyWrappedView` — personality-colored mesh (update green fallback)
+- `ShareCharacterCardView` — character card mesh
+- `ShareableQuestCard` — quest card mesh
+- `ShareableAchievementCard` — achievement card mesh
+- `ShareCardRenderer` — export mesh
 
-## Phase 6: Money Memory Explorer (Screen 5) ✅
+### Step 5 — Update Neon/Glow Effects
 
-- [x] 4 rapid-fire prompts about childhood money beliefs
-- [x] Large rounded pill options, selection fills with color and auto-advances after 0.5s
-- [x] Progress dots, subtle background gradient shifts between prompts
-- [x] Each answer nudges DNA axes based on psychological scoring
+- All `Theme.neonEmerald` → `Theme.neonGold` across celebration views, particle effects, and holographic sheens
+- Shadow colors using green → gold at 15% opacity
+- `PressableButtonStyle` shadow → gold accent
 
-## Phase 7: Risk Tolerance Meter (Screen 6) ✅
+### Step 6 — Verify Every Screen
 
-- [x] Interactive coin-stacking challenge ($100 → $10,000)
-- [x] Rising risk bar (thermometer), shake animation as risk increases
-- [x] "Lock In My Gains" button with pulse animation
-- [x] Coin explosion with particles + heavy haptics if they wait too long
-- [x] Lock-in level maps directly to riskAxis score
-- [x] Result message: locked-in gets "Smart move", explosion gets "You like to push the limits"
-
-## Phase 8: Financial DNA Reveal (Screen 7) ✅
-
-- [x] Cinematic 4-act reveal sequence (build-up → axes fill → archetype drop → scrollable deep cut)
-- [x] `DNARadarShape` — Canvas-based radar chart with animated fill
-- [x] Superpower + Blind Spot + Blend sections with empathetic copy
-- [x] 4 axis detail cards (reuses `DNAAxisPreviewCard` with filled values)
-- [x] `FinancialDNACardView` — Shareable card with radar chart, archetype, tagline
-- [x] Share button via `ShareLink`
-- [x] "How This Personalizes Splurj" teaser section
-
-## Phase 9: Personalized Plan Preview (Screen 8) ✅
-
-- [x] 3 archetype-specific insight cards showing how app adapts
-- [x] Cards stagger in with spring animation
-- [x] Dynamic content based on DNA archetype
-
-## Phase 10: First Quest Assignment (Screen 9) ✅
-
-- [x] DNA-based first quest assignment (Guardian→Mirror, Strategist→Archaeology, etc.)
-- [x] Quest card with XP preview, difficulty badge, estimated time
-- [x] "Accept Quest" button with confetti burst on acceptance
-- [x] Bridges onboarding → game loop immediately
-
-## Phase 11: Launch Screen (Screen 10) ✅
-
-- [x] Name input with elegant underlined field
-- [x] DNA Card mini-preview (archetype icon + name + axis dots)
-- [x] Notification permission toggle for quest reminders
-- [x] "Enter Splurj" CTA with glow, skip option
-- [x] Creates UserProfile and saves FinancialDNAResult to SwiftData
-
-## Phase 12: Wire New Onboarding Flow ✅
-
-- [x] New `OnboardingScreenV2` enum with 10 screens
-- [x] Replaced `OnboardingView.swift` with new flow
-- [x] SOS button (floating, top-right) available on every screen except splash
-- [x] Skip button (top-left, muted) from screen 3 onward → jumps to launch with default DNA
-- [x] Deleted old onboarding files: SplurjWelcomeScreen, ChooseYourPathScreen, MoneyPersonalityQuizView, SplurjPersonalityRevealScreen, BranchingScreen, LossVisualizationScreen, SocialProofScreen, IntentionScreen, CurrencySelectionScreen, FirstWinScreen, SetupCompleteScreen, QuizWelcomeScreen
-
-## Phase 13: DNA-Driven Personalization ✅
-
-- [x] `MoneyPersonality.toArchetype` mapping for backward compatibility (Saver→Guardian, Builder→Visionary, Hustler→Adventurer, Minimalist→Strategist, Generous→Empath)
-- [x] Existing views continue to work with old `QuizResult`/`MoneyPersonality` data
-- [x] New users get `FinancialDNAResult` from the new onboarding flow
-
----
-
-## Files Created
-
-1. `Views/Onboarding/EmotionalTriggersView.swift` — Screen 4: Emotion wheel + slider ratings
-2. `Views/Onboarding/MoneyMemoryView.swift` — Screen 5: Childhood money memory prompts
-3. `Views/Onboarding/RiskToleranceView.swift` — Screen 6: Coin-stacking risk game
-4. `Views/Onboarding/FinancialDNARevealView.swift` — Screen 7: Cinematic DNA reveal + radar chart
-5. `Views/Onboarding/FinancialDNACardView.swift` — Shareable DNA card component
-6. `Views/Onboarding/PersonalizedPlanView.swift` — Screen 8: Archetype-specific plan preview
-7. `Views/Onboarding/FirstQuestScreen.swift` — Screen 9: DNA-based first quest assignment
-8. `Views/Onboarding/LaunchScreenView.swift` — Screen 10: Name + notifications + launch
-
-## Files Modified
-
-1. `Views/OnboardingView.swift` — Complete rewrite with 10-screen V2 flow
-2. `Models/MoneyPersonality.swift` — Added `toArchetype` backward compatibility mapping
-
-## Files Deleted (12 old onboarding screens)
-
-SplurjWelcomeScreen, ChooseYourPathScreen, MoneyPersonalityQuizView, SplurjPersonalityRevealScreen, BranchingScreen, LossVisualizationScreen, SocialProofScreen, IntentionScreen, CurrencySelectionScreen, FirstWinScreen, SetupCompleteScreen, QuizWelcomeScreen
+After all changes, ensure correct color mapping:
+- **Home:** Gold on savings, teal on health metrics
+- **Games Hub:** Gold on achievements/rewards, teal on breathing exercises
+- **Quest Hub:** Gold on quest rewards, indigo on AI recommendations
+- **Wallet:** Gold on transaction highlights
+- **Profile:** Gold on level/streak badges
+- **Paywall:** Gold gradient on premium CTA
+- **Onboarding:** Warm palette throughout
+- **Tab bar tint:** Gold

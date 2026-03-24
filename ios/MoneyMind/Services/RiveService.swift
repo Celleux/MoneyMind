@@ -11,10 +11,10 @@ struct SplurjRiveView: View {
     private var placeholderView: some View {
         VStack(spacing: 8) {
             Image(systemName: "sparkles")
-                .font(.system(size: 24, weight: .bold))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.accent)
             Text("Animation coming soon")
-                .font(.system(size: 10, weight: .medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
         }
     }

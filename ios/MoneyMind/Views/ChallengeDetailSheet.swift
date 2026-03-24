@@ -33,12 +33,12 @@ struct ChallengeDetailSheet: View {
                     .fill(Theme.accentGreen.opacity(0.12))
                     .frame(width: 64, height: 64)
                 Image(systemName: challenge.iconName)
-                    .font(.system(size: 28))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.accentGreen)
             }
 
             Text(challenge.name)
-                .font(Theme.headingFont(.title2))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
         }
     }
@@ -68,21 +68,21 @@ struct ChallengeDetailSheet: View {
             )
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private func statItem(value: String, label: String, icon: String) -> some View {
         VStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.caption)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.accentGreen)
             Text(value)
-                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.textPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
             Text(label)
-                .font(.caption2)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .frame(maxWidth: .infinity)
@@ -92,11 +92,11 @@ struct ChallengeDetailSheet: View {
         VStack(spacing: 10) {
             HStack {
                 Text("Community Progress")
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text("\(Int(challenge.progress * 100))%")
-                    .font(.system(.caption, design: .rounded, weight: .bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.accentGreen)
             }
 
@@ -114,25 +114,25 @@ struct ChallengeDetailSheet: View {
 
             HStack {
                 Text("$0")
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                 Spacer()
                 Text(challenge.savingsGoal.formatted(.currency(code: "USD").precision(.fractionLength(0))))
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private var descriptionSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("About")
-                .font(.subheadline.weight(.semibold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.textPrimary)
             Text(challenge.groupDescription)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .lineSpacing(4)
         }
@@ -146,7 +146,7 @@ struct ChallengeDetailSheet: View {
                     Image(systemName: "checkmark.circle.fill")
                     Text("You're In!")
                 }
-                .font(.headline)
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.accentGreen)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
@@ -163,13 +163,13 @@ struct ChallengeDetailSheet: View {
                         Image(systemName: "flag.fill")
                         Text("Join Challenge")
                     }
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .sensoryFeedback(.impact(weight: .heavy), trigger: joinTrigger)
                 .accessibilityLabel("Join \(challenge.name)")
             }

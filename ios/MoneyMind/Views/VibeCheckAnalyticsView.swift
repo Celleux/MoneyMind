@@ -66,7 +66,7 @@ struct VibeCheckAnalyticsView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(Theme.textSecondary)
                             .frame(width: 32, height: 32)
                             .background(Theme.card, in: .circle)
@@ -110,7 +110,7 @@ struct VibeCheckAnalyticsView: View {
                 Image(systemName: "chart.pie.fill")
                     .foregroundStyle(personality.color)
                 Text("Mood Distribution")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
             }
@@ -122,15 +122,15 @@ struct VibeCheckAnalyticsView: View {
                     ForEach(vm.moodDistribution, id: \.vibeType) { dist in
                         HStack(spacing: 12) {
                             Text(dist.vibeType.emoji)
-                                .font(.system(size: 22))
+                                .font(Typography.displaySmall)
 
                             VStack(alignment: .leading, spacing: 3) {
                                 HStack(spacing: 6) {
                                     Text(dist.vibeType.label)
-                                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                                        .font(Typography.headingSmall)
                                         .foregroundStyle(Theme.textPrimary)
                                     Text("\(Int(dist.percentage))%")
-                                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                                        .font(Typography.labelMedium)
                                         .foregroundStyle(personality.color)
                                 }
 
@@ -151,7 +151,7 @@ struct VibeCheckAnalyticsView: View {
                             Spacer()
 
                             Text("$\(Int(dist.totalAmount))")
-                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                .font(Typography.bodySmall)
                                 .foregroundStyle(Theme.textSecondary)
                         }
                     }
@@ -161,7 +161,7 @@ struct VibeCheckAnalyticsView: View {
             }
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     private var moodPieChart: some View {
@@ -183,10 +183,10 @@ struct VibeCheckAnalyticsView: View {
 
             VStack(spacing: 2) {
                 Text("\(entries.count)")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.textPrimary)
                 Text("rated")
-                    .font(.system(size: 11))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
         }
@@ -199,14 +199,14 @@ struct VibeCheckAnalyticsView: View {
         if let top = vm.topVibe {
             VStack(spacing: 6) {
                 Text("\(Int(top.percentage))% of your purchases felt \(top.vibeType.label).")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textPrimary)
                     .multilineTextAlignment(.center)
 
                 let regretDist = vm.moodDistribution.first(where: { $0.vibeType == .regret })
                 if let regret = regretDist, regret.percentage < 15 {
                     Text("Only \(Int(regret.percentage))% were Regrets \u{2014} nice!")
-                        .font(.system(size: 13))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.success)
                 }
             }
@@ -222,7 +222,7 @@ struct VibeCheckAnalyticsView: View {
                 Image(systemName: "square.grid.3x3.fill")
                     .foregroundStyle(personality.color)
                 Text("Mood Map")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
 
@@ -235,10 +235,10 @@ struct VibeCheckAnalyticsView: View {
                     Spacer()
                     VStack(spacing: 8) {
                         Image(systemName: "tray")
-                            .font(.title2)
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textMuted)
                         Text("No ratings this month")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                     }
                     .padding(.vertical, 20)
@@ -253,7 +253,7 @@ struct VibeCheckAnalyticsView: View {
             }
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     private func moodMapCell(_ entry: VibeCheckEntry) -> some View {
@@ -262,9 +262,9 @@ struct VibeCheckAnalyticsView: View {
 
         return VStack(spacing: 2) {
             Text(vibe?.emoji ?? "?")
-                .font(.system(size: 16))
+                .font(Typography.labelLarge)
             Text("$\(Int(entry.amount))")
-                .font(.system(size: 8, weight: .medium, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
         }
         .frame(maxWidth: .infinity)
@@ -287,10 +287,10 @@ struct VibeCheckAnalyticsView: View {
         } label: {
             HStack(spacing: 4) {
                 Text(selectedMonth.formatted(.dateTime.month(.abbreviated)))
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.secondary)
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.secondary)
             }
             .padding(.horizontal, 10)
@@ -307,7 +307,7 @@ struct VibeCheckAnalyticsView: View {
                 Image(systemName: "chart.xyaxis.line")
                     .foregroundStyle(personality.color)
                 Text("Trend Analysis")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
             }
@@ -320,10 +320,10 @@ struct VibeCheckAnalyticsView: View {
                     VStack(spacing: 6) {
                         if let vibe = trend.dominantVibe {
                             Text(vibe.emoji)
-                                .font(.system(size: 12))
+                                .font(Typography.bodySmall)
                         } else {
                             Text("-")
-                                .font(.system(size: 12))
+                                .font(Typography.bodySmall)
                                 .foregroundStyle(Theme.textMuted)
                         }
 
@@ -341,7 +341,7 @@ struct VibeCheckAnalyticsView: View {
                             .frame(height: height)
 
                         Text(trend.weekLabel)
-                            .font(.system(size: 8, weight: .medium))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
@@ -355,7 +355,7 @@ struct VibeCheckAnalyticsView: View {
             sentimentTrendLine(trends)
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     private func sentimentTrendLine(_ trends: [VibeCheckViewModel.WeeklyTrend]) -> some View {
@@ -369,10 +369,10 @@ struct VibeCheckAnalyticsView: View {
         return AnyView(
             HStack(spacing: 6) {
                 Image(systemName: improving ? "arrow.up.right" : "arrow.down.right")
-                    .font(.system(size: 11, weight: .bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(improving ? Theme.success : Theme.danger)
                 Text(improving ? "Your spending mood is trending positive" : "Spending satisfaction dipped recently")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
             }
             .padding(.top, 4)
@@ -391,7 +391,7 @@ struct VibeCheckAnalyticsView: View {
                     Image(systemName: "lightbulb.fill")
                         .foregroundStyle(Theme.gold)
                     Text("Insights")
-                        .font(.system(.headline, design: .rounded, weight: .semibold))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()
                 }
@@ -400,17 +400,17 @@ struct VibeCheckAnalyticsView: View {
                     ForEach(Array(insights.enumerated()), id: \.offset) { _, insight in
                         HStack(alignment: .top, spacing: 12) {
                             Image(systemName: insight.icon)
-                                .font(.system(size: 16))
+                                .font(Typography.labelLarge)
                                 .foregroundStyle(personality.color)
                                 .frame(width: 32, height: 32)
                                 .background(personality.color.opacity(0.1), in: .rect(cornerRadius: 8))
 
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(insight.title)
-                                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                                    .font(Typography.headingSmall)
                                     .foregroundStyle(Theme.textPrimary)
                                 Text(insight.description)
-                                    .font(.system(size: 13))
+                                    .font(Typography.bodySmall)
                                     .foregroundStyle(Theme.textSecondary)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
@@ -423,7 +423,7 @@ struct VibeCheckAnalyticsView: View {
                 }
             }
             .padding(20)
-            .glassCard(cornerRadius: 20)
+            .splurjCard(.elevated)
         )
     }
 
@@ -435,7 +435,7 @@ struct VibeCheckAnalyticsView: View {
                 Image(systemName: "calendar")
                     .foregroundStyle(personality.color)
                 Text("Monthly Overview")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
             }
@@ -445,7 +445,7 @@ struct VibeCheckAnalyticsView: View {
                 if !monthEntries.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(month.formatted(.dateTime.month(.wide).year()))
-                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .font(Typography.labelMedium)
                             .foregroundStyle(Theme.textSecondary)
 
                         let grouped = Dictionary(grouping: monthEntries) { $0.emoji }
@@ -458,9 +458,9 @@ struct VibeCheckAnalyticsView: View {
                                 if count > 0 {
                                     VStack(spacing: 4) {
                                         Text(vibe.emoji)
-                                            .font(.system(size: 18))
+                                            .font(Typography.bodyLarge)
                                         Text("\(count)")
-                                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                                            .font(Typography.labelMedium)
                                             .foregroundStyle(Theme.textPrimary)
                                     }
                                 }
@@ -470,10 +470,10 @@ struct VibeCheckAnalyticsView: View {
 
                             VStack(alignment: .trailing, spacing: 2) {
                                 Text("\(total) rated")
-                                    .font(.system(size: 11, weight: .medium))
+                                    .font(Typography.labelSmall)
                                     .foregroundStyle(Theme.textSecondary)
                                 Text("$\(Int(totalAmount))")
-                                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                    .font(Typography.labelMedium)
                                     .foregroundStyle(Theme.textPrimary)
                             }
                         }
@@ -484,7 +484,7 @@ struct VibeCheckAnalyticsView: View {
             }
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     // MARK: - Helpers

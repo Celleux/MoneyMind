@@ -49,7 +49,7 @@ struct NotificationCenterView: View {
                             }
                         } label: {
                             Image(systemName: "ellipsis.circle")
-                                .font(.body.weight(.medium))
+                                .font(Typography.bodyLarge)
                                 .foregroundStyle(Theme.textSecondary)
                         }
                     }
@@ -59,7 +59,7 @@ struct NotificationCenterView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textMuted)
                     }
                 }
@@ -83,18 +83,18 @@ struct NotificationCenterView: View {
                     .fill(Theme.accentGreen.opacity(0.08))
                     .frame(width: 100, height: 100)
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 44))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(Theme.accentGreen)
             }
             .offset(y: appeared ? 0 : -8)
             .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true), value: appeared)
 
             Text("All Caught Up!")
-                .font(.system(size: 22, weight: .semibold, design: .rounded))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
 
             Text("No new notifications.\nKeep up the great work!")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
                 .lineSpacing(3)
@@ -122,7 +122,7 @@ struct NotificationCenterView: View {
     private func notificationSection(title: String, items: [InAppNotification]) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
-                .font(.subheadline.weight(.semibold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.textMuted)
                 .padding(.leading, 4)
 
@@ -195,7 +195,7 @@ private struct NotificationRow: View {
             HStack {
                 Spacer()
                 Image(systemName: "trash.fill")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(.white)
                     .frame(width: 60)
             }
@@ -212,14 +212,14 @@ private struct NotificationRow: View {
                             .fill(notification.type.color.opacity(0.12))
                             .frame(width: 44, height: 44)
                         Image(systemName: notification.type.icon)
-                            .font(.system(size: 18, weight: .semibold))
+                            .font(Typography.headingLarge)
                             .foregroundStyle(notification.type.color)
                     }
 
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(spacing: 6) {
                             Text(notification.title)
-                                .font(.subheadline.weight(.semibold))
+                                .font(Typography.headingSmall)
                                 .foregroundStyle(Theme.textPrimary)
                                 .lineLimit(1)
 
@@ -231,7 +231,7 @@ private struct NotificationRow: View {
                         }
 
                         Text(notification.body)
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                             .lineLimit(2)
                             .multilineTextAlignment(.leading)
@@ -241,12 +241,12 @@ private struct NotificationRow: View {
 
                     VStack(alignment: .trailing, spacing: 4) {
                         Text(notification.relativeTime)
-                            .font(.system(size: 11))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
 
                         if notification.deepLink != .none {
                             Image(systemName: "chevron.right")
-                                .font(.system(size: 10, weight: .semibold))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textMuted.opacity(0.5))
                         }
                     }

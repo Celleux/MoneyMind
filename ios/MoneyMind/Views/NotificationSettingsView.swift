@@ -70,16 +70,16 @@ struct NotificationSettingsView: View {
                             .fill(Theme.accentGreen.opacity(0.12))
                             .frame(width: 44, height: 44)
                         Image(systemName: "bell.badge.fill")
-                            .font(.title3)
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.accentGreen)
                     }
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Notifications")
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.textPrimary)
                         Text(profile.notificationsEnabled ? "All notifications active" : "Notifications are off")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                     }
 
@@ -107,10 +107,10 @@ struct NotificationSettingsView: View {
                 if !notifService.isAuthorized && profile.notificationsEnabled {
                     HStack(spacing: 8) {
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(.orange)
                         Text("Enable notifications in Settings to receive alerts")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                         Spacer()
                     }
@@ -119,7 +119,7 @@ struct NotificationSettingsView: View {
                 }
             }
         }
-        .glassCard()
+        .splurjCard(.elevated)
         .sensoryFeedback(.selection, trigger: profile?.notificationsEnabled)
     }
 
@@ -415,11 +415,11 @@ struct NotificationSettingsView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     HStack(spacing: 12) {
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.warning)
                             .frame(width: 24)
                         Text("Budget Alert Thresholds")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textPrimary)
                     }
 
@@ -484,10 +484,10 @@ struct NotificationSettingsView: View {
     private var frequencyCapNote: some View {
         HStack(spacing: 10) {
             Image(systemName: "info.circle.fill")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textMuted)
             Text("Push notifications are capped at 3 per day to keep things calm.")
-                .font(.caption)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
         }
         .padding(14)
@@ -499,10 +499,10 @@ struct NotificationSettingsView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 10) {
                 Image(systemName: "text.bubble.fill")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.accentGreen)
                 Text("Notification Style")
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
             }
 
@@ -519,12 +519,12 @@ struct NotificationSettingsView: View {
                 Text(profile.notificationStyle == "minimal"
                      ? "Brief, to-the-point messages"
                      : "Longer, warmer messages with encouragement")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private func formatHour(_ hour: Int, minute: Int = 0) -> String {
@@ -547,10 +547,10 @@ private struct NotifSection<Content: View>: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 10) {
                 Image(systemName: icon)
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(iconColor)
                 Text(title)
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
             }
             .padding(.bottom, 2)
@@ -558,7 +558,7 @@ private struct NotifSection<Content: View>: View {
             content()
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 }
 
@@ -573,16 +573,16 @@ private struct NotifToggleRow: View {
         Toggle(isOn: $isOn) {
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(color)
                     .frame(width: 24)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Text(subtitle)
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
@@ -600,7 +600,7 @@ private struct NotifTimePicker: View {
     var body: some View {
         HStack {
             Text(label)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
 
             Spacer()
@@ -652,13 +652,13 @@ private struct BudgetThresholdPill: View {
             isOn.toggle()
         } label: {
             Text(label)
-                .font(.caption.weight(.semibold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(isOn ? .white : Theme.textSecondary)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
                 .background(isOn ? color : Theme.elevated, in: .capsule)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
         .sensoryFeedback(.selection, trigger: isOn)
     }
 }

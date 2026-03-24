@@ -49,17 +49,17 @@ struct PersonalizedPlanView: View {
 
             VStack(spacing: 8) {
                 Image(systemName: archetype.icon)
-                    .font(.system(size: 28, weight: .bold))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(archetype.color)
                     .opacity(appeared ? 1 : 0)
 
                 Text("Your Personalized Plan")
-                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(.white)
                     .opacity(appeared ? 1 : 0)
 
                 Text("How Splurj adapts to your \(archetype.rawValue) DNA")
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .opacity(appeared ? 1 : 0)
                     .animation(.easeOut(duration: 0.4).delay(0.15), value: appeared)
@@ -71,20 +71,20 @@ struct PersonalizedPlanView: View {
                 ForEach(Array(insights.enumerated()), id: \.offset) { index, insight in
                     HStack(alignment: .top, spacing: 14) {
                         Image(systemName: insight.icon)
-                            .font(.system(size: 20, weight: .semibold))
+                            .font(Typography.headingLarge)
                             .foregroundStyle(archetype.color)
                             .frame(width: 40, height: 40)
                             .background(archetype.color.opacity(0.1), in: .rect(cornerRadius: 10))
 
                         Text(insight.text)
-                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                             .lineSpacing(3)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(16)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .glassCard(cornerRadius: 14)
+                    .splurjCard(.elevated)
                     .opacity(appeared ? 1 : 0)
                     .offset(y: appeared ? 0 : 20)
                     .animation(
@@ -100,13 +100,13 @@ struct PersonalizedPlanView: View {
 
             Button(action: onComplete) {
                 Text("Continue")
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 17)
                     .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .padding(.horizontal, 32)
             .padding(.bottom, 48)
             .opacity(appeared ? 1 : 0)

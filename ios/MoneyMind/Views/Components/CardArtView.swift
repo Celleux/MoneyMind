@@ -38,7 +38,7 @@ struct CardArtView: View {
                         .blur(radius: card.rarity == .legendary ? 12 : 6)
 
                     Image(systemName: card.set.icon)
-                        .font(.system(size: 48, weight: .light))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(card.rarity.color)
                         .shadow(color: card.rarity.color.opacity(card.rarity == .legendary ? 0.6 : 0.3), radius: card.rarity == .legendary ? 12 : 4)
                         .rotationEffect(card.rarity == .legendary && !reduceMotion ? .degrees(holoPulse ? 2 : -2) : .zero)
@@ -46,18 +46,18 @@ struct CardArtView: View {
                 }
 
                 Text(card.name)
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
                     .padding(.horizontal, 8)
 
                 Text(card.rarity.label)
-                    .font(.system(size: 11))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(card.rarity.color)
 
                 Text(card.tip)
-                    .font(.system(size: 10, weight: .medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
@@ -66,7 +66,7 @@ struct CardArtView: View {
                 Spacer()
 
                 Text(card.set.rawValue)
-                    .font(.system(size: 9, weight: .medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(card.set.accentColor.opacity(0.6))
                     .padding(.bottom, 10)
             }

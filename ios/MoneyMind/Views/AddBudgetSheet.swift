@@ -34,10 +34,10 @@ struct AddBudgetSheet: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Category Name")
-                            .font(.system(size: 13, weight: .medium))
+                            .font(Typography.bodySmall)
                             .foregroundStyle(Theme.textSecondary)
                         TextField("e.g. Groceries", text: $name)
-                            .font(.system(.body, design: .rounded))
+                            .font(Typography.bodyLarge)
                             .padding(14)
                             .background(Theme.elevated, in: .rect(cornerRadius: 12))
                             .foregroundStyle(Theme.textPrimary)
@@ -46,14 +46,14 @@ struct AddBudgetSheet: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Monthly Budget")
-                            .font(.system(size: 13, weight: .medium))
+                            .font(Typography.bodySmall)
                             .foregroundStyle(Theme.textSecondary)
                         HStack {
                             Text(CurrencyHelper.symbol(for: profiles.first?.defaultCurrency ?? "USD"))
-                                .font(.system(.title3, design: .rounded, weight: .bold))
+                                .font(Typography.headingLarge)
                                 .foregroundStyle(Theme.textSecondary)
                             TextField("0", text: $monthlyLimit)
-                                .font(.system(.title3, design: .rounded, weight: .bold))
+                                .font(Typography.headingLarge)
                                 .keyboardType(.decimalPad)
                                 .foregroundStyle(Theme.textPrimary)
                                 .tint(Theme.accent)
@@ -64,7 +64,7 @@ struct AddBudgetSheet: View {
 
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Icon")
-                            .font(.system(size: 13, weight: .medium))
+                            .font(Typography.bodySmall)
                             .foregroundStyle(Theme.textSecondary)
 
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 8), spacing: 12) {
@@ -82,7 +82,7 @@ struct AddBudgetSheet: View {
                                                 .frame(width: 40, height: 40)
                                         }
                                         Image(systemName: ic)
-                                            .font(.system(size: 16))
+                                            .font(Typography.labelLarge)
                                             .foregroundStyle(icon == ic ? selectedColor : Theme.textSecondary)
                                     }
                                 }
@@ -93,7 +93,7 @@ struct AddBudgetSheet: View {
 
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Color")
-                            .font(.system(size: 13, weight: .medium))
+                            .font(Typography.bodySmall)
                             .foregroundStyle(Theme.textSecondary)
 
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 6), spacing: 12) {
@@ -111,7 +111,7 @@ struct AddBudgetSheet: View {
                                                 .strokeBorder(.white, lineWidth: 2.5)
                                                 .frame(width: 36, height: 36)
                                             Image(systemName: "checkmark")
-                                                .font(.system(size: 12, weight: .bold))
+                                                .font(Typography.labelMedium)
                                                 .foregroundStyle(.white)
                                         }
                                     }
@@ -139,7 +139,7 @@ struct AddBudgetSheet: View {
                     Button("Save") {
                         saveBudget()
                     }
-                    .font(.body.weight(.semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(canSave ? Theme.accent : Theme.textMuted)
                     .disabled(!canSave)
                 }
@@ -163,21 +163,21 @@ struct AddBudgetSheet: View {
                     .stroke(Theme.border, lineWidth: 5)
                     .frame(width: 48, height: 48)
                 Image(systemName: icon)
-                    .font(.system(size: 20))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(selectedColor)
             }
 
             Text(name.isEmpty ? "Category" : name)
-                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             Text("$0 / $\(monthlyLimit.isEmpty ? "0" : monthlyLimit)")
-                .font(.system(size: 12, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 24)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private func saveBudget() {

@@ -10,6 +10,6 @@ struct MMCard<Content: View>: View {
     var body: some View {
         content
             .padding(Theme.Spacing.sm)
-            .glassCard()
+            .splurjCard(.elevated)
     }
 }

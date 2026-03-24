@@ -84,15 +84,15 @@ struct SettingsView: View {
                     SettingsIconBadge(icon: "moon.fill", color: Theme.accent)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Theme")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textPrimary)
                         Text("Dark mode only")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                     }
                     Spacer()
                     Text("DARK")
-                        .font(.system(size: 10, weight: .heavy, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.accent)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -105,10 +105,10 @@ struct SettingsView: View {
                     SettingsIconBadge(icon: "paintpalette.fill", color: Theme.accent)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Personality Color")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textPrimary)
                         Text(personality.rawValue)
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                     }
                     Spacer()
@@ -194,11 +194,11 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     HStack(spacing: 12) {
                         Image(systemName: "chart.bar.fill")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.accent)
                             .frame(width: 28)
                         Text("Budget Alerts")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textPrimary)
                     }
 
@@ -260,11 +260,11 @@ struct SettingsView: View {
                     HStack(spacing: 14) {
                         SettingsIconBadge(icon: "slider.horizontal.3", color: Theme.textSecondary)
                         Text("Advanced Settings")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textPrimary)
                         Spacer()
                         Image(systemName: "chevron.right")
-                            .font(.caption.weight(.semibold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary.opacity(0.4))
                     }
                 }
@@ -280,7 +280,7 @@ struct SettingsView: View {
                 HStack(spacing: 14) {
                     SettingsIconBadge(icon: "dollarsign.circle.fill", color: Theme.accent)
                     Text("Default Currency")
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()
                     Picker("", selection: Binding(
@@ -305,7 +305,7 @@ struct SettingsView: View {
                 HStack(spacing: 14) {
                     SettingsIconBadge(icon: "list.bullet.rectangle.fill", color: Theme.accent)
                     Text("Budget Method")
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()
                     Picker("", selection: Binding(
@@ -325,7 +325,7 @@ struct SettingsView: View {
                 HStack(spacing: 14) {
                     SettingsIconBadge(icon: "calendar", color: Theme.accent)
                     Text("First Day of Month")
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()
                     Picker("", selection: Binding(
@@ -371,11 +371,11 @@ struct SettingsView: View {
                 HStack(spacing: 14) {
                     SettingsIconBadge(icon: "arrow.counterclockwise", color: Theme.textSecondary)
                     Text("Restore Purchases")
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary.opacity(0.4))
                 }
             }
@@ -389,11 +389,11 @@ struct SettingsView: View {
             HStack(spacing: 14) {
                 SettingsIconBadge(icon: "number", color: Theme.textMuted)
                 Text("Version")
-                    .font(.subheadline.weight(.medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
             }
 
@@ -453,15 +453,15 @@ struct SettingsView: View {
                     SettingsIconBadge(icon: "trash.fill", color: Theme.textSecondary)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Clear All Data")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                         Text("Permanently remove all app data")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary.opacity(0.4))
                 }
             }
@@ -476,15 +476,15 @@ struct SettingsView: View {
                     SettingsIconBadge(icon: "person.crop.circle.badge.xmark", color: Theme.textSecondary)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Delete Account")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                         Text("Delete your account and all data forever")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary.opacity(0.4))
                 }
             }
@@ -523,10 +523,10 @@ struct SettingsSectionCard<Content: View>: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 10) {
                 Image(systemName: icon)
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(iconColor)
                 Text(title)
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
             }
             .padding(.bottom, 2)
@@ -534,7 +534,7 @@ struct SettingsSectionCard<Content: View>: View {
             content()
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 }
 
@@ -544,7 +544,7 @@ struct SettingsIconBadge: View {
 
     var body: some View {
         Image(systemName: icon)
-            .font(.subheadline)
+            .font(Typography.bodyMedium)
             .foregroundStyle(.white)
             .frame(width: 30, height: 30)
             .background(color, in: .rect(cornerRadius: 7))
@@ -572,30 +572,30 @@ struct SettingsNavRow: View {
                 SettingsIconBadge(icon: icon, color: color)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                     if let subtitle {
                         Text(subtitle)
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
                 Spacer()
                 if let badge {
                     Text(badge)
-                        .font(.system(size: 9, weight: .heavy))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(color)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 3)
                         .background(color.opacity(0.12), in: .capsule)
                 } else {
                     Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary.opacity(0.4))
                 }
             }
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
     }
 }
 
@@ -610,16 +610,16 @@ struct SettingsPreferenceToggle: View {
         Toggle(isOn: $isOn) {
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(color)
                     .frame(width: 28)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Text(subtitle)
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
@@ -638,13 +638,13 @@ struct SettingsAlertPill: View {
             isOn.toggle()
         } label: {
             Text(label)
-                .font(.caption.weight(.semibold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(isOn ? .white : Theme.textSecondary)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
                 .background(isOn ? Theme.accent : Theme.elevated, in: .capsule)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
         .sensoryFeedback(.selection, trigger: isOn)
     }
 }

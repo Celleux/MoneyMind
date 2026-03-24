@@ -38,7 +38,7 @@ struct ReferralMilestoneCelebration: View {
                         .opacity(phase >= 1 ? 1 : 0)
 
                     Image(systemName: milestone.icon)
-                        .font(.system(size: 48))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(milestone.accentColor)
                         .scaleEffect(phase >= 1 ? 1.0 : 0.0)
                         .shadow(color: milestone.accentColor.opacity(0.5), radius: 16)
@@ -47,14 +47,14 @@ struct ReferralMilestoneCelebration: View {
 
                 VStack(spacing: 12) {
                     Text(milestone.title)
-                        .font(.system(.title2, design: .rounded, weight: .bold))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(.white)
                         .multilineTextAlignment(.center)
                         .opacity(phase >= 2 ? 1 : 0)
                         .offset(y: phase >= 2 ? 0 : 20)
 
                     Text(milestone.subtitle)
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
@@ -88,13 +88,13 @@ struct ReferralMilestoneCelebration: View {
                     onDismiss()
                 } label: {
                     Text("Awesome!")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(milestone.accentColor, in: .rect(cornerRadius: 14))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .padding(.horizontal, 24)
                 .opacity(phase >= 3 ? 1 : 0)
                 .animation(reduceMotion ? .none : .easeOut(duration: 0.3).delay(0.7), value: phase)
@@ -121,7 +121,7 @@ struct ReferralMilestoneCelebration: View {
     private var rewardsStack: some View {
         VStack(spacing: 8) {
             Text("Your Rewards")
-                .font(.caption.weight(.semibold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
 
             HStack(spacing: 16) {
@@ -135,7 +135,7 @@ struct ReferralMilestoneCelebration: View {
     private var connectorCardPreview: some View {
         VStack(spacing: 12) {
             Text("Exclusive Card Set Unlocked")
-                .font(.caption.weight(.bold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.neonPurple)
 
             HStack(spacing: -8) {
@@ -147,7 +147,7 @@ struct ReferralMilestoneCelebration: View {
                             .overlay(Circle().stroke(Theme.neonPurple.opacity(0.4), lineWidth: 1))
 
                         Image(systemName: connectorIcons[i])
-                            .font(.system(size: 18))
+                            .font(Typography.bodyLarge)
                             .foregroundStyle(Theme.neonPurple)
                     }
                     .zIndex(Double(5 - i))
@@ -155,11 +155,11 @@ struct ReferralMilestoneCelebration: View {
             }
 
             Text("The Connector Collection — 5 Cards")
-                .font(.caption2)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .padding(16)
-        .glassCard(cornerRadius: 14)
+        .splurjCard(.hero)
         .padding(.horizontal, 32)
     }
 
@@ -168,15 +168,15 @@ struct ReferralMilestoneCelebration: View {
     private var premiumRewardBadge: some View {
         HStack(spacing: 12) {
             Image(systemName: "crown.fill")
-                .font(.title2)
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.gold)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("1 Month Premium")
-                    .font(.subheadline.weight(.bold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(.white)
                 Text("Unlocked for free")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.gold)
             }
         }
@@ -226,10 +226,10 @@ private struct RewardPill: View {
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.caption2)
+                .font(Typography.labelSmall)
                 .foregroundStyle(color)
             Text(text)
-                .font(.caption2.weight(.semibold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(.white)
         }
         .padding(.horizontal, 10)

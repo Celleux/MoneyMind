@@ -47,7 +47,7 @@ struct QuestCompleteCheckmark: View {
 
             if xpFloatOpacity > 0 && xpFloatOffset != 0 {
                 Text("+\(xpEarned) XP")
-                    .font(.system(size: 18, weight: .black, design: .rounded))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.gold)
                     .shadow(color: Theme.gold.opacity(0.5), radius: 8)
                     .offset(y: xpFloatOffset)

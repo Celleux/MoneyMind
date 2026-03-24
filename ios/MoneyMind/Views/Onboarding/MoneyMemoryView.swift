@@ -18,7 +18,7 @@ struct MoneyMemoryView: View {
                 MemoryOption(text: "Invisible — never discussed", icon: "eye.slash.fill", adjustments: [.social: -0.1, .emotional: -0.06]),
                 MemoryOption(text: "Abundant — never a worry", icon: "sparkles", adjustments: [.spending: 0.08, .risk: 0.08]),
             ],
-            bgShift: Color(hex: 0x0B0E14)
+            bgShift: Theme.background
         ),
         MemoryPrompt(
             question: "My parents taught me that money is...",
@@ -71,7 +71,7 @@ struct MoneyMemoryView: View {
                 .padding(.top, 24)
 
                 Text("MONEY MEMORIES")
-                    .font(.system(size: 10, weight: .bold, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
                     .tracking(3)
                     .padding(.top, 16)
@@ -81,7 +81,7 @@ struct MoneyMemoryView: View {
 
                 VStack(spacing: 28) {
                     Text(prompts[currentPrompt].question)
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(.white)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
@@ -98,12 +98,12 @@ struct MoneyMemoryView: View {
                             } label: {
                                 HStack(spacing: 14) {
                                     Image(systemName: option.icon)
-                                        .font(.system(size: 18, weight: .semibold))
+                                        .font(Typography.headingLarge)
                                         .foregroundStyle(selectedOption == option.text ? Theme.accent : Theme.textSecondary)
                                         .frame(width: 32)
 
                                     Text(option.text)
-                                        .font(.system(size: 15, weight: .medium, design: .rounded))
+                                        .font(Typography.bodyMedium)
                                         .foregroundStyle(selectedOption == option.text ? .white : Theme.textSecondary)
                                         .multilineTextAlignment(.leading)
 

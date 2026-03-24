@@ -12,7 +12,7 @@ struct MMTextField: View {
     var body: some View {
         ZStack(alignment: .leading) {
             Text(label)
-                .font(.system(size: isFloating ? 12 : 16, weight: .medium, design: .rounded))
+                .font(isFloating ? Typography.bodySmall : Typography.labelLarge)
                 .foregroundStyle(isFocused ? Theme.accent : Theme.textMuted)
                 .offset(y: isFloating ? -14 : 0)
                 .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isFloating)
@@ -24,7 +24,7 @@ struct MMTextField: View {
                     TextField("", text: $text)
                 }
             }
-            .font(.system(size: 16, weight: .regular, design: .rounded))
+            .font(Typography.labelLarge)
             .foregroundStyle(Theme.textPrimary)
             .keyboardType(keyboardType)
             .focused($isFocused)

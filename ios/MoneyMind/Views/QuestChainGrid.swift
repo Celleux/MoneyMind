@@ -5,7 +5,7 @@ struct QuestChainGrid: View {
     @Environment(\.modelContext) private var modelContext
 
     private let chains: [(id: String, name: String, icon: String, color: Color)] = [
-        ("chain_savers_guild", "The Saver's Journey", "banknote.fill", Color(hex: 0x34D399)),
+        ("chain_savers_guild", "The Saver's Journey", "banknote.fill", Theme.accent),
         ("chain_compound", "The Compound Path", "chart.line.uptrend.xyaxis", Color(hex: 0xF5C542)),
         ("chain_budget_warriors", "The Budget Battle", "shield.lefthalf.filled", Color(hex: 0x60A5FA)),
         ("chain_debt_slayers", "Debt Freedom Road", "bolt.circle.fill", Color(hex: 0xA78BFA)),
@@ -20,11 +20,11 @@ struct QuestChainGrid: View {
                 Image(systemName: "link")
                     .foregroundStyle(Color(hex: 0xA78BFA))
                 Text("Quest Chains")
-                    .font(.system(size: 15, weight: .heavy))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(.white)
                 Spacer()
                 Text("5 story arcs")
-                    .font(.system(size: 10))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
             .padding(.horizontal, 20)
@@ -123,7 +123,7 @@ private struct ChainCard: View {
                         .fill(accentColor.opacity(0.15))
                         .frame(width: 36, height: 36)
                     Image(systemName: icon)
-                        .font(.system(size: 16, weight: .bold))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(accentColor)
                 }
 
@@ -131,13 +131,13 @@ private struct ChainCard: View {
 
                 if isComplete {
                     Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 16))
+                        .font(Typography.labelLarge)
                         .foregroundStyle(Theme.gold)
                 }
             }
 
             Text(name)
-                .font(.system(size: 13, weight: .bold))
+                .font(Typography.labelMedium)
                 .foregroundStyle(.white)
                 .lineLimit(2)
                 .fixedSize(horizontal: false, vertical: true)
@@ -147,9 +147,9 @@ private struct ChainCard: View {
             if isComplete {
                 HStack(spacing: 4) {
                     Image(systemName: "crown.fill")
-                        .font(.system(size: 8))
+                        .font(Typography.labelSmall)
                     Text("COMPLETED")
-                        .font(.system(size: 9, weight: .black))
+                        .font(Typography.labelSmall)
                         .tracking(1)
                 }
                 .foregroundStyle(Theme.gold)
@@ -169,16 +169,16 @@ private struct ChainCard: View {
 
                     HStack {
                         Text("\(progress.completed)/\(progress.total)")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(accentColor)
                         Spacer()
                         if progress.completed == 0 {
                             Text("Start")
-                                .font(.system(size: 9, weight: .semibold))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(accentColor)
                         } else {
                             Text("In Progress")
-                                .font(.system(size: 9))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textMuted)
                         }
                     }

@@ -34,7 +34,7 @@ struct FinancialDNARevealView: View {
 
             if phase >= 1 {
                 Text("Your Financial DNA is ready.")
-                    .font(.system(size: 18, weight: .semibold, design: .rounded))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textSecondary)
                     .offset(y: -60)
                     .transition(.opacity)
@@ -49,16 +49,16 @@ struct FinancialDNARevealView: View {
             if phase >= 3 {
                 VStack(spacing: 8) {
                     Image(systemName: archetype.icon)
-                        .font(.system(size: 32, weight: .bold))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(archetype.color)
 
                     Text(archetype.rawValue.uppercased())
-                        .font(.system(size: 32, weight: .black, design: .rounded))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(.white)
                         .tracking(4)
 
                     Text(archetype.tagline)
-                        .font(.system(size: 15, weight: .medium, design: .rounded))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(archetype.color)
                 }
                 .offset(y: 140)
@@ -79,32 +79,32 @@ struct FinancialDNARevealView: View {
                     sectionTitle("Your Superpower", icon: "bolt.fill", color: Theme.gold)
 
                     Text(dna.superpower)
-                        .font(.system(size: 22, weight: .black, design: .rounded))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(Theme.gold)
 
                     Text(superpowerDescription)
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                         .lineSpacing(4)
                 }
                 .padding(20)
-                .glassCard()
+                .splurjCard(.elevated)
                 .padding(.horizontal, 24)
 
                 VStack(alignment: .leading, spacing: 16) {
                     sectionTitle("Your Blind Spot", icon: "eye.trianglebadge.exclamationmark.fill", color: Color(hex: 0xFB923C))
 
                     Text(dna.vulnerability)
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Color(hex: 0xFB923C))
 
                     Text("This isn't a flaw — it's the shadow side of your superpower.")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textMuted)
                         .italic()
                 }
                 .padding(20)
-                .glassCard()
+                .splurjCard(.elevated)
                 .padding(.horizontal, 24)
 
                 VStack(alignment: .leading, spacing: 16) {
@@ -116,16 +116,16 @@ struct FinancialDNARevealView: View {
                     }
 
                     Text(blendDescription)
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                         .lineSpacing(3)
                 }
                 .padding(20)
-                .glassCard()
+                .splurjCard(.elevated)
                 .padding(.horizontal, 24)
 
                 VStack(spacing: 10) {
-                    DNAAxisPreviewCard(title: "Spending Style", icon: "shield.lefthalf.filled", color: Color(hex: 0x34D399), value: dna.spendingAxis)
+                    DNAAxisPreviewCard(title: "Spending Style", icon: "shield.lefthalf.filled", color: Theme.accent, value: dna.spendingAxis)
                     DNAAxisPreviewCard(title: "Money Emotions", icon: "brain.head.profile.fill", color: Color(hex: 0x60A5FA), value: dna.emotionalAxis)
                     DNAAxisPreviewCard(title: "Risk Profile", icon: "flame.fill", color: Color(hex: 0xFB923C), value: dna.riskAxis)
                     DNAAxisPreviewCard(title: "Social Money", icon: "person.2.fill", color: Color(hex: 0xF472B6), value: dna.socialAxis)
@@ -134,21 +134,21 @@ struct FinancialDNARevealView: View {
 
                 VStack(spacing: 12) {
                     Image(systemName: "sparkles")
-                        .font(.system(size: 20))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.accent)
 
                     Text("How This Personalizes Splurj")
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(.white)
 
                     Text("Your DNA shapes which quests appear, which challenges suit you, and how the app coaches you. No two Splurj experiences are alike.")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                         .lineSpacing(3)
                 }
                 .padding(20)
-                .glassCard()
+                .splurjCard(.elevated)
                 .padding(.horizontal, 24)
 
                 ShareLink(
@@ -159,7 +159,7 @@ struct FinancialDNARevealView: View {
                         Image(systemName: "square.and.arrow.up")
                         Text("Share My Financial DNA")
                     }
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.accent)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
@@ -173,13 +173,13 @@ struct FinancialDNARevealView: View {
 
                 Button(action: onComplete) {
                     Text("Continue")
-                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 17)
                         .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .padding(.horizontal, 32)
                 .padding(.bottom, 48)
             }
@@ -190,10 +190,10 @@ struct FinancialDNARevealView: View {
     private func sectionTitle(_ text: String, icon: String, color: Color) -> some View {
         HStack(spacing: 8) {
             Image(systemName: icon)
-                .font(.system(size: 14, weight: .bold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(color)
             Text(text.uppercased())
-                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(color)
                 .tracking(2)
         }
@@ -202,17 +202,17 @@ struct FinancialDNARevealView: View {
     private func archetypePill(_ type: FinancialArchetype, label: String) -> some View {
         VStack(spacing: 8) {
             Text(label.uppercased())
-                .font(.system(size: 9, weight: .bold, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
                 .tracking(1)
 
             HStack(spacing: 8) {
                 Image(systemName: type.icon)
-                    .font(.system(size: 16, weight: .bold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(type.color)
 
                 Text(type.rawValue.replacingOccurrences(of: "The ", with: ""))
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(.white)
             }
             .padding(.horizontal, 14)

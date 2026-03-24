@@ -12,19 +12,19 @@ struct ScenarioCardView: View {
                     .frame(width: 64, height: 64)
 
                 Image(systemName: scenario.icon)
-                    .font(.system(size: 28, weight: .bold))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(scenario.axisColor)
             }
 
             Text(scenario.text)
-                .font(.system(size: 20, weight: .semibold, design: .rounded))
+                .font(Typography.headingLarge)
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
                 .padding(.horizontal, 8)
 
             Text(scenario.axisLabel.uppercased())
-                .font(.system(size: 10, weight: .medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
                 .tracking(2)
         }
@@ -66,7 +66,7 @@ struct ScenarioCardView: View {
 
     private func stampLabel(_ text: String, color: Color, rotation: Double) -> some View {
         Text(text)
-            .font(.system(size: 14, weight: .black))
+            .font(Typography.headingSmall)
             .foregroundStyle(color)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)

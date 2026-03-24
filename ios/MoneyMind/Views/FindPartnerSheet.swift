@@ -53,17 +53,17 @@ struct FindPartnerSheet: View {
                     .fill(Theme.teal.opacity(0.12))
                     .frame(width: 80, height: 80)
                 Image(systemName: "person.2.fill")
-                    .font(.system(size: 32))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.teal)
             }
 
             VStack(spacing: 8) {
                 Text("Accountability Partner")
-                    .font(Theme.headingFont(.title2))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.textPrimary)
 
                 Text("We'll match you with someone on a similar journey. Weekly check-ins help you both stay on track.")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
             }
@@ -75,19 +75,19 @@ struct FindPartnerSheet: View {
                 matchCriteria("Fully anonymous & private", icon: "lock.fill")
             }
             .padding(16)
-            .glassCard()
+            .splurjCard(.elevated)
 
             Button {
                 startMatching()
             } label: {
                 Text("Find My Partner")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(Theme.teal, in: .rect(cornerRadius: 12))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .sensoryFeedback(.impact(weight: .medium), trigger: matchingPhase)
             .accessibilityLabel("Start partner matching")
         }
@@ -96,11 +96,11 @@ struct FindPartnerSheet: View {
     private func matchCriteria(_ text: String, icon: String) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.teal)
                 .frame(width: 24)
             Text(text)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textPrimary)
         }
     }
@@ -117,16 +117,16 @@ struct FindPartnerSheet: View {
                     .frame(width: 80, height: 80)
                     .rotationEffect(.degrees(-90))
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 28))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.teal)
             }
 
             VStack(spacing: 8) {
                 Text("Finding your partner...")
-                    .font(Theme.headingFont(.title3))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
                 Text("Matching based on your goals and journey")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
             }
         }
@@ -139,32 +139,32 @@ struct FindPartnerSheet: View {
                     .fill(Theme.teal.opacity(0.15))
                     .frame(width: 80, height: 80)
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 40))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.teal)
             }
 
             VStack(spacing: 8) {
                 Text("Partner Found!")
-                    .font(Theme.headingFont(.title2))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.textPrimary)
 
                 Text("Meet \(matchedName)")
-                    .font(.title3)
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.teal)
 
                 HStack(spacing: 16) {
                     Label("\(matchedStreak)d streak", systemImage: "flame.fill")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.gold)
                     Label(profile?.selectedReason ?? "Wellness", systemImage: "heart.fill")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.accentGreen)
                 }
                 .padding(.top, 4)
             }
 
             Text("You'll receive weekly check-in reminders. Support each other through the journey!")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
 
@@ -181,13 +181,13 @@ struct FindPartnerSheet: View {
                     Image(systemName: "hand.wave.fill")
                     Text("Say Hello")
                 }
-                .font(.headline)
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.background)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
                 .background(Theme.teal, in: .rect(cornerRadius: 12))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .sensoryFeedback(.success, trigger: matchedName)
             .accessibilityLabel("Accept partner match")
         }

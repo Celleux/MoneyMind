@@ -31,11 +31,11 @@ struct CardWatermark: View {
                 Image(systemName: "leaf.fill")
                     .foregroundStyle(Theme.accentGreen)
                 Text("splurj.app")
-                    .font(.caption.weight(.medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(.white.opacity(0.4))
             }
             Text("Don't splurge. Splurj.")
-                .font(.system(size: 9, weight: .medium, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(.white.opacity(0.25))
         }
     }

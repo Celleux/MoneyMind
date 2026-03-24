@@ -45,7 +45,7 @@ struct ChallengesHubView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -88,7 +88,7 @@ struct ChallengesHubView: View {
                 Image(systemName: "flame.fill")
                     .foregroundStyle(Theme.warning)
                 Text("Active")
-                    .font(Theme.headingFont(.headline))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
             }
 
@@ -112,7 +112,7 @@ struct ChallengesHubView: View {
                 Image(systemName: "star.fill")
                     .foregroundStyle(Theme.gold)
                 Text("Available Challenges")
-                    .font(Theme.headingFont(.headline))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
             }
 
@@ -159,13 +159,13 @@ private struct ActiveChallengeCard: View {
                 MMProgressRing(progress: challenge.progress, lineWidth: 6, size: 60)
                     .overlay {
                         Image(systemName: challenge.challengeType.icon)
-                            .font(.system(size: 18))
+                            .font(Typography.bodyLarge)
                             .foregroundStyle(personalityColor)
                     }
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(challenge.challengeType.title)
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.textPrimary)
                         .lineLimit(1)
 
@@ -177,7 +177,7 @@ private struct ActiveChallengeCard: View {
                             Label("\(challenge.noSpendStreak) streak", systemImage: "flame.fill")
                         }
                     }
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
 
                     GeometryReader { geo in
@@ -200,13 +200,13 @@ private struct ActiveChallengeCard: View {
                 }
 
                 Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
             }
             .padding(16)
-            .glassCard()
+            .splurjCard(.interactive)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
     }
 }
 
@@ -223,16 +223,16 @@ private struct ChallengePickerCard: View {
                         .fill(Theme.accent.opacity(0.1))
                         .frame(width: 48, height: 48)
                     Image(systemName: type.icon)
-                        .font(.title3)
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.accent)
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(type.title)
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
                     Text(type.subtitle)
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .lineLimit(2)
                 }
@@ -242,19 +242,19 @@ private struct ChallengePickerCard: View {
 
             HStack(spacing: 16) {
                 Label(type.durationLabel, systemImage: "clock")
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
 
                 HStack(spacing: 2) {
                     ForEach(0..<type.difficulty, id: \.self) { _ in
                         Text("🔥")
-                            .font(.caption2)
+                            .font(Typography.labelSmall)
                     }
                 }
 
                 if type.totalGoal > 0 {
                     Text("$\(Int(type.totalGoal))")
-                        .font(.system(.caption2, design: .rounded, weight: .bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.success)
                 }
 
@@ -265,7 +265,7 @@ private struct ChallengePickerCard: View {
                         Image(systemName: "checkmark.circle.fill")
                         Text("Active")
                     }
-                    .font(.caption2.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.success)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
@@ -273,17 +273,17 @@ private struct ChallengePickerCard: View {
                 } else {
                     Button(action: action) {
                         Text("Start")
-                            .font(.caption.weight(.bold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 7)
                             .background(Theme.accent, in: .capsule)
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .small))
                 }
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import PhosphorSwift
 
 struct MilestoneCard: View {
     let icon: String
@@ -16,29 +17,29 @@ struct MilestoneCard: View {
                     .shadow(color: isCompleted ? accentColor.opacity(0.3) : .clear, radius: 8)
 
                 Image(systemName: icon)
-                    .font(.system(size: 20))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(isCompleted ? accentColor : Theme.textMuted.opacity(0.3))
             }
 
             Text(title)
-                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(isCompleted ? .white : Theme.textMuted)
 
             Text(subtitle)
-                .font(.system(size: 9, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
 
             if isCompleted {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 14))
+                PhIcon.checkCircleFill
+                    .frame(width: 16, height: 16)
                     .foregroundStyle(accentColor)
             }
         }
         .frame(width: 100)
         .padding(.vertical, 12)
         .padding(.horizontal, 4)
-        .glassCard(cornerRadius: 12)
+        .splurjCard(.subtle)
     }
 }

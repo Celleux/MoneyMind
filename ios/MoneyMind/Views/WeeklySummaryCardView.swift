@@ -13,17 +13,17 @@ struct WeeklySummaryCardView: View {
 
             VStack(spacing: 28) {
                 Text("WEEKLY SUMMARY")
-                    .font(.system(.caption2, design: .rounded, weight: .bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(.white.opacity(0.4))
                     .tracking(4)
 
                 VStack(spacing: 4) {
                     Text(weekRangeString())
-                        .font(.system(.caption, design: .rounded, weight: .medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.teal)
 
                     Text("My Week in Splurj")
-                        .font(.system(size: 26, weight: .bold, design: .rounded))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(.white)
                 }
 
@@ -72,17 +72,17 @@ struct WeeklySummaryCardView: View {
     private func summaryStatBlock(value: String, label: String, icon: String, color: Color) -> some View {
         VStack(spacing: 10) {
             Image(systemName: icon)
-                .font(.title2)
+                .font(Typography.displaySmall)
                 .foregroundStyle(color)
 
             Text(value)
-                .font(.system(.title2, design: .rounded, weight: .bold))
+                .font(Typography.displaySmall)
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
 
             Text(label)
-                .font(.system(.caption, design: .rounded, weight: .medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(.white.opacity(0.5))
         }
         .frame(maxWidth: .infinity)
@@ -144,9 +144,9 @@ struct WeeklySummarySheet: View {
                 } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "square.and.arrow.up")
-                            .font(.body.weight(.semibold))
+                            .font(Typography.headingMedium)
                         Text("Share Weekly Summary")
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                     }
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
@@ -156,7 +156,7 @@ struct WeeklySummarySheet: View {
                         in: .rect(cornerRadius: 14)
                     )
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .padding(.horizontal, 32)
                 .sensoryFeedback(.impact(weight: .medium), trigger: showShareSheet)
             }

@@ -57,14 +57,14 @@ struct HALTCheckView: View {
             Spacer()
 
             Text("HALT Check")
-                .font(Theme.headingFont(.headline))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             Spacer()
 
             if !showResults {
                 Text("\(currentCard + 1)/4")
-                    .font(.subheadline.weight(.medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
             } else {
                 Circle().fill(.clear).frame(width: 44, height: 44)
@@ -95,13 +95,13 @@ struct HALTCheckView: View {
                     }
                 } label: {
                     Text("Next")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .padding(.horizontal, 24)
             } else {
                 Button {
@@ -110,13 +110,13 @@ struct HALTCheckView: View {
                     }
                 } label: {
                     Text("See Results")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .padding(.horizontal, 24)
             }
 
@@ -140,27 +140,27 @@ struct HALTCheckView: View {
         let cat = categories[index]
         return VStack(spacing: 20) {
             Image(systemName: cat.icon)
-                .font(.system(size: 40))
+                .font(Typography.displayMedium)
                 .foregroundStyle(cat.color)
                 .frame(width: 72, height: 72)
                 .background(cat.color.opacity(0.12), in: .circle)
 
             Text(cat.name)
-                .font(Theme.headingFont(.title2))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
 
             Text(cat.description)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
 
             VStack(spacing: 8) {
                 HStack {
                     Text("Not at all")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                     Spacer()
                     Text("Extremely")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
 
@@ -169,14 +169,14 @@ struct HALTCheckView: View {
                     .sensoryFeedback(.selection, trigger: Int(scores[index]))
 
                 Text("\(Int(scores[index]))")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(cat.color)
                     .contentTransition(.numericText())
                     .animation(.default, value: Int(scores[index]))
             }
         }
         .padding(24)
-        .glassCard()
+        .splurjCard(.elevated)
         .padding(.horizontal, 24)
         .accessibilityElement(children: .contain)
         .accessibilityLabel("\(cat.name) level slider")
@@ -203,13 +203,13 @@ struct HALTCheckView: View {
                     saveAndComplete()
                 } label: {
                     Text("Complete Check-In")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .sensoryFeedback(.success, trigger: isCompleted)
 
                 if isCompleted {
@@ -217,7 +217,7 @@ struct HALTCheckView: View {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundStyle(Theme.accentGreen)
                         Text("+15 XP")
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.gold)
                     }
                     .transition(.scale.combined(with: .opacity))
@@ -238,7 +238,7 @@ struct HALTCheckView: View {
                         .frame(width: 24)
 
                     Text(categories[i].name)
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                         .frame(width: 60, alignment: .leading)
 
@@ -256,31 +256,31 @@ struct HALTCheckView: View {
                     .frame(height: 8)
 
                     Text("\(Int(scores[i]))")
-                        .font(.subheadline.weight(.bold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(categories[i].color)
                         .frame(width: 24)
                 }
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private func recommendationCard(for category: String) -> some View {
         let (message, icon) = recommendation(for: category)
         return HStack(spacing: 14) {
             Image(systemName: icon)
-                .font(.title3)
+                .font(Typography.headingLarge)
                 .foregroundStyle(Theme.gold)
                 .frame(width: 44, height: 44)
                 .background(Theme.gold.opacity(0.12), in: .rect(cornerRadius: 12))
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("High \(category) Detected")
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
                 Text(message)
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         }
@@ -311,14 +311,14 @@ struct HALTCheckView: View {
     private var functionalAnalysis: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("What was happening before this urge?")
-                .font(.subheadline.weight(.semibold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.textPrimary)
 
             TextField("Describe the situation...", text: $contextNote, axis: .vertical)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .lineLimit(3...6)
                 .padding(12)
-                .glassCard(cornerRadius: 12)
+                .splurjCard(.outlined)
                 .foregroundStyle(Theme.textPrimary)
         }
     }
@@ -326,7 +326,7 @@ struct HALTCheckView: View {
     private var needPicker: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("What need am I trying to meet?")
-                .font(.subheadline.weight(.semibold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.textPrimary)
 
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), spacing: 8)], spacing: 8) {
@@ -335,7 +335,7 @@ struct HALTCheckView: View {
                         selectedNeed = need
                     } label: {
                         Text(need)
-                            .font(.caption.weight(.medium))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(selectedNeed == need ? Theme.background : Theme.textPrimary)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 10)
@@ -345,7 +345,7 @@ struct HALTCheckView: View {
                                 in: .rect(cornerRadius: 10)
                             )
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                     .sensoryFeedback(.selection, trigger: selectedNeed)
                     .accessibilityLabel(need)
                 }

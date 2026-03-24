@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhosphorSwift
 
 struct WalletView: View {
     @Query private var profiles: [UserProfile]
@@ -124,11 +125,11 @@ struct WalletView: View {
     private var heroCounterCard: some View {
         VStack(spacing: 14) {
             HStack {
-                Image(systemName: "wallet.bifold.fill")
-                    .font(.title3)
+                PhIcon.walletFill
+                    .frame(width: 22, height: 22)
                     .foregroundStyle(Theme.accentGreen)
                 Text("Total Saved")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                 Spacer()
                 if let progress = vm.milestoneProgress(for: effectiveTotal),
@@ -139,7 +140,7 @@ struct WalletView: View {
 
             if gentle && !vm.revealExact {
                 Text(vm.displayAmount(effectiveTotal, gentle: true))
-                    .font(.system(size: 42, weight: .bold, design: .rounded))
+                    .font(Typography.moneyLarge)
                     .foregroundStyle(Theme.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .contentTransition(.numericText())
@@ -147,7 +148,7 @@ struct WalletView: View {
                     .accessibilityLabel("Total saved approximately \(Int(effectiveTotal)) dollars")
             } else {
                 Text(effectiveTotal, format: .currency(code: currencyCode))
-                    .font(.system(size: 42, weight: .bold, design: .rounded))
+                    .font(Typography.moneyLarge)
                     .foregroundStyle(Theme.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .contentTransition(.numericText(value: effectiveTotal))
@@ -157,18 +158,18 @@ struct WalletView: View {
             }
 
             HStack(spacing: 4) {
-                Image(systemName: "clock.fill")
-                    .font(.caption2)
+                PhIcon.clockFill
+                    .frame(width: 14, height: 14)
                     .foregroundStyle(Theme.teal)
                 let hours = vm.workHours(for: effectiveTotal, rate: profile?.hourlyRate ?? 20)
                 Text("That's \(hours, specifier: "%.1f") hours of your work")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.teal)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(24)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.hero)
         .opacity(vm.appeared ? 1 : 0)
         .offset(y: vm.appeared ? 0 : 16)
         .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.05), value: vm.appeared)
@@ -177,10 +178,10 @@ struct WalletView: View {
 
     private func goalGradientBadge(progress: Double, milestone: Double) -> some View {
         HStack(spacing: 4) {
-            Image(systemName: "flag.checkered")
-                .font(.caption2)
+            PhIcon.flagCheckered
+                .frame(width: 14, height: 14)
             Text("\(CurrencyHelper.symbol(for: profiles.first?.defaultCurrency ?? "USD"))\(Int(milestone))")
-                .font(.caption.weight(.bold))
+                .font(Typography.labelSmall)
         }
         .foregroundStyle(Theme.gold)
         .padding(.horizontal, 8)
@@ -210,7 +211,7 @@ struct WalletView: View {
                     .frame(width: 100, height: 100)
 
                 Image(systemName: level.icon)
-                    .font(.system(size: 40))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.accentGradient)
                     .symbolEffect(.breathe, options: .repeating, isActive: vm.appeared)
 
@@ -220,7 +221,7 @@ struct WalletView: View {
             }
 
             Text(level.name)
-                .font(Theme.headingFont(.headline))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             GeometryReader { geo in
@@ -264,26 +265,27 @@ struct WalletView: View {
 
         return VStack(spacing: 16) {
             HStack {
-                Image(systemName: "arrow.left.arrow.right")
+                PhIcon.arrowsLeftRight
+                    .frame(width: 20, height: 20)
                     .foregroundStyle(Theme.gold)
                 Text("Impulse Cost Calculator")
-                    .font(Theme.headingFont(.headline))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
             }
 
             HStack(spacing: 12) {
                 VStack(spacing: 8) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title3)
+                    PhIcon.xCircleFill
+                        .frame(width: 24, height: 24)
                         .foregroundStyle(Theme.emergency)
                     Text("Without\nSplurj")
-                        .font(.caption2)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                     Text(gentle && !vm.revealExact ? vm.displayAmountShort(totalImpact, gentle: true, symbol: currencySymbol) : "\(currencySymbol)\(Int(totalImpact))")
-                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .font(Typography.moneyMedium)
                         .foregroundStyle(Theme.emergency)
                         .contentTransition(.numericText())
                 }
@@ -296,16 +298,16 @@ struct WalletView: View {
                 )
 
                 VStack(spacing: 8) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.title3)
+                    PhIcon.checkCircleFill
+                        .frame(width: 24, height: 24)
                         .foregroundStyle(Theme.accentGreen)
                     Text("With\nSplurj")
-                        .font(.caption2)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                     Text(gentle && !vm.revealExact ? vm.displayAmountShort(totalGaveIn, gentle: true, symbol: currencySymbol) : "\(currencySymbol)\(Int(totalGaveIn))")
-                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .font(Typography.moneyMedium)
                         .foregroundStyle(Theme.accentGreen)
                         .contentTransition(.numericText())
                 }
@@ -320,12 +322,12 @@ struct WalletView: View {
 
             if totalImpact > 0 {
                 HStack(spacing: 6) {
-                    Image(systemName: "sparkles")
-                        .font(.caption)
+                    PhIcon.sparkleFill
+                        .frame(width: 14, height: 14)
                     Text("Total Impact:")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                     Text("\(currencySymbol)\(Int(totalResisted))")
-                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .font(Typography.moneyMedium)
                 }
                 .foregroundStyle(Theme.gold)
                 .frame(maxWidth: .infinity)
@@ -334,7 +336,7 @@ struct WalletView: View {
             }
         }
         .padding(20)
-        .glassCard()
+        .splurjCard(.elevated)
         .opacity(vm.appeared ? 1 : 0)
         .offset(y: vm.appeared ? 0 : 16)
         .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.12), value: vm.appeared)
@@ -351,11 +353,11 @@ struct WalletView: View {
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("Savings Trend")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text("Last 6 months")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
 
@@ -414,16 +416,16 @@ struct WalletView: View {
             HStack(spacing: 16) {
                 HStack(spacing: 4) {
                     Circle().fill(Theme.accent).frame(width: 8, height: 8)
-                    Text("Actual").font(.caption2).foregroundStyle(Theme.textSecondary)
+                    Text("Actual").font(Typography.labelSmall).foregroundStyle(Theme.textSecondary)
                 }
                 HStack(spacing: 4) {
                     Circle().fill(Theme.accent.opacity(0.4)).frame(width: 8, height: 8)
-                    Text("Projected").font(.caption2).foregroundStyle(Theme.textSecondary)
+                    Text("Projected").font(Typography.labelSmall).foregroundStyle(Theme.textSecondary)
                 }
             }
         }
         .padding(20)
-        .glassCard()
+        .splurjCard(.elevated)
         .opacity(vm.appeared ? 1 : 0)
         .offset(y: vm.appeared ? 0 : 16)
         .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.13), value: vm.appeared)
@@ -459,11 +461,11 @@ struct WalletView: View {
                 Image(systemName: "chart.bar.fill")
                     .foregroundStyle(Theme.accentGreen)
                 Text("This Week")
-                    .font(Theme.headingFont(.subheadline))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text("\(currencySymbol)\(Int(weekSaved)) saved")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
@@ -477,7 +479,7 @@ struct WalletView: View {
                             .shadow(color: i == 6 ? Theme.accentGreen.opacity(0.4) : .clear, radius: 4)
 
                         Text(labels[i])
-                            .font(.system(size: 10, weight: .medium))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(i == 6 ? Theme.textPrimary : Theme.textSecondary)
                     }
                     .frame(maxWidth: .infinity)
@@ -486,7 +488,7 @@ struct WalletView: View {
             .frame(height: 68)
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
         .opacity(vm.appeared ? 1 : 0)
         .offset(y: vm.appeared ? 0 : 16)
         .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.14), value: vm.appeared)
@@ -498,12 +500,12 @@ struct WalletView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("Recent Activity")
-                    .font(Theme.headingFont(.headline))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 if !impulseLogs.isEmpty {
                     Text("\(impulseLogs.count) total")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
@@ -511,18 +513,18 @@ struct WalletView: View {
             if impulseLogs.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "star.fill")
-                        .font(.title)
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.gold.opacity(0.4))
                     Text("No activity yet")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                     Text("Tap the green button to log your first resist!")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary.opacity(0.7))
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 32)
-                .glassCard()
+                .splurjCard(.subtle)
             } else {
                 VStack(spacing: 2) {
                     ForEach(impulseLogs.prefix(10)) { log in
@@ -553,17 +555,17 @@ struct WalletView: View {
                 Image(systemName: "chart.line.uptrend.xyaxis")
                     .foregroundStyle(Theme.accent)
                 Text("1-Year Projection")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
             }
 
             Text(yearProjection, format: .currency(code: currencyCode).precision(.fractionLength(0)))
-                .font(.system(size: 32, weight: .bold, design: .rounded))
+                .font(Typography.moneyLarge)
                 .foregroundStyle(Theme.accent)
                 .contentTransition(.numericText(value: yearProjection))
 
             Text("based on your \(currencySymbol)\(dailyAverage, specifier: "%.0f")/day average over \(daysActive) days")
-                .font(.caption)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
 
             Divider().background(Theme.border)
@@ -572,7 +574,7 @@ struct WalletView: View {
                 Image(systemName: "arrow.up.right")
                     .foregroundStyle(Theme.gold)
                 Text("Save \(currencySymbol)10 more/day →")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                 Spacer()
                 Text(optimisticProjection, format: .currency(code: currencyCode).precision(.fractionLength(0)))
@@ -582,7 +584,7 @@ struct WalletView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard()
+        .splurjCard(.elevated)
         .opacity(vm.appeared ? 1 : 0)
         .offset(y: vm.appeared ? 0 : 16)
         .animation(.spring(response: 0.5, dampingFraction: 0.75).delay(0.20), value: vm.appeared)
@@ -602,11 +604,11 @@ struct WalletView: View {
                         .shadow(color: Theme.accentGreen.opacity(0.4), radius: 12, y: 4)
 
                     Image(systemName: "plus")
-                        .font(.system(size: 26, weight: .bold))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(Theme.background)
                 }
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(.plain)
             .sensoryFeedback(.impact(weight: .medium), trigger: vm.showLogWin)
             .accessibilityLabel("Log a win")
             .accessibilityHint("Record an impulse you resisted")
@@ -615,7 +617,7 @@ struct WalletView: View {
                 vm.showAutopsy = true
             } label: {
                 Text("I gave in")
-                    .font(.caption.weight(.medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
@@ -625,7 +627,7 @@ struct WalletView: View {
                             .strokeBorder(Theme.textSecondary.opacity(0.2), lineWidth: 1)
                     )
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .ghost, size: .medium))
             .accessibilityLabel("I gave in")
             .accessibilityHint("Log a spending slip for reflection")
         }
@@ -647,24 +649,24 @@ private struct WalletStatPill: View {
         VStack(spacing: 6) {
             if gentle && !revealExact {
                 Text("~\(CurrencyHelper.symbol(for: currencyCode))\(Int((amount / 10).rounded() * 10))")
-                    .font(.system(.headline, design: .rounded, weight: .bold))
+                    .font(Typography.moneySmall)
                     .foregroundStyle(color)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
             } else {
                 Text(amount, format: .currency(code: currencyCode).precision(.fractionLength(0)))
-                    .font(.system(.headline, design: .rounded, weight: .bold))
+                    .font(Typography.moneySmall)
                     .foregroundStyle(color)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
             }
             Text(label)
-                .font(.caption2)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)
-        .glassCard(cornerRadius: 14)
+        .splurjCard(.outlined)
     }
 }
 
@@ -683,24 +685,24 @@ private struct WalletTransactionRow: View {
                 .frame(width: 36, height: 36)
                 .overlay {
                     Image(systemName: log.resisted ? "checkmark" : "arrow.uturn.backward")
-                        .font(.caption.weight(.bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(log.resisted ? Theme.accentGreen : Theme.emergency)
                 }
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(log.note.isEmpty ? (log.resisted ? "Impulse resisted" : "Gave in") : log.note)
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textPrimary)
                     .lineLimit(1)
 
                 HStack(spacing: 6) {
                     Text(log.date, format: .dateTime.month(.abbreviated).day().hour().minute())
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
 
                     if !log.emotionalTrigger.isEmpty {
                         Text(log.emotionalTrigger)
-                            .font(.system(size: 9, weight: .medium))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.teal)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
@@ -713,11 +715,11 @@ private struct WalletTransactionRow: View {
 
             if gentle && !revealExact {
                 Text(log.resisted ? "+~\(sym)\(Int((log.amount / 10).rounded() * 10))" : "-~\(sym)\(Int((log.amount / 10).rounded() * 10))")
-                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(log.resisted ? Theme.accentGreen : Theme.emergency)
             } else {
                 Text(log.resisted ? "+\(sym)\(log.amount, specifier: "%.0f")" : "-\(sym)\(log.amount, specifier: "%.0f")")
-                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(log.resisted ? Theme.accentGreen : Theme.emergency)
             }
         }
@@ -780,17 +782,17 @@ struct CelebrationOverlay: View {
 
             VStack(spacing: 20) {
                 Image(systemName: "dollarsign.circle.fill")
-                    .font(.system(size: 56))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(Theme.gold)
                     .scaleEffect(coinScale)
                     .offset(y: coinY)
 
                 Text("+\(CurrencyHelper.symbol(for: "USD"))\(Int(amount))")
-                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.accentGreen)
 
                 Text("saved!")
-                    .font(.title3)
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
             }
             .scaleEffect(show ? 1 : 0.5)
@@ -844,21 +846,21 @@ struct MilestoneOverlay: View {
 
             VStack(spacing: 16) {
                 Image(systemName: "crown.fill")
-                    .font(.system(size: 52))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(Theme.goldGradient)
                     .symbolEffect(.bounce, value: show)
 
                 Text("MILESTONE!")
-                    .font(.system(size: 14, weight: .heavy, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.gold)
                     .tracking(4)
 
                 Text("$\(Int(amount))")
-                    .font(.system(size: 48, weight: .bold, design: .rounded))
+                    .font(Typography.moneyHero)
                     .foregroundStyle(Theme.textPrimary)
 
                 Text("You've reached a new level!")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
 
                 HStack(spacing: 12) {
@@ -867,28 +869,24 @@ struct MilestoneOverlay: View {
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "square.and.arrow.up")
-                                .font(.subheadline.weight(.semibold))
+                                .font(Typography.headingSmall)
                             Text("Share")
-                                .font(.headline)
+                                .font(Typography.headingMedium)
                         }
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                         .background(Theme.goldGradient, in: .capsule)
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
 
                     Button {
                         dismiss()
                     } label: {
                         Text("Later")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(Theme.textSecondary)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(Theme.cardSurface, in: .capsule)
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .ghost, size: .medium))
                 }
                 .padding(.horizontal, 32)
                 .padding(.top, 8)

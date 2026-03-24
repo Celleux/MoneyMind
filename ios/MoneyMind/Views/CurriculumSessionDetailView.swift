@@ -92,29 +92,29 @@ struct CurriculumSessionDetailView: View {
                     .fill(accentColor.opacity(0.12))
                     .frame(width: 72, height: 72)
                 Image(systemName: content.iconName)
-                    .font(.system(size: 32))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(accentColor)
             }
 
             Text("Session \(content.number)")
-                .font(.caption.weight(.semibold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(accentColor)
 
             Text(content.title)
-                .font(Theme.headingFont(.title2))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
                 .multilineTextAlignment(.center)
 
             Text(content.subtitle)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
 
             HStack(spacing: 6) {
                 Image(systemName: "clock.fill")
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                 Text(content.duration)
-                    .font(.caption.weight(.medium))
+                    .font(Typography.labelSmall)
             }
             .foregroundStyle(Theme.textSecondary)
             .padding(.horizontal, 12)
@@ -130,17 +130,17 @@ struct CurriculumSessionDetailView: View {
                     .fill(accentColor)
                     .frame(width: 4, height: 20)
                 Text(section.heading)
-                    .font(Theme.headingFont(.headline))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
             }
 
             Text(section.body)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textPrimary.opacity(0.85))
                 .lineSpacing(5)
         }
         .padding(20)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private func takeawaysSection(_ content: CurriculumSessionContent) -> some View {
@@ -149,20 +149,20 @@ struct CurriculumSessionDetailView: View {
                 Image(systemName: "lightbulb.fill")
                     .foregroundStyle(Theme.gold)
                 Text("Key Takeaways")
-                    .font(Theme.headingFont(.headline))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
             }
 
             ForEach(Array(content.keyTakeaways.enumerated()), id: \.offset) { index, takeaway in
                 HStack(alignment: .top, spacing: 12) {
                     Text("\(index + 1)")
-                        .font(.caption.weight(.bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(accentColor)
                         .frame(width: 22, height: 22)
                         .background(accentColor.opacity(0.12), in: Circle())
 
                     Text(takeaway)
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary.opacity(0.85))
                         .lineSpacing(3)
                 }
@@ -189,17 +189,17 @@ struct CurriculumSessionDetailView: View {
                 Image(systemName: "pencil.and.outline")
                     .foregroundStyle(accentColor)
                 Text("Reflect")
-                    .font(Theme.headingFont(.headline))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
             }
 
             Text(content.reflectionPrompt)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .lineSpacing(3)
 
             TextField("Your thoughts...", text: $reflectionText, axis: .vertical)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textPrimary)
                 .lineLimit(3...6)
                 .padding(14)
@@ -210,7 +210,7 @@ struct CurriculumSessionDetailView: View {
                 )
         }
         .padding(20)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private var completeButton: some View {
@@ -220,14 +220,14 @@ struct CurriculumSessionDetailView: View {
             HStack(spacing: 8) {
                 Image(systemName: "checkmark.seal.fill")
                 Text("Complete Session \(sessionNumber)")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
             }
             .foregroundStyle(Theme.background)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
             .background(accentColor, in: .rect(cornerRadius: 14))
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
         .sensoryFeedback(.success, trigger: showCompletion)
         .accessibilityLabel("Complete session \(sessionNumber)")
     }
@@ -237,12 +237,12 @@ struct CurriculumSessionDetailView: View {
             Image(systemName: "checkmark.seal.fill")
                 .foregroundStyle(accentColor)
             Text("Session Completed")
-                .font(.headline)
+                .font(Typography.headingMedium)
                 .foregroundStyle(accentColor)
             if let date = existingSession?.completedDate {
                 Spacer()
                 Text(date, format: .dateTime.month(.abbreviated).day())
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         }
@@ -261,16 +261,16 @@ struct CurriculumSessionDetailView: View {
                     .fill(accentColor.opacity(0.15))
                     .frame(width: 80, height: 80)
                 Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: 40))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(accentColor)
             }
 
             Text("Session \(sessionNumber) Complete!")
-                .font(Theme.headingFont(.title2))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
 
             Text("+150 XP earned")
-                .font(.system(.title3, design: .rounded, weight: .bold))
+                .font(Typography.headingLarge)
                 .foregroundStyle(accentColor)
 
             Button {
@@ -278,13 +278,13 @@ struct CurriculumSessionDetailView: View {
                 dismiss()
             } label: {
                 Text("Continue")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(accentColor, in: .rect(cornerRadius: 12))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
         }
         .padding(24)
     }
@@ -353,17 +353,17 @@ struct ProgramCertificateSheet: View {
             VStack(spacing: 28) {
                 VStack(spacing: 8) {
                     Image(systemName: "graduationcap.fill")
-                        .font(.system(size: 52))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(Theme.gold)
 
                     Text("Congratulations!")
-                        .font(Theme.headingFont(.largeTitle))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(Theme.textPrimary)
                 }
 
                 VStack(spacing: 20) {
                     Text("CERTIFICATE OF COMPLETION")
-                        .font(.caption.weight(.bold))
+                        .font(Typography.labelSmall)
                         .tracking(3)
                         .foregroundStyle(Theme.gold)
 
@@ -373,20 +373,20 @@ struct ProgramCertificateSheet: View {
                         .padding(.horizontal, 40)
 
                     Text("This certifies that")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
 
                     Text(userName)
-                        .font(.system(.title, design: .rounded, weight: .bold))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.textPrimary)
 
                     Text("has successfully completed all 8 sessions of the")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
 
                     Text("Splurj Program")
-                        .font(Theme.headingFont(.title2))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [Theme.gold, Color(red: 1, green: 179/255, blue: 0)],
@@ -403,28 +403,28 @@ struct ProgramCertificateSheet: View {
                     HStack(spacing: 24) {
                         VStack(spacing: 4) {
                             Image(systemName: characterStage.bodyIcon)
-                                .font(.title2)
+                                .font(Typography.displaySmall)
                                 .foregroundStyle(characterStage.primaryColor)
                             Text(characterStage.name)
-                                .font(.caption.weight(.medium))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textSecondary)
                         }
 
                         VStack(spacing: 4) {
                             Image(systemName: "calendar")
-                                .font(.title2)
+                                .font(Typography.displaySmall)
                                 .foregroundStyle(Theme.teal)
                             Text(completionDate, format: .dateTime.month(.abbreviated).day().year())
-                                .font(.caption.weight(.medium))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textSecondary)
                         }
 
                         VStack(spacing: 4) {
                             Image(systemName: "checkmark.seal.fill")
-                                .font(.title2)
+                                .font(Typography.displaySmall)
                                 .foregroundStyle(Theme.accentGreen)
                             Text("8/8 Sessions")
-                                .font(.caption.weight(.medium))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textSecondary)
                         }
                     }
@@ -444,7 +444,7 @@ struct ProgramCertificateSheet: View {
                 )
 
                 Text("Based on the UCLA Gambling CBT manual and internet-delivered CBT research. You now have the knowledge, tools, and plan to navigate your journey with confidence.")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(3)
@@ -458,7 +458,7 @@ struct ProgramCertificateSheet: View {
                     HStack(spacing: 8) {
                         Image(systemName: "square.and.arrow.up")
                         Text("Share My Achievement")
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                     }
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
@@ -472,13 +472,13 @@ struct ProgramCertificateSheet: View {
                         in: .rect(cornerRadius: 14)
                     )
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
 
                 Button {
                     dismiss()
                 } label: {
                     Text("Continue")
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }

@@ -1,4 +1,5 @@
 import SwiftUI
+import PhosphorSwift
 
 struct ToolkitView: View {
     @State private var showBudgetAnalytics = false
@@ -27,7 +28,7 @@ struct ToolkitView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 28) {
                     Text("What do you need right now?")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                         .padding(.top, 4)
 
@@ -68,7 +69,7 @@ struct ToolkitView: View {
 
     private var spendingToolsSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            sectionHeader(icon: "dollarsign.circle.fill", title: "Spending Tools")
+            sectionHeader(icon: PhIcon.currencyDollarFill, title: "Spending Tools")
 
             LazyVGrid(columns: columns, spacing: 12) {
                 ToolGridCard(
@@ -110,7 +111,7 @@ struct ToolkitView: View {
 
     private var impulseControlSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            sectionHeader(icon: "hand.raised.fill", title: "Impulse Control")
+            sectionHeader(icon: PhIcon.handPalmFill, title: "Impulse Control")
 
             LazyVGrid(columns: columns, spacing: 12) {
                 ToolGridCard(
@@ -154,7 +155,7 @@ struct ToolkitView: View {
 
     private var coachingSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            sectionHeader(icon: "brain.head.profile.fill", title: "Coaching & Therapy")
+            sectionHeader(icon: PhIcon.brainFill, title: "Coaching & Therapy")
 
             Button {
                 showCoach = true
@@ -164,30 +165,30 @@ struct ToolkitView: View {
                         Circle()
                             .fill(Theme.accentDim)
                             .frame(width: 52, height: 52)
-                        Image(systemName: "bubble.left.and.text.bubble.right.fill")
-                            .font(.title2)
+                        PhIcon.chatDotsFill
+                            .frame(width: 28, height: 28)
                             .foregroundStyle(Theme.accent)
                     }
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text("AI Money Coach")
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.textPrimary)
                         Text("Talk through what you're feeling")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                     }
 
                     Spacer()
 
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
+                    PhIcon.caretRight
+                        .frame(width: 12, height: 12)
                         .foregroundStyle(Theme.textMuted)
                 }
                 .padding(16)
-                .glassCard()
+                .splurjCard(.interactive)
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(.plain)
             .sensoryFeedback(.impact(weight: .medium), trigger: showCoach)
 
             LazyVGrid(columns: columns, spacing: 12) {
@@ -214,24 +215,24 @@ struct ToolkitView: View {
                         Circle()
                             .fill(Theme.accentDim)
                             .frame(width: 44, height: 44)
-                        Image(systemName: "shield.checkered")
-                            .font(.body)
+                        PhIcon.shieldFill
+                            .frame(width: 20, height: 20)
                             .foregroundStyle(Theme.accent)
                     }
 
                     VStack(alignment: .leading, spacing: 3) {
                         HStack(spacing: 6) {
                             Text("Block Gambling Sites")
-                                .font(.subheadline.weight(.semibold))
+                                .font(Typography.headingSmall)
                                 .foregroundStyle(Theme.textPrimary)
                             if blockingEnabled {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .font(.caption)
+                                PhIcon.checkCircleFill
+                                    .frame(width: 14, height: 14)
                                     .foregroundStyle(Theme.accent)
                             }
                         }
                         Text(blockingEnabled ? "DNS protection is active" : "Set up DNS-level site blocking")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                     }
 
@@ -239,21 +240,21 @@ struct ToolkitView: View {
 
                     if !blockingEnabled {
                         Text("+100 XP")
-                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.accent)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(Theme.accentDim, in: .capsule)
                     } else {
-                        Image(systemName: "chevron.right")
-                            .font(.caption.weight(.semibold))
+                        PhIcon.caretRight
+                            .frame(width: 12, height: 12)
                             .foregroundStyle(Theme.textMuted)
                     }
                 }
                 .padding(14)
-                .glassCard()
+                .splurjCard(.interactive)
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(.plain)
             .sensoryFeedback(.impact(weight: .medium), trigger: showDNSBlocking)
 
             Button {
@@ -264,30 +265,30 @@ struct ToolkitView: View {
                         Circle()
                             .fill(Theme.accentDim)
                             .frame(width: 44, height: 44)
-                        Image(systemName: "lungs.fill")
-                            .font(.body)
+                        PhIcon.lungsFill
+                            .frame(width: 20, height: 20)
                             .foregroundStyle(Theme.accent)
                     }
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Add Breathing Pause")
-                            .font(.subheadline.weight(.semibold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(Theme.textPrimary)
                         Text("Pause before opening tempting apps")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                     }
 
                     Spacer()
 
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
+                    PhIcon.caretRight
+                        .frame(width: 12, height: 12)
                         .foregroundStyle(Theme.textMuted)
                 }
                 .padding(14)
-                .glassCard()
+                .splurjCard(.interactive)
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(.plain)
             .sensoryFeedback(.impact(weight: .medium), trigger: showOneSecGuide)
         }
     }
@@ -299,12 +300,12 @@ struct ToolkitView: View {
             showEmergency = true
         } label: {
             HStack(spacing: 6) {
-                Image(systemName: "heart.fill")
-                    .font(.caption)
+                PhIcon.heartFill
+                    .frame(width: 14, height: 14)
                 Text("Need urgent help? Tap for immediate support")
-                    .font(.footnote)
-                Image(systemName: "arrow.right")
-                    .font(.caption2)
+                    .font(Typography.bodySmall)
+                PhIcon.arrowRight
+                    .frame(width: 14, height: 14)
             }
             .foregroundStyle(Theme.textMuted)
             .frame(maxWidth: .infinity)
@@ -323,8 +324,8 @@ struct ToolkitView: View {
                         Button {
                             dismissAction()
                         } label: {
-                            Image(systemName: "xmark")
-                                .font(.system(size: 14, weight: .bold))
+                            PhIcon.x
+                                .frame(width: 16, height: 16)
                                 .foregroundStyle(Theme.textSecondary)
                                 .frame(width: 30, height: 30)
                                 .background(Theme.elevated, in: .circle)
@@ -336,13 +337,13 @@ struct ToolkitView: View {
 
     // MARK: - Helpers
 
-    private func sectionHeader(icon: String, title: String) -> some View {
+    private func sectionHeader(icon: Image, title: String) -> some View {
         HStack(spacing: 8) {
-            Image(systemName: icon)
+            icon
+                .frame(width: 18, height: 18)
                 .foregroundStyle(Theme.accent)
-                .font(.subheadline)
             Text(title)
-                .font(Theme.headingFont(.headline))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
         }
     }
@@ -367,26 +368,26 @@ private struct ToolGridCard: View {
         } label: {
             VStack(alignment: .leading, spacing: 10) {
                 Image(systemName: icon)
-                    .font(.title3)
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.accent)
                     .frame(width: 40, height: 40)
                     .background(Theme.accentDim, in: .rect(cornerRadius: 10))
 
                 Text(title)
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
 
                 Text(subtitle)
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(14)
-            .glassCard()
+            .splurjCard(.interactive)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
         .sensoryFeedback(.impact(weight: .light), trigger: tapped)
         .opacity(appeared ? 1 : 0)
         .offset(y: appeared ? 0 : 16)

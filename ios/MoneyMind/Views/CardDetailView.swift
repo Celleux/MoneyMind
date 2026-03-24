@@ -42,22 +42,22 @@ struct CardDetailView: View {
 
                     VStack(spacing: 8) {
                         Text(card.name)
-                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textPrimary)
 
                         HStack(spacing: 6) {
                             Text(card.rarity.label)
                             Text(card.rarity.rawValue)
                         }
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(card.rarity.color)
 
                         Text(card.set.rawValue)
-                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .font(Typography.bodySmall)
                             .foregroundStyle(card.set.accentColor.opacity(0.7))
 
                         Text("\"\(card.tip)\"")
-                            .font(.system(size: 15, weight: .medium))
+                            .font(Typography.bodyMedium)
                             .italic()
                             .foregroundStyle(Theme.textSecondary)
                             .multilineTextAlignment(.center)
@@ -68,16 +68,16 @@ struct CardDetailView: View {
                             HStack(spacing: 16) {
                                 if info.duplicateCount > 0 {
                                     Label("x\(info.duplicateCount + 1)", systemImage: "square.stack.fill")
-                                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                                        .font(Typography.bodySmall)
                                         .foregroundStyle(Theme.textMuted)
                                 }
                                 if info.evolutionLevel > 0 {
                                     Label("Evo +\(info.evolutionLevel)", systemImage: "sparkles")
-                                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                                        .font(Typography.bodySmall)
                                         .foregroundStyle(Theme.gold)
                                 }
                                 Label(info.obtainedAt.formatted(.dateTime.month(.abbreviated).day()), systemImage: "calendar")
-                                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                                    .font(Typography.bodySmall)
                                     .foregroundStyle(Theme.textMuted)
                             }
                             .padding(.top, 8)
@@ -93,13 +93,13 @@ struct CardDetailView: View {
 
                     if showEvolveSuccess {
                         Text("Evolution successful")
-                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .font(Typography.labelMedium)
                             .foregroundStyle(Theme.accent)
                             .transition(.opacity.combined(with: .move(edge: .bottom)))
                     }
 
                     Button("Close") { dismiss() }
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.accent)
                         .padding(.bottom, 16)
                 }

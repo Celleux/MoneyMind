@@ -53,11 +53,11 @@ struct PersonalityEmptyStateView: View {
 
             VStack(spacing: 10) {
                 Text(headline)
-                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.textPrimary)
 
                 Text(subtext)
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -68,13 +68,13 @@ struct PersonalityEmptyStateView: View {
             if let buttonLabel, let action {
                 Button(action: action) {
                     Label(buttonLabel, systemImage: buttonIcon ?? "plus.circle.fill")
-                        .font(.system(.body, design: .rounded, weight: .semibold))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Theme.accent, in: .rect(cornerRadius: 14))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .padding(.horizontal, 32)
             }
 
@@ -110,19 +110,19 @@ struct PersonalityEmptyStateView: View {
                 .frame(width: 90, height: 90)
 
             Image(systemName: icon)
-                .font(.system(size: 44, weight: .medium))
+                .font(Typography.displayLarge)
                 .foregroundStyle(personality.color)
                 .symbolEffect(.pulse, options: .repeating.speed(0.5))
 
             if let secondaryIcon {
                 Image(systemName: secondaryIcon)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(personality.color.opacity(0.7))
                     .offset(x: 34, y: -30)
             }
 
             Image(systemName: personalityIcon)
-                .font(.system(size: 14, weight: .bold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(personality.color.opacity(0.5))
                 .offset(x: -36, y: 28)
         }

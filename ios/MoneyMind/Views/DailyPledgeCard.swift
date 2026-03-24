@@ -26,21 +26,21 @@ struct DailyPledgeCard: View {
             VStack(spacing: 16) {
                 HStack(spacing: 10) {
                     Image(systemName: "sun.max.fill")
-                        .font(.title3)
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.gold)
                     Text("Daily Pledge")
-                        .font(Theme.headingFont(.headline))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()
                 }
 
                 Text("I pledge to be mindful with my money today.")
-                    .font(.system(.body, design: .rounded, weight: .medium))
+                    .font(Typography.bodyLarge)
                     .foregroundStyle(Theme.textPrimary)
                     .multilineTextAlignment(.leading)
 
                 Text("\"\(quote)\"")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                     .italic()
                     .lineSpacing(3)
@@ -51,18 +51,18 @@ struct DailyPledgeCard: View {
                     HStack(spacing: 10) {
                         if completed {
                             Image(systemName: "checkmark.circle.fill")
-                                .font(.title3)
+                                .font(Typography.headingLarge)
                                 .scaleEffect(checkScale)
                         }
                         Text(completed ? "Pledged!" : "Take the Pledge")
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                     }
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .sensoryFeedback(.success, trigger: completed)
                 .accessibilityLabel("Take the daily pledge")
             }

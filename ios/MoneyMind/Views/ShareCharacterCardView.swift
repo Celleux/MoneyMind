@@ -13,7 +13,7 @@ struct ShareCharacterCardView: View {
 
             VStack(spacing: 28) {
                 Text("Splurj")
-                    .font(.system(.caption, design: .rounded, weight: .bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(.white.opacity(0.5))
                     .tracking(3)
                     .textCase(.uppercase)
@@ -24,11 +24,11 @@ struct ShareCharacterCardView: View {
 
                 VStack(spacing: 8) {
                     Text(stage.name)
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(.white)
 
                     Text("Level \(level)")
-                        .font(.system(.title3, design: .rounded, weight: .semibold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(stage.primaryColor)
                 }
 
@@ -43,7 +43,7 @@ struct ShareCharacterCardView: View {
                 }
 
                 Text("Building a healthier relationship with money")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(.white.opacity(0.4))
                     .multilineTextAlignment(.center)
             }
@@ -56,11 +56,11 @@ struct ShareCharacterCardView: View {
                     Image(systemName: "leaf.fill")
                         .foregroundStyle(Theme.accentGreen)
                     Text("splurj.app")
-                        .font(.caption.weight(.medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(.white.opacity(0.4))
                 }
                 Text("Don't splurge. Splurj.")
-                    .font(.system(size: 9, weight: .medium, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(.white.opacity(0.25))
             }
             .padding(.bottom, 40)
@@ -98,15 +98,15 @@ struct ShareCharacterCardView: View {
     private func shareStatPill(value: String, label: String, icon: String) -> some View {
         VStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.caption)
+                .font(Typography.labelSmall)
                 .foregroundStyle(stage.primaryColor.opacity(0.8))
             Text(value)
-                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
             Text(label)
-                .font(.system(size: 10, weight: .medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(.white.opacity(0.4))
         }
     }
@@ -156,9 +156,9 @@ struct ShareCharacterButton: View {
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "square.and.arrow.up")
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                 Text("Share My Character")
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
             }
             .foregroundStyle(Theme.textPrimary)
             .padding(.horizontal, 20)
@@ -169,7 +169,7 @@ struct ShareCharacterButton: View {
                     .strokeBorder(stage.primaryColor.opacity(0.2), lineWidth: 1)
             )
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .secondary, size: .medium))
         .accessibilityLabel("Share my character card")
         .sheet(isPresented: $showShareSheet) {
             if let image = shareImage {

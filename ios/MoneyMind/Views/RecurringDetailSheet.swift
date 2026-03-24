@@ -80,23 +80,23 @@ struct RecurringDetailSheet: View {
                 .frame(width: 72, height: 72)
                 .overlay {
                     Text(expense.category.emoji)
-                        .font(.system(size: 32))
+                        .font(Typography.displayMedium)
                 }
 
             Text("$\(Int(expense.amount))")
-                .font(.system(size: 44, weight: .bold, design: .rounded))
+                .font(Typography.displayLarge)
                 .foregroundStyle(Theme.textPrimary)
 
             HStack(spacing: 12) {
                 Label(expense.frequency.rawValue, systemImage: expense.frequency.icon)
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(categoryColor)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
                     .background(categoryColor.opacity(0.12), in: .capsule)
 
                 Label(expense.category.rawValue, systemImage: expense.category.icon)
-                    .font(.caption.weight(.medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
@@ -105,14 +105,14 @@ struct RecurringDetailSheet: View {
 
             if expense.isOverdue {
                 Label("Overdue", systemImage: "exclamationmark.circle.fill")
-                    .font(.caption.weight(.bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.danger)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(Theme.danger.opacity(0.12), in: .capsule)
             } else {
                 Text("Next due \(expense.nextDueDate, format: .dateTime.month(.abbreviated).day(.twoDigits).year())")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
         }
@@ -141,13 +141,13 @@ struct RecurringDetailSheet: View {
                 }
             } label: {
                 Label("Mark Paid", systemImage: "checkmark.circle.fill")
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(Theme.success, in: .rect(cornerRadius: 12))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
 
             Button {
                 withAnimation(.spring(response: 0.35)) {
@@ -155,7 +155,7 @@ struct RecurringDetailSheet: View {
                 }
             } label: {
                 Label("Skip", systemImage: "forward.fill")
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.warning)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
@@ -165,13 +165,13 @@ struct RecurringDetailSheet: View {
                             .strokeBorder(Theme.warning.opacity(0.2), lineWidth: 1)
                     )
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .secondary, size: .medium))
 
             Button {
                 showDeleteConfirm = true
             } label: {
                 Image(systemName: "trash")
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.danger)
                     .frame(width: 48, height: 48)
                     .background(Theme.danger.opacity(0.12), in: .rect(cornerRadius: 12))
@@ -180,7 +180,7 @@ struct RecurringDetailSheet: View {
                             .strokeBorder(Theme.danger.opacity(0.2), lineWidth: 1)
                     )
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .destructive, size: .medium))
         }
     }
 
@@ -189,7 +189,7 @@ struct RecurringDetailSheet: View {
     private var settingsSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Settings")
-                .font(.system(.headline, design: .rounded, weight: .semibold))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             VStack(spacing: 0) {
@@ -229,14 +229,14 @@ struct RecurringDetailSheet: View {
                     .tint(Theme.textSecondary)
                 }
             }
-            .glassCard(cornerRadius: 14)
+            .splurjCard(.elevated)
         }
     }
 
     private func settingsRow<Content: View>(label: String, @ViewBuilder content: () -> Content) -> some View {
         HStack {
             Text(label)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textPrimary)
             Spacer()
             content()
@@ -251,11 +251,11 @@ struct RecurringDetailSheet: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("Payment History")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text("\(expense.paidDates.count + expense.skippedDates.count) entries")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
 
@@ -266,16 +266,16 @@ struct RecurringDetailSheet: View {
                     Spacer()
                     VStack(spacing: 8) {
                         Image(systemName: "clock")
-                            .font(.title2)
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textMuted)
                         Text("No payment history yet")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                     }
                     .padding(.vertical, 24)
                     Spacer()
                 }
-                .glassCard(cornerRadius: 14)
+                .splurjCard(.elevated)
             } else {
                 VStack(spacing: 2) {
                     ForEach(allEntries) { entry in
@@ -285,16 +285,16 @@ struct RecurringDetailSheet: View {
                                 .frame(width: 32, height: 32)
                                 .overlay {
                                     Image(systemName: entry.isPaid ? "checkmark" : "forward.fill")
-                                        .font(.caption.weight(.bold))
+                                        .font(Typography.labelSmall)
                                         .foregroundStyle(entry.isPaid ? Theme.success : Theme.warning)
                                 }
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(entry.isPaid ? "Paid" : "Skipped")
-                                    .font(.subheadline.weight(.medium))
+                                    .font(Typography.bodyMedium)
                                     .foregroundStyle(Theme.textPrimary)
                                 Text(entry.date, format: .dateTime.month(.abbreviated).day().year())
-                                    .font(.caption)
+                                    .font(Typography.labelSmall)
                                     .foregroundStyle(Theme.textMuted)
                             }
 
@@ -302,7 +302,7 @@ struct RecurringDetailSheet: View {
 
                             if entry.isPaid {
                                 Text("$\(Int(expense.amount))")
-                                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                                    .font(Typography.headingSmall)
                                     .foregroundStyle(Theme.success)
                             }
                         }
@@ -348,14 +348,14 @@ private struct StatCell: View {
     var body: some View {
         VStack(spacing: 6) {
             Text(value)
-                .font(.system(.title3, design: .rounded, weight: .bold))
+                .font(Typography.headingLarge)
                 .foregroundStyle(color)
             Text(label)
-                .font(.caption2)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
-        .glassCard(cornerRadius: 14)
+        .splurjCard(.elevated)
     }
 }

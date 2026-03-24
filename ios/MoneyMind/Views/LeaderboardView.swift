@@ -150,7 +150,7 @@ struct LeaderboardView: View {
                     .shadow(color: color.opacity(0.3), radius: 8)
 
                 Image(systemName: entry.avatarIcon)
-                    .font(.system(size: 20, weight: .bold))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(color)
 
                 if entry.isCurrentUser {
@@ -161,20 +161,20 @@ struct LeaderboardView: View {
             }
 
             Text(entry.username)
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .font(Typography.labelMedium)
                 .foregroundStyle(entry.isCurrentUser ? Theme.accent : .white)
                 .lineLimit(1)
 
             Text(formattedScore(entry.weeklyScore))
-                .font(.system(size: 14, weight: .black, design: .rounded))
+                .font(Typography.headingSmall)
                 .foregroundStyle(.white)
 
             HStack(spacing: 2) {
                 Image(systemName: "flame.fill")
-                    .font(.system(size: 9))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(.orange)
                 Text("\(entry.streak)")
-                    .font(.system(size: 10, weight: .bold, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
@@ -190,14 +190,14 @@ struct LeaderboardView: View {
                     .frame(height: height * 0.35)
 
                 Text(medal)
-                    .font(.system(size: 24, weight: .black, design: .rounded))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(color)
             }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
         .padding(.horizontal, 6)
-        .glassCard(cornerRadius: 16)
+        .splurjCard(.hero)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .strokeBorder(
@@ -248,7 +248,7 @@ struct LeaderboardView: View {
     private func rankRow(entry: LeaderboardEntry) -> some View {
         HStack(spacing: 12) {
             Text("\(entry.rank)")
-                .font(.system(size: 14, weight: .bold, design: .monospaced))
+                .font(Typography.moneySmall)
                 .foregroundStyle(Theme.textMuted)
                 .frame(width: 28, alignment: .center)
 
@@ -258,28 +258,28 @@ struct LeaderboardView: View {
                     .frame(width: 36, height: 36)
 
                 Image(systemName: entry.avatarIcon)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(entry.isCurrentUser ? Theme.accent : Theme.textSecondary)
             }
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Text(entry.username)
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(entry.isCurrentUser ? Theme.accent : .white)
                         .lineLimit(1)
 
                     Text("Lv.\(entry.level)")
-                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
 
                 HStack(spacing: 4) {
                     Image(systemName: "flame.fill")
-                        .font(.system(size: 9))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(.orange)
                     Text("\(entry.streak)d")
-                        .font(.system(size: 10, weight: .medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
             }
@@ -287,7 +287,7 @@ struct LeaderboardView: View {
             Spacer()
 
             Text(formattedScore(entry.weeklyScore))
-                .font(.system(size: 15, weight: .black, design: .rounded))
+                .font(Typography.headingSmall)
                 .foregroundStyle(.white)
         }
         .padding(.horizontal, 16)
@@ -315,9 +315,9 @@ struct LeaderboardView: View {
         } label: {
             HStack(spacing: 10) {
                 Image(systemName: "person.badge.plus")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(Typography.headingMedium)
                 Text("Invite Friends to Compete")
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .font(Typography.headingSmall)
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
@@ -325,7 +325,7 @@ struct LeaderboardView: View {
             .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
             .shadow(color: Theme.accent.opacity(0.3), radius: 12, y: 4)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
         .padding(.horizontal, 20)
         .sensoryFeedback(.impact(weight: .medium), trigger: showInviteSheet)
     }
@@ -334,15 +334,15 @@ struct LeaderboardView: View {
         VStack(spacing: 24) {
             VStack(spacing: 8) {
                 Image(systemName: "trophy.fill")
-                    .font(.system(size: 40))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.neonGold)
 
                 Text("Challenge Your Friends")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(.white)
 
                 Text("Compete on the savings leaderboard.\nSee who can save the most each week!")
-                    .font(.system(size: 14))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
             }
@@ -354,20 +354,20 @@ struct LeaderboardView: View {
                     HStack(spacing: 10) {
                         Image(systemName: "square.and.arrow.up")
                         Text("Share Invite Link")
-                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .font(Typography.headingSmall)
                     }
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             }
 
             Button("Done") {
                 showInviteSheet = false
             }
-            .font(.system(size: 15, weight: .medium))
+            .font(Typography.bodyMedium)
             .foregroundStyle(Theme.textSecondary)
         }
         .padding(24)

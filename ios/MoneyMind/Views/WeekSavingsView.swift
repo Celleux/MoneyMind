@@ -35,7 +35,7 @@ struct WeekSavingsView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -63,10 +63,10 @@ struct WeekSavingsView: View {
                 .overlay {
                     VStack(spacing: 2) {
                         Text("\(challenge.completedItems.count)")
-                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textPrimary)
                         Text("of 52")
-                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -74,18 +74,18 @@ struct WeekSavingsView: View {
             VStack(alignment: .leading, spacing: 10) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Total Saved")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                     Text("$\(Int(challenge.totalSaved))")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(personalityColor)
                 }
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Goal")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                     Text("$1,378")
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
                 }
             }
@@ -93,7 +93,7 @@ struct WeekSavingsView: View {
             Spacer()
         }
         .padding(20)
-        .glassCard()
+        .splurjCard(.hero)
         .padding(.top, 8)
     }
 
@@ -101,11 +101,11 @@ struct WeekSavingsView: View {
         VStack(spacing: 8) {
             HStack {
                 Text("Progress")
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                 Spacer()
                 Text("\(Int(challenge.progress * 100))%")
-                    .font(.system(.caption, design: .rounded, weight: .bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(personalityColor)
             }
 
@@ -128,7 +128,7 @@ struct WeekSavingsView: View {
             .frame(height: 8)
         }
         .padding(16)
-        .glassCard(cornerRadius: 12)
+        .splurjCard(.subtle)
     }
 
     private var weekGrid: some View {
@@ -162,13 +162,13 @@ struct WeekSavingsView: View {
                 Image(systemName: "square.and.arrow.up")
                 Text("Share Progress")
             }
-            .font(.subheadline.weight(.semibold))
+            .font(Typography.headingSmall)
             .foregroundStyle(Theme.accent)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .background(Theme.accent.opacity(0.1), in: .rect(cornerRadius: 12))
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .secondary, size: .medium))
         .sheet(isPresented: $shareTrigger) {
             let text = vm.shareChallenge(challenge)
             ShareSheetView(items: [text])
@@ -191,12 +191,12 @@ private struct WeekCell: View {
             VStack(spacing: 4) {
                 HStack {
                     Text("W\(week)")
-                        .font(.system(size: 10, weight: .semibold, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(isCompleted ? personalityColor : Theme.textMuted)
                     Spacer()
                     if isCompleted {
                         Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 12))
+                            .font(Typography.bodySmall)
                             .foregroundStyle(Theme.success)
                             .scaleEffect(checkScale)
                             .onAppear {
@@ -208,7 +208,7 @@ private struct WeekCell: View {
                 }
 
                 Text("$\(amount)")
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(isCompleted ? personalityColor : Theme.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

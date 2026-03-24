@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhosphorSwift
 
 struct QuestHubView: View {
     @Environment(\.modelContext) private var modelContext
@@ -90,8 +91,8 @@ struct QuestHubView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button { showBuddy = true } label: {
-                    Image(systemName: "person.2.fill")
-                        .font(.system(size: 14, weight: .semibold))
+                    PhIcon.usersFill
+                        .frame(width: 18, height: 18)
                         .foregroundStyle(Theme.accent)
                 }
             }

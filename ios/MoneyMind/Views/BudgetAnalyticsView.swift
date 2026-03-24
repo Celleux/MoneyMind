@@ -102,7 +102,7 @@ struct BudgetAnalyticsView: View {
                         ToolbarItem(placement: .cancellationAction) {
                             Button { showRecurring = false } label: {
                                 Image(systemName: "xmark")
-                                    .font(.system(size: 14, weight: .bold))
+                                    .font(Typography.headingSmall)
                                     .foregroundStyle(Theme.textSecondary)
                                     .frame(width: 30, height: 30)
                                     .background(Theme.elevated, in: .circle)
@@ -118,7 +118,7 @@ struct BudgetAnalyticsView: View {
                         ToolbarItem(placement: .cancellationAction) {
                             Button { showGhostBudget = false } label: {
                                 Image(systemName: "xmark")
-                                    .font(.system(size: 14, weight: .bold))
+                                    .font(Typography.headingSmall)
                                     .foregroundStyle(Theme.textSecondary)
                                     .frame(width: 30, height: 30)
                                     .background(Theme.elevated, in: .circle)
@@ -145,29 +145,29 @@ struct BudgetAnalyticsView: View {
                         .fill(Theme.secondary.opacity(0.1))
                         .frame(width: 48, height: 48)
                     Image(systemName: "arrow.triangle.2.circlepath")
-                        .font(.title2)
+                        .font(Typography.displaySmall)
                         .foregroundStyle(Theme.secondary)
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Recurring Expenses")
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
                     Text("Track subscriptions & bills")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
             }
             .padding(16)
-            .glassCard()
+            .splurjCard(.interactive)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
     }
 
     // MARK: - Ghost Budget Card
@@ -180,17 +180,17 @@ struct BudgetAnalyticsView: View {
                         .fill(Theme.success.opacity(0.1))
                         .frame(width: 48, height: 48)
                     Text("👻")
-                        .font(.system(size: 22))
+                        .font(Typography.displaySmall)
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 6) {
                         Text("Ghost Budget")
-                            .font(.subheadline.weight(.semibold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(Theme.textPrimary)
                         if !premiumManager.hasFullAccess {
                             Label("PRO", systemImage: "crown.fill")
-                                .font(.system(size: 9, weight: .bold, design: .rounded))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.gold)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
@@ -198,20 +198,20 @@ struct BudgetAnalyticsView: View {
                         }
                     }
                     Text("See your parallel financial timeline")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
             }
             .padding(16)
-            .glassCard()
+            .splurjCard(.interactive)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
     }
 
     // MARK: - Month Selector
@@ -224,24 +224,24 @@ struct BudgetAnalyticsView: View {
                 }
             } label: {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .frame(width: 36, height: 36)
                     .background(Theme.elevated, in: .circle)
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(.plain)
 
             Spacer()
 
             VStack(spacing: 2) {
                 Text(vm.monthLabel)
-                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
                     .contentTransition(.numericText())
 
                 if vm.isCurrentMonth {
                     Text("\(vm.daysLeftInMonth) days left")
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
@@ -254,12 +254,12 @@ struct BudgetAnalyticsView: View {
                 }
             } label: {
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .frame(width: 36, height: 36)
                     .background(Theme.elevated, in: .circle)
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(.plain)
         }
         .padding(.top, 8)
     }
@@ -269,15 +269,15 @@ struct BudgetAnalyticsView: View {
     private var overBudgetBanner: some View {
         HStack(spacing: 10) {
             Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 18))
+                .font(Typography.bodyLarge)
                 .foregroundStyle(Theme.danger)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Over Budget")
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.danger)
                 Text("Some categories have exceeded their limit")
-                    .font(.system(size: 12))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
@@ -298,11 +298,11 @@ struct BudgetAnalyticsView: View {
         VStack(spacing: 16) {
             HStack {
                 Text("Overview")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text("Spent $\(Int(totalSpent)) of $\(Int(totalBudget))")
-                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
@@ -319,11 +319,11 @@ struct BudgetAnalyticsView: View {
 
                 VStack(spacing: 2) {
                     Text("$\(Int(remaining))")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(overallProgress > 1 ? Theme.danger : Theme.textPrimary)
                         .contentTransition(.numericText(value: remaining))
                     Text("remaining")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
@@ -331,10 +331,10 @@ struct BudgetAnalyticsView: View {
             HStack(spacing: 20) {
                 VStack(spacing: 4) {
                     Text("\(Int(overallProgress * 100))%")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(overallProgress > 0.9 ? Theme.danger : overallProgress > 0.7 ? Theme.warning : Theme.accentGreen)
                     Text("used")
-                        .font(.system(size: 11))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
 
@@ -344,10 +344,10 @@ struct BudgetAnalyticsView: View {
 
                 VStack(spacing: 4) {
                     Text("\(vm.daysLeftInMonth)")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.textPrimary)
                     Text("days left")
-                        .font(.system(size: 11))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
 
@@ -357,16 +357,16 @@ struct BudgetAnalyticsView: View {
 
                 VStack(spacing: 4) {
                     Text("\(budgets.count)")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.accent)
                     Text("categories")
-                        .font(.system(size: 11))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     // MARK: - Category Grid
@@ -375,7 +375,7 @@ struct BudgetAnalyticsView: View {
         VStack(spacing: 14) {
             HStack {
                 Text("Categories")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
 
@@ -383,36 +383,36 @@ struct BudgetAnalyticsView: View {
                     showTemplates = true
                 } label: {
                     Image(systemName: "rectangle.grid.1x2.fill")
-                        .font(.system(size: 16))
+                        .font(Typography.labelLarge)
                         .foregroundStyle(Theme.accent)
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(.plain)
 
                 Button {
                     vm.showAddBudget = true
                 } label: {
                     Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 22))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(Theme.accent)
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(.plain)
             }
 
             if categories.allSatisfy({ $0.spent == 0 }) && !budgets.isEmpty {
                 VStack(spacing: 10) {
                     Image(systemName: "tray")
-                        .font(.system(size: 28))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.textMuted)
                     Text("No transactions this month")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                     Text("Your budget rings will fill as you spend")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 28)
-                .glassCard()
+                .splurjCard(.subtle)
             } else {
                 LazyVGrid(columns: [
                     GridItem(.flexible(), spacing: 12),
@@ -453,24 +453,24 @@ struct BudgetAnalyticsView: View {
                         .rotationEffect(.degrees(-90))
 
                     Image(systemName: cat.icon)
-                        .font(.system(size: 16))
+                        .font(Typography.labelLarge)
                         .foregroundStyle(cat.isOverBudget ? Theme.danger : cat.color)
                 }
 
                 Text(cat.name)
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textPrimary)
                     .lineLimit(1)
 
                 Text("\(Int(cat.spent)) / \(Int(cat.limit))")
-                    .font(.system(size: 12, design: .rounded))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(cat.isOverBudget ? Theme.danger : Theme.textSecondary)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
-            .glassCard()
+            .splurjCard(.interactive)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
     }
 
     // MARK: - Empty State
@@ -493,7 +493,7 @@ struct BudgetAnalyticsView: View {
                 vm.showAddBudget = true
             } label: {
                 Label("Create Custom Budget", systemImage: "plus")
-                    .font(.system(.body, design: .rounded, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.accent)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
@@ -503,7 +503,7 @@ struct BudgetAnalyticsView: View {
                             .strokeBorder(Theme.accent.opacity(0.2), lineWidth: 1)
                     )
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(.plain)
             .padding(.horizontal, 24)
         }
     }
@@ -511,14 +511,14 @@ struct BudgetAnalyticsView: View {
     private func templateRow(emoji: String, label: String, desc: String, color: Color) -> some View {
         HStack(spacing: 14) {
             Text(emoji)
-                .font(.title2)
+                .font(Typography.displaySmall)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(label)
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
                 Text(desc)
-                    .font(.system(size: 12))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
@@ -529,7 +529,7 @@ struct BudgetAnalyticsView: View {
                 .frame(width: 10, height: 10)
         }
         .padding(14)
-        .glassCard(cornerRadius: 12)
+        .splurjCard(.subtle)
     }
 
     private func createDefaultBudgets() {

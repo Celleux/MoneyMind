@@ -73,7 +73,7 @@ struct SplurjiCharacter: View {
             Circle()
                 .fill(
                     RadialGradient(
-                        colors: [Theme.neonEmerald, Theme.accent, Color(hex: 0x059669)],
+                        colors: [Theme.neonGold, Theme.accent, Theme.accentDim],
                         center: .center,
                         startRadius: 0,
                         endRadius: bodySize / 2

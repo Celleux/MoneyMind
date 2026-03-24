@@ -87,9 +87,9 @@ struct OnboardingView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: "sos")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(Typography.labelSmall)
                         Text("SOS")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(Typography.labelSmall)
                     }
                     .foregroundStyle(Color(hex: 0xF87171))
                     .padding(.horizontal, 10)
@@ -106,7 +106,7 @@ struct OnboardingView: View {
                     skipToLaunch()
                 } label: {
                     Text("Skip")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textMuted)
                 }
                 .padding(.leading, 20)

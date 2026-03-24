@@ -19,7 +19,7 @@ struct BossBattleCard: View {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundStyle(Color(hex: 0xF87171))
                 Text("Zone Boss")
-                    .font(.system(size: 15, weight: .heavy))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(.white)
                 Spacer()
             }
@@ -39,7 +39,7 @@ struct BossBattleCard: View {
                         .frame(width: 160, height: 160)
 
                     Image(systemName: bossIcon(for: zone))
-                        .font(.system(size: 56, weight: .bold))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [Color(hex: 0xF87171), Color(hex: 0x991B1B)],
@@ -52,19 +52,19 @@ struct BossBattleCard: View {
 
                 VStack(spacing: 4) {
                     Text(zone.bossName.uppercased())
-                        .font(.system(size: 20, weight: .black))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Color(hex: 0xF87171))
                         .tracking(2)
 
                     Text(zone.rawValue)
-                        .font(.system(size: 11))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
 
                 VStack(spacing: 6) {
                     HStack {
                         Text("HP")
-                            .font(.system(size: 11, weight: .black))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Color(hex: 0xF87171))
                         Spacer()
                         Text("\(max(0, zone.bossHP - damageDealt)) / \(zone.bossHP)")
@@ -94,14 +94,14 @@ struct BossBattleCard: View {
                 .padding(.horizontal, 24)
 
                 Text("Objective: \(zone.bossDescription)")
-                    .font(.system(size: 12))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 24)
 
                 if !canFight {
                     Text("Complete quests to deal damage")
-                        .font(.system(size: 11))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 } else {
                     Button {
@@ -110,7 +110,7 @@ struct BossBattleCard: View {
                         HStack {
                             Image(systemName: "bolt.fill")
                             Text("DELIVER FINAL BLOW")
-                                .font(.system(size: 16, weight: .black))
+                                .font(Typography.headingMedium)
                         }
                         .foregroundStyle(.black)
                         .frame(maxWidth: .infinity)
@@ -156,6 +156,6 @@ struct BossBattleCard: View {
     private func hpColors(percent: CGFloat) -> [Color] {
         if percent > 0.5 { return [Color(hex: 0xF87171), Color(hex: 0xDC2626)] }
         if percent > 0.25 { return [Color(hex: 0xFB923C), Color(hex: 0xF59E0B)] }
-        return [Color(hex: 0x34D399), Color(hex: 0x10B981)]
+        return [Theme.accentSecondary, Theme.accentSecondaryDim]
     }
 }

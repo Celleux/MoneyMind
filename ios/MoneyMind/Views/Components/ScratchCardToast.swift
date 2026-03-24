@@ -11,17 +11,17 @@ struct ScratchCardToast: View {
     var body: some View {
         HStack(spacing: 10) {
             Image(systemName: "sparkles.rectangle.stack")
-                .font(.system(size: 16, weight: .semibold))
+                .font(Typography.headingMedium)
                 .foregroundStyle(data.isGlowing ? Theme.gold : Theme.accent)
 
             Text(data.isGlowing ? "You earned a GLOWING scratch card" : "You earned a scratch card")
-                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .font(Typography.labelMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             Spacer()
 
             Image(systemName: "xmark")
-                .font(.system(size: 10, weight: .bold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
         }
         .padding(.horizontal, 16)

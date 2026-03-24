@@ -121,18 +121,18 @@ struct BossBattleView: View {
         HStack {
             Button { dismiss() } label: {
                 Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 28))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.textMuted)
             }
             Spacer()
 
             VStack(alignment: .trailing, spacing: 2) {
                 Text(zone.rawValue)
-                    .font(.system(size: 10, weight: .bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
                     .tracking(1)
                 Text("Zone Boss")
-                    .font(.system(size: 12, weight: .heavy))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Color(hex: 0xF87171))
                     .tracking(1.5)
             }
@@ -145,14 +145,14 @@ struct BossBattleView: View {
     private var bossNameSection: some View {
         VStack(spacing: 6) {
             Text(zone.bossName.uppercased())
-                .font(.system(size: 28, weight: .black))
+                .font(Typography.displayMedium)
                 .foregroundStyle(Color(hex: 0xF87171))
                 .tracking(3)
                 .neonGlow(color: Theme.neonRed, radius: 20, pulses: hpFraction < 0.25)
                 .multilineTextAlignment(.center)
 
             Text("Level \(zone.levelRange.upperBound) Guardian")
-                .font(.system(size: 12, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
         }
     }
@@ -182,7 +182,7 @@ struct BossBattleView: View {
 
             ZStack {
                 Image(systemName: bossIcon)
-                    .font(.system(size: 80, weight: .bold))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(
                         LinearGradient(
                             colors: [Color(hex: 0xF87171), Color(hex: 0x991B1B)],
@@ -211,7 +211,7 @@ struct BossBattleView: View {
         ZStack {
             if damagePercent >= 0.5 {
                 Image(systemName: "bolt.fill")
-                    .font(.system(size: 30))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Color(hex: 0xF87171).opacity(0.3))
                     .rotationEffect(.degrees(-30))
                     .offset(x: 15, y: -10)
@@ -220,14 +220,14 @@ struct BossBattleView: View {
 
             if damagePercent >= 0.75 {
                 Image(systemName: "bolt.fill")
-                    .font(.system(size: 24))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Color(hex: 0xF87171).opacity(0.4))
                     .rotationEffect(.degrees(45))
                     .offset(x: -20, y: 15)
                     .opacity(crackOpacity)
 
                 Image(systemName: "bolt.fill")
-                    .font(.system(size: 18))
+                    .font(Typography.bodyLarge)
                     .foregroundStyle(Color(hex: 0xF87171).opacity(0.35))
                     .rotationEffect(.degrees(-60))
                     .offset(x: 25, y: 20)
@@ -236,7 +236,7 @@ struct BossBattleView: View {
 
             if damagePercent >= 0.9 {
                 Image(systemName: "bolt.fill")
-                    .font(.system(size: 20))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Color(hex: 0xF87171).opacity(0.5))
                     .rotationEffect(.degrees(120))
                     .offset(x: -10, y: -25)
@@ -252,15 +252,15 @@ struct BossBattleView: View {
             HStack {
                 HStack(spacing: 4) {
                     Image(systemName: "heart.fill")
-                        .font(.system(size: 10))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(hpBarColors.first ?? Color(hex: 0xF87171))
                     Text("HP")
-                        .font(.system(size: 11, weight: .black))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(hpBarColors.first ?? Color(hex: 0xF87171))
                 }
                 Spacer()
                 Text("\(remainingHP) / \(zone.bossHP)")
-                    .font(.system(size: 12, weight: .bold, design: .monospaced))
+                    .font(Typography.moneySmall)
                     .foregroundStyle(Theme.textSecondary)
             }
             .accessibilityElement(children: .combine)
@@ -307,16 +307,16 @@ struct BossBattleView: View {
 
             HStack {
                 Text("Damage dealt: \(player.currentBossDamageDealt)")
-                    .font(.system(size: 10, weight: .medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
                 Spacer()
                 if !canDefeat {
                     Text("\(remainingHP) HP remaining")
-                        .font(.system(size: 10, weight: .medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(hpBarColors.first?.opacity(0.7) ?? Color.clear)
                 } else {
                     Text("Ready to defeat")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.gold)
                 }
             }
@@ -329,16 +329,16 @@ struct BossBattleView: View {
         VStack(spacing: 8) {
             HStack(spacing: 6) {
                 Image(systemName: "target")
-                    .font(.system(size: 12, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Color(hex: 0xF87171).opacity(0.7))
                 Text("Objective")
-                    .font(.system(size: 11, weight: .heavy))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Color(hex: 0xF87171).opacity(0.7))
                     .tracking(1)
             }
 
             Text(zone.bossDescription)
-                .font(.system(size: 14, weight: .medium))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
         }
@@ -349,12 +349,12 @@ struct BossBattleView: View {
     private var damageInfoSection: some View {
         VStack(spacing: 4) {
             Text("Every quest you complete deals damage to this boss")
-                .font(.system(size: 11))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
                 .multilineTextAlignment(.center)
 
             Text("Defeat the boss to unlock the next zone")
-                .font(.system(size: 11, weight: .medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted.opacity(0.7))
                 .multilineTextAlignment(.center)
         }
@@ -365,10 +365,10 @@ struct BossBattleView: View {
     private var questsNeededHint: some View {
         HStack(spacing: 8) {
             Image(systemName: "bolt.circle.fill")
-                .font(.system(size: 16))
+                .font(Typography.labelLarge)
                 .foregroundStyle(Theme.accent.opacity(0.6))
             Text("Complete quests to deal damage")
-                .font(.system(size: 13, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .padding(.vertical, 12)
@@ -386,9 +386,9 @@ struct BossBattleView: View {
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "bolt.fill")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(Typography.headingLarge)
                 Text("DELIVER FINAL BLOW")
-                    .font(.system(size: 16, weight: .black))
+                    .font(Typography.headingMedium)
             }
             .foregroundStyle(.black)
             .frame(maxWidth: .infinity)
@@ -544,7 +544,7 @@ struct BossBattleView: View {
     private var hpBarColors: [Color] {
         if hpFraction > 0.5 { return [Color(hex: 0xF87171), Color(hex: 0xDC2626)] }
         if hpFraction > 0.25 { return [Color(hex: 0xFB923C), Color(hex: 0xF59E0B)] }
-        return [Color(hex: 0x34D399), Color(hex: 0x10B981)]
+        return [Theme.accentSecondary, Theme.accentSecondaryDim]
     }
 }
 

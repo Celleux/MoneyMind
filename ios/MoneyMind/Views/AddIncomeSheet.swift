@@ -18,16 +18,16 @@ struct AddIncomeSheet: View {
                 VStack(spacing: 28) {
                     VStack(spacing: 6) {
                         Text("Amount received")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
 
                         HStack(alignment: .firstTextBaseline, spacing: 4) {
                             Text(CurrencyHelper.symbol(for: profiles.first?.defaultCurrency ?? "USD"))
-                                .font(.system(size: 36, weight: .bold, design: .rounded))
+                                .font(Typography.displayMedium)
                                 .foregroundStyle(Theme.accentGreen.opacity(0.6))
                             TextField("0", text: $amount)
                                 .keyboardType(.decimalPad)
-                                .font(.system(size: 48, weight: .bold, design: .rounded))
+                                .font(Typography.displayLarge)
                                 .foregroundStyle(Theme.textPrimary)
                                 .multilineTextAlignment(.center)
                                 .frame(maxWidth: 200)
@@ -38,7 +38,7 @@ struct AddIncomeSheet: View {
 
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Source")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
 
                         HStack(spacing: 10) {
@@ -53,10 +53,10 @@ struct AddIncomeSheet: View {
                                                 .fill(catColor.opacity(selectedCategory == cat ? 0.25 : 0.1))
                                                 .frame(width: 44, height: 44)
                                             Text(cat.emoji)
-                                                .font(.system(size: 20))
+                                                .font(Typography.headingLarge)
                                         }
                                         Text(cat.rawValue)
-                                            .font(.caption2.weight(.medium))
+                                            .font(Typography.labelSmall)
                                             .foregroundStyle(selectedCategory == cat ? Theme.textPrimary : Theme.textSecondary)
                                     }
                                     .padding(.vertical, 10)
@@ -82,10 +82,10 @@ struct AddIncomeSheet: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Note (optional)")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                         TextField("Description", text: $note)
-                            .font(.body)
+                            .font(Typography.bodyLarge)
                             .padding(14)
                             .background(Theme.elevated, in: .rect(cornerRadius: 12))
                             .overlay(
@@ -98,13 +98,13 @@ struct AddIncomeSheet: View {
                         saveIncome()
                     } label: {
                         Text("Add Income")
-                            .font(.system(.headline, design: .rounded, weight: .semibold))
+                            .font(Typography.headingMedium)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(Theme.accentGreen.opacity(amount.isEmpty ? 0.4 : 1), in: .rect(cornerRadius: 14))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                     .disabled(amount.isEmpty)
                     .sensoryFeedback(.impact(weight: .medium), trigger: hapticTrigger)
                 }

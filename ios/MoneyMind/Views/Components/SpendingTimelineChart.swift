@@ -19,11 +19,11 @@ struct SpendingTimelineChart: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text("This Week")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text("See All")
-                    .font(.subheadline.weight(.medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.secondary)
             }
 
@@ -32,7 +32,7 @@ struct SpendingTimelineChart: View {
                     VStack(spacing: 8) {
                         if dailyAmounts[index] > 0 {
                             Text("\(currencySymbol)\(Int(dailyAmounts[index]))")
-                                .font(.system(size: 10, weight: .medium, design: .rounded))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(index == currentDayIndex ? Theme.textPrimary : Theme.textMuted)
                                 .opacity(animatedHeights[index] > 0 ? 1 : 0)
                         }
@@ -55,7 +55,7 @@ struct SpendingTimelineChart: View {
             .frame(height: maxBarHeight + 40)
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
         .onAppear {
             for i in 0..<7 {
                 let targetHeight = dailyAmounts[i] > 0

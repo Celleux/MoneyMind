@@ -40,31 +40,31 @@ struct MilestoneShareCardView: View {
                         .fill(Theme.gold.opacity(0.06))
                         .frame(width: 120, height: 120)
                     Image(systemName: milestoneIcon)
-                        .font(.system(size: 44))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(Theme.goldGradient)
                 }
 
                 VStack(spacing: 8) {
                     Text(milestoneLabel.uppercased())
-                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.gold)
                         .tracking(3)
 
                     Text(milestoneAmount, format: .currency(code: "USD").precision(.fractionLength(0)))
-                        .font(.system(size: 52, weight: .bold, design: .rounded))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(.white)
 
                     Text("saved with Splurj")
-                        .font(.system(.body, design: .rounded, weight: .medium))
+                        .font(Typography.bodyLarge)
                         .foregroundStyle(.white.opacity(0.6))
                 }
 
                 VStack(spacing: 4) {
                     Text("Can you beat my savings?")
-                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(.white.opacity(0.7))
                     Text("Download Splurj and find out")
-                        .font(.system(.caption, design: .rounded, weight: .medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(.white.opacity(0.4))
                 }
                 .padding(.top, 8)
@@ -107,16 +107,16 @@ struct MilestoneShareSheet: View {
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: "square.and.arrow.up")
-                                .font(.body.weight(.semibold))
+                                .font(Typography.headingMedium)
                             Text("Share Milestone")
-                                .font(.headline)
+                                .font(Typography.headingMedium)
                         }
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Theme.goldGradient, in: .rect(cornerRadius: 14))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
 
                     Button {
                         let card = MilestoneShareCardView(milestoneAmount: milestoneAmount)
@@ -125,9 +125,9 @@ struct MilestoneShareSheet: View {
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: "person.2.fill")
-                                .font(.subheadline)
+                                .font(Typography.bodyMedium)
                             Text("Challenge a Friend")
-                                .font(.subheadline.weight(.semibold))
+                                .font(Typography.headingSmall)
                         }
                         .foregroundStyle(Theme.gold)
                         .frame(maxWidth: .infinity)
@@ -138,7 +138,7 @@ struct MilestoneShareSheet: View {
                                 .strokeBorder(Theme.gold.opacity(0.2), lineWidth: 1)
                         )
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .secondary, size: .medium))
                 }
                 .padding(.horizontal, 32)
                 .sensoryFeedback(.impact(weight: .heavy), trigger: showShareSheet)

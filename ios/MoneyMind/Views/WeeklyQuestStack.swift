@@ -33,11 +33,11 @@ struct WeeklyQuestStack: View {
                 Image(systemName: "calendar")
                     .foregroundStyle(Color(hex: 0x60A5FA))
                 Text("This Week's Quests")
-                    .font(.system(size: 15, weight: .heavy))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(.white)
                 Spacer()
                 Text("Resets Monday")
-                    .font(.system(size: 10))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
             .padding(.horizontal, 20)
@@ -47,10 +47,10 @@ struct WeeklyQuestStack: View {
             if weeklyQuests.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "hourglass")
-                        .font(.system(size: 32))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.textMuted)
                     Text("Weekly quests refresh on Monday")
-                        .font(.system(size: 13))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
                 .padding(.vertical, 40)

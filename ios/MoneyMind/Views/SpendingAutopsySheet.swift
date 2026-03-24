@@ -26,15 +26,15 @@ struct SpendingAutopsySheet: View {
                 VStack(spacing: 24) {
                     VStack(spacing: 8) {
                         Image(systemName: "heart.text.clipboard.fill")
-                            .font(.system(size: 36))
+                            .font(Typography.displayMedium)
                             .foregroundStyle(Theme.teal)
 
                         Text("No judgment here")
-                            .font(Theme.headingFont(.title3))
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textPrimary)
 
                         Text("Reflecting on slip-ups builds self-awareness. That takes real courage.")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 8)
@@ -43,40 +43,40 @@ struct SpendingAutopsySheet: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("How much?")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
 
                         HStack(spacing: 2) {
                             Text(CurrencyHelper.symbol(for: "USD"))
-                                .font(.system(size: 28, weight: .bold, design: .rounded))
+                                .font(Typography.displayMedium)
                                 .foregroundStyle(Theme.textSecondary)
                             TextField("0", text: $amount)
                                 .keyboardType(.decimalPad)
-                                .font(.system(size: 28, weight: .bold, design: .rounded))
+                                .font(Typography.displayMedium)
                                 .foregroundStyle(Theme.textPrimary)
                                 .tint(Theme.teal)
                         }
                         .padding(16)
-                        .glassCard(cornerRadius: 12)
+                        .splurjCard(.outlined)
                     }
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("What happened?")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
 
                         TextField("What triggered the spending?", text: $trigger, axis: .vertical)
-                            .font(.body)
+                            .font(Typography.bodyLarge)
                             .foregroundStyle(Theme.textPrimary)
                             .tint(Theme.teal)
                             .lineLimit(2...4)
                             .padding(16)
-                            .glassCard(cornerRadius: 12)
+                            .splurjCard(.outlined)
                     }
 
                     VStack(alignment: .leading, spacing: 10) {
                         Text("How did you feel?")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
 
                         LazyVGrid(columns: [
@@ -90,9 +90,9 @@ struct SpendingAutopsySheet: View {
                                 } label: {
                                     HStack(spacing: 6) {
                                         Image(systemName: icon)
-                                            .font(.caption)
+                                            .font(Typography.labelSmall)
                                         Text(emotion)
-                                            .font(.caption.weight(.medium))
+                                            .font(Typography.labelSmall)
                                     }
                                     .foregroundStyle(selectedEmotion == emotion ? Theme.background : Theme.textPrimary)
                                     .padding(.horizontal, 12)
@@ -110,7 +110,7 @@ struct SpendingAutopsySheet: View {
                                             )
                                     )
                                 }
-                                .buttonStyle(PressableButtonStyle())
+                                .buttonStyle(.plain)
                                 .sensoryFeedback(.selection, trigger: selectedEmotion)
                                 .accessibilityLabel("Emotion: \(emotion)")
                             }
@@ -119,16 +119,16 @@ struct SpendingAutopsySheet: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("What could you do next time?")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
 
                         TextField("A thought for your future self...", text: $reflection, axis: .vertical)
-                            .font(.body)
+                            .font(Typography.bodyLarge)
                             .foregroundStyle(Theme.textPrimary)
                             .tint(Theme.teal)
                             .lineLimit(2...4)
                             .padding(16)
-                            .glassCard(cornerRadius: 12)
+                            .splurjCard(.outlined)
                     }
 
                     Button {
@@ -136,26 +136,26 @@ struct SpendingAutopsySheet: View {
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: "checkmark.circle.fill")
-                                .font(.body)
+                                .font(Typography.bodyLarge)
                             Text("Log & Reflect")
-                                .font(.headline)
+                                .font(Typography.headingMedium)
                         }
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Theme.teal, in: .rect(cornerRadius: 12))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(.plain)
                     .disabled(amount.isEmpty)
                     .opacity(amount.isEmpty ? 0.5 : 1)
                     .accessibilityLabel("Log reflection")
 
                     HStack(spacing: 6) {
                         Image(systemName: "sparkles")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.gold)
                         Text("+10 XP for your honesty")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.gold)
                     }
                     .padding(.bottom, 16)

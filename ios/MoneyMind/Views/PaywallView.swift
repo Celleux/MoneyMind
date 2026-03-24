@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhosphorSwift
 
 struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
@@ -55,8 +56,8 @@ struct PaywallView: View {
 
     private var closeButton: some View {
         Button { dismiss() } label: {
-            Image(systemName: "xmark")
-                .font(.system(size: 15, weight: .bold))
+            PhIcon.x
+                .frame(width: 16, height: 16)
                 .foregroundStyle(Theme.textMuted)
                 .frame(width: 32, height: 32)
                 .background(Theme.elevated, in: .circle)
@@ -80,8 +81,8 @@ struct PaywallView: View {
                     .fill(Theme.accent.opacity(0.2))
                     .frame(width: 72, height: 72)
 
-                Image(systemName: "crown.fill")
-                    .font(.system(size: 32))
+                PhIcon.crownFill
+                    .frame(width: 32, height: 32)
                     .foregroundStyle(Theme.accent)
                     .shadow(color: Theme.accent.opacity(0.5), radius: 8)
             }
@@ -92,13 +93,13 @@ struct PaywallView: View {
             }
 
             Text("Your 3-Day Trial\nHas Ended")
-                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .font(Typography.displayMedium)
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
                 .lineSpacing(2)
 
             Text("Keep all the tools that are helping you save")
-                .font(.system(size: 15, weight: .medium, design: .rounded))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.accent)
         }
     }
@@ -109,17 +110,17 @@ struct PaywallView: View {
         VStack(spacing: 12) {
             let currencySymbol = profile?.currencySymbol ?? "$"
             Text("In 3 days, you've saved \(currencySymbol)\(String(format: "%.0f", totalSaved)) and logged \(totalWins) win\(totalWins == 1 ? "" : "s").")
-                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .font(Typography.headingSmall)
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
 
             Text("Don't lose your momentum.")
-                .font(.system(size: 13, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .padding(16)
         .frame(maxWidth: .infinity)
-        .glassCard()
+        .splurjCard(.hero)
     }
 
     // MARK: - Features
@@ -140,24 +141,24 @@ struct PaywallView: View {
                     .frame(width: 40, height: 40)
 
                 Image(systemName: feature.icon)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.accent)
             }
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(feature.name)
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(.white)
 
                 Text(feature.subtitle)
-                    .font(.system(size: 13))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
             Spacer()
 
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 18))
+            PhIcon.checkCircleFill
+                .frame(width: 20, height: 20)
                 .foregroundStyle(Theme.accent.opacity(0.6))
         }
         .padding(.vertical, 12)
@@ -182,27 +183,27 @@ struct PaywallView: View {
                 }
 
                 Text("+10,000")
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(.white)
                     .padding(.leading, 16)
             }
 
             HStack(spacing: 4) {
                 ForEach(0..<5, id: \.self) { _ in
-                    Image(systemName: "star.fill")
-                        .font(.system(size: 12))
+                    PhIcon.starFill
+                        .frame(width: 14, height: 14)
                         .foregroundStyle(Theme.gold)
                 }
                 Text("4.8")
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.gold)
                 Text("(2,340 reviews)")
-                    .font(.system(size: 12))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textMuted)
             }
 
             Text("Join 10,000+ Splurj Premium members")
-                .font(.system(size: 13, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .padding(.vertical, 8)
@@ -247,7 +248,7 @@ struct PaywallView: View {
             VStack(spacing: 10) {
                 if let badge {
                     Text(badge)
-                        .font(.system(size: 10, weight: .heavy, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(.black)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
@@ -257,21 +258,21 @@ struct PaywallView: View {
                 }
 
                 Text(type == .monthly ? "Monthly" : "Annual")
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textSecondary)
 
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
                     Text(price)
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(.white)
                     Text(period)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textMuted)
                 }
 
                 if type == .annual {
                     Text("$3.33/mo")
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                 } else {
                     Spacer().frame(height: 16)
@@ -279,7 +280,7 @@ struct PaywallView: View {
 
                 if let savingsPill {
                     Text(savingsPill)
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(.white)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
@@ -319,20 +320,15 @@ struct PaywallView: View {
                 premiumManager.unlock()
             } label: {
                 Text("Continue My Journey")
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(Theme.accent, in: .rect(cornerRadius: Theme.Radius.button))
-                    .shadow(color: Theme.accent.opacity(0.3), radius: 12, y: 6)
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .sensoryFeedback(.impact(weight: .medium), trigger: ctaTapped)
 
             Text(selectedPlan == .annual
                  ? "$39.99/year. Cancel anytime."
                  : "$4.99/month. Cancel anytime.")
-                .font(.system(size: 11))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
         }
     }
@@ -345,19 +341,19 @@ struct PaywallView: View {
                 premiumManager.restore()
             } label: {
                 Text("Restore Purchases")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textMuted)
             }
 
             HStack(spacing: 16) {
                 Button { } label: {
                     Text("Terms of Use")
-                        .font(.system(size: 11))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted.opacity(0.7))
                 }
                 Button { } label: {
                     Text("Privacy Policy")
-                        .font(.system(size: 11))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted.opacity(0.7))
                 }
             }

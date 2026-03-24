@@ -17,17 +17,17 @@ struct QuestStepRow: View {
 
                 if isCompleted {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(Typography.labelMedium)
                         .foregroundStyle(.white)
                 } else {
                     Text("\(stepNumber)")
-                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .font(Typography.labelMedium)
                         .foregroundStyle(isCurrent ? Theme.accent : Theme.textMuted)
                 }
             }
 
             Text(step.instruction)
-                .font(.system(size: 12))
+                .font(Typography.bodySmall)
                 .foregroundStyle(isCurrent ? .white : Theme.textSecondary)
                 .strikethrough(isCompleted, color: Theme.accent)
 
@@ -35,7 +35,7 @@ struct QuestStepRow: View {
 
             if isCurrent {
                 Text("+\(step.xpReward) XP")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.gold)
             }
         }

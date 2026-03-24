@@ -57,7 +57,7 @@ struct CreatePostSheet: View {
     private var categoryPicker: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Category")
-                .font(.subheadline.weight(.semibold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.textPrimary)
 
             HStack(spacing: 8) {
@@ -66,7 +66,7 @@ struct CreatePostSheet: View {
                         withAnimation(.snappy) { selectedCategory = cat }
                     } label: {
                         Text(cat)
-                            .font(.caption.weight(.medium))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(selectedCategory == cat ? Theme.background : Theme.textSecondary)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
@@ -85,7 +85,7 @@ struct CreatePostSheet: View {
     private var moodPicker: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("How are you feeling?")
-                .font(.subheadline.weight(.semibold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.textPrimary)
 
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), spacing: 8)], spacing: 8) {
@@ -95,9 +95,9 @@ struct CreatePostSheet: View {
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: mood.icon)
-                                .font(.system(size: 10))
+                                .font(Typography.labelSmall)
                             Text(mood.name)
-                                .font(.caption.weight(.medium))
+                                .font(Typography.labelSmall)
                         }
                         .foregroundStyle(selectedMood == mood.name ? Theme.background : moodColor(mood.color))
                         .padding(.horizontal, 12)
@@ -120,7 +120,7 @@ struct CreatePostSheet: View {
     private var textSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Share with the community")
-                .font(.subheadline.weight(.semibold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.textPrimary)
 
             ZStack(alignment: .topLeading) {
@@ -136,7 +136,7 @@ struct CreatePostSheet: View {
 
                 if content.isEmpty {
                     Text("What's on your mind? Share a win, ask a question, or just say hi...")
-                        .font(.body)
+                        .font(Typography.bodyLarge)
                         .foregroundStyle(Theme.textSecondary.opacity(0.5))
                         .padding(.horizontal, 16)
                         .padding(.vertical, 20)
@@ -146,14 +146,14 @@ struct CreatePostSheet: View {
 
             HStack {
                 Text("\(content.count)/\(charLimit)")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(content.count > charLimit ? Theme.emergency : Theme.textSecondary)
                 Spacer()
                 HStack(spacing: 4) {
                     Image(systemName: "eye.slash.fill")
-                        .font(.caption2)
+                        .font(Typography.labelSmall)
                     Text("Posting as \(authorName)")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                 }
                 .foregroundStyle(Theme.textSecondary.opacity(0.7))
             }
@@ -177,7 +177,7 @@ struct CreatePostSheet: View {
             HStack(spacing: 8) {
                 Image(systemName: "paperplane.fill")
                 Text("Post Anonymously")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
             }
             .foregroundStyle(Theme.background)
             .frame(maxWidth: .infinity)
@@ -189,7 +189,7 @@ struct CreatePostSheet: View {
                 in: .rect(cornerRadius: 12)
             )
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
         .disabled(content.isEmpty || content.count > charLimit)
         .sensoryFeedback(.success, trigger: postTrigger)
         .accessibilityLabel("Post anonymously")

@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhosphorSwift
 
 struct ProfileView: View {
     @Query private var profiles: [UserProfile]
@@ -179,21 +180,21 @@ struct ProfileView: View {
         VStack(spacing: 16) {
             HStack(spacing: 10) {
                 Text(profile?.name ?? "User")
-                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.textPrimary)
 
                 Text("·")
                     .foregroundStyle(Theme.textMuted)
 
                 Text(personality.rawValue)
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.accent)
 
                 Text("·")
                     .foregroundStyle(Theme.textMuted)
 
                 Text("Lv. \(characterLevel)")
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.accent)
             }
             .lineLimit(1)
@@ -202,7 +203,7 @@ struct ProfileView: View {
             HStack(spacing: 8) {
                 ForEach(personality.traits, id: \.self) { trait in
                     Text(trait)
-                        .font(.caption2.weight(.semibold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.accent)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
@@ -214,20 +215,20 @@ struct ProfileView: View {
                 showRetakeQuiz = true
             } label: {
                 Text("Retake Quiz")
-                    .font(.caption.weight(.medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
             if let startDate = profile?.startDate {
                 Text("Member since \(startDate, format: .dateTime.month(.wide).year())")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 24)
         .padding(.horizontal, 20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.hero)
     }
 
     // MARK: - Stats Grid
@@ -260,11 +261,11 @@ struct ProfileView: View {
     private var journeySection: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 10) {
-                Image(systemName: "leaf.fill")
-                    .font(.subheadline)
+                PhIcon.leafFill
+                    .frame(width: 18, height: 18)
                     .foregroundStyle(Theme.accent)
                 Text("My Journey")
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
             }
 
@@ -285,17 +286,17 @@ struct ProfileView: View {
                     .shadow(color: personality.color.opacity(0.3), radius: 12)
 
                 Image(systemName: characterStage.bodyIcon)
-                    .font(.system(size: 32))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(characterStage.primaryColor)
             }
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(characterStage.name)
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(.white)
 
                 Text("Level \(characterLevel) \(personality.rawValue)")
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(personality.color)
 
                 GeometryReader { geo in
@@ -313,18 +314,18 @@ struct ProfileView: View {
                 .frame(height: 8)
 
                 Text("\(currentXP)/\(nextLevelXP) XP")
-                    .font(.system(size: 11, design: .rounded))
+                    .font(Typography.moneySmall)
                     .foregroundStyle(Theme.textMuted)
             }
         }
         .padding(20)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private var milestoneTimeline: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Milestones")
-                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .font(Typography.headingMedium)
                 .foregroundStyle(.white)
 
             ScrollView(.horizontal, showsIndicators: false) {
@@ -383,14 +384,14 @@ struct ProfileView: View {
             NavigationLink(destination: BadgeGalleryView()) {
                 HStack {
                     Text("Badges")
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(.white)
                     Spacer()
                     Text("\(earnedBadges.count)/\(badges.count)")
-                        .font(.system(size: 13, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textMuted)
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
+                    PhIcon.caretRight
+                        .frame(width: 12, height: 12)
                         .foregroundStyle(Theme.textMuted)
                 }
             }
@@ -404,26 +405,28 @@ struct ProfileView: View {
                             .shadow(color: badge.isEarned ? badgeColor(for: badge).opacity(0.3) : .clear, radius: 6)
 
                         Image(systemName: badge.iconName)
-                            .font(.system(size: 18))
+                            .font(Typography.bodyLarge)
                             .foregroundStyle(badge.isEarned ? badgeColor(for: badge) : Theme.textMuted.opacity(0.3))
                     }
                 }
             }
         }
         .padding(20)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private var leaderboardLink: some View {
         NavigationLink(destination: LeaderboardView()) {
             HStack {
-                Image(systemName: "trophy.fill")
+                PhIcon.trophyFill
+                    .frame(width: 20, height: 20)
                     .foregroundStyle(Theme.neonGold)
                 Text("Leaderboard")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(.white)
                 Spacer()
-                Image(systemName: "chevron.right")
+                PhIcon.caretRight
+                    .frame(width: 14, height: 14)
                     .foregroundStyle(Theme.textMuted)
             }
             .padding(16)
@@ -436,13 +439,15 @@ struct ProfileView: View {
             showShareCharacter = true
         } label: {
             HStack {
-                Image(systemName: "square.and.arrow.up")
+                PhIcon.shareFat
+                    .frame(width: 20, height: 20)
                     .foregroundStyle(Theme.accent)
                 Text("Share My Character Card")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(.white)
                 Spacer()
-                Image(systemName: "chevron.right")
+                PhIcon.caretRight
+                    .frame(width: 14, height: 14)
                     .foregroundStyle(Theme.textMuted)
             }
             .padding(16)
@@ -514,15 +519,15 @@ struct ProfileView: View {
     private var referralProgressSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 10) {
-                Image(systemName: "chart.bar.fill")
-                    .font(.subheadline)
+                PhIcon.chartBarFill
+                    .frame(width: 18, height: 18)
                     .foregroundStyle(Theme.neonPurple)
                 Text("Referral Progress")
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text("\(referrals.count) friends")
-                    .font(.caption.weight(.medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.neonPurple)
             }
 
@@ -551,7 +556,7 @@ struct ProfileView: View {
             )
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private func referralMilestoneRow(icon: String, title: String, subtitle: String, target: Int, color: Color) -> some View {
@@ -562,16 +567,16 @@ struct ProfileView: View {
                     .fill(isCompleted ? color.opacity(0.15) : Theme.elevated)
                     .frame(width: 36, height: 36)
                 Image(systemName: isCompleted ? "checkmark" : icon)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(isCompleted ? color : Theme.textMuted)
             }
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(isCompleted ? Theme.textPrimary : Theme.textSecondary)
                 Text(subtitle)
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
 
@@ -579,14 +584,14 @@ struct ProfileView: View {
 
             if isCompleted {
                 Text("Claimed")
-                    .font(.system(size: 9, weight: .heavy))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(color)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(color.opacity(0.12), in: .capsule)
             } else {
                 Text("\(referrals.count)/\(target)")
-                    .font(.caption2.weight(.bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
         }
@@ -618,23 +623,23 @@ struct ProfileView: View {
                 SettingsIconBadge(icon: "crown.fill", color: Theme.gold)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Premium")
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Text(premiumStatusText)
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(premiumStatusColor)
                 }
                 Spacer()
                 if premiumManager.isPremium {
                     Text("PRO")
-                        .font(.system(size: 10, weight: .heavy, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(.black)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(Theme.goldGradient, in: .capsule)
                 } else if premiumManager.isInTrial {
                     Text("TRIAL")
-                        .font(.system(size: 10, weight: .heavy, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(.white)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -648,18 +653,18 @@ struct ProfileView: View {
                 } label: {
                     HStack {
                         Text("Upgrade to Premium")
-                            .font(.subheadline.weight(.semibold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(.white)
                         Spacer()
                         Image(systemName: "arrow.right")
-                            .font(.caption.weight(.bold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(.white.opacity(0.7))
                     }
                     .padding(.vertical, 12)
                     .padding(.horizontal, 16)
                     .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .medium))
             }
         }
     }
@@ -674,11 +679,11 @@ struct ProfileView: View {
                 Image(systemName: "gearshape")
                     .foregroundStyle(Theme.textSecondary)
                 Text("Settings")
-                    .font(.subheadline.weight(.medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
             .padding(16)
@@ -725,27 +730,27 @@ struct ProfileView: View {
                 } label: {
                     HStack(spacing: 12) {
                         Image(systemName: "chart.line.downtrend.xyaxis")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.accent)
                             .frame(width: 28)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Monthly Check-In")
-                                .font(.subheadline.weight(.semibold))
+                                .font(Typography.headingSmall)
                                 .foregroundStyle(Theme.textPrimary)
                             Text("Track your recovery progress")
-                                .font(.caption)
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textSecondary)
                         }
                         Spacer()
                         Text("Optional")
-                            .font(.caption2.weight(.medium))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.accent)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(Theme.accent.opacity(0.1), in: .capsule)
                     }
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(.plain)
                 .padding(.top, 8)
             }
         }
@@ -785,7 +790,7 @@ struct ProfileView: View {
                     Spacer()
                     Button { showMoneyWrapped = false } label: {
                         Image(systemName: "xmark")
-                            .font(.body.weight(.semibold))
+                            .font(Typography.headingMedium)
                             .foregroundStyle(.white.opacity(0.7))
                             .frame(width: 32, height: 32)
                             .background(.ultraThinMaterial, in: .circle)
@@ -921,16 +926,16 @@ private struct ProfileReferralInlineView: View {
                 SettingsIconBadge(icon: "person.badge.plus", color: Theme.accent)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Invite Friends")
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Text(referralCode)
-                        .font(.system(.caption, design: .monospaced, weight: .bold))
+                        .font(Typography.moneySmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
                 Spacer()
                 if referralCount > 0 {
                     Text("\(referralCount) invited")
-                        .font(.caption2.weight(.medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.accent)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -945,7 +950,7 @@ private struct ProfileReferralInlineView: View {
                     }
                 } label: {
                     Image(systemName: copied ? "checkmark" : "doc.on.doc.fill")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(copied ? Theme.accent : Theme.textSecondary)
                         .frame(width: 32, height: 32)
                         .background(Theme.elevated, in: .circle)
@@ -967,22 +972,22 @@ private struct ProfileStatCard: View {
     var body: some View {
         VStack(spacing: 8) {
             Image(systemName: icon)
-                .font(.title3)
+                .font(Typography.headingLarge)
                 .foregroundStyle(color)
 
             Text(value)
-                .font(.system(.headline, design: .rounded))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
 
             Text(label)
-                .font(.caption2)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
-        .glassCard(cornerRadius: 14)
+        .splurjCard(.outlined)
     }
 }
 
@@ -1018,19 +1023,19 @@ struct ProfileSettingsRowLabel: View {
     var body: some View {
         HStack(spacing: 14) {
             Image(systemName: icon)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(.white)
                 .frame(width: 32, height: 32)
                 .background(color, in: .rect(cornerRadius: 8))
 
             Text(title)
-                .font(.body)
+                .font(Typography.bodyLarge)
                 .foregroundStyle(Theme.textPrimary)
 
             Spacer()
 
             Image(systemName: "chevron.right")
-                .font(.caption.weight(.semibold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary.opacity(0.4))
         }
         .padding(.horizontal, 16)

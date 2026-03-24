@@ -52,18 +52,18 @@ struct HRVCardView: View {
         HStack {
             HStack(spacing: 8) {
                 Image(systemName: "heart.text.square.fill")
-                    .font(.title3)
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.teal)
                 Text("Heart Rate Variability")
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
             }
             Spacer()
             HStack(spacing: 4) {
                 Image(systemName: trend.icon)
-                    .font(.caption.weight(.bold))
+                    .font(Typography.labelSmall)
                 Text(trend.label)
-                    .font(.caption.weight(.medium))
+                    .font(Typography.labelSmall)
             }
             .foregroundStyle(trend.color)
             .padding(.horizontal, 10)
@@ -170,10 +170,10 @@ struct HRVCardView: View {
         HStack(spacing: 0) {
             VStack(spacing: 3) {
                 Text(String(format: "%.0f", todayHRV))
-                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
                 Text("Today (ms)")
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
             .frame(maxWidth: .infinity)
@@ -184,10 +184,10 @@ struct HRVCardView: View {
 
             VStack(spacing: 3) {
                 Text(String(format: "%.0f", weekAvgHRV))
-                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
                 Text("7-Day Avg")
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
             .frame(maxWidth: .infinity)
@@ -199,10 +199,10 @@ struct HRVCardView: View {
             VStack(spacing: 3) {
                 let diff = weekAvgHRV > 0 ? ((todayHRV - weekAvgHRV) / weekAvgHRV) * 100 : 0
                 Text("\(diff >= 0 ? "+" : "")\(String(format: "%.0f", diff))%")
-                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(diff >= 0 ? Theme.accentGreen : Color.orange)
                 Text("Change")
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
             .frame(maxWidth: .infinity)
@@ -220,23 +220,23 @@ struct HRVCardView: View {
                         .opacity(stressPulse ? 0.5 : 1.0)
 
                     Image(systemName: "waveform.path.ecg")
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(.orange)
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Stress Detected")
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
                     Text("Would you like to surf it?")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
 
                 Spacer()
 
                 Text("Surf It")
-                    .font(.caption.weight(.bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(.white)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 8)
@@ -270,7 +270,7 @@ struct HRVCardView: View {
                     )
             )
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
         .sensoryFeedback(.warning, trigger: isStressDetected)
         .accessibilityLabel("Stress detected. Tap to open urge surf tool.")
         .onAppear {

@@ -62,7 +62,7 @@ struct BudgetTemplateSelectionView: View {
                         } else {
                             HStack(spacing: 4) {
                                 Image(systemName: "chevron.left")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(Typography.headingSmall)
                                 Text("Back")
                             }
                             .foregroundStyle(Theme.textSecondary)
@@ -81,10 +81,10 @@ struct BudgetTemplateSelectionView: View {
             VStack(spacing: 24) {
                 VStack(spacing: 6) {
                     Text("Budget Templates")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Text("Choose a method that fits your style")
-                        .font(.system(size: 15))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                 }
                 .padding(.top, 8)
@@ -126,7 +126,7 @@ struct BudgetTemplateSelectionView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     HStack {
                         Text(template.rawValue)
-                            .font(.system(size: 22, weight: .semibold, design: .rounded))
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textPrimary)
 
                         Spacer()
@@ -137,11 +137,11 @@ struct BudgetTemplateSelectionView: View {
                     }
 
                     Text(template.subtitle)
-                        .font(.system(size: 14, weight: .medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(template.accentColor)
 
                     Text(template.description)
-                        .font(.system(size: 13))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                         .lineSpacing(3)
                         .fixedSize(horizontal: false, vertical: true)
@@ -150,18 +150,18 @@ struct BudgetTemplateSelectionView: View {
                         Spacer()
                         HStack(spacing: 6) {
                             Text("Get Started")
-                                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                                .font(Typography.headingSmall)
                             Image(systemName: "arrow.right")
-                                .font(.system(size: 12, weight: .bold))
+                                .font(Typography.labelMedium)
                         }
                         .foregroundStyle(template.accentColor)
                     }
                 }
                 .padding(20)
             }
-            .glassCard(cornerRadius: 20)
+            .splurjCard(.elevated)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
     }
 
     @ViewBuilder
@@ -194,7 +194,7 @@ struct BudgetTemplateSelectionView: View {
                             .frame(width: 46, height: 46)
                             .rotationEffect(.degrees(-90))
                         Text(pair.0)
-                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(color)
                     }
                 }
@@ -205,10 +205,10 @@ struct BudgetTemplateSelectionView: View {
     private func zeroBasedPreview(_ color: Color) -> some View {
         VStack(spacing: 8) {
             Text("$0")
-                .font(.system(size: 36, weight: .bold, design: .rounded))
+                .font(Typography.displayMedium)
                 .foregroundStyle(color)
             Text("Unassigned")
-                .font(.system(size: 12, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(color.opacity(0.7))
 
             HStack(spacing: 4) {
@@ -234,7 +234,7 @@ struct BudgetTemplateSelectionView: View {
                             .frame(width: 36, height: max(4, 24 - Double(i * 6)))
                             .frame(width: 36, height: 24, alignment: .bottom)
                         Image(systemName: "envelope.fill")
-                            .font(.system(size: 14))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(color.opacity(0.3))
                     }
                     RoundedRectangle(cornerRadius: 1)
@@ -257,11 +257,11 @@ struct BudgetTemplateSelectionView: View {
                     .frame(width: 72, height: 72)
                     .rotationEffect(.degrees(-90))
                 Image(systemName: "arrow.up.circle.fill")
-                    .font(.system(size: 24))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(color)
             }
             Text("Save First")
-                .font(.system(size: 11, weight: .semibold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(color.opacity(0.7))
         }
     }
@@ -275,20 +275,20 @@ struct BudgetTemplateSelectionView: View {
                         .frame(width: 56, height: 56)
                         .overlay(
                             Image(systemName: "plus")
-                                .font(.system(size: 18, weight: .medium))
+                                .font(Typography.bodyLarge)
                                 .foregroundStyle(color.opacity(0.4))
                         )
                 }
             }
             Text("Your Categories")
-                .font(.system(size: 11, weight: .semibold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(color.opacity(0.7))
         }
     }
 
     private func recommendedPill(_ personality: MoneyPersonality) -> some View {
         Text("For \(personality.rawValue.replacingOccurrences(of: "The ", with: ""))s")
-            .font(.system(size: 11, weight: .bold, design: .rounded))
+            .font(Typography.labelSmall)
             .foregroundStyle(personality.color)
             .padding(.horizontal, 10)
             .padding(.vertical, 4)
@@ -304,28 +304,28 @@ struct BudgetTemplateSelectionView: View {
                 VStack(spacing: 32) {
                     VStack(spacing: 6) {
                         Image(systemName: template.icon)
-                            .font(.system(size: 44))
+                            .font(Typography.displayLarge)
                             .foregroundStyle(template.accentColor)
                             .padding(.bottom, 4)
                         Text(template.rawValue)
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textPrimary)
                         Text("Enter your monthly income to get started")
-                            .font(.system(size: 15))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                     }
                     .padding(.top, 32)
 
                     VStack(spacing: 12) {
                         Text("Monthly Income")
-                            .font(.system(size: 13, weight: .medium))
+                            .font(Typography.bodySmall)
                             .foregroundStyle(Theme.textSecondary)
                         HStack(alignment: .firstTextBaseline, spacing: 4) {
                             Text("$")
-                                .font(.system(size: 34, weight: .bold, design: .rounded))
+                                .font(Typography.displayMedium)
                                 .foregroundStyle(template.accentColor.opacity(0.6))
                             TextField("0", text: $vm.monthlyIncome)
-                                .font(.system(size: 48, weight: .bold, design: .rounded))
+                                .font(Typography.displayLarge)
                                 .keyboardType(.decimalPad)
                                 .foregroundStyle(Theme.textPrimary)
                                 .tint(template.accentColor)
@@ -333,7 +333,7 @@ struct BudgetTemplateSelectionView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 20)
-                        .glassCard(cornerRadius: 20)
+                        .splurjCard(.elevated)
                     }
                     .padding(.horizontal)
 
@@ -350,7 +350,7 @@ struct BudgetTemplateSelectionView: View {
                     vm.proceedToReview()
                 } label: {
                     Text("Generate Budget")
-                        .font(.system(.body, design: .rounded, weight: .bold))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(vm.canProceedFromIncome ? Theme.background : Theme.textMuted)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
@@ -359,7 +359,7 @@ struct BudgetTemplateSelectionView: View {
                             in: .capsule
                         )
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .disabled(!vm.canProceedFromIncome)
             }
             .padding(.horizontal, 20)
@@ -371,11 +371,11 @@ struct BudgetTemplateSelectionView: View {
         VStack(spacing: 14) {
             HStack {
                 Text("Savings Target")
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text("\(Int(vm.savingsPercentage))%")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(template.accentColor)
                     .contentTransition(.numericText())
             }
@@ -386,12 +386,12 @@ struct BudgetTemplateSelectionView: View {
             if vm.canProceedFromIncome {
                 let savingsAmount = (vm.incomeValue * vm.savingsPercentage / 100).rounded()
                 Text("You'll save $\(Int(savingsAmount))/month, budget the remaining $\(Int(vm.incomeValue - savingsAmount))")
-                    .font(.system(size: 13))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         }
         .padding(20)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     // MARK: - Category Review
@@ -406,11 +406,11 @@ struct BudgetTemplateSelectionView: View {
                     VStack(alignment: .leading, spacing: 14) {
                         HStack {
                             Text("Categories")
-                                .font(.system(.headline, design: .rounded, weight: .semibold))
+                                .font(Typography.headingMedium)
                                 .foregroundStyle(Theme.textPrimary)
                             Spacer()
                             Text("\(vm.allocations.count) items")
-                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .font(Typography.bodySmall)
                                 .foregroundStyle(Theme.textSecondary)
                         }
 
@@ -419,7 +419,7 @@ struct BudgetTemplateSelectionView: View {
                         }
                     }
                     .padding(20)
-                    .glassCard(cornerRadius: 20)
+                    .splurjCard(.elevated)
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 100)
@@ -431,13 +431,13 @@ struct BudgetTemplateSelectionView: View {
                     vm.proceedToConfirm()
                 } label: {
                     Text("Review Summary")
-                        .font(.system(.body, design: .rounded, weight: .bold))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Theme.accentGradient, in: .capsule)
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 8)
@@ -464,7 +464,7 @@ struct BudgetTemplateSelectionView: View {
         let data = vm.needsRingData()
         return VStack(spacing: 16) {
             Text("50 / 30 / 20 Split")
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             HStack(spacing: 24) {
@@ -474,7 +474,7 @@ struct BudgetTemplateSelectionView: View {
             }
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     private func ringColumn(label: String, value: Double, target: Double, color: Color) -> some View {
@@ -489,14 +489,14 @@ struct BudgetTemplateSelectionView: View {
                     .frame(width: 56, height: 56)
                     .rotationEffect(.degrees(-90))
                 Text("\(Int(value * 100))%")
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(color)
             }
             Text(label)
-                .font(.system(size: 12, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
             Text("\(Int(target * 100))% target")
-                .font(.system(size: 10))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
         }
     }
@@ -504,10 +504,10 @@ struct BudgetTemplateSelectionView: View {
     private var zeroBasedHeader: some View {
         VStack(spacing: 12) {
             Text("Unassigned")
-                .font(.system(size: 13, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
             Text("$\(Int(vm.unassigned))")
-                .font(.system(size: 42, weight: .bold, design: .rounded))
+                .font(Typography.displayLarge)
                 .foregroundStyle(vm.isFullyAssigned ? Theme.accentGreen : Color(hex: 0x00D2FF))
                 .contentTransition(.numericText(value: vm.unassigned))
                 .animation(.spring(response: 0.3), value: vm.unassigned)
@@ -517,7 +517,7 @@ struct BudgetTemplateSelectionView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(Theme.accentGreen)
                     Text("Every dollar assigned!")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.accentGreen)
                 }
             }
@@ -543,13 +543,13 @@ struct BudgetTemplateSelectionView: View {
             .frame(height: 8)
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     private var envelopeHeader: some View {
         VStack(spacing: 14) {
             Text("Digital Envelopes")
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 4)
@@ -566,11 +566,11 @@ struct BudgetTemplateSelectionView: View {
                                 .frame(height: 36 * min(fillRatio * 3, 1))
                                 .frame(height: 36, alignment: .bottom)
                             Image(systemName: "envelope.fill")
-                                .font(.system(size: 12))
+                                .font(Typography.bodySmall)
                                 .foregroundStyle(Color(hex: UInt(alloc.colorHex, radix: 16) ?? 0xFF9100).opacity(0.5))
                         }
                         Text(alloc.name)
-                            .font(.system(size: 9, weight: .medium))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                             .lineLimit(1)
                     }
@@ -578,7 +578,7 @@ struct BudgetTemplateSelectionView: View {
             }
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     private var payYourselfFirstHeader: some View {
@@ -598,37 +598,37 @@ struct BudgetTemplateSelectionView: View {
                     .rotationEffect(.degrees(-90))
                 VStack(spacing: 2) {
                     Text("$\(Int(savingsAmount))")
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(Theme.accentGreen)
                     Text("Saved")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
 
             Text("$\(Int(vm.incomeValue - savingsAmount)) remaining to budget")
-                .font(.system(size: 13, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     private var customHeader: some View {
         VStack(spacing: 10) {
             Image(systemName: "slider.horizontal.3")
-                .font(.system(size: 32))
+                .font(Typography.displayMedium)
                 .foregroundStyle(Color(hex: 0xA55EEA))
             Text("Custom Budget")
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
             Text("Adjust amounts to fit your needs")
-                .font(.system(size: 13))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     private func allocationRow(index: Int, alloc: BudgetAllocation, template: BudgetTemplateType) -> some View {
@@ -641,13 +641,13 @@ struct BudgetTemplateSelectionView: View {
                     .fill(color.opacity(0.12))
                     .frame(width: 40, height: 40)
                 Image(systemName: alloc.icon)
-                    .font(.system(size: 16))
+                    .font(Typography.labelLarge)
                     .foregroundStyle(color)
             }
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(alloc.name)
-                    .font(.system(size: 15, weight: .medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textPrimary)
 
                 GeometryReader { geo in
@@ -667,7 +667,7 @@ struct BudgetTemplateSelectionView: View {
 
             HStack(spacing: 2) {
                 Text("$")
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textSecondary)
                 TextField("0", text: Binding(
                     get: { alloc.amount > 0 ? String(Int(alloc.amount)) : "" },
@@ -676,7 +676,7 @@ struct BudgetTemplateSelectionView: View {
                         vm.updateAllocation(at: index, amount: val)
                     }
                 ))
-                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .font(Typography.headingMedium)
                 .keyboardType(.numberPad)
                 .foregroundStyle(Theme.textPrimary)
                 .frame(width: 60)
@@ -702,14 +702,14 @@ struct BudgetTemplateSelectionView: View {
                                 .fill(template.accentColor.opacity(0.1))
                                 .frame(width: 72, height: 72)
                             Image(systemName: template.icon)
-                                .font(.system(size: 30))
+                                .font(Typography.displayMedium)
                                 .foregroundStyle(template.accentColor)
                         }
                         Text(template.rawValue)
-                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textPrimary)
                         Text("Monthly Income: $\(Int(vm.incomeValue))")
-                            .font(.system(size: 15, weight: .medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                     }
                     .padding(.top, 16)
@@ -720,36 +720,36 @@ struct BudgetTemplateSelectionView: View {
                         }
                     }
                     .padding(16)
-                    .glassCard(cornerRadius: 20)
+                    .splurjCard(.elevated)
 
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Total Budgeted")
-                                .font(.system(size: 13, weight: .medium))
+                                .font(Typography.bodySmall)
                                 .foregroundStyle(Theme.textSecondary)
                             Text("$\(Int(vm.totalAllocated))")
-                                .font(.system(size: 28, weight: .bold, design: .rounded))
+                                .font(Typography.displayMedium)
                                 .foregroundStyle(Theme.textPrimary)
                         }
                         Spacer()
                         VStack(alignment: .trailing, spacing: 4) {
                             Text("Unassigned")
-                                .font(.system(size: 13, weight: .medium))
+                                .font(Typography.bodySmall)
                                 .foregroundStyle(Theme.textSecondary)
                             Text("$\(Int(vm.unassigned))")
-                                .font(.system(size: 28, weight: .bold, design: .rounded))
+                                .font(Typography.displayMedium)
                                 .foregroundStyle(vm.unassigned > 0 ? Theme.warning : Theme.accentGreen)
                         }
                     }
                     .padding(20)
-                    .glassCard()
+                    .splurjCard(.elevated)
 
                     if !budgets.isEmpty {
                         HStack(spacing: 8) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundStyle(Theme.warning)
                             Text("This will replace your existing \(budgets.count) budget categories.")
-                                .font(.system(size: 13))
+                                .font(Typography.bodySmall)
                                 .foregroundStyle(Theme.textSecondary)
                         }
                         .padding(14)
@@ -774,13 +774,13 @@ struct BudgetTemplateSelectionView: View {
                         Image(systemName: "checkmark.circle.fill")
                         Text("Create Budget")
                     }
-                    .font(.system(.body, design: .rounded, weight: .bold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(Theme.accentGradient, in: .capsule)
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 8)
@@ -797,17 +797,17 @@ struct BudgetTemplateSelectionView: View {
                 .frame(width: 10, height: 10)
 
             Text(alloc.name)
-                .font(.system(size: 15, weight: .medium))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             Spacer()
 
             Text("\(Int(pct))%")
-                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
 
             Text("$\(Int(alloc.amount))")
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
                 .frame(width: 70, alignment: .trailing)
         }

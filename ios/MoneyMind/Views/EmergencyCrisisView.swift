@@ -76,16 +76,16 @@ struct EmergencyCrisisView: View {
             }
 
             Image(systemName: "heart.fill")
-                .font(.system(size: 36))
+                .font(Typography.displayMedium)
                 .foregroundStyle(Theme.emergency)
                 .symbolEffect(.pulse, options: .repeating)
 
             Text("You're Not Alone")
-                .font(Theme.headingFont(.title2))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
 
             Text("This moment will pass. Let's get through it together.")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
         }
@@ -103,7 +103,7 @@ struct EmergencyCrisisView: View {
                     }
                 } label: {
                     Text(section.rawValue)
-                        .font(.caption.weight(.semibold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(selectedSection == section ? Theme.background : Theme.textSecondary)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
@@ -144,20 +144,20 @@ struct EmergencyCrisisView: View {
                     } label: {
                         HStack(spacing: 14) {
                             Image(systemName: hotline.icon)
-                                .font(.title3)
+                                .font(Typography.headingLarge)
                                 .foregroundStyle(Theme.emergency)
                                 .frame(width: 44, height: 44)
                                 .background(Theme.emergency.opacity(0.12), in: .rect(cornerRadius: 12))
 
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(hotline.name)
-                                    .font(.subheadline.weight(.semibold))
+                                    .font(Typography.headingSmall)
                                     .foregroundStyle(Theme.textPrimary)
                                 Text(hotline.number)
-                                    .font(.subheadline.weight(.medium))
+                                    .font(Typography.bodyMedium)
                                     .foregroundStyle(Theme.accentGreen)
                                 Text(hotline.available)
-                                    .font(.caption)
+                                    .font(Typography.labelSmall)
                                     .foregroundStyle(Theme.textSecondary)
                             }
 
@@ -167,15 +167,15 @@ struct EmergencyCrisisView: View {
                                 .foregroundStyle(Theme.accentGreen)
                         }
                         .padding(14)
-                        .glassCard()
+                        .splurjCard(.interactive)
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(.plain)
                     .accessibilityLabel("\(hotline.name), \(hotline.number)")
                     .accessibilityHint("Tap to call")
                 }
 
                 Text("Remember: You've resisted before and you can do it again.")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
                     .padding(.top, 12)
@@ -189,11 +189,11 @@ struct EmergencyCrisisView: View {
         ScrollView {
             VStack(spacing: 20) {
                 Text("5-4-3-2-1 Grounding")
-                    .font(Theme.headingFont(.title3))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
 
                 Text("Focus on your senses to anchor yourself in the present moment.")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
 
@@ -211,11 +211,11 @@ struct EmergencyCrisisView: View {
 
                                 if isDone {
                                     Image(systemName: "checkmark")
-                                        .font(.caption.weight(.bold))
+                                        .font(Typography.labelSmall)
                                         .foregroundStyle(.white)
                                 } else {
                                     Image(systemName: prompt.2)
-                                        .font(.caption)
+                                        .font(Typography.labelSmall)
                                         .foregroundStyle(isActive ? Theme.background : Theme.textSecondary)
                                 }
                             }
@@ -227,9 +227,9 @@ struct EmergencyCrisisView: View {
 
                         if isActive {
                             TextField("Type here...", text: $groundingInputs[i])
-                                .font(.subheadline)
+                                .font(Typography.bodyMedium)
                                 .padding(12)
-                                .glassCard(cornerRadius: 10)
+                                .splurjCard(.outlined)
                                 .foregroundStyle(Theme.textPrimary)
                                 .transition(.opacity.combined(with: .move(edge: .top)))
 
@@ -239,13 +239,13 @@ struct EmergencyCrisisView: View {
                                 }
                             } label: {
                                 Text(i < 4 ? "Next" : "Done")
-                                    .font(.subheadline.weight(.semibold))
+                                    .font(Typography.headingSmall)
                                     .foregroundStyle(Theme.background)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
                                     .background(Theme.accentGradient, in: .rect(cornerRadius: 10))
                             }
-                            .buttonStyle(PressableButtonStyle())
+                            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .medium))
                             .sensoryFeedback(.impact(weight: .light), trigger: groundingStep)
                         }
                     }
@@ -264,15 +264,15 @@ struct EmergencyCrisisView: View {
                 if groundingStep >= 5 {
                     VStack(spacing: 12) {
                         Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 40))
+                            .font(Typography.displayMedium)
                             .foregroundStyle(Theme.accentGreen)
 
                         Text("You're grounded.")
-                            .font(Theme.headingFont(.title3))
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textPrimary)
 
                         Text("Take a few more deep breaths. You're safe.")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                     }
                     .transition(.scale.combined(with: .opacity))
@@ -287,11 +287,11 @@ struct EmergencyCrisisView: View {
         ScrollView {
             VStack(spacing: 24) {
                 Text("PHQ-2 Quick Screen")
-                    .font(Theme.headingFont(.title3))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
 
                 Text("Over the last 2 weeks, how often have you been bothered by:")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
 
@@ -312,13 +312,13 @@ struct EmergencyCrisisView: View {
                         }
                     } label: {
                         Text("See Results")
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.background)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 }
 
                 if showPHQResult {
@@ -334,7 +334,7 @@ struct EmergencyCrisisView: View {
     private func phqQuestion(text: String, score: Binding<Int>) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(text)
-                .font(.subheadline.weight(.medium))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             let options = ["Not at all", "Several days", "More than half", "Nearly every day"]
@@ -353,7 +353,7 @@ struct EmergencyCrisisView: View {
                             )
 
                         Text(options[i])
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(score.wrappedValue == i ? Theme.textPrimary : Theme.textSecondary)
 
                         Spacer()
@@ -366,7 +366,7 @@ struct EmergencyCrisisView: View {
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private var phqResult: some View {
@@ -382,17 +382,17 @@ struct EmergencyCrisisView: View {
         return VStack(spacing: 14) {
             HStack(spacing: 8) {
                 Text("Score: \(total)/6")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(color)
             }
 
             Text(message)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
 
             Text("This is a screening tool, not a clinical assessment. Please consult a healthcare provider for evaluation.")
-                .font(.caption)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary.opacity(0.7))
                 .multilineTextAlignment(.center)
         }

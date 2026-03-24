@@ -30,13 +30,13 @@ struct FirstQuestScreen: View {
             Spacer().frame(height: 32)
 
             Text("YOUR FIRST QUEST")
-                .font(.system(size: 10, weight: .bold, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
                 .tracking(3)
                 .opacity(appeared ? 1 : 0)
 
             Text("Chosen for your DNA")
-                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .padding(.top, 6)
                 .opacity(appeared ? 1 : 0)
@@ -66,9 +66,9 @@ struct FirstQuestScreen: View {
                 } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "checkmark.seal.fill")
-                            .font(.system(size: 18, weight: .bold))
+                            .font(Typography.headingLarge)
                         Text("Accept Quest")
-                            .font(.system(size: 17, weight: .bold, design: .rounded))
+                            .font(Typography.headingMedium)
                     }
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
@@ -76,26 +76,26 @@ struct FirstQuestScreen: View {
                     .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
                     .shadow(color: Theme.accent.opacity(0.4), radius: 16, y: 6)
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .padding(.horizontal, 32)
                 .opacity(appeared ? 1 : 0)
                 .animation(.easeOut(duration: 0.4).delay(0.6), value: appeared)
             } else {
                 Button(action: onComplete) {
                     Text("Let's Go")
-                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 17)
                         .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .padding(.horizontal, 32)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
 
             Text("This quest was chosen based on your Financial DNA.")
-                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
                 .multilineTextAlignment(.center)
                 .padding(.top, 12)
@@ -123,22 +123,22 @@ struct FirstQuestScreen: View {
                     .frame(width: 72, height: 72)
 
                 Image(systemName: quest.icon)
-                    .font(.system(size: 30, weight: .bold))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(archetype.color)
             }
 
             VStack(spacing: 6) {
                 Text(quest.title)
-                    .font(.system(size: 22, weight: .black, design: .rounded))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(.white)
 
                 Text(quest.subtitle)
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
             }
 
             Text(quest.description)
-                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
                 .lineSpacing(3)
@@ -147,22 +147,22 @@ struct FirstQuestScreen: View {
             HStack(spacing: 16) {
                 HStack(spacing: 4) {
                     Image(systemName: "star.fill")
-                        .font(.system(size: 10))
+                        .font(Typography.labelSmall)
                     Text("+\(quest.xp) XP")
-                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .font(Typography.labelMedium)
                 }
                 .foregroundStyle(Theme.gold)
 
                 HStack(spacing: 4) {
                     Image(systemName: "clock")
-                        .font(.system(size: 10))
+                        .font(Typography.labelSmall)
                     Text("~5 min")
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .font(Typography.bodySmall)
                 }
                 .foregroundStyle(Theme.textMuted)
 
                 Text("EASY")
-                    .font(.system(size: 9, weight: .bold, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.accent)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
@@ -171,7 +171,7 @@ struct FirstQuestScreen: View {
         }
         .padding(28)
         .frame(maxWidth: .infinity)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.hero)
         .overlay(
             RoundedRectangle(cornerRadius: 20)
                 .stroke(archetype.color.opacity(0.2), lineWidth: 1)
@@ -190,29 +190,29 @@ struct FirstQuestScreen: View {
                     .frame(width: 72, height: 72)
 
                 Image(systemName: "checkmark")
-                    .font(.system(size: 32, weight: .bold))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.accent)
             }
 
             Text("Quest Accepted!")
-                .font(.system(size: 24, weight: .black, design: .rounded))
+                .font(Typography.displaySmall)
                 .foregroundStyle(.white)
 
             HStack(spacing: 4) {
                 Image(systemName: "star.fill")
-                    .font(.system(size: 14))
+                    .font(Typography.bodyMedium)
                 Text("+\(quest.xp) XP")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(Typography.headingLarge)
             }
             .foregroundStyle(Theme.gold)
 
             Text("Complete it to start earning XP")
-                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .padding(28)
         .frame(maxWidth: .infinity)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.hero)
         .padding(.horizontal, 28)
     }
 

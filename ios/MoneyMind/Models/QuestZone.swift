@@ -29,11 +29,11 @@ nonisolated enum QuestZone: String, Codable, CaseIterable, Sendable {
 
     var gradientColors: [Color] {
         switch self {
-        case .awakening: return [Color(hex: 0x0B0E14), Color(hex: 0x1A2332)]
-        case .budgetForge: return [Color(hex: 0x0B0E14), Color(hex: 0x1A1528)]
-        case .savingsCitadel: return [Color(hex: 0x0B0E14), Color(hex: 0x0D2818)]
-        case .incomeFrontier: return [Color(hex: 0x0B0E14), Color(hex: 0x2A1A08)]
-        case .legacy: return [Color(hex: 0x0B0E14), Color(hex: 0x1A1A08)]
+        case .awakening: return [Theme.background, Color(hex: 0x1E2230)]
+        case .budgetForge: return [Theme.background, Color(hex: 0x1E1828)]
+        case .savingsCitadel: return [Theme.background, Color(hex: 0x162824)]
+        case .incomeFrontier: return [Theme.background, Color(hex: 0x2A1E10)]
+        case .legacy: return [Theme.background, Color(hex: 0x1E1E10)]
         }
     }
 

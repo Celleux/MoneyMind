@@ -4,16 +4,16 @@ struct AllQuestsCompleteCard: View {
     var body: some View {
         VStack(spacing: 16) {
             Image(systemName: "checkmark.seal.fill")
-                .font(.system(size: 44))
+                .font(Typography.displayLarge)
                 .foregroundStyle(Theme.accent)
                 .symbolEffect(.pulse)
 
             Text("All Quests Complete")
-                .font(.system(size: 18, weight: .bold))
+                .font(Typography.headingLarge)
                 .foregroundStyle(.white)
 
             Text("You conquered today's challenges. New quests arrive at midnight")
-                .font(.system(size: 13))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
         }

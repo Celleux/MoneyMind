@@ -49,29 +49,29 @@ struct BudgetDetailSheet: View {
 
                 VStack(spacing: 4) {
                     Image(systemName: budget.icon)
-                        .font(.system(size: 28))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(categoryColor)
                     Text("\(Int(progress * 100))%")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(Theme.textPrimary)
                     Text("used")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
             .frame(width: 140, height: 140)
 
             Text(budget.name)
-                .font(.system(.title2, design: .rounded, weight: .bold))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
 
             HStack(spacing: 32) {
                 VStack(spacing: 4) {
                     Text("Spent")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                     Text(spent, format: .currency(code: currencyCode).precision(.fractionLength(0)))
-                        .font(.system(.title3, design: .rounded, weight: .semibold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(categoryColor)
                 }
 
@@ -81,10 +81,10 @@ struct BudgetDetailSheet: View {
 
                 VStack(spacing: 4) {
                     Text("Budget")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                     Text(budget.monthlyLimit, format: .currency(code: currencyCode).precision(.fractionLength(0)))
-                        .font(.system(.title3, design: .rounded, weight: .semibold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.textPrimary)
                 }
 
@@ -94,10 +94,10 @@ struct BudgetDetailSheet: View {
 
                 VStack(spacing: 4) {
                     Text("Left")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                     Text(remaining, format: .currency(code: currencyCode).precision(.fractionLength(0)))
-                        .font(.system(.title3, design: .rounded, weight: .semibold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(remaining > 0 ? Theme.accentGreen : Theme.danger)
                 }
             }
@@ -107,7 +107,7 @@ struct BudgetDetailSheet: View {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundStyle(Theme.warning)
                     Text(progress >= 1.0 ? "Budget exceeded!" : "Almost at your limit")
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.warning)
                 }
                 .padding(12)

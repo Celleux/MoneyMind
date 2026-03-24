@@ -68,19 +68,19 @@ struct EMACheckInCard: View {
     private func headerForType(_ type: EMACheckInType) -> some View {
         HStack(spacing: 10) {
             Image(systemName: iconForType(type))
-                .font(.title3)
+                .font(Typography.headingLarge)
                 .foregroundStyle(colorForType(type))
             VStack(alignment: .leading, spacing: 2) {
                 Text(titleForType(type))
-                    .font(Theme.headingFont(.subheadline))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
                 Text("In the past few hours")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
             Spacer()
             Text("~45s")
-                .font(.caption2.weight(.medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(colorForType(type))
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
@@ -91,12 +91,12 @@ struct EMACheckInCard: View {
     private var morningContent: some View {
         VStack(spacing: 12) {
             Text("How's your urge level right now?")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             HStack {
                 Text(String(format: "%.1f", urgeLevel))
-                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(urgeColor)
                     .frame(width: 50)
                     .contentTransition(.numericText())
@@ -106,11 +106,11 @@ struct EMACheckInCard: View {
 
             HStack {
                 Text("None")
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                 Spacer()
                 Text("Extreme")
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         }
@@ -119,7 +119,7 @@ struct EMACheckInCard: View {
     private var afternoonContent: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Any purchases planned today?")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             let options = ["No spending", "Feeling tempted"]
@@ -134,7 +134,7 @@ struct EMACheckInCard: View {
                         Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                             .foregroundStyle(isSelected ? Theme.accentGreen : Theme.textSecondary.opacity(0.4))
                         Text(option)
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textPrimary)
                         Spacer()
                     }
@@ -155,11 +155,11 @@ struct EMACheckInCard: View {
                     Image(systemName: spendingIntention == "Planned" ? "checkmark.circle.fill" : "circle")
                         .foregroundStyle(spendingIntention == "Planned" ? Theme.accentGreen : Theme.textSecondary.opacity(0.4))
                     Text("Planned:")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                     TextField("$0", text: $plannedAmount)
                         .keyboardType(.decimalPad)
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                         .frame(width: 60)
                     Spacer()
@@ -175,7 +175,7 @@ struct EMACheckInCard: View {
         VStack(spacing: 16) {
             VStack(spacing: 8) {
                 Text("Did you stick to your intention?")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textPrimary)
 
                 HStack(spacing: 12) {
@@ -184,16 +184,16 @@ struct EMACheckInCard: View {
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "checkmark")
-                                .font(.caption.weight(.bold))
+                                .font(Typography.labelSmall)
                             Text("Yes")
-                                .font(.subheadline.weight(.medium))
+                                .font(Typography.bodyMedium)
                         }
                         .foregroundStyle(stuckToIntention ? Theme.background : Theme.accentGreen)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(stuckToIntention ? Theme.accentGreen : Theme.accentGreen.opacity(0.1), in: .rect(cornerRadius: 10))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(.plain)
                     .sensoryFeedback(.selection, trigger: stuckToIntention)
 
                     Button {
@@ -201,22 +201,22 @@ struct EMACheckInCard: View {
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "xmark")
-                                .font(.caption.weight(.bold))
+                                .font(Typography.labelSmall)
                             Text("No")
-                                .font(.subheadline.weight(.medium))
+                                .font(Typography.bodyMedium)
                         }
                         .foregroundStyle(!stuckToIntention ? .white : Theme.emergency)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(!stuckToIntention ? Theme.emergency : Theme.emergency.opacity(0.1), in: .rect(cornerRadius: 10))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(.plain)
                 }
             }
 
             VStack(spacing: 8) {
                 Text("How are you feeling?")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
 
                 HStack(spacing: 16) {
@@ -227,7 +227,7 @@ struct EMACheckInCard: View {
                             }
                         } label: {
                             Text(mood)
-                                .font(.system(size: 28))
+                                .font(Typography.displayMedium)
                                 .scaleEffect(selectedMood == mood ? 1.2 : 1.0)
                                 .opacity(selectedMood.isEmpty || selectedMood == mood ? 1 : 0.4)
                         }
@@ -245,13 +245,13 @@ struct EMACheckInCard: View {
             submitCheckIn(type: type)
         } label: {
             Text("Done")
-                .font(.subheadline.weight(.semibold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.background)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
                 .background(colorForType(type), in: .rect(cornerRadius: 10))
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
         .sensoryFeedback(.success, trigger: submitted)
         .accessibilityLabel("Submit check-in")
     }

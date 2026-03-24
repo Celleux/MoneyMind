@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhosphorSwift
 
 struct HomeView: View {
     @Query private var profiles: [UserProfile]
@@ -265,24 +266,24 @@ struct HomeView: View {
                     showPaywall = true
                 } label: {
                     HStack(spacing: 10) {
-                        Image(systemName: "clock.fill")
-                            .font(.system(size: 14, weight: .semibold))
+                        PhIcon.clockFill
+                            .frame(width: 18, height: 18)
                             .foregroundStyle(Theme.accent)
 
                         let days = premiumManager.trialDaysRemaining
                         Text("Your free trial ends in \(days) day\(days == 1 ? "" : "s")")
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .font(Typography.bodySmall)
                             .foregroundStyle(Theme.textPrimary)
 
                         Spacer()
 
                         Text("See Plans")
-                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .font(Typography.labelMedium)
                             .foregroundStyle(Theme.accent)
                     }
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
-                    .glassCard(cornerRadius: 12)
+                    .splurjCard(.subtle)
                 }
                 .buttonStyle(.plain)
             }
@@ -294,19 +295,19 @@ struct HomeView: View {
             if !pendingScratchCards.isEmpty {
                 NavigationLink(value: "vaultGame") {
                     HStack(spacing: 10) {
-                        Image(systemName: "sparkles.rectangle.stack")
-                            .font(.system(size: 16, weight: .semibold))
+                        PhIcon.cardsThree
+                            .frame(width: 20, height: 20)
                             .foregroundStyle(Theme.accent)
                         Text("\(pendingScratchCards.count) card\(pendingScratchCards.count == 1 ? "" : "s") to scratch")
-                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(Theme.textPrimary)
                         Spacer()
                         Image(systemName: "chevron.right")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(Typography.labelMedium)
                             .foregroundStyle(Theme.textMuted)
                     }
                     .padding(14)
-                    .glassCard(cornerRadius: 12)
+                    .splurjCard(.interactive)
                 }
                 .buttonStyle(.plain)
                 .staggerIn(appeared: appeared, delay: 0.08)
@@ -377,20 +378,20 @@ struct HomeView: View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text("\(greetingText), \(profile?.name ?? "Friend")")
-                    .font(.system(size: 20, weight: .semibold, design: .rounded))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
 
                 HStack(spacing: 6) {
                     Image(systemName: personality.icon)
-                        .font(.system(size: 12))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.accent)
                     Text("\(personality.rawValue)")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                     Text("•")
                         .foregroundStyle(Theme.textMuted)
                     Text("Level \(characterLevel)")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
@@ -428,15 +429,14 @@ struct HomeView: View {
                         Circle()
                             .fill(Theme.elevated)
                             .frame(width: 36, height: 36)
-                        Image(systemName: "bell.fill")
-                            .font(.system(size: 15, weight: .semibold))
+                        PhIcon.bellFill
+                            .frame(width: 18, height: 18)
                             .foregroundStyle(Theme.textSecondary)
-                            .symbolEffect(.bounce, value: bellBounce)
                     }
 
                     if !unreadNotifications.isEmpty {
                         Text("\(min(unreadNotifications.count, 99))")
-                            .font(.system(size: 9, weight: .bold, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(.white)
                             .padding(.horizontal, 4)
                             .padding(.vertical, 1)
@@ -462,23 +462,23 @@ struct HomeView: View {
 
             VStack(spacing: 10) {
                 Text("Total Saved This Month")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
 
                 MMAmountDisplay(amount: totalSavedThisMonth, font: Theme.amountXL, color: Theme.accent)
 
                 HStack(spacing: 4) {
-                    Image(systemName: savedDifference >= 0 ? "arrow.up.right" : "arrow.down.right")
-                        .font(.system(size: 11, weight: .bold))
+                    (savedDifference >= 0 ? PhIcon.arrowUpRight : PhIcon.arrowDownRight)
+                        .frame(width: 12, height: 12)
                     Text("\(currencySymbol)\(abs(savedDifference), specifier: "%.0f") from last month")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(Typography.bodySmall)
                         .contentTransition(.numericText())
                 }
                 .foregroundStyle(savedDifference >= 0 ? Theme.accent : Theme.danger)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 24)
-            .glassCard(cornerRadius: 20)
+            .splurjCard(.hero)
             .offset(y: parallax)
         }
         .frame(height: 140)
@@ -500,13 +500,13 @@ struct HomeView: View {
             NavigationLink(value: "budgetAnalytics") {
                 HomeQuickActionLabel(icon: "chart.bar.fill", label: "Budget Check")
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(.plain)
 
             if hasEnoughDataForWrapped {
                 NavigationLink(value: "wrapped") {
                     HomeQuickActionLabel(icon: "chart.pie.fill", label: "Wrapped")
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(.plain)
             } else {
                 HomeQuickAction(icon: "arrow.down.circle.fill", label: "Expense") {
                     showAddExpense = true
@@ -524,24 +524,20 @@ struct HomeView: View {
 
     private var budgetBarsSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack {
-                Text("Budgets")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
-                    .foregroundStyle(Theme.textPrimary)
-                Spacer()
-
-                NavigationLink(value: "budgetAnalytics") {
-                    Text("See All")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(Theme.accent)
+            SectionHeader(icon: "chart.bar.fill", title: "Budgets", phosphorIcon: PhIcon.chartBarFill)
+                .overlay(alignment: .trailing) {
+                    NavigationLink(value: "budgetAnalytics") {
+                        Text("See All")
+                            .font(Typography.labelMedium)
+                            .foregroundStyle(Theme.accent)
+                    }
                 }
-            }
 
             if budgets.isEmpty {
                 HStack {
                     Spacer()
                     Text("No budgets set up yet")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textMuted)
                     Spacer()
                 }
@@ -559,14 +555,14 @@ struct HomeView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
                                     Image(systemName: budget.icon)
-                                        .font(.system(size: 14))
+                                        .font(Typography.bodyMedium)
                                         .foregroundStyle(Theme.accent)
                                     Text(budget.name)
-                                        .font(.system(size: 14, weight: .medium))
+                                        .font(Typography.bodyMedium)
                                         .foregroundStyle(Theme.textPrimary)
                                     Spacer()
                                     Text("\(currencySymbol)\(Int(spent)) / \(currencySymbol)\(Int(budget.monthlyLimit))")
-                                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                                        .font(Typography.bodySmall)
                                         .foregroundStyle(Theme.textSecondary)
                                 }
 
@@ -591,7 +587,7 @@ struct HomeView: View {
             }
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
         .staggerIn(appeared: appeared, delay: 0.18)
     }
 
@@ -599,20 +595,7 @@ struct HomeView: View {
 
     private var friendActivitySection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack {
-                Text("Friend Activity")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
-                    .foregroundStyle(Theme.textPrimary)
-                Spacer()
-                Button {
-                    showFriendActivity = true
-                } label: {
-                    Text("See All")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(Theme.accent)
-                }
-                .buttonStyle(.plain)
-            }
+            SectionHeader(icon: "person.2.fill", title: "Friend Activity", phosphorIcon: PhIcon.usersFill, action: { showFriendActivity = true })
 
             VStack(spacing: 8) {
                 ForEach(FriendActivity.mockData.prefix(3)) { activity in
@@ -622,16 +605,16 @@ struct HomeView: View {
                                 .fill(activity.avatarColor.opacity(0.18))
                                 .frame(width: 34, height: 34)
                             Image(systemName: activity.avatarIcon)
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(Typography.headingSmall)
                                 .foregroundStyle(activity.avatarColor)
                         }
 
                         HStack(spacing: 0) {
                             Text(activity.username)
-                                .font(.system(size: 13, weight: .semibold))
+                                .font(Typography.labelMedium)
                                 .foregroundStyle(Theme.textPrimary)
                             Text(" \(activity.activityText)")
-                                .font(.system(size: 13))
+                                .font(Typography.bodySmall)
                                 .foregroundStyle(Theme.textSecondary)
                         }
                         .lineLimit(1)
@@ -639,14 +622,14 @@ struct HomeView: View {
                         Spacer()
 
                         Text(activity.timeAgo)
-                            .font(.system(size: 11, weight: .medium))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                     }
                 }
             }
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
         .staggerIn(appeared: appeared, delay: 0.22)
         .sheet(isPresented: $showFriendActivity) {
             FriendActivityView()
@@ -673,22 +656,17 @@ struct HomeView: View {
 
     private var recentTransactionsSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack {
-                Text("Recent")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
-                    .foregroundStyle(Theme.textPrimary)
-                Spacer()
-            }
+            SectionHeader(icon: "clock.fill", title: "Recent", phosphorIcon: PhIcon.clockFill)
 
             if recentItems.isEmpty {
                 HStack {
                     Spacer()
                     VStack(spacing: 8) {
-                        Image(systemName: "tray")
-                            .font(.title2)
+                        PhIcon.tray
+                            .frame(width: 24, height: 24)
                             .foregroundStyle(Theme.textMuted)
                         Text("No transactions yet")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                     }
                     .padding(.vertical, 20)
@@ -703,7 +681,7 @@ struct HomeView: View {
             }
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
         .staggerIn(appeared: appeared, delay: 0.30)
     }
 
@@ -716,21 +694,21 @@ struct HomeView: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
                     Text(item.name)
-                        .font(.system(size: 15, weight: .regular))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                         .lineLimit(1)
                     if item.isResisted {
-                        Image(systemName: "checkmark.shield.fill")
-                            .font(.system(size: 10))
+                        PhIcon.shieldCheckFill
+                            .frame(width: 14, height: 14)
                             .foregroundStyle(Theme.accent)
                     }
                     if !item.moodEmoji.isEmpty {
                         Text(item.moodEmoji)
-                            .font(.system(size: 12))
+                            .font(Typography.bodySmall)
                     }
                 }
                 Text(item.date, format: .dateTime.hour().minute())
-                    .font(.system(size: 13))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textMuted)
             }
 
@@ -739,7 +717,7 @@ struct HomeView: View {
             Text(item.isIncome ? "+\(currencySymbol)\(item.amount, specifier: "%.0f")" :
                     item.isResisted ? "Saved \(currencySymbol)\(item.amount, specifier: "%.0f")" :
                     "-\(currencySymbol)\(item.amount, specifier: "%.0f")")
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
+                .font(Typography.headingMedium)
                 .foregroundStyle(
                     item.isIncome ? Theme.accent :
                         item.isResisted ? Theme.accent :
@@ -812,7 +790,7 @@ struct HomeQuickAction: View {
         } label: {
             HomeQuickActionLabel(icon: icon, label: label)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
         .sensoryFeedback(.impact(weight: .light), trigger: hapticTrigger)
     }
 }
@@ -828,16 +806,16 @@ struct HomeQuickActionLabel: View {
                     .fill(Theme.accent.opacity(0.12))
                     .frame(width: 40, height: 40)
                 Image(systemName: icon)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.accent)
             }
             Text(label)
-                .font(.system(size: 14, weight: .semibold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.textPrimary)
             Spacer()
         }
         .padding(14)
-        .glassCard(cornerRadius: 14)
+        .splurjCard(.interactive)
     }
 }
 
@@ -881,17 +859,17 @@ struct LogWinSheet: View {
             VStack(spacing: 24) {
                 VStack(spacing: 8) {
                     Text("What did you resist?")
-                        .font(Theme.headingFont(.headline))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(.primary)
 
                     TextField("Amount saved", text: $amount)
                         .keyboardType(.decimalPad)
-                        .font(.system(.title, design: .rounded, weight: .bold))
+                        .font(Typography.displayMedium)
                         .multilineTextAlignment(.center)
                         .tint(Theme.accent)
 
                     TextField("What was the temptation?", text: $note)
-                        .font(.body)
+                        .font(Typography.bodyLarge)
                         .multilineTextAlignment(.center)
                         .foregroundStyle(.secondary)
                 }
@@ -922,13 +900,13 @@ struct LogWinSheet: View {
                     dismiss()
                 } label: {
                     Text("Log Win")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                         .background(Theme.accentGradient, in: .capsule)
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .disabled(amount.isEmpty)
                 .sensoryFeedback(.success, trigger: note)
             }

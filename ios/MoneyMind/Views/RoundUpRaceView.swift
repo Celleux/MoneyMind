@@ -44,7 +44,7 @@ struct RoundUpRaceView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -53,7 +53,7 @@ struct RoundUpRaceView: View {
                         syncRoundUps()
                     } label: {
                         Image(systemName: "arrow.clockwise")
-                            .font(.subheadline.weight(.semibold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(Theme.accent)
                     }
                 }
@@ -89,13 +89,13 @@ struct RoundUpRaceView: View {
 
                 ZStack {
                     Image(systemName: "dollarsign.circle.fill")
-                        .font(.system(size: 56))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(personalityColor)
                         .scaleEffect(piggyScale)
 
                     if coinDrop {
                         Image(systemName: "centsign.circle.fill")
-                            .font(.system(size: 20))
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.gold)
                             .offset(y: -50)
                             .transition(.asymmetric(
@@ -113,11 +113,11 @@ struct RoundUpRaceView: View {
 
             VStack(spacing: 6) {
                 Text("$\(String(format: "%.2f", challenge.roundUpTotal))")
-                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(personalityColor)
 
                 Text("saved from round-ups")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
             }
 
@@ -141,16 +141,16 @@ struct RoundUpRaceView: View {
 
             HStack {
                 Text("$0")
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
                 Spacer()
                 Text("Next milestone: $\(nextMilestone)")
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         }
         .padding(24)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.hero)
         .padding(.top, 8)
     }
 
@@ -169,21 +169,21 @@ struct RoundUpRaceView: View {
             statItem(value: String(format: "$%.2f", avg), label: "Avg Round-Up", icon: "chart.bar.fill")
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private func statItem(value: String, label: String, icon: String) -> some View {
         VStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.caption)
+                .font(Typography.labelSmall)
                 .foregroundStyle(personalityColor)
             Text(value)
-                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.textPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
             Text(label)
-                .font(.caption2)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .frame(maxWidth: .infinity)
@@ -193,21 +193,21 @@ struct RoundUpRaceView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("Recent Round-Ups")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text("\(roundUpTransactions.count) total")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
             if roundUpTransactions.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "tray")
-                        .font(.title)
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.textMuted)
                     Text("Add expense transactions\nand round-ups will appear here")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                 }
@@ -221,24 +221,24 @@ struct RoundUpRaceView: View {
                             .frame(width: 36, height: 36)
                             .overlay {
                                 Image(systemName: "arrow.up.circle.fill")
-                                    .font(.system(size: 16))
+                                    .font(Typography.labelLarge)
                                     .foregroundStyle(personalityColor)
                             }
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text(item.0)
-                                .font(.subheadline.weight(.medium))
+                                .font(Typography.bodyMedium)
                                 .foregroundStyle(Theme.textPrimary)
                                 .lineLimit(1)
                             Text(item.2, style: .relative)
-                                .font(.caption)
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textMuted)
                         }
 
                         Spacer()
 
                         Text("+$\(String(format: "%.2f", item.1))")
-                            .font(.system(.subheadline, design: .rounded, weight: .bold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(Theme.success)
                     }
                     .padding(12)
@@ -247,7 +247,7 @@ struct RoundUpRaceView: View {
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private var shareSection: some View {
@@ -258,13 +258,13 @@ struct RoundUpRaceView: View {
                 Image(systemName: "square.and.arrow.up")
                 Text("Share Progress")
             }
-            .font(.subheadline.weight(.semibold))
+            .font(Typography.headingSmall)
             .foregroundStyle(Theme.accent)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .background(Theme.accent.opacity(0.1), in: .rect(cornerRadius: 12))
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .secondary, size: .medium))
         .sheet(isPresented: $shareTrigger) {
             let text = vm.shareChallenge(challenge)
             ShareSheetView(items: [text])

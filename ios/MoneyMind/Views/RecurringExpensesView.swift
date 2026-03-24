@@ -86,16 +86,16 @@ struct RecurringExpensesView: View {
         VStack(spacing: 14) {
             HStack {
                 Image(systemName: "arrow.triangle.2.circlepath")
-                    .font(.title3)
+                    .font(Typography.headingLarge)
                     .foregroundStyle(personality.color)
                 Text("Monthly Recurring")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                 Spacer()
 
                 let count = vm.sortedExpenses(recurringExpenses).count
                 Text("\(count) active")
-                    .font(.caption.weight(.medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -104,7 +104,7 @@ struct RecurringExpensesView: View {
 
             let total = vm.totalMonthlyRecurring(recurringExpenses)
             Text(total, format: .currency(code: currencyCode).precision(.fractionLength(0)))
-                .font(.system(size: 42, weight: .bold, design: .rounded))
+                .font(Typography.displayLarge)
                 .foregroundStyle(personality.color)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentTransition(.numericText(value: total))
@@ -113,16 +113,16 @@ struct RecurringExpensesView: View {
             if pct > 0 {
                 HStack(spacing: 4) {
                     Image(systemName: "chart.pie.fill")
-                        .font(.caption2)
+                        .font(Typography.labelSmall)
                     Text("\(pct, specifier: "%.0f")% of your income")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                 }
                 .foregroundStyle(pct > 50 ? Theme.danger : Theme.textSecondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
         .padding(24)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.hero)
     }
 
     // MARK: - View Mode Picker
@@ -137,9 +137,9 @@ struct RecurringExpensesView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: mode == .list ? "list.bullet" : "calendar")
-                            .font(.caption.weight(.semibold))
+                            .font(Typography.labelSmall)
                         Text(mode.rawValue)
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                     }
                     .foregroundStyle(vm.viewMode == mode ? Theme.textPrimary : Theme.textMuted)
                     .frame(maxWidth: .infinity)
@@ -153,7 +153,7 @@ struct RecurringExpensesView: View {
             }
         }
         .padding(4)
-        .glassCard(cornerRadius: 14)
+        .splurjCard(.subtle)
     }
 
     // MARK: - Pending Detections
@@ -165,10 +165,10 @@ struct RecurringExpensesView: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 6) {
                     Image(systemName: "sparkle")
-                        .font(.caption.weight(.bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.gold)
                     Text("Detected Patterns")
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
                 }
 
@@ -197,15 +197,15 @@ struct RecurringExpensesView: View {
                 ForEach(unused) { expense in
                     HStack(spacing: 12) {
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.warning)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text(expense.merchant)
-                                .font(.subheadline.weight(.medium))
+                                .font(Typography.bodyMedium)
                                 .foregroundStyle(Theme.textPrimary)
                             Text("No activity in 30+ days. Consider cancelling?")
-                                .font(.caption)
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textSecondary)
                         }
 
@@ -215,7 +215,7 @@ struct RecurringExpensesView: View {
                             vm.removeExpense(expense, context: modelContext)
                         } label: {
                             Text("Remove")
-                                .font(.caption.weight(.semibold))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.danger)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 6)
@@ -239,7 +239,7 @@ struct RecurringExpensesView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("All Recurring")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
 
@@ -254,9 +254,9 @@ struct RecurringExpensesView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.up.arrow.down")
-                            .font(.caption2.weight(.bold))
+                            .font(Typography.labelSmall)
                         Text(vm.sortOption.rawValue)
-                            .font(.caption.weight(.medium))
+                            .font(Typography.labelSmall)
                     }
                     .foregroundStyle(Theme.textSecondary)
                     .padding(.horizontal, 10)
@@ -271,10 +271,10 @@ struct RecurringExpensesView: View {
                     Spacer()
                     VStack(spacing: 8) {
                         Image(systemName: "tray")
-                            .font(.title2)
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textMuted)
                         Text("No confirmed recurring expenses yet")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                     }
                     .padding(.vertical, 32)
@@ -330,7 +330,7 @@ struct RecurringExpensesView: View {
                 withAnimation(.spring(response: 0.3)) { vm.previousMonth() }
             } label: {
                 Image(systemName: "chevron.left")
-                    .font(.body.weight(.semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .frame(width: 36, height: 36)
                     .background(Theme.elevated, in: .circle)
@@ -339,7 +339,7 @@ struct RecurringExpensesView: View {
             Spacer()
 
             Text(vm.monthTitle)
-                .font(.system(.headline, design: .rounded, weight: .semibold))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             Spacer()
@@ -348,7 +348,7 @@ struct RecurringExpensesView: View {
                 withAnimation(.spring(response: 0.3)) { vm.nextMonth() }
             } label: {
                 Image(systemName: "chevron.right")
-                    .font(.body.weight(.semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .frame(width: 36, height: 36)
                     .background(Theme.elevated, in: .circle)
@@ -365,7 +365,7 @@ struct RecurringExpensesView: View {
             HStack(spacing: 0) {
                 ForEach(weekdays, id: \.self) { day in
                     Text(day.prefix(2))
-                        .font(.caption2.weight(.semibold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                         .frame(maxWidth: .infinity)
                 }
@@ -387,7 +387,7 @@ struct RecurringExpensesView: View {
             }
         }
         .padding(16)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
     }
 
     @ViewBuilder
@@ -398,14 +398,14 @@ struct RecurringExpensesView: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Text(selectedDate, format: .dateTime.weekday(.wide).month(.abbreviated).day())
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()
 
                     if !dateExpenses.isEmpty {
                         let total = dateExpenses.reduce(0.0) { $0 + $1.amount }
                         Text("\(currencySymbol)\(Int(total))")
-                            .font(.subheadline.weight(.bold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(personality.color)
                     }
                 }
@@ -414,7 +414,7 @@ struct RecurringExpensesView: View {
                     HStack {
                         Spacer()
                         Text("No expenses due this day")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                             .padding(.vertical, 12)
                         Spacer()
@@ -430,13 +430,13 @@ struct RecurringExpensesView: View {
                                     .frame(width: 8, height: 8)
 
                                 Text(expense.merchant)
-                                    .font(.subheadline)
+                                    .font(Typography.bodyMedium)
                                     .foregroundStyle(Theme.textPrimary)
 
                                 Spacer()
 
                                 Text("\(currencySymbol)\(Int(expense.amount))")
-                                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                                    .font(Typography.headingSmall)
                                     .foregroundStyle(Theme.textPrimary)
                             }
                             .padding(.vertical, 6)
@@ -446,7 +446,7 @@ struct RecurringExpensesView: View {
                 }
             }
             .padding(16)
-            .glassCard()
+            .splurjCard(.elevated)
             .transition(.move(edge: .bottom).combined(with: .opacity))
         }
     }
@@ -536,18 +536,18 @@ private struct DetectionBannerCard: View {
                 .frame(width: 40, height: 40)
                 .overlay {
                     Text(expense.category.emoji)
-                        .font(.system(size: 18))
+                        .font(Typography.bodyLarge)
                 }
 
             VStack(alignment: .leading, spacing: 3) {
                 Text("Is \(expense.merchant) recurring?")
-                    .font(.subheadline.weight(.medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textPrimary)
                     .lineLimit(1)
 
                 HStack(spacing: 6) {
                     Text("\(CurrencyHelper.symbol(for: "USD"))\(Int(expense.amount))/\(expense.frequency.rawValue.lowercased())")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
@@ -559,7 +559,7 @@ private struct DetectionBannerCard: View {
                     onDismiss()
                 } label: {
                     Image(systemName: "xmark")
-                        .font(.caption.weight(.bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                         .frame(width: 32, height: 32)
                         .background(Theme.elevated, in: .circle)
@@ -569,7 +569,7 @@ private struct DetectionBannerCard: View {
                     onAccept()
                 } label: {
                     Image(systemName: "checkmark")
-                        .font(.caption.weight(.bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(.white)
                         .frame(width: 32, height: 32)
                         .background(Theme.success, in: .circle)
@@ -603,18 +603,18 @@ private struct RecurringExpenseRow: View {
                     .frame(width: 44, height: 44)
                     .overlay {
                         Text(expense.category.emoji)
-                            .font(.system(size: 20))
+                            .font(Typography.headingLarge)
                     }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(expense.merchant)
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                         .lineLimit(1)
 
                     HStack(spacing: 8) {
                         Text(expense.frequency.rawValue)
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(categoryColor)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
@@ -622,14 +622,14 @@ private struct RecurringExpenseRow: View {
 
                         if expense.isOverdue {
                             Text("OVERDUE")
-                                .font(.system(size: 9, weight: .bold))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.danger)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
                                 .background(Theme.danger.opacity(0.12), in: .capsule)
                         } else {
                             Text("Due \(expense.nextDueDate, format: .dateTime.month(.abbreviated).day())")
-                                .font(.caption)
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(expense.isDueWithinWeek ? Theme.warning : Theme.textMuted)
                         }
                     }
@@ -638,7 +638,7 @@ private struct RecurringExpenseRow: View {
                 Spacer()
 
                 Text("\(CurrencyHelper.symbol(for: "USD"))\(Int(expense.amount))")
-                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
             }
             .padding(.horizontal, 16)

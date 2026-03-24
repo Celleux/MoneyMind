@@ -29,16 +29,16 @@ struct NotificationPermissionCard: View {
                             .fill(Theme.teal.opacity(0.12))
                             .frame(width: 48, height: 48)
                         Image(systemName: "bell.badge.fill")
-                            .font(.title2)
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.teal)
                     }
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Stay on Track")
-                            .font(.subheadline.weight(.semibold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(Theme.textPrimary)
                         Text("Want weekly savings reports and streak reminders?")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                             .lineLimit(2)
                     }
@@ -71,14 +71,14 @@ struct NotificationPermissionCard: View {
                                     .scaleEffect(0.8)
                             }
                             Text("Enable Notifications")
-                                .font(.subheadline.weight(.semibold))
+                                .font(Typography.headingSmall)
                         }
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(Theme.accentGradient, in: .capsule)
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .medium))
                     .disabled(enabling)
 
                     Button {
@@ -88,7 +88,7 @@ struct NotificationPermissionCard: View {
                         }
                     } label: {
                         Text("Not now")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }

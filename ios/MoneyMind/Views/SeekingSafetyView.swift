@@ -13,15 +13,15 @@ struct SeekingSafetyView: View {
                 VStack(spacing: 20) {
                     VStack(spacing: 8) {
                         Image(systemName: "shield.lefthalf.filled")
-                            .font(.system(size: 36))
+                            .font(Typography.displayMedium)
                             .foregroundStyle(purple)
 
                         Text("Seeking Safety")
-                            .font(Theme.headingFont(.title2))
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textPrimary)
 
                         Text("Trauma-informed exercises for building safety and resilience in recovery.")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 16)
@@ -34,17 +34,17 @@ struct SeekingSafetyView: View {
                         } label: {
                             HStack(spacing: 14) {
                                 Image(systemName: topic.icon)
-                                    .font(.title2)
+                                    .font(Typography.displaySmall)
                                     .foregroundStyle(purple)
                                     .frame(width: 48, height: 48)
                                     .background(purple.opacity(0.12), in: .rect(cornerRadius: 12))
 
                                 VStack(alignment: .leading, spacing: 3) {
                                     Text(topic.title)
-                                        .font(.subheadline.weight(.semibold))
+                                        .font(Typography.headingSmall)
                                         .foregroundStyle(Theme.textPrimary)
                                     Text(topic.intro.prefix(60) + "...")
-                                        .font(.caption)
+                                        .font(Typography.labelSmall)
                                         .foregroundStyle(Theme.textSecondary)
                                         .lineLimit(2)
                                 }
@@ -52,13 +52,13 @@ struct SeekingSafetyView: View {
                                 Spacer()
 
                                 Image(systemName: "chevron.right")
-                                    .font(.caption.weight(.semibold))
+                                    .font(Typography.labelSmall)
                                     .foregroundStyle(Theme.textSecondary.opacity(0.4))
                             }
                             .padding(16)
-                            .glassCard()
+                            .splurjCard(.interactive)
                         }
-                        .buttonStyle(PressableButtonStyle())
+                        .buttonStyle(.plain)
                         .accessibilityLabel(topic.title)
                     }
                 }
@@ -71,7 +71,7 @@ struct SeekingSafetyView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -127,13 +127,13 @@ struct SeekingSafetyTopicFlowView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text(topic.title)
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.textPrimary)
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -186,12 +186,12 @@ struct SeekingSafetyTopicFlowView: View {
     private var introStep: some View {
         VStack(alignment: .leading, spacing: 20) {
             Image(systemName: topic.icon)
-                .font(.system(size: 44))
+                .font(Typography.displayLarge)
                 .foregroundStyle(purple)
                 .frame(maxWidth: .infinity)
 
             Text(topic.intro)
-                .font(.body)
+                .font(Typography.bodyLarge)
                 .foregroundStyle(Theme.textPrimary)
                 .lineSpacing(5)
 
@@ -199,7 +199,7 @@ struct SeekingSafetyTopicFlowView: View {
                 Image(systemName: "info.circle.fill")
                     .foregroundStyle(purple.opacity(0.7))
                 Text("Take your time with each reflection. There are no wrong answers.")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
             .padding(12)
@@ -210,19 +210,19 @@ struct SeekingSafetyTopicFlowView: View {
     private func reflectionStep(index: Int) -> some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Reflection \(index + 1) of \(topic.reflectionPrompts.count)")
-                .font(.caption.weight(.semibold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(purple)
 
             Text(topic.reflectionPrompts[index])
-                .font(.title3.weight(.medium))
+                .font(Typography.headingLarge)
                 .foregroundStyle(Theme.textPrimary)
                 .lineSpacing(4)
 
             TextField("Take your time...", text: $currentInput, axis: .vertical)
                 .lineLimit(4...8)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .padding(14)
-                .glassCard(cornerRadius: 12)
+                .splurjCard(.outlined)
                 .foregroundStyle(Theme.textPrimary)
                 .tint(purple)
         }
@@ -232,11 +232,11 @@ struct SeekingSafetyTopicFlowView: View {
         VStack(alignment: .leading, spacing: 20) {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Key Takeaway")
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(purple)
 
                 Text(topic.keyTakeaway)
-                    .font(.subheadline.weight(.medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textPrimary)
                     .lineSpacing(3)
                     .padding(14)
@@ -249,18 +249,18 @@ struct SeekingSafetyTopicFlowView: View {
 
             VStack(alignment: .leading, spacing: 8) {
                 Text("Journal")
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(purple)
 
                 Text(topic.journalPrompt)
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
 
                 TextField("Write freely...", text: $journalText, axis: .vertical)
                     .lineLimit(5...10)
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .padding(14)
-                    .glassCard(cornerRadius: 12)
+                    .splurjCard(.outlined)
                     .foregroundStyle(Theme.textPrimary)
                     .tint(purple)
             }
@@ -279,13 +279,13 @@ struct SeekingSafetyTopicFlowView: View {
                         Image(systemName: "chevron.left")
                         Text("Back")
                     }
-                    .font(.subheadline.weight(.medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .padding(.vertical, 14)
                     .padding(.horizontal, 24)
-                    .glassCard(cornerRadius: 12)
+                    .splurjCard(.outlined)
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .ghost, size: .medium))
             }
 
             Spacer()
@@ -312,13 +312,13 @@ struct SeekingSafetyTopicFlowView: View {
                     Text(isLast ? "Complete" : "Next")
                     Image(systemName: isLast ? "checkmark" : "chevron.right")
                 }
-                .font(.subheadline.weight(.semibold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.background)
                 .padding(.vertical, 14)
                 .padding(.horizontal, 28)
                 .background(purple, in: .rect(cornerRadius: 12))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .sensoryFeedback(.impact(weight: .light), trigger: currentStep)
         }
         .padding(.horizontal)
@@ -335,16 +335,16 @@ struct SeekingSafetyTopicFlowView: View {
                     .fill(purple.opacity(0.1))
                     .frame(width: 120, height: 120)
                 Image(systemName: "checkmark.shield.fill")
-                    .font(.system(size: 56))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(purple)
             }
 
             Text("Topic Complete")
-                .font(Theme.headingFont(.title2))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
 
             Text("You've explored \"\(topic.title)\" — an important step in building safety and resilience.")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -355,13 +355,13 @@ struct SeekingSafetyTopicFlowView: View {
                 dismiss()
             } label: {
                 Text("Done")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(purple, in: .rect(cornerRadius: 14))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
         }

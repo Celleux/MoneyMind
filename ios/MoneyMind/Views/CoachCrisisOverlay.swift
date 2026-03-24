@@ -14,18 +14,18 @@ struct CoachCrisisOverlay: View {
                 Spacer()
 
                 Image(systemName: "heart.fill")
-                    .font(.system(size: 56))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(Theme.emergency)
                     .symbolEffect(.pulse, options: .repeating, value: heartPulse)
                     .onAppear { heartPulse = true }
 
                 VStack(spacing: 10) {
                     Text("You Matter")
-                        .font(Theme.headingFont(.title))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.textPrimary)
 
                     Text("I noticed something in what you shared. Please reach out to someone who can help right now.")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
@@ -57,17 +57,17 @@ struct CoachCrisisOverlay: View {
 
                 VStack(spacing: 8) {
                     Text("Grounding Exercise")
-                        .font(.caption.weight(.semibold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
 
                     Text("Name 5 things you can see right now. Focus on each one for a breath.")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary.opacity(0.8))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
                 }
                 .padding(16)
-                .glassCard()
+                .splurjCard(.elevated)
                 .padding(.horizontal, 24)
 
                 Spacer()
@@ -77,17 +77,17 @@ struct CoachCrisisOverlay: View {
                         onDismiss()
                     } label: {
                         Text("Return to Coach")
-                            .font(.subheadline.weight(.medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                             .padding(.vertical, 14)
                             .padding(.horizontal, 32)
                             .background(Theme.cardSurface, in: .rect(cornerRadius: 12))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .ghost, size: .medium))
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
                 } else {
                     Text("Please take a moment... (\(countdown)s)")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary.opacity(0.6))
                 }
             }
@@ -128,30 +128,30 @@ private struct CrisisCallButton: View {
         } label: {
             HStack(spacing: 14) {
                 Image(systemName: icon)
-                    .font(.title3)
+                    .font(Typography.headingLarge)
                     .foregroundStyle(color)
                     .frame(width: 44, height: 44)
                     .background(color.opacity(0.15), in: .rect(cornerRadius: 12))
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
                     Text(number)
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(color)
                 }
 
                 Spacer()
 
                 Image(systemName: "arrow.up.right")
-                    .font(.caption.weight(.bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(color.opacity(0.6))
             }
             .padding(14)
-            .glassCard()
+            .splurjCard(.interactive)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
         .sensoryFeedback(.impact(weight: .heavy), trigger: title)
         .accessibilityLabel("\(title): \(number)")
     }

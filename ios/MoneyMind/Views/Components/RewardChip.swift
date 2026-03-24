@@ -8,9 +8,9 @@ struct RewardChip: View {
     var body: some View {
         HStack(spacing: 4) {
             Image(systemName: icon)
-                .font(.system(size: 10))
+                .font(Typography.labelSmall)
             Text(text)
-                .font(.system(size: 10, weight: .bold))
+                .font(Typography.labelSmall)
         }
         .foregroundStyle(color)
         .padding(.horizontal, 8)

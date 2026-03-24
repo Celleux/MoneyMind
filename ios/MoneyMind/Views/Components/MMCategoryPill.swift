@@ -12,7 +12,7 @@ struct MMCategoryPill: View {
                 .frame(width: 6, height: 6)
 
             Text(label)
-                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(isSelected ? .white : Theme.textSecondary)
         }
         .padding(.horizontal, Theme.Spacing.xs)

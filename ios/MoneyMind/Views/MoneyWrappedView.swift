@@ -31,7 +31,7 @@ struct MoneyWrappedView: View {
                         Spacer()
                         Button { dismiss() } label: {
                             Image(systemName: "xmark")
-                                .font(.body.weight(.semibold))
+                                .font(Typography.headingMedium)
                                 .foregroundStyle(.white.opacity(0.7))
                                 .frame(width: 32, height: 32)
                                 .background(.ultraThinMaterial, in: .circle)
@@ -161,7 +161,7 @@ private struct WrappedSlideIntro: View {
                 Spacer()
 
                 Image(systemName: data.personality.icon)
-                    .font(.system(size: 64))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(data.personality.color)
                     .scaleEffect(iconPulse ? 1.15 : 0.9)
                     .opacity(appeared ? 1 : 0)
@@ -171,19 +171,19 @@ private struct WrappedSlideIntro: View {
 
                 VStack(spacing: 14) {
                     Text(data.isAnnual ? "Your Year in" : "Your Month in")
-                        .font(.system(.title2, design: .rounded, weight: .medium))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(.white.opacity(0.6))
                         .opacity(appeared ? 1 : 0)
                         .offset(y: appeared ? 0 : 20)
 
                     Text("Splurj")
-                        .font(.system(size: 42, weight: .bold, design: .rounded))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(.white)
                         .opacity(appeared ? 1 : 0)
                         .offset(y: appeared ? 0 : 20)
 
                     Text(data.periodLabel)
-                        .font(.system(.title3, design: .rounded, weight: .semibold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(data.personality.color)
                         .opacity(appeared ? 1 : 0)
                         .offset(y: appeared ? 0 : 20)
@@ -192,7 +192,7 @@ private struct WrappedSlideIntro: View {
                 Spacer()
 
                 Text("Tap to continue")
-                    .font(.system(.caption, design: .rounded, weight: .medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(.white.opacity(0.3))
                     .padding(.bottom, 60)
                     .opacity(appeared ? 1 : 0)
@@ -219,20 +219,20 @@ private struct WrappedSlideSpent: View {
 
     var body: some View {
         ZStack {
-            wrappedMeshBg(accent: data.personality.color, secondary: .green.opacity(0.6))
+            wrappedMeshBg(accent: data.personality.color, secondary: Theme.accentSecondary.opacity(0.6))
 
             VStack(spacing: 0) {
                 Spacer()
 
                 VStack(spacing: 28) {
                     Text(data.isAnnual ? "YOU SAVED" : "TOTAL SPENT")
-                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(data.personality.color)
                         .tracking(4)
                         .opacity(appeared ? 1 : 0)
 
                     Text(animatedAmount, format: .currency(code: "USD").precision(.fractionLength(0)))
-                        .font(.system(size: 56, weight: .bold, design: .rounded))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(.white)
                         .contentTransition(.numericText(value: animatedAmount))
 
@@ -240,9 +240,9 @@ private struct WrappedSlideSpent: View {
                         let isUp = data.spendingChangePercent > 0
                         HStack(spacing: 6) {
                             Image(systemName: isUp ? "arrow.up.right" : "arrow.down.right")
-                                .font(.subheadline.weight(.bold))
+                                .font(Typography.headingSmall)
                             Text("\(abs(Int(data.spendingChangePercent)))% \(isUp ? "more" : "less") than last month")
-                                .font(.system(.subheadline, design: .rounded, weight: .medium))
+                                .font(Typography.bodyMedium)
                         }
                         .foregroundStyle(isUp ? Theme.danger : Theme.success)
                         .opacity(appeared ? 1 : 0)
@@ -250,7 +250,7 @@ private struct WrappedSlideSpent: View {
                     }
 
                     Image(systemName: "dollarsign.circle.fill")
-                        .font(.system(size: 52))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [data.personality.color, Theme.secondary],
@@ -296,7 +296,7 @@ private struct WrappedSlideTopCategory: View {
 
                 VStack(spacing: 28) {
                     Text("TOP CATEGORY")
-                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.secondary)
                         .tracking(4)
                         .opacity(appeared ? 1 : 0)
@@ -329,11 +329,11 @@ private struct WrappedSlideTopCategory: View {
                     if let top = data.topCategory {
                         VStack(spacing: 10) {
                             Text(top.category)
-                                .font(.system(.title2, design: .rounded, weight: .bold))
+                                .font(Typography.displaySmall)
                                 .foregroundStyle(.white)
 
                             Text("was your biggest spend at \(top.amount, format: .currency(code: "USD").precision(.fractionLength(0)))")
-                                .font(.system(.subheadline, design: .rounded, weight: .medium))
+                                .font(Typography.bodyMedium)
                                 .foregroundStyle(.white.opacity(0.6))
                                 .multilineTextAlignment(.center)
 
@@ -341,7 +341,7 @@ private struct WrappedSlideTopCategory: View {
                                 Image(systemName: "cup.and.saucer.fill")
                                     .foregroundStyle(Theme.secondary)
                                 Text("That's \(data.coffeEquivalent) cups of coffee")
-                                    .font(.system(.footnote, design: .rounded, weight: .semibold))
+                                    .font(Typography.bodySmall)
                                     .foregroundStyle(Theme.secondary)
                             }
                             .padding(.horizontal, 16)
@@ -419,7 +419,7 @@ private struct WrappedSlideMoodMap: View {
 
                 VStack(spacing: 28) {
                     Text("SPENDING MOODS")
-                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(.purple)
                         .tracking(4)
                         .opacity(appeared ? 1 : 0)
@@ -427,7 +427,7 @@ private struct WrappedSlideMoodMap: View {
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 4), spacing: 12) {
                         ForEach(Array(moodGrid.enumerated()), id: \.offset) { index, emoji in
                             Text(emoji)
-                                .font(.system(size: 36))
+                                .font(Typography.displayMedium)
                                 .scaleEffect(appeared ? 1 : 0)
                                 .animation(
                                     .spring(response: 0.4, dampingFraction: 0.6)
@@ -440,13 +440,13 @@ private struct WrappedSlideMoodMap: View {
 
                     VStack(spacing: 10) {
                         Text(topMood.emoji)
-                            .font(.system(size: 52))
+                            .font(Typography.displayLarge)
                             .scaleEffect(appeared ? 1 : 0.3)
                             .animation(.spring(response: 0.5, dampingFraction: 0.5).delay(0.6), value: appeared)
 
                         let pct = totalCount > 0 ? Int((Double(topMood.count) / Double(totalCount)) * 100) : 0
                         Text("Your top vibe \(pct)% of purchases")
-                            .font(.system(.subheadline, design: .rounded, weight: .medium))
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(.white.opacity(0.6))
                             .multilineTextAlignment(.center)
                             .opacity(appeared ? 1 : 0)
@@ -500,7 +500,7 @@ private struct WrappedSlideSavings: View {
 
                 VStack(spacing: 28) {
                     Text("SAVINGS PROGRESS")
-                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.success)
                         .tracking(4)
                         .opacity(appeared ? 1 : 0)
@@ -524,18 +524,18 @@ private struct WrappedSlideSavings: View {
 
                         VStack(spacing: 4) {
                             Text("\(Int(data.savingsProgress * 100))%")
-                                .font(.system(size: 44, weight: .bold, design: .rounded))
+                                .font(Typography.displayLarge)
                                 .foregroundStyle(.white)
 
                             Text("of goal")
-                                .font(.system(.caption, design: .rounded, weight: .medium))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(.white.opacity(0.5))
                         }
                     }
 
                     if data.savingsGoal > 0 {
                         Text("\(data.totalSaved, format: .currency(code: "USD").precision(.fractionLength(0))) of \(data.savingsGoal, format: .currency(code: "USD").precision(.fractionLength(0)))")
-                            .font(.system(.body, design: .rounded, weight: .medium))
+                            .font(Typography.bodyLarge)
                             .foregroundStyle(.white.opacity(0.7))
                     }
 
@@ -544,7 +544,7 @@ private struct WrappedSlideSavings: View {
                             Image(systemName: "party.popper.fill")
                             Text("Goal Reached!")
                         }
-                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.gold)
                         .scaleEffect(appeared ? 1 : 0.5)
                         .animation(.spring(response: 0.5, dampingFraction: 0.5).delay(1.2), value: appeared)
@@ -612,13 +612,13 @@ private struct WrappedSlideFortune: View {
 
                 VStack(spacing: 24) {
                     Text("FINANCIAL FORTUNE")
-                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(data.personality.color)
                         .tracking(4)
                         .opacity(appeared ? 1 : 0)
 
                     Image(systemName: "sparkle")
-                        .font(.system(size: 40))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(data.personality.color)
                         .scaleEffect(glowPhase ? 1.2 : 0.9)
                         .opacity(appeared ? 1 : 0)
@@ -689,10 +689,10 @@ private struct WrappedSlideShareCard: View {
                 VStack(spacing: 20) {
                     HStack(spacing: 8) {
                         Image(systemName: data.personality.icon)
-                            .font(.title3)
+                            .font(Typography.headingLarge)
                             .foregroundStyle(data.personality.color)
                         Text(data.periodLabel)
-                            .font(.system(.headline, design: .rounded, weight: .bold))
+                            .font(Typography.headingMedium)
                             .foregroundStyle(.white)
                     }
                     .opacity(appeared ? 1 : 0)
@@ -750,9 +750,9 @@ private struct WrappedSlideShareCard: View {
                     Button(action: onShare) {
                         HStack(spacing: 8) {
                             Image(systemName: "square.and.arrow.up")
-                                .font(.body.weight(.semibold))
+                                .font(Typography.headingMedium)
                             Text("Share Your Wrapped")
-                                .font(.system(.headline, design: .rounded))
+                                .font(Typography.headingMedium)
                         }
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
@@ -766,7 +766,7 @@ private struct WrappedSlideShareCard: View {
                             in: .rect(cornerRadius: 14)
                         )
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 }
                 .padding(.horizontal, 32)
                 .opacity(appeared ? 1 : 0)
@@ -790,17 +790,17 @@ private struct StatMini: View {
     var body: some View {
         VStack(spacing: 8) {
             Image(systemName: icon)
-                .font(.title3)
+                .font(Typography.headingLarge)
                 .foregroundStyle(color)
 
             Text(value)
-                .font(.system(.headline, design: .rounded, weight: .bold))
+                .font(Typography.headingMedium)
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
 
             Text(label)
-                .font(.system(.caption2, design: .rounded, weight: .medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(.white.opacity(0.5))
         }
         .frame(maxWidth: .infinity)
@@ -824,12 +824,12 @@ struct WrappedShareImage: View {
                     Image(systemName: "leaf.fill")
                         .foregroundStyle(Theme.accentGreen)
                     Text("Splurj")
-                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(.white.opacity(0.6))
                 }
                 Spacer()
                 Text(data.periodLabel)
-                    .font(.system(.caption2, design: .rounded, weight: .medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(.white.opacity(0.4))
             }
             .padding(.horizontal, 28)
@@ -839,11 +839,11 @@ struct WrappedShareImage: View {
 
             VStack(spacing: 32) {
                 Image(systemName: data.personality.icon)
-                    .font(.system(size: 48))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(data.personality.color)
 
                 Text(data.isAnnual ? "Year in Review" : "Monthly Wrapped")
-                    .font(.system(.title, design: .rounded, weight: .bold))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(.white)
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
@@ -860,7 +860,7 @@ struct WrappedShareImage: View {
                             .fill(Color(hex: UInt(top.color, radix: 16) ?? 0x6C5CE7))
                             .frame(width: 10, height: 10)
                         Text("Top: \(top.category)")
-                            .font(.system(.footnote, design: .rounded, weight: .semibold))
+                            .font(Typography.bodySmall)
                             .foregroundStyle(.white.opacity(0.6))
                     }
                 }
@@ -870,7 +870,7 @@ struct WrappedShareImage: View {
 
             VStack(spacing: 8) {
                 Text("Get Splurj")
-                    .font(.system(.caption, design: .rounded, weight: .bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(data.personality.color)
                 CardWatermark()
             }
@@ -890,12 +890,12 @@ private struct ShareStatCell: View {
     var body: some View {
         VStack(spacing: 6) {
             Text(value)
-                .font(.system(.title2, design: .rounded, weight: .bold))
+                .font(Typography.displaySmall)
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
             Text(label)
-                .font(.system(.caption2, design: .rounded, weight: .medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(.white.opacity(0.5))
         }
         .frame(maxWidth: .infinity)

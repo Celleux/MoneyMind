@@ -17,27 +17,27 @@ struct AvoidedPurchaseCardView: View {
 
             VStack(spacing: 32) {
                 Text("MONEYMIND")
-                    .font(.system(.caption2, design: .rounded, weight: .bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(.white.opacity(0.4))
                     .tracking(4)
 
                 VStack(spacing: 8) {
                     Text("I saved")
-                        .font(.system(.title3, design: .rounded, weight: .medium))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(.white.opacity(0.7))
 
                     Text(amount, format: .currency(code: "USD").precision(.fractionLength(0)))
-                        .font(.system(size: 56, weight: .bold, design: .rounded))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(.white)
 
                     Text("by saying no")
-                        .font(.system(.title3, design: .rounded, weight: .medium))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(.white.opacity(0.7))
                 }
 
                 if !itemName.isEmpty {
                     Text("\"\(itemName)\"")
-                        .font(.system(.body, design: .rounded, weight: .medium))
+                        .font(Typography.bodyLarge)
                         .foregroundStyle(.white.opacity(0.6))
                         .italic()
                         .lineLimit(2)
@@ -47,9 +47,9 @@ struct AvoidedPurchaseCardView: View {
 
                 HStack(spacing: 6) {
                     Image(systemName: "clock.fill")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                     Text("That's \(workHours, specifier: "%.1f") hours of my work")
-                        .font(.system(.subheadline, design: .rounded, weight: .medium))
+                        .font(Typography.bodyMedium)
                 }
                 .foregroundStyle(Theme.teal)
                 .padding(.horizontal, 16)
@@ -59,9 +59,9 @@ struct AvoidedPurchaseCardView: View {
                 if !trigger.isEmpty {
                     HStack(spacing: 6) {
                         Image(systemName: "bolt.fill")
-                            .font(.caption2)
+                            .font(Typography.labelSmall)
                         Text(trigger)
-                            .font(.system(.caption, design: .rounded, weight: .semibold))
+                            .font(Typography.labelSmall)
                     }
                     .foregroundStyle(Theme.accentGreen)
                     .padding(.horizontal, 14)
@@ -122,16 +122,16 @@ struct ShareWinSheet: View {
                 } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "square.and.arrow.up")
-                            .font(.body.weight(.semibold))
+                            .font(Typography.headingMedium)
                         Text("Share Your Win")
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                     }
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .padding(.horizontal, 32)
                 .sensoryFeedback(.impact(weight: .medium), trigger: showShareSheet)
             }

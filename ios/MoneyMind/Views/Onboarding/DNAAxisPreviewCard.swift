@@ -12,14 +12,14 @@ struct DNAAxisPreviewCard: View {
     var body: some View {
         HStack(spacing: 14) {
             Image(systemName: icon)
-                .font(.system(size: 20, weight: .semibold))
+                .font(Typography.headingLarge)
                 .foregroundStyle(color)
                 .frame(width: 40, height: 40)
                 .background(color.opacity(0.12), in: .rect(cornerRadius: 10))
 
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
 
                 GeometryReader { geo in
@@ -65,7 +65,7 @@ struct DNAAxisPreviewCard: View {
             Spacer(minLength: 0)
         }
         .padding(14)
-        .glassCard(cornerRadius: 14)
+        .splurjCard(.outlined)
         .onAppear {
             guard showShimmer else { return }
             withAnimation(.easeInOut(duration: 1.5).delay(0.5)) {

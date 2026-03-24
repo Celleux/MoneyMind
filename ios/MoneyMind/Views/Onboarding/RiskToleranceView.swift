@@ -44,20 +44,20 @@ struct RiskToleranceView: View {
     var body: some View {
         VStack(spacing: 0) {
             Text("RISK TOLERANCE")
-                .font(.system(size: 10, weight: .bold, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
                 .tracking(3)
                 .padding(.top, 24)
                 .opacity(appeared ? 1 : 0)
 
             Text("How far will you go?")
-                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .font(Typography.displaySmall)
                 .foregroundStyle(.white)
                 .padding(.top, 12)
                 .opacity(appeared ? 1 : 0)
 
             Text("The coins keep growing. Cash out whenever.")
-                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
                 .padding(.top, 6)
                 .opacity(appeared ? 1 : 0)
@@ -79,13 +79,13 @@ struct RiskToleranceView: View {
                         startGame()
                     } label: {
                         Text("Start the Challenge")
-                            .font(.system(size: 17, weight: .bold, design: .rounded))
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.background)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 17)
                             .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                     .padding(.horizontal, 32)
                     .opacity(appeared ? 1 : 0)
                 } else if isRunning {
@@ -94,9 +94,9 @@ struct RiskToleranceView: View {
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: "lock.fill")
-                                .font(.system(size: 16, weight: .bold))
+                                .font(Typography.headingMedium)
                             Text("Lock In My Gains")
-                                .font(.system(size: 17, weight: .bold, design: .rounded))
+                                .font(Typography.headingMedium)
                         }
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
@@ -104,7 +104,7 @@ struct RiskToleranceView: View {
                         .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
                         .scaleEffect(lockInPulse ? 1.03 : 1.0)
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                     .padding(.horizontal, 32)
                 }
             }
@@ -168,7 +168,7 @@ struct RiskToleranceView: View {
 
             VStack(spacing: 8) {
                 Text("RISK")
-                    .font(.system(size: 9, weight: .bold, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
                     .tracking(2)
 
@@ -190,7 +190,7 @@ struct RiskToleranceView: View {
                 }
 
                 Text("\(currentRisk)%")
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.danger)
                     .contentTransition(.numericText())
             }
@@ -201,27 +201,27 @@ struct RiskToleranceView: View {
         VStack(spacing: 20) {
             if exploded {
                 Image(systemName: "face.smiling.inverse")
-                    .font(.system(size: 56))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(Color(hex: 0xFB923C))
 
                 Text("Interesting.")
-                    .font(.system(size: 28, weight: .black, design: .rounded))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(.white)
 
                 Text("You like to push the limits. 😏")
-                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                    .font(Typography.labelLarge)
                     .foregroundStyle(Theme.textSecondary)
             } else {
                 Image(systemName: "lock.shield.fill")
-                    .font(.system(size: 56))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(Theme.accent)
 
                 Text("Locked in at \(levels[max(0, currentLevel)].amount)")
-                    .font(.system(size: 24, weight: .black, design: .rounded))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(.white)
 
                 Text("Smart move. You know your limits.")
-                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                    .font(Typography.labelLarge)
                     .foregroundStyle(Theme.textSecondary)
             }
 
@@ -229,13 +229,13 @@ struct RiskToleranceView: View {
                 onComplete()
             } label: {
                 Text("Continue")
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 17)
                     .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .padding(.horizontal, 32)
             .padding(.top, 16)
         }

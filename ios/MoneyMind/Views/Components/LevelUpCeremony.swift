@@ -59,14 +59,14 @@ struct LevelUpCeremony: View {
 
                 if showTitle {
                     Text("LEVEL UP")
-                        .font(.system(size: 14, weight: .black, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.neonEmerald)
                         .tracking(6)
                         .transition(.opacity)
                 }
 
                 Text("\(displayLevel)")
-                    .font(.system(size: 96, weight: .black, design: .rounded))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(
                         LinearGradient(
                             colors: [Theme.neonGold, Color(hex: 0xFFA500)],
@@ -89,11 +89,11 @@ struct LevelUpCeremony: View {
                                             .fill(reward.color.opacity(0.15))
                                             .frame(width: 36, height: 36)
                                         Image(systemName: reward.icon)
-                                            .font(.system(size: 16, weight: .bold))
+                                            .font(Typography.headingMedium)
                                             .foregroundStyle(reward.color)
                                     }
                                     Text(reward.title)
-                                        .font(.system(size: 14, weight: .bold))
+                                        .font(Typography.headingSmall)
                                         .foregroundStyle(.white)
                                     Spacer()
                                 }
@@ -134,7 +134,7 @@ struct LevelUpCeremony: View {
                         dismiss()
                     } label: {
                         Text("Continue")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.background)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)

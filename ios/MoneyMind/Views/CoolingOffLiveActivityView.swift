@@ -7,11 +7,11 @@ struct CoolingOffLiveActivityCompactView: View {
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: "timer")
-                .font(.caption2.weight(.bold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.teal)
 
             Text(timerInterval: Date.now...endTime, countsDown: true)
-                .font(.system(.caption, design: .rounded, weight: .bold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(.white)
                 .monospacedDigit()
         }
@@ -29,24 +29,24 @@ struct CoolingOffLiveActivityExpandedView: View {
                 Image(systemName: "shield.checkered")
                     .foregroundStyle(Theme.teal)
                 Text("Cooling Off")
-                    .font(.system(.subheadline, design: .rounded, weight: .bold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(.white)
                 Spacer()
                 Text(timerInterval: Date.now...endTime, countsDown: true)
-                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.accentGreen)
                     .monospacedDigit()
             }
 
             if !triggerReason.isEmpty {
                 Text(triggerReason)
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             Text("Stay strong — this urge will pass")
-                .font(.caption2)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.teal)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -62,18 +62,18 @@ struct CoolingOffLockScreenView: View {
         VStack(spacing: 12) {
             HStack {
                 Image(systemName: "shield.checkered")
-                    .font(.title3)
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.teal)
 
                 Text("Cooling Off Timer")
-                    .font(.system(.headline, design: .rounded, weight: .bold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(.white)
 
                 Spacer()
             }
 
             Text(timerInterval: Date.now...endTime, countsDown: true)
-                .font(.system(size: 44, weight: .bold, design: .rounded))
+                .font(Typography.displayLarge)
                 .foregroundStyle(Theme.accentGreen)
                 .monospacedDigit()
                 .frame(maxWidth: .infinity, alignment: .center)

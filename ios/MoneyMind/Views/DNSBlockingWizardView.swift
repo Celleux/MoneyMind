@@ -42,14 +42,14 @@ struct DNSBlockingWizardView: View {
             Spacer()
 
             Text("Block Gambling Sites")
-                .font(Theme.headingFont(.headline))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             Spacer()
 
             if currentStep < 2 {
                 Text("Step \(currentStep + 1)/3")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             } else {
                 Circle().fill(.clear).frame(width: 44, height: 44)
@@ -88,18 +88,18 @@ struct DNSBlockingWizardView: View {
                     .frame(width: 120, height: 120)
 
                 Image(systemName: "shield.checkered")
-                    .font(.system(size: 56))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(shieldBlue)
             }
 
             VStack(spacing: 12) {
                 Text("What is DNS Blocking?")
-                    .font(Theme.headingFont(.title2))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.textPrimary)
                     .multilineTextAlignment(.center)
 
                 Text("DNS blocking prevents your device from connecting to gambling and high-risk spending websites at the network level.")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -120,13 +120,13 @@ struct DNSBlockingWizardView: View {
                 withAnimation { currentStep = 1 }
             } label: {
                 Text("Set Up Blocking")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(shieldBlue, in: .rect(cornerRadius: 14))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
         }
@@ -145,7 +145,7 @@ struct DNSBlockingWizardView: View {
                         .tint(shieldBlue)
 
                     Text("Configuring DNS...")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.textPrimary)
                 }
             } else {
@@ -156,17 +156,17 @@ struct DNSBlockingWizardView: View {
                             .frame(width: 100, height: 100)
 
                         Image(systemName: "network.badge.shield.half.filled")
-                            .font(.system(size: 48))
+                            .font(Typography.displayLarge)
                             .foregroundStyle(shieldBlue)
                     }
 
                     VStack(spacing: 8) {
                         Text("Configure DNS Protection")
-                            .font(Theme.headingFont(.title3))
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textPrimary)
 
                         Text("Splurj will set up secure DNS filtering to block known gambling domains on your device.")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                             .multilineTextAlignment(.center)
                             .lineSpacing(4)
@@ -180,7 +180,7 @@ struct DNSBlockingWizardView: View {
                         BlockedCategoryRow(name: "Lottery Sites", count: "300+")
                     }
                     .padding(16)
-                    .glassCard(cornerRadius: 14)
+                    .splurjCard(.elevated)
                     .padding(.horizontal, 24)
                 }
             }
@@ -194,25 +194,25 @@ struct DNSBlockingWizardView: View {
                             attemptDNSConfig()
                         } label: {
                             Text("Enable DNS Blocking")
-                                .font(.headline)
+                                .font(Typography.headingMedium)
                                 .foregroundStyle(Theme.background)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 16)
                                 .background(shieldBlue, in: .rect(cornerRadius: 14))
                         }
-                        .buttonStyle(PressableButtonStyle())
+                        .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                     } else {
                         Button {
                             completeSetup()
                         } label: {
                             Text("I've Enabled It")
-                                .font(.headline)
+                                .font(Typography.headingMedium)
                                 .foregroundStyle(Theme.background)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 16)
                                 .background(Theme.accentGreen, in: .rect(cornerRadius: 14))
                         }
-                        .buttonStyle(PressableButtonStyle())
+                        .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                     }
 
                     if !showManualFallback {
@@ -220,7 +220,7 @@ struct DNSBlockingWizardView: View {
                             withAnimation { showManualFallback = true }
                         } label: {
                             Text("Set up manually instead")
-                                .font(.subheadline)
+                                .font(Typography.bodyMedium)
                                 .foregroundStyle(Theme.textSecondary)
                         }
                     }
@@ -239,12 +239,12 @@ struct DNSBlockingWizardView: View {
                     .frame(width: 80, height: 80)
 
                 Image(systemName: "gear")
-                    .font(.system(size: 40))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(shieldBlue)
             }
 
             Text("Manual Setup")
-                .font(Theme.headingFont(.title3))
+                .font(Typography.headingLarge)
                 .foregroundStyle(Theme.textPrimary)
 
             VStack(alignment: .leading, spacing: 16) {
@@ -254,7 +254,7 @@ struct DNSBlockingWizardView: View {
                 ManualStepRow(number: 4, text: "Return here and tap \"I've Enabled It\"")
             }
             .padding(16)
-            .glassCard(cornerRadius: 14)
+            .splurjCard(.elevated)
             .padding(.horizontal, 24)
         }
     }
@@ -269,18 +269,18 @@ struct DNSBlockingWizardView: View {
                     .frame(width: 120, height: 120)
 
                 Image(systemName: "checkmark.shield.fill")
-                    .font(.system(size: 56))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(Theme.accentGreen)
                     .symbolEffect(.bounce, value: configSuccess)
             }
 
             VStack(spacing: 12) {
                 Text("Protection Active!")
-                    .font(Theme.headingFont(.title2))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.textPrimary)
 
                 Text("DNS blocking is now configured on your device. Gambling sites will be blocked across all apps and browsers.")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -290,7 +290,7 @@ struct DNSBlockingWizardView: View {
                     Image(systemName: "plus.circle.fill")
                         .foregroundStyle(Theme.accentGreen)
                     Text("+100 XP")
-                        .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.accentGreen)
                 }
                 .padding(.top, 8)
@@ -301,13 +301,13 @@ struct DNSBlockingWizardView: View {
                     Image(systemName: "info.circle.fill")
                         .foregroundStyle(shieldBlue)
                     Text("You can manage DNS settings anytime in Settings → General → VPN & Device Management → DNS")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .lineSpacing(3)
                 }
             }
             .padding(16)
-            .glassCard(cornerRadius: 14)
+            .splurjCard(.elevated)
             .padding(.horizontal, 24)
 
             Spacer()
@@ -316,13 +316,13 @@ struct DNSBlockingWizardView: View {
                 dismiss()
             } label: {
                 Text("Done")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
         }
@@ -360,12 +360,12 @@ private struct BenefitRow: View {
     var body: some View {
         HStack(spacing: 14) {
             Image(systemName: icon)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(color)
                 .frame(width: 32)
 
             Text(text)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textPrimary)
         }
     }
@@ -379,15 +379,15 @@ private struct BlockedCategoryRow: View {
         HStack {
             HStack(spacing: 8) {
                 Image(systemName: "xmark.circle.fill")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.emergency.opacity(0.7))
                 Text(name)
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textPrimary)
             }
             Spacer()
             Text(count)
-                .font(.caption.weight(.medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
         }
     }
@@ -400,13 +400,13 @@ private struct ManualStepRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 14) {
             Text("\(number)")
-                .font(.system(.caption, design: .rounded, weight: .bold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(.white)
                 .frame(width: 24, height: 24)
                 .background(Color(red: 0.25, green: 0.45, blue: 0.95), in: Circle())
 
             Text(text)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textPrimary)
                 .lineSpacing(3)
         }

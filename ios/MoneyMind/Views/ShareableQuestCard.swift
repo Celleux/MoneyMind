@@ -13,7 +13,7 @@ struct ShareableQuestCard: View {
 
             VStack(spacing: 28) {
                 Text("SPLURJ")
-                    .font(.system(size: 11, weight: .heavy, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(.white.opacity(0.4))
                     .tracking(4)
 
@@ -34,7 +34,7 @@ struct ShareableQuestCard: View {
                         .frame(width: 100, height: 100)
 
                     Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 44, weight: .bold))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [Theme.accent, Theme.accent.opacity(0.7)],
@@ -46,12 +46,12 @@ struct ShareableQuestCard: View {
 
                 VStack(spacing: 6) {
                     Text("QUEST COMPLETE")
-                        .font(.system(size: 10, weight: .heavy, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.accent)
                         .tracking(3)
 
                     Text(questTitle)
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(.white)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
@@ -61,7 +61,7 @@ struct ShareableQuestCard: View {
                 if !amountSaved.isEmpty {
                     VStack(spacing: 4) {
                         Text(amountSaved)
-                            .font(.system(size: 40, weight: .black, design: .rounded))
+                            .font(Typography.displayMedium)
                             .foregroundStyle(
                                 LinearGradient(
                                     colors: [Theme.gold, Color(hex: 0xFBBF24)],
@@ -72,14 +72,14 @@ struct ShareableQuestCard: View {
                             .shadow(color: Theme.gold.opacity(0.3), radius: 12)
 
                         Text("SAVED")
-                            .font(.system(size: 10, weight: .heavy))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                             .tracking(2)
                     }
                 }
 
                 Text("This app just gave me a quest to \(action.lowercased()) and I saved \(amountSaved.isEmpty ? "money" : amountSaved)!")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
@@ -98,12 +98,12 @@ struct ShareableQuestCard: View {
                     Image(systemName: "leaf.fill")
                         .foregroundStyle(Theme.accent)
                     Text("splurj.app")
-                        .font(.caption.weight(.medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(.white.opacity(0.4))
                 }
 
                 Text("Don't splurge. Splurj.")
-                    .font(.system(size: 9, weight: .medium, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(.white.opacity(0.2))
             }
             .padding(.bottom, 40)
@@ -141,10 +141,10 @@ struct ShareableQuestCard: View {
     private func shareStatChip(icon: String, value: String, color: Color) -> some View {
         HStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.system(size: 10, weight: .bold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(color)
             Text(value)
-                .font(.system(size: 11, weight: .bold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(.white.opacity(0.7))
                 .lineLimit(1)
         }
@@ -203,9 +203,9 @@ struct ShareQuestButton: View {
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "square.and.arrow.up")
-                    .font(.system(size: 13, weight: .bold))
+                    .font(Typography.labelMedium)
                 Text("Share Your Win")
-                    .font(.system(size: 13, weight: .bold))
+                    .font(Typography.labelMedium)
             }
             .foregroundStyle(Theme.accent)
             .padding(.horizontal, 20)
@@ -217,7 +217,7 @@ struct ShareQuestButton: View {
                 Capsule().stroke(Theme.accent.opacity(0.3), lineWidth: 1)
             )
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .secondary, size: .medium))
         .sheet(isPresented: $showShareSheet) {
             if let image = shareImage {
                 ShareSheet(items: [image])

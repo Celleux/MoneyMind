@@ -65,17 +65,17 @@ struct AccountabilityBuddyView: View {
                     .frame(width: 100, height: 100)
 
                 Image(systemName: "person.2.fill")
-                    .font(.system(size: 40, weight: .bold))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.accent)
             }
 
             VStack(spacing: 8) {
                 Text("Find a Quest Buddy")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(.white)
 
                 Text("Team up with a friend to stay accountable.\nCelebrate wins together — no shame, only hype.")
-                    .font(.system(size: 14))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(2)
@@ -103,9 +103,9 @@ struct AccountabilityBuddyView: View {
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "paperplane.fill")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(Typography.headingMedium)
                     Text("Invite a Buddy")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(Typography.headingMedium)
                 }
                 .foregroundStyle(Theme.background)
                 .frame(maxWidth: .infinity)
@@ -114,13 +114,13 @@ struct AccountabilityBuddyView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             .padding(.horizontal, 20)
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
 
             Button {
                 addSimulatedBuddy()
             } label: {
                 Text("Match me with someone")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.accent)
             }
 
@@ -135,11 +135,11 @@ struct AccountabilityBuddyView: View {
                     .fill(color.opacity(0.15))
                     .frame(width: 36, height: 36)
                 Image(systemName: icon)
-                    .font(.system(size: 14, weight: .bold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(color)
             }
             Text(text)
-                .font(.system(size: 13, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(.white)
         }
     }
@@ -163,20 +163,20 @@ struct AccountabilityBuddyView: View {
                         .frame(width: 56, height: 56)
 
                     Text(String(buddy.buddyName.prefix(2)).uppercased())
-                        .font(.system(size: 20, weight: .black, design: .rounded))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.accent)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(buddy.buddyName)
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(.white)
 
                     HStack(spacing: 4) {
                         Image(systemName: "clock.fill")
-                            .font(.system(size: 9))
+                            .font(Typography.labelSmall)
                         Text("Buddied \(buddy.matchDate.formatted(.relative(presentation: .named)))")
-                            .font(.system(size: 11))
+                            .font(Typography.labelSmall)
                     }
                     .foregroundStyle(Theme.textMuted)
                 }
@@ -185,16 +185,16 @@ struct AccountabilityBuddyView: View {
 
                 VStack(spacing: 2) {
                     Image(systemName: buddy.buddyQuestStreak > 0 ? "flame.fill" : "flame")
-                        .font(.system(size: 20))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(buddy.buddyQuestStreak > 0 ? Color(hex: 0xFB923C) : Theme.textMuted)
                         .symbolEffect(.pulse, isActive: buddy.buddyQuestStreak >= 7)
 
                     Text("\(buddy.buddyQuestStreak)")
-                        .font(.system(size: 14, weight: .black, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(.white)
 
                     Text("streak")
-                        .font(.system(size: 8))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
             }
@@ -238,17 +238,17 @@ struct AccountabilityBuddyView: View {
     private func buddyStat(icon: String, value: String, label: String, color: Color) -> some View {
         VStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.system(size: 14, weight: .bold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(color)
 
             Text(value)
-                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .font(Typography.headingMedium)
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
 
             Text(label)
-                .font(.system(size: 9, weight: .medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
         }
         .frame(maxWidth: .infinity)
@@ -263,10 +263,10 @@ struct AccountabilityBuddyView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 13, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.gold)
                 Text("Buddy's Recent Wins")
-                    .font(.system(size: 14, weight: .bold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(.white)
                 Spacer()
             }
@@ -279,16 +279,16 @@ struct AccountabilityBuddyView: View {
                             .fill(win.color.opacity(0.15))
                             .frame(width: 36, height: 36)
                         Image(systemName: win.icon)
-                            .font(.system(size: 14, weight: .bold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(win.color)
                     }
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(win.title)
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(Typography.labelMedium)
                             .foregroundStyle(.white)
                         Text(win.time)
-                            .font(.system(size: 10))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                     }
 
@@ -300,7 +300,7 @@ struct AccountabilityBuddyView: View {
                             celebrationQuest = win.title
                         } label: {
                             Text("React")
-                                .font(.system(size: 11, weight: .bold))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.accent)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
@@ -310,7 +310,7 @@ struct AccountabilityBuddyView: View {
                         }
                     } else {
                         Text(win.reaction)
-                            .font(.system(size: 18))
+                            .font(Typography.bodyLarge)
                     }
                 }
                 .padding(12)
@@ -348,10 +348,10 @@ struct AccountabilityBuddyView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     HStack {
                         Image(systemName: "heart.circle.fill")
-                            .font(.system(size: 13, weight: .bold))
+                            .font(Typography.labelMedium)
                             .foregroundStyle(Color(hex: 0xF472B6))
                         Text("Reactions Sent")
-                            .font(.system(size: 14, weight: .bold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(.white)
                         Spacer()
                     }
@@ -359,15 +359,15 @@ struct AccountabilityBuddyView: View {
                     ForEach(buddy.reactions.suffix(5)) { reaction in
                         HStack(spacing: 10) {
                             Text(reaction.emoji)
-                                .font(.system(size: 20))
+                                .font(Typography.headingLarge)
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("You reacted to \"\(reaction.questTitle)\"")
-                                    .font(.system(size: 12))
+                                    .font(Typography.bodySmall)
                                     .foregroundStyle(Theme.textSecondary)
                                     .lineLimit(1)
                                 Text(reaction.sentAt.formatted(.relative(presentation: .named)))
-                                    .font(.system(size: 9))
+                                    .font(Typography.labelSmall)
                                     .foregroundStyle(Theme.textMuted)
                             }
 
@@ -392,9 +392,9 @@ struct AccountabilityBuddyView: View {
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "person.badge.plus")
-                        .font(.system(size: 13, weight: .bold))
+                        .font(Typography.labelMedium)
                     Text("Invite Another Buddy")
-                        .font(.system(size: 13, weight: .bold))
+                        .font(Typography.labelMedium)
                 }
                 .foregroundStyle(Theme.accent)
                 .frame(maxWidth: .infinity)
@@ -470,17 +470,17 @@ struct BuddyInviteSheet: View {
                         .fill(Theme.accent.opacity(0.1))
                         .frame(width: 72, height: 72)
                     Image(systemName: "link.circle.fill")
-                        .font(.system(size: 32, weight: .bold))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.accent)
                 }
 
                 VStack(spacing: 6) {
                     Text("Your Invite Code")
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(.white)
 
                     Text(inviteCode)
-                        .font(.system(size: 28, weight: .black, design: .monospaced))
+                        .font(Typography.moneyLarge)
                         .foregroundStyle(Theme.accent)
                         .padding(.vertical, 12)
                         .padding(.horizontal, 24)
@@ -494,7 +494,7 @@ struct BuddyInviteSheet: View {
                         )
 
                     Text("Share this code with a friend")
-                        .font(.system(size: 12))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textMuted)
                 }
 
@@ -510,9 +510,9 @@ struct BuddyInviteSheet: View {
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: copied ? "checkmark" : "doc.on.doc")
-                                .font(.system(size: 13, weight: .bold))
+                                .font(Typography.labelMedium)
                             Text(copied ? "Copied!" : "Copy")
-                                .font(.system(size: 13, weight: .bold))
+                                .font(Typography.labelMedium)
                         }
                         .foregroundStyle(copied ? Theme.accent : .white)
                         .frame(maxWidth: .infinity)
@@ -527,9 +527,9 @@ struct BuddyInviteSheet: View {
                     ShareLink(item: shareText) {
                         HStack(spacing: 6) {
                             Image(systemName: "square.and.arrow.up")
-                                .font(.system(size: 13, weight: .bold))
+                                .font(Typography.labelMedium)
                             Text("Share")
-                                .font(.system(size: 13, weight: .bold))
+                                .font(Typography.labelMedium)
                         }
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
@@ -573,10 +573,10 @@ struct ReactionPickerSheet: View {
         NavigationStack {
             VStack(spacing: 20) {
                 Text("React to")
-                    .font(.system(size: 13))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textMuted)
                 Text(questTitle)
-                    .font(.system(size: 16, weight: .bold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
 
@@ -587,9 +587,9 @@ struct ReactionPickerSheet: View {
                         } label: {
                             VStack(spacing: 6) {
                                 Text(reaction.emoji)
-                                    .font(.system(size: 36))
+                                    .font(Typography.displayMedium)
                                 Text(reaction.label)
-                                    .font(.system(size: 10, weight: .medium))
+                                    .font(Typography.labelSmall)
                                     .foregroundStyle(Theme.textSecondary)
                             }
                             .frame(maxWidth: .infinity)
@@ -631,20 +631,20 @@ struct BuddyCelebrationOverlay: View {
 
             VStack(spacing: 16) {
                 Text(emoji)
-                    .font(.system(size: 72))
+                    .font(Typography.displayLarge)
                     .scaleEffect(emojiScale)
 
                 VStack(spacing: 4) {
                     Text("Reaction Sent!")
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(.white)
 
                     Text("Your buddy will see your \(emoji) for")
-                        .font(.system(size: 13))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
 
                     Text("\"\(questTitle)\"")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(Typography.labelMedium)
                         .foregroundStyle(Theme.accent)
                         .lineLimit(1)
                 }

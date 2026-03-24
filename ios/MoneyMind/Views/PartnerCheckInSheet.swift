@@ -42,16 +42,16 @@ struct PartnerCheckInSheet: View {
                     .fill(Theme.teal.opacity(0.12))
                     .frame(width: 56, height: 56)
                 Image(systemName: "checkmark.message.fill")
-                    .font(.title2)
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.teal)
             }
 
             Text("How was your week?")
-                .font(Theme.headingFont(.title3))
+                .font(Typography.headingLarge)
                 .foregroundStyle(Theme.textPrimary)
 
             Text("Your partner will see this and share theirs too")
-                .font(.caption)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
         }
     }
@@ -59,7 +59,7 @@ struct PartnerCheckInSheet: View {
     private var ratingSection: some View {
         VStack(spacing: 12) {
             Text("Rate your week")
-                .font(.subheadline.weight(.semibold))
+                .font(Typography.headingSmall)
                 .foregroundStyle(Theme.textPrimary)
 
             HStack(spacing: 12) {
@@ -70,7 +70,7 @@ struct PartnerCheckInSheet: View {
                         }
                     } label: {
                         Image(systemName: star <= weekRating ? "star.fill" : "star")
-                            .font(.title2)
+                            .font(Typography.displaySmall)
                             .foregroundStyle(star <= weekRating ? Theme.gold : Theme.textSecondary.opacity(0.3))
                             .scaleEffect(star <= weekRating ? 1.1 : 1.0)
                     }
@@ -80,17 +80,17 @@ struct PartnerCheckInSheet: View {
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private func textFieldSection(_ title: String, text: Binding<String>, icon: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(color)
                 Text(title)
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
             }
 
@@ -120,14 +120,14 @@ struct PartnerCheckInSheet: View {
             HStack(spacing: 8) {
                 Image(systemName: "paperplane.fill")
                 Text("Send Check-In")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
             }
             .foregroundStyle(Theme.background)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .background(Theme.teal, in: .rect(cornerRadius: 12))
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
         .sensoryFeedback(.success, trigger: submitTrigger)
         .accessibilityLabel("Send weekly check-in")
     }

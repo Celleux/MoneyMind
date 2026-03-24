@@ -141,7 +141,7 @@ struct QuickTransactionSheet: View {
                     }
                 } label: {
                     Text(type == .expense ? "Expense" : "Income")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(transactionType == type ? .white : Theme.textMuted)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
@@ -164,11 +164,11 @@ struct QuickTransactionSheet: View {
     private var amountDisplay: some View {
         HStack(alignment: .firstTextBaseline, spacing: 2) {
             Text(CurrencyHelper.symbol(for: profiles.first?.defaultCurrency ?? "USD"))
-                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .font(Typography.displayMedium)
                 .foregroundStyle(Theme.textMuted)
 
             Text(displayAmount)
-                .font(.system(size: 52, weight: .bold, design: .rounded))
+                .font(Typography.displayLarge)
                 .foregroundStyle(Theme.textPrimary)
                 .contentTransition(.numericText())
                 .animation(.spring(response: 0.2, dampingFraction: 0.8), value: amountString)
@@ -186,7 +186,7 @@ struct QuickTransactionSheet: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         Image(systemName: "sparkles")
-                            .font(.system(size: 11))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.accent)
 
                         ForEach(suggestions, id: \.self) { cat in
@@ -198,9 +198,9 @@ struct QuickTransactionSheet: View {
                             } label: {
                                 HStack(spacing: 4) {
                                     Text(cat.emoji)
-                                        .font(.system(size: 12))
+                                        .font(Typography.bodySmall)
                                     Text(cat.rawValue)
-                                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                                        .font(Typography.bodySmall)
                                         .foregroundStyle(selectedCategory == cat ? .white : Theme.accent)
                                 }
                                 .padding(.horizontal, 10)
@@ -228,7 +228,7 @@ struct QuickTransactionSheet: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         Text("Recent")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                             .padding(.leading, 4)
 
@@ -263,9 +263,9 @@ struct QuickTransactionSheet: View {
         } label: {
             HStack(spacing: 4) {
                 Text(cat.emoji)
-                    .font(.system(size: 13))
+                    .font(Typography.bodySmall)
                 Text(cat.rawValue)
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(isSelected ? .white : Theme.textSecondary)
             }
             .padding(.horizontal, 12)
@@ -292,7 +292,7 @@ struct QuickTransactionSheet: View {
                 }
             } label: {
                 Text(dateLabel)
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Calendar.current.isDateInToday(selectedDate) ? Theme.secondary : Theme.textPrimary)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 7)
@@ -309,7 +309,7 @@ struct QuickTransactionSheet: View {
                     }
                 } label: {
                     Text("Yesterday")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textMuted)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 7)
@@ -322,7 +322,7 @@ struct QuickTransactionSheet: View {
                 showDatePicker.toggle()
             } label: {
                 Image(systemName: "calendar")
-                    .font(.system(size: 14))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textMuted)
                     .padding(7)
                     .background(Theme.elevated, in: .circle)
@@ -340,7 +340,7 @@ struct QuickTransactionSheet: View {
             Spacer()
 
             TextField("Merchant / note...", text: $note)
-                .font(.system(size: 13, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textPrimary)
                 .tint(Theme.accent)
                 .frame(maxWidth: 140)
@@ -363,7 +363,7 @@ struct QuickTransactionSheet: View {
     private var vibeCheckRow: some View {
         VStack(spacing: 4) {
             Text("Vibe Check")
-                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
 
             HStack(spacing: 0) {
@@ -377,11 +377,11 @@ struct QuickTransactionSheet: View {
                     } label: {
                         VStack(spacing: 3) {
                             Text(vibe.0)
-                                .font(.system(size: 26))
+                                .font(Typography.displaySmall)
                                 .scaleEffect(isSelected ? 1.25 : 1.0)
 
                             Text(vibe.1)
-                                .font(.system(size: 10, weight: .medium))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(isSelected ? Theme.textPrimary : Theme.textMuted)
                         }
                         .frame(maxWidth: .infinity)
@@ -404,7 +404,7 @@ struct QuickTransactionSheet: View {
             saveTransaction()
         } label: {
             Text("Save")
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
+                .font(Typography.headingMedium)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
@@ -413,7 +413,7 @@ struct QuickTransactionSheet: View {
                     in: .rect(cornerRadius: 14)
                 )
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
         .disabled(amountString.isEmpty)
         .padding(.horizontal, 16)
         .padding(.top, 4)
@@ -549,11 +549,11 @@ struct NumpadKey: View {
             Group {
                 if label == "\u{232B}" {
                     Image(systemName: "delete.left.fill")
-                        .font(.system(size: 20))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.textSecondary)
                 } else {
                     Text(label)
-                        .font(.system(size: 24, weight: .medium, design: .rounded))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(Theme.textPrimary)
                 }
             }

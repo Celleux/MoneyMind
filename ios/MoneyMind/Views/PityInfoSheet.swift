@@ -61,11 +61,11 @@ struct PityInfoSheet: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text(title)
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 Text("\(current)/\(hardPity)")
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(color)
             }
 
@@ -95,26 +95,26 @@ struct PityInfoSheet: View {
 
             HStack {
                 Text("Soft pity: \(softPity)")
-                    .font(.system(size: 11, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
                 Spacer()
                 Text("Guaranteed: \(hardPity)")
-                    .font(.system(size: 11, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
 
             Text(description)
-                .font(.system(size: 12, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.subtle)
     }
 
     private var statsSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Your Stats")
-                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             statRow(label: "Total Pulls", value: "\(state?.totalPulls ?? 0)")
@@ -124,17 +124,17 @@ struct PityInfoSheet: View {
             statRow(label: "Cards Collected", value: "\(collection.count)/\(CardDatabase.totalCards)")
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.subtle)
     }
 
     private func statRow(label: String, value: String) -> some View {
         HStack {
             Text(label)
-                .font(.system(size: 13, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
             Spacer()
             Text(value)
-                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .font(Typography.labelMedium)
                 .foregroundStyle(Theme.textPrimary)
         }
     }
@@ -142,18 +142,18 @@ struct PityInfoSheet: View {
     private var howItWorksSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("How The Vault Works")
-                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             Text("Every time you resist a spending impulse, you earn a scratch card. Inside each card is a gacha pull — scratch to reveal which financial literacy card you've collected.")
-                .font(.system(size: 13, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
 
             Text("This is not gambling. There is no money at risk. Every scratch card is free — earned through discipline. Every card teaches real financial wisdom.")
-                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.accent)
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.subtle)
     }
 }

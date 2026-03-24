@@ -15,19 +15,19 @@ struct EmotionalTriggersView: View {
         EmotionalTrigger(name: "Celebration", icon: "party.popper.fill", color: Color(hex: 0xF5C542), description: "Good news means treating myself", angle: 60),
         EmotionalTrigger(name: "Social Pressure", icon: "person.2.fill", color: Color(hex: 0xFB923C), description: "I spend to keep up with others", angle: 120),
         EmotionalTrigger(name: "Sadness", icon: "cloud.rain.fill", color: Color(hex: 0xA78BFA), description: "Shopping is my comfort blanket", angle: 180),
-        EmotionalTrigger(name: "FOMO", icon: "clock.badge.exclamationmark.fill", color: Color(hex: 0x34D399), description: "Limited time offers get me every time", angle: 240),
+        EmotionalTrigger(name: "FOMO", icon: "clock.badge.exclamationmark.fill", color: Theme.accent, description: "Limited time offers get me every time", angle: 240),
     ]
 
     var body: some View {
         VStack(spacing: 0) {
             Text("Emotional Triggers")
-                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .font(Typography.displayMedium)
                 .foregroundStyle(.white)
                 .opacity(appeared ? 1 : 0)
                 .padding(.top, 24)
 
             Text("How much does each emotion\naffect your spending?")
-                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.top, 8)
@@ -54,19 +54,19 @@ struct EmotionalTriggersView: View {
                     onComplete()
                 }) {
                     Text("Continue")
-                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 17)
                         .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .padding(.horizontal, 32)
                 .padding(.bottom, 48)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             } else if selectedTrigger == nil {
                 Text("Tap each trigger to rate it")
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textMuted)
                     .padding(.bottom, 48)
             }
@@ -97,11 +97,11 @@ struct EmotionalTriggersView: View {
 
             VStack(spacing: 2) {
                 Text("\(ratedCount)")
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.accent)
                     .contentTransition(.numericText())
                 Text("of 6")
-                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
 
@@ -129,19 +129,19 @@ struct EmotionalTriggersView: View {
                                 .frame(width: 56, height: 56)
 
                             Image(systemName: trigger.icon)
-                                .font(.system(size: 22, weight: .semibold))
+                                .font(Typography.displaySmall)
                                 .foregroundStyle(trigger.color)
                         }
                         .scaleEffect(0.8 + rating * 0.3)
 
                         Text(trigger.name)
-                            .font(.system(size: 9, weight: .bold, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(isRated ? trigger.color : Theme.textMuted)
                             .lineLimit(1)
 
                         if isRated {
                             Text("\(Int(rating * 100))%")
-                                .font(.system(size: 8, weight: .bold, design: .rounded))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(trigger.color.opacity(0.7))
                         }
                     }
@@ -179,34 +179,34 @@ struct EmotionalTriggersView: View {
                     .frame(width: 88, height: 88)
 
                 Image(systemName: trigger.icon)
-                    .font(.system(size: 36, weight: .bold))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(trigger.color)
             }
             .scaleEffect(0.9 + binding.wrappedValue * 0.2)
             .animation(.spring(response: 0.3), value: binding.wrappedValue)
 
             Text(trigger.name)
-                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .font(Typography.displaySmall)
                 .foregroundStyle(.white)
 
             Text(trigger.description)
-                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
 
             VStack(spacing: 12) {
                 HStack {
                     Text("Rarely")
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                     Spacer()
                     Text("\(Int(binding.wrappedValue * 100))%")
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(trigger.color)
                         .contentTransition(.numericText())
                     Spacer()
                     Text("Always")
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
 
@@ -242,13 +242,13 @@ struct EmotionalTriggersView: View {
                 }
             } label: {
                 Text("Save & Back")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(trigger.color, in: .rect(cornerRadius: 12))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .padding(.horizontal, 40)
             .sensoryFeedback(.impact(weight: .medium), trigger: binding.wrappedValue)
         }

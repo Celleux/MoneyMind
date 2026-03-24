@@ -86,7 +86,7 @@ struct QuestChainDetailView: View {
                 HStack {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 28))
+                            .font(Typography.displayMedium)
                             .foregroundStyle(Theme.textMuted)
                             .background(Circle().fill(Theme.background.opacity(0.6)).frame(width: 32, height: 32))
                     }
@@ -120,17 +120,17 @@ struct QuestChainDetailView: View {
                     .frame(width: 80, height: 80)
 
                 Image(systemName: chainIcon)
-                    .font(.system(size: 32, weight: .bold))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(chainColor)
             }
 
             Text(chainName)
-                .font(.system(size: 24, weight: .black, design: .rounded))
+                .font(Typography.displaySmall)
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
 
             Text("\(chainQuests.count)-quest story arc")
-                .font(.system(size: 13))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .padding(.bottom, 20)
@@ -142,21 +142,21 @@ struct QuestChainDetailView: View {
         VStack(spacing: 8) {
             HStack {
                 Text("\(completedCount) of \(chainQuests.count) complete")
-                    .font(.system(size: 13, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(.white)
                 Spacer()
                 if isChainComplete {
                     HStack(spacing: 4) {
                         Image(systemName: "crown.fill")
-                            .font(.system(size: 10))
+                            .font(Typography.labelSmall)
                         Text("CHAIN COMPLETE")
-                            .font(.system(size: 10, weight: .black))
+                            .font(Typography.labelSmall)
                             .tracking(1)
                     }
                     .foregroundStyle(Theme.gold)
                 } else {
                     Text("\(Int(Double(completedCount) / Double(max(1, chainQuests.count)) * 100))%")
-                        .font(.system(size: 13, weight: .bold, design: .monospaced))
+                        .font(Typography.moneySmall)
                         .foregroundStyle(chainColor)
                 }
             }
@@ -244,11 +244,11 @@ struct QuestChainDetailView: View {
 
                     if isCompleted {
                         Image(systemName: "checkmark")
-                            .font(.system(size: 14, weight: .bold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(.white)
                     } else {
                         Image(systemName: "bolt.fill")
-                            .font(.system(size: 14, weight: .bold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(Color(hex: 0xF87171))
                     }
                 } else if isCompleted {
@@ -257,7 +257,7 @@ struct QuestChainDetailView: View {
                         .frame(width: 28, height: 28)
 
                     Image(systemName: "checkmark")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(Typography.labelMedium)
                         .foregroundStyle(.white)
                 } else if isCurrent {
                     Circle()
@@ -277,7 +277,7 @@ struct QuestChainDetailView: View {
                         .frame(width: 28, height: 28)
 
                     Image(systemName: "lock.fill")
-                        .font(.system(size: 10))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
             }
@@ -309,12 +309,12 @@ struct QuestChainDetailView: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 8) {
                 Text(quest.title)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .strikethrough(color: Theme.accent.opacity(0.5))
 
                 Text(quest.difficulty.rawValue)
-                    .font(.system(size: 8, weight: .bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(quest.difficulty.color.opacity(0.6))
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
@@ -323,10 +323,10 @@ struct QuestChainDetailView: View {
 
             HStack(spacing: 4) {
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 10))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.accent)
                 Text("Completed")
-                    .font(.system(size: 10))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.accent)
             }
         }
@@ -342,25 +342,25 @@ struct QuestChainDetailView: View {
                 if isBoss {
                     HStack(spacing: 4) {
                         Image(systemName: "bolt.fill")
-                            .font(.system(size: 9))
+                            .font(Typography.labelSmall)
                         Text("BOSS QUEST")
-                            .font(.system(size: 9, weight: .black))
+                            .font(Typography.labelSmall)
                             .tracking(1.5)
                     }
                     .foregroundStyle(Color(hex: 0xF87171))
                 }
 
                 Text(quest.title)
-                    .font(.system(size: 15, weight: .bold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(.white)
 
                 Text(quest.subtitle)
-                    .font(.system(size: 12))
+                    .font(Typography.bodySmall)
                     .foregroundStyle(Theme.textSecondary)
 
                 HStack(spacing: 8) {
                     Text(quest.difficulty.rawValue)
-                        .font(.system(size: 9, weight: .bold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(quest.difficulty.color)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 2)
@@ -368,18 +368,18 @@ struct QuestChainDetailView: View {
 
                     HStack(spacing: 2) {
                         Image(systemName: "star.fill")
-                            .font(.system(size: 8))
+                            .font(Typography.labelSmall)
                         Text("+\(quest.baseXP) XP")
-                            .font(.system(size: 9, weight: .bold))
+                            .font(Typography.labelSmall)
                     }
                     .foregroundStyle(Theme.gold)
 
                     if !quest.estimatedTime.isEmpty {
                         HStack(spacing: 2) {
                             Image(systemName: "clock")
-                                .font(.system(size: 8))
+                                .font(Typography.labelSmall)
                             Text(quest.estimatedTime)
-                                .font(.system(size: 9))
+                                .font(Typography.labelSmall)
                         }
                         .foregroundStyle(Theme.textMuted)
                     }
@@ -396,9 +396,9 @@ struct QuestChainDetailView: View {
                 } label: {
                     HStack {
                         Text(isExpanded ? "Collapse" : "View Details")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(Typography.labelMedium)
                         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(Typography.labelSmall)
                     }
                     .foregroundStyle(chainColor)
                 }
@@ -430,7 +430,7 @@ struct QuestChainDetailView: View {
             Divider().background(Theme.elevated)
 
             Text(quest.description)
-                .font(.system(size: 12))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
 
             if quest.steps.count > 1 {
@@ -471,9 +471,9 @@ struct QuestChainDetailView: View {
             } label: {
                 HStack {
                     Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(Typography.headingMedium)
                     Text("Complete Quest")
-                        .font(.system(size: 15, weight: .black))
+                        .font(Typography.headingSmall)
                 }
                 .foregroundStyle(Theme.background)
                 .frame(maxWidth: .infinity)
@@ -493,7 +493,7 @@ struct QuestChainDetailView: View {
             if showChainArchiveConfirmation {
                 VStack(spacing: 8) {
                     Text("That's okay \u{2014} you tried, and that took courage.")
-                        .font(.system(size: 11))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
 
@@ -504,7 +504,7 @@ struct QuestChainDetailView: View {
                             }
                         } label: {
                             Text("Keep Quest")
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(Typography.labelMedium)
                                 .foregroundStyle(Theme.textSecondary)
                         }
 
@@ -513,9 +513,9 @@ struct QuestChainDetailView: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "leaf.fill")
-                                    .font(.system(size: 10))
+                                    .font(Typography.labelSmall)
                                 Text("Archive (+15 XP)")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .font(Typography.labelMedium)
                             }
                             .foregroundStyle(Theme.accent)
                         }
@@ -530,7 +530,7 @@ struct QuestChainDetailView: View {
                     }
                 } label: {
                     Text("Not for me right now")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
                 .padding(.top, 4)
@@ -542,25 +542,25 @@ struct QuestChainDetailView: View {
     private func lockedNode(quest: QuestDefinition, index: Int, isBoss: Bool) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(quest.title)
-                .font(.system(size: 13, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textDisabled)
 
             if isBoss {
                 HStack(spacing: 4) {
                     Image(systemName: "bolt.fill")
-                        .font(.system(size: 8))
+                        .font(Typography.labelSmall)
                     Text("Boss Quest")
-                        .font(.system(size: 10))
+                        .font(Typography.labelSmall)
                 }
                 .foregroundStyle(Color(hex: 0xF87171).opacity(0.4))
             } else {
                 Text("Complete previous quest first")
-                    .font(.system(size: 10))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
 
             Text(quest.difficulty.rawValue)
-                .font(.system(size: 8, weight: .bold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(quest.difficulty.color.opacity(0.4))
                 .padding(.horizontal, 6)
                 .padding(.vertical, 2)
@@ -590,16 +590,16 @@ struct QuestChainDetailView: View {
 
                 VStack(spacing: 10) {
                     Image(systemName: "trophy.fill")
-                        .font(.system(size: 36))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.gold)
 
                     Text("CHAIN COMPLETE")
-                        .font(.system(size: 16, weight: .black))
+                        .font(Typography.headingMedium)
                         .tracking(2)
                         .foregroundStyle(Theme.gold)
 
                     Text("Epic Card Earned")
-                        .font(.system(size: 13))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
                 .padding(.vertical, 24)
@@ -616,9 +616,9 @@ struct QuestChainDetailView: View {
 
             HStack(spacing: 4) {
                 Image(systemName: "gift.fill")
-                    .font(.system(size: 10))
+                    .font(Typography.labelSmall)
                 Text("CHAIN REWARD")
-                    .font(.system(size: 10, weight: .black))
+                    .font(Typography.labelSmall)
                     .tracking(1.5)
             }
             .foregroundStyle(chainColor.opacity(0.6))
@@ -639,24 +639,24 @@ struct QuestChainDetailView: View {
                             .frame(width: 52, height: 52)
 
                         Image(systemName: "sparkles")
-                            .font(.system(size: 22, weight: .bold))
+                            .font(Typography.displaySmall)
                             .foregroundStyle(chainColor)
                     }
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Epic Card")
-                            .font(.system(size: 14, weight: .bold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(.white)
 
                         Text("Complete all \(chainQuests.count) quests to unlock")
-                            .font(.system(size: 11))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                     }
 
                     Spacer()
 
                     Image(systemName: "lock.fill")
-                        .font(.system(size: 14))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textMuted)
                 }
                 .padding(.horizontal, 16)

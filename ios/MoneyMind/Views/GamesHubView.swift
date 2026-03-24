@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhosphorSwift
 
 struct GamesHubView: View {
     @Environment(\.modelContext) private var modelContext
@@ -133,7 +134,7 @@ struct GamesHubView: View {
                     .frame(width: 52, height: 52)
 
                 Image(systemName: avatarIcon(stage: player.avatarStage))
-                    .font(.system(size: 20, weight: .bold))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(
                         LinearGradient(
                             colors: [Theme.accent, Theme.neonGold],
@@ -149,11 +150,11 @@ struct GamesHubView: View {
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
                     Text("Lv.\(player.level)")
-                        .font(.system(size: 16, weight: .black, design: .rounded))
+                        .font(Typography.moneySmall)
                         .foregroundStyle(.white)
 
                     Text(player.activeTitle)
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.accent)
                         .lineLimit(1)
                 }
@@ -182,28 +183,27 @@ struct GamesHubView: View {
             HStack(spacing: 12) {
                 if player.questStreak > 0 {
                     HStack(spacing: 3) {
-                        Image(systemName: "flame.fill")
-                            .font(.system(size: 14))
+                        PhIcon.fireFill
+                            .frame(width: 18, height: 18)
                             .foregroundStyle(Color(hex: 0xFB923C))
-                            .symbolEffect(.pulse, isActive: player.questStreak >= 7 && !reduceMotion)
                         Text("\(player.questStreak)")
-                            .font(.system(size: 13, weight: .black, design: .rounded))
+                            .font(Typography.labelMedium)
                             .foregroundStyle(.white)
                     }
                 }
 
                 HStack(spacing: 3) {
-                    Image(systemName: "diamond.fill")
-                        .font(.system(size: 11))
+                    PhIcon.diamondFill
+                        .frame(width: 14, height: 14)
                         .foregroundStyle(Theme.neonPurple)
                     Text("\(essence)")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .font(Typography.labelMedium)
                         .foregroundStyle(.white)
                 }
 
                 NavigationLink(destination: LeaderboardView()) {
-                    Image(systemName: "trophy.fill")
-                        .font(.system(size: 13))
+                    PhIcon.trophyFill
+                        .frame(width: 16, height: 16)
                         .foregroundStyle(Theme.neonGold)
                 }
                 .accessibilityLabel("Leaderboard")
@@ -231,9 +231,9 @@ struct GamesHubView: View {
                 ForEach(Array(events.enumerated()), id: \.offset) { _, event in
                     HStack(spacing: 6) {
                         Text(event.icon)
-                            .font(.system(size: 12))
+                            .font(Typography.bodySmall)
                         Text(event.text)
-                            .font(.system(size: 12, weight: .medium))
+                            .font(Typography.bodySmall)
                             .foregroundStyle(Theme.textSecondary)
                             .lineLimit(1)
                     }
@@ -253,7 +253,7 @@ struct GamesHubView: View {
                 sectionHeader("TODAY'S MISSIONS")
                 Spacer()
                 Text("\(completedDailyCount)/\(todaysQuests.count) done")
-                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(completedDailyCount == todaysQuests.count ? Theme.accent : Theme.textMuted)
             }
             .padding(.horizontal, 20)
@@ -278,15 +278,15 @@ struct GamesHubView: View {
 
                     if todaysQuests.isEmpty {
                         VStack(spacing: 8) {
-                            Image(systemName: "checkmark.seal.fill")
-                                .font(.title2)
+                            PhIcon.sealCheckFill
+                                .frame(width: 24, height: 24)
                                 .foregroundStyle(Theme.accent)
                             Text("Quests loading...")
-                                .font(.caption)
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textMuted)
                         }
                         .frame(width: 140, height: 120)
-                        .glassCard()
+                        .splurjCard(.subtle)
                     }
                 }
                 .padding(.vertical, 2)
@@ -361,23 +361,23 @@ struct GamesHubView: View {
 
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        Image(systemName: "trophy.fill")
-                            .font(.system(size: 16))
+                        PhIcon.trophyFill
+                            .frame(width: 18, height: 18)
                             .foregroundStyle(Theme.neonGold)
 
                         Text(challenge.title)
-                            .font(.system(size: 15, weight: .heavy, design: .rounded))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(.white)
 
                         Spacer()
 
                         Text(challenge.timeRemaining)
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                     }
 
                     Text(challenge.challengeDescription)
-                        .font(.system(size: 13, weight: .medium))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
 
                     HStack(spacing: 12) {
@@ -401,16 +401,16 @@ struct GamesHubView: View {
                         .frame(height: 10)
 
                         Text("\(challenge.current)/\(challenge.target)")
-                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                            .font(Typography.moneySmall)
                             .foregroundStyle(.white)
                     }
 
                     HStack(spacing: 6) {
                         Image(systemName: challenge.rewardIcon)
-                            .font(.system(size: 12))
+                            .font(Typography.bodySmall)
                             .foregroundStyle(Theme.neonGold)
                         Text("Reward: \(challenge.rewardLabel)")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.neonGold)
                     }
                 }
@@ -488,11 +488,11 @@ struct GamesHubView: View {
                 .fill(color)
                 .frame(width: 8, height: 8)
             Text(label)
-                .font(.system(size: 12, weight: .medium))
+                .font(Typography.bodySmall)
                 .foregroundStyle(Theme.textSecondary)
             Spacer()
             Text(value)
-                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .font(Typography.labelMedium)
                 .foregroundStyle(.white)
         }
     }
@@ -560,7 +560,7 @@ struct GamesHubView: View {
 
     private func sectionHeader(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 11, weight: .heavy, design: .rounded))
+            .font(Typography.labelSmall)
             .foregroundStyle(Theme.textMuted)
             .tracking(2)
     }
@@ -675,19 +675,19 @@ private struct CompactMissionCard: View {
 
                     if isLucky {
                         Image(systemName: "sparkle")
-                            .font(.system(size: 9, weight: .bold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.neonGold)
                     }
 
                     Spacer()
 
                     Text("+\(quest.baseXP) XP")
-                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.accent)
                 }
 
                 Text(quest.title)
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(.white)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
@@ -696,10 +696,10 @@ private struct CompactMissionCard: View {
 
                 HStack(spacing: 4) {
                     Image(systemName: quest.category.icon)
-                        .font(.system(size: 9))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(quest.category.color)
                     Text(quest.estimatedTime)
-                        .font(.system(size: 9))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
             }
@@ -725,7 +725,7 @@ private struct CompactMissionCard: View {
                         RoundedRectangle(cornerRadius: 14)
                             .fill(Theme.accent.opacity(0.2))
                         Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 32))
+                            .font(Typography.displayMedium)
                             .foregroundStyle(Theme.accent)
                     }
                 }
@@ -756,19 +756,19 @@ private struct ArcadeGameCard: View {
                     .shadow(color: accentColor.opacity(0.2), radius: 8)
 
                 Image(systemName: icon)
-                    .font(.system(size: 22, weight: .bold))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(accentColor)
             }
 
             VStack(alignment: .leading, spacing: 5) {
                 HStack(spacing: 8) {
                     Text(title)
-                        .font(.system(size: 15, weight: .heavy, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(.white)
 
                     if badgeCount > 0 {
                         Text("\(badgeCount)")
-                            .font(.system(size: 10, weight: .black, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(.white)
                             .padding(.horizontal, 7)
                             .padding(.vertical, 2)
@@ -777,12 +777,12 @@ private struct ArcadeGameCard: View {
                 }
 
                 Text(subtitle)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(accentColor.opacity(0.8))
 
                 HStack(spacing: 8) {
                     Text(statLabel)
-                        .font(.system(size: 10, weight: .medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                         .lineLimit(1)
 
@@ -809,7 +809,7 @@ private struct ArcadeGameCard: View {
             Spacer(minLength: 4)
 
             Image(systemName: "chevron.right")
-                .font(.system(size: 12, weight: .semibold))
+                .font(Typography.labelMedium)
                 .foregroundStyle(Theme.textMuted)
         }
         .padding(16)
@@ -845,17 +845,17 @@ private struct ArcadeStatCard: View {
     var body: some View {
         VStack(spacing: 8) {
             Image(systemName: icon)
-                .font(.system(size: 20))
+                .font(Typography.headingLarge)
                 .foregroundStyle(color)
 
             Text(value)
-                .font(.system(size: 18, weight: .black, design: .rounded))
+                .font(Typography.headingLarge)
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
 
             Text(label)
-                .font(.system(size: 10, weight: .medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
         }
         .frame(maxWidth: .infinity)
@@ -884,17 +884,17 @@ private struct QuickMissionSheet: View {
                     Image(systemName: quest.category.icon)
                         .foregroundStyle(quest.category.color)
                     Text(quest.category.rawValue)
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(Typography.labelMedium)
                         .foregroundStyle(quest.category.color)
                 }
 
                 Text(quest.title)
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
 
                 Text(quest.description)
-                    .font(.system(size: 14))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
@@ -903,28 +903,28 @@ private struct QuickMissionSheet: View {
             HStack(spacing: 16) {
                 VStack(spacing: 2) {
                     Text("+\(quest.baseXP)")
-                        .font(.system(size: 20, weight: .black, design: .rounded))
+                        .font(Typography.moneyMedium)
                         .foregroundStyle(Theme.accent)
                     Text("XP")
-                        .font(.system(size: 10, weight: .medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
 
                 VStack(spacing: 2) {
                     Text(quest.difficulty.rawValue)
-                        .font(.system(size: 14, weight: .bold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(quest.difficulty.color)
                     Text("Difficulty")
-                        .font(.system(size: 10, weight: .medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
 
                 VStack(spacing: 2) {
                     Text(quest.estimatedTime)
-                        .font(.system(size: 14, weight: .bold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(.white)
                     Text("Time")
-                        .font(.system(size: 10, weight: .medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
             }
@@ -935,10 +935,10 @@ private struct QuickMissionSheet: View {
                     ForEach(quest.steps) { step in
                         HStack(spacing: 8) {
                             Image(systemName: "circle")
-                                .font(.system(size: 10))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.textMuted)
                             Text(step.instruction)
-                                .font(.system(size: 13))
+                                .font(Typography.bodySmall)
                                 .foregroundStyle(Theme.textSecondary)
                         }
                     }
@@ -950,7 +950,7 @@ private struct QuickMissionSheet: View {
 
             Button(action: onComplete) {
                 Text(quest.steps.count <= 1 ? "Complete Quest" : "Start Quest")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)

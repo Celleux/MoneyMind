@@ -7,16 +7,16 @@ struct ZoneBanner: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(zone.rawValue.uppercased())
-                    .font(.system(size: 11, weight: .heavy, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.accent)
                     .tracking(2)
 
                 Text("Levels \(zone.levelRange.lowerBound)-\(zone.levelRange.upperBound)")
-                    .font(.system(size: 22, weight: .black))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(.white)
 
                 Text(zone.themeDescription)
-                    .font(.system(size: 11))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                     .lineLimit(2)
             }
@@ -29,7 +29,7 @@ struct ZoneBanner: View {
                     .frame(width: 56, height: 56)
 
                 Image(systemName: zone.sfSymbol)
-                    .font(.system(size: 24, weight: .bold))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.accent)
             }
         }
@@ -52,9 +52,9 @@ struct ZoneBanner: View {
         .overlay(alignment: .bottomTrailing) {
             HStack(spacing: 4) {
                 Text("View Map")
-                    .font(.system(size: 9, weight: .medium))
+                    .font(Typography.labelSmall)
                 Image(systemName: "map.fill")
-                    .font(.system(size: 9))
+                    .font(Typography.labelSmall)
             }
             .foregroundStyle(Theme.textMuted)
             .padding(.trailing, 16)

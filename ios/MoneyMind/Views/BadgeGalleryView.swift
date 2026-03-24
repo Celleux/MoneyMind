@@ -22,12 +22,12 @@ struct BadgeGalleryView: View {
                 Image(systemName: "medal.fill")
                     .foregroundStyle(Theme.gold)
                 Text("Badges")
-                    .font(Theme.headingFont(.headline))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 let earnedCount = badges.filter(\.isEarned).count
                 Text("\(earnedCount)/\(badges.count)")
-                    .font(.caption.weight(.medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
@@ -41,7 +41,7 @@ struct BadgeGalleryView: View {
             let categoryBadges = badgesForCategory(selectedCategory)
             if categoryBadges.isEmpty {
                 Text("No badges in this category yet")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 20)
@@ -62,7 +62,7 @@ struct BadgeGalleryView: View {
             }
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
         .sheet(isPresented: Binding(
             get: { selectedBadgeName != nil },
             set: { if !$0 { selectedBadgeName = nil } }
@@ -115,19 +115,19 @@ private struct BadgeCellView: View {
                     }
 
                     Image(systemName: badge.iconName)
-                        .font(.title3)
+                        .font(Typography.headingLarge)
                         .foregroundStyle(badge.isEarned ? badgeColor : Theme.textSecondary.opacity(0.25))
 
                     if !badge.isEarned {
                         Image(systemName: "lock.fill")
-                            .font(.caption2)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary.opacity(0.4))
                             .offset(x: 16, y: 16)
                     }
                 }
 
                 Text(badge.name)
-                    .font(.caption2.weight(.medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(badge.isEarned ? Theme.textPrimary : Theme.textSecondary.opacity(0.4))
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
@@ -160,27 +160,27 @@ private struct BadgeDetailSheetView: View {
                     .fill(badgeColor.opacity(0.06))
                     .frame(width: 104, height: 104)
                 Image(systemName: badge.iconName)
-                    .font(.system(size: 40))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(badgeColor)
             }
 
             Text(badge.name)
-                .font(Theme.headingFont(.title2))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
 
             Text(badge.badgeDescription)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
 
             if let date = badge.dateEarned {
                 Label("Earned \(date, format: .dateTime.month(.wide).day().year())", systemImage: "calendar")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
             Text(badge.category)
-                .font(.caption.weight(.semibold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(badgeColor)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 6)
@@ -194,14 +194,14 @@ private struct BadgeDetailSheetView: View {
                 HStack(spacing: 6) {
                     Image(systemName: "square.and.arrow.up")
                     Text("Share")
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                 }
                 .foregroundStyle(badgeColor)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
                 .background(badgeColor.opacity(0.1), in: .rect(cornerRadius: 12))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .secondary, size: .medium))
         }
         .padding(24)
     }

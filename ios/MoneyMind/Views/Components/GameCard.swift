@@ -1,4 +1,5 @@
 import SwiftUI
+import PhosphorSwift
 
 struct GameCard: View {
     let title: String
@@ -16,14 +17,14 @@ struct GameCard: View {
                     .fill(accentColor.opacity(0.15))
                     .frame(width: 56, height: 56)
                 Image(systemName: icon)
-                    .font(.title2)
+                    .font(Typography.displaySmall)
                     .foregroundStyle(accentColor)
             }
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     Text(title)
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(isLocked ? Theme.textMuted : Theme.textPrimary)
                     if badgeCount > 0 {
                         Text("\(badgeCount)")
@@ -35,16 +36,16 @@ struct GameCard: View {
                             .clipShape(Capsule())
                     }
                     if isLocked {
-                        Image(systemName: "lock.fill")
-                            .font(.caption)
+                        PhIcon.lockFill
+                            .frame(width: 14, height: 14)
                             .foregroundStyle(Theme.textMuted)
                     }
                 }
                 Text(subtitle)
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(accentColor)
                 Text(description)
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
@@ -53,7 +54,8 @@ struct GameCard: View {
             Spacer()
 
             if !isLocked {
-                Image(systemName: "chevron.right")
+                PhIcon.caretRight
+                    .frame(width: 14, height: 14)
                     .foregroundStyle(Theme.textMuted)
             }
         }

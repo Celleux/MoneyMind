@@ -73,7 +73,7 @@ struct CoolingOffView: View {
             Spacer()
 
             Text("Cooling Off")
-                .font(Theme.headingFont(.headline))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             Spacer()
@@ -90,16 +90,16 @@ struct CoolingOffView: View {
             Spacer()
 
             Image(systemName: "timer")
-                .font(.system(size: 56))
+                .font(Typography.displayLarge)
                 .foregroundStyle(Color(red: 0.3, green: 0.5, blue: 1.0))
 
             VStack(spacing: 8) {
                 Text("Set a Cooling Off Period")
-                    .font(Theme.headingFont(.title2))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.textPrimary)
 
                 Text("Give yourself time before acting on an impulse.")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
             }
@@ -110,13 +110,13 @@ struct CoolingOffView: View {
                         startTimer(seconds: seconds)
                     } label: {
                         Text(label)
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.textPrimary)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 20)
-                            .glassCard(cornerRadius: 12)
+                            .splurjCard(.interactive)
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(.plain)
                     .accessibilityLabel("Set timer for \(label)")
                 }
             }
@@ -155,13 +155,13 @@ struct CoolingOffView: View {
 
                 VStack(spacing: 8) {
                     Text(formatCountdown(remaining))
-                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.textPrimary)
                         .contentTransition(.numericText())
                         .animation(.default, value: remaining)
 
                     Text("remaining")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
@@ -183,13 +183,13 @@ struct CoolingOffView: View {
                     showConfirmCancel = true
                 } label: {
                     Text("End Timer")
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 12)
-                        .glassCard(cornerRadius: 10)
+                        .splurjCard(.outlined)
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .ghost, size: .medium))
             }
 
             Spacer().frame(height: 32)
@@ -199,15 +199,15 @@ struct CoolingOffView: View {
     private func completedView(session: CoolingOffSession) -> some View {
         VStack(spacing: 16) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 48))
+                .font(Typography.displayLarge)
                 .foregroundStyle(Theme.accentGreen)
 
             Text("You made it!")
-                .font(Theme.headingFont(.title3))
+                .font(Typography.headingLarge)
                 .foregroundStyle(Theme.textPrimary)
 
             Text("The urge has passed. You're in control.")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
 
             Button {
@@ -215,13 +215,13 @@ struct CoolingOffView: View {
                 dismiss()
             } label: {
                 Text("Done")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
             }
-            .buttonStyle(PressableButtonStyle())
+            .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             .padding(.horizontal, 24)
         }
         .sensoryFeedback(.success, trigger: session.completed)

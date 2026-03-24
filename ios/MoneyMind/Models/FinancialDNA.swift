@@ -69,7 +69,7 @@ nonisolated enum FinancialArchetype: String, Codable, CaseIterable, Sendable {
 
     var color: Color {
         switch self {
-        case .guardian: Color(hex: 0x34D399)
+        case .guardian: Theme.accent
         case .strategist: Color(hex: 0x60A5FA)
         case .adventurer: Color(hex: 0xFB923C)
         case .empath: Color(hex: 0xF472B6)
@@ -79,7 +79,7 @@ nonisolated enum FinancialArchetype: String, Codable, CaseIterable, Sendable {
 
     var secondaryColor: Color {
         switch self {
-        case .guardian: Color(hex: 0x10B981)
+        case .guardian: Theme.accentDim
         case .strategist: Color(hex: 0x3B82F6)
         case .adventurer: Color(hex: 0xF59E0B)
         case .empath: Color(hex: 0xEC4899)

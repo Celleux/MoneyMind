@@ -34,7 +34,7 @@ struct ChallengeInviteView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
+                            .font(Typography.headingLarge)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -54,18 +54,18 @@ struct ChallengeInviteView: View {
                     .fill(Theme.accent.opacity(0.12))
                     .frame(width: 72, height: 72)
                 Image(systemName: "figure.2")
-                    .font(.system(size: 30, weight: .semibold))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.accent)
             }
             .opacity(appeared ? 1 : 0)
             .scaleEffect(appeared ? 1 : 0.6)
 
             Text("Pick a Challenge")
-                .font(Theme.headingFont(.title2))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
 
             Text("Challenge a friend and compete head-to-head.\nThe winner earns bonus XP and a Victor badge!")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -105,16 +105,16 @@ struct ChallengeInviteView: View {
                             .fill(accentColor.opacity(0.15))
                             .frame(width: 48, height: 48)
                         Image(systemName: type.icon)
-                            .font(.system(size: 20, weight: .semibold))
+                            .font(Typography.headingLarge)
                             .foregroundStyle(accentColor)
                     }
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(type.rawValue)
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.textPrimary)
                         Text(type.description)
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                             .lineLimit(2)
                     }
@@ -123,10 +123,10 @@ struct ChallengeInviteView: View {
 
                     VStack(spacing: 2) {
                         Text("+\(type.xpReward)")
-                            .font(.system(.caption, design: .rounded, weight: .bold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.gold)
                         Text("XP")
-                            .font(.system(.caption2, design: .rounded, weight: .medium))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textMuted)
                     }
                 }
@@ -143,19 +143,19 @@ struct ChallengeInviteView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "paperplane.fill")
                             Text("Send Challenge")
-                                .font(.subheadline.weight(.semibold))
+                                .font(Typography.headingSmall)
                         }
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(accentColor, in: .rect(cornerRadius: 10))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .medium))
                     .padding(16)
                     .transition(.move(edge: .top).combined(with: .opacity))
                 }
             }
-            .glassCard(accentGlow: isSelected ? accentColor : nil)
+            .splurjCard(isSelected ? .hero : .elevated, accent: accentColor)
             .overlay {
                 if isSelected {
                     RoundedRectangle(cornerRadius: Theme.Radius.card)
@@ -184,13 +184,13 @@ struct ChallengeInviteView: View {
                 Image(systemName: "trophy.fill")
                     .foregroundStyle(Theme.gold)
                 Text("My Challenges")
-                    .font(Theme.headingFont(.title3))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
 
                 Spacer()
 
                 Text("\(activeInvites.count) active")
-                    .font(.caption.weight(.medium))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
             .padding(.horizontal)
@@ -211,23 +211,23 @@ struct ChallengeInviteView: View {
                     .fill(accentColor.opacity(0.15))
                     .frame(width: 40, height: 40)
                 Image(systemName: type?.icon ?? "bolt.fill")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(accentColor)
             }
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(invite.challengeType)
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
 
                 HStack(spacing: 8) {
                     Label(invite.status.capitalized, systemImage: invite.statusIcon)
-                        .font(.caption2.weight(.medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(accentColor)
 
                     if invite.daysRemaining > 0 {
                         Text("\(invite.daysRemaining)d left")
-                            .font(.caption2)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -237,15 +237,15 @@ struct ChallengeInviteView: View {
 
             VStack(alignment: .trailing, spacing: 2) {
                 Text("\(Int(invite.creatorProgress * 100))%")
-                    .font(.system(.caption, design: .rounded, weight: .bold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textPrimary)
                 Text("progress")
-                    .font(.caption2)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
             }
         }
         .padding(14)
-        .glassCard()
+        .splurjCard(.elevated)
         .padding(.horizontal)
     }
 

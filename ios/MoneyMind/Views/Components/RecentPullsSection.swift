@@ -15,7 +15,7 @@ struct RecentPullsSection: View {
         if !recentCards.isEmpty {
             VStack(alignment: .leading, spacing: 12) {
                 Text("Recent Pulls")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                     .padding(.horizontal)
 
@@ -29,7 +29,7 @@ struct RecentPullsSection: View {
 
                                     if collected.isNew {
                                         Text("NEW")
-                                            .font(.system(size: 8, weight: .heavy, design: .rounded))
+                                            .font(Typography.labelSmall)
                                             .foregroundStyle(Theme.background)
                                             .padding(.horizontal, 6)
                                             .padding(.vertical, 2)

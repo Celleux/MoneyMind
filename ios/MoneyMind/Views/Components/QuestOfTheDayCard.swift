@@ -45,40 +45,40 @@ struct QuestOfTheDayCard: View {
                         .stroke(quest.category.color.opacity(0.3), lineWidth: 1.5)
                         .frame(width: 48, height: 48)
                     Image(systemName: quest.category.icon)
-                        .font(.system(size: 20, weight: .bold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(quest.category.color)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 6) {
                         Text("Quest of the Day")
-                            .font(.system(size: 10, weight: .heavy, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.gold)
                             .tracking(1)
                             .textCase(.uppercase)
 
                         Image(systemName: "sparkles")
-                            .font(.system(size: 10))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.gold)
                             .symbolEffect(.pulse, isActive: sparkle)
                     }
 
                     Text(quest.title)
-                        .font(.system(size: 15, weight: .bold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
                         .lineLimit(1)
 
                     HStack(spacing: 8) {
                         HStack(spacing: 3) {
                             Image(systemName: "star.fill")
-                                .font(.system(size: 9))
+                                .font(Typography.labelSmall)
                             Text("+\(quest.baseXP) XP")
-                                .font(.system(size: 10, weight: .bold))
+                                .font(Typography.labelSmall)
                         }
                         .foregroundStyle(Theme.gold)
 
                         Text(quest.difficulty.rawValue)
-                            .font(.system(size: 9, weight: .bold))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(quest.difficulty.color)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
@@ -88,7 +88,7 @@ struct QuestOfTheDayCard: View {
 
                         if !quest.estimatedImpact.isEmpty {
                             Text(quest.estimatedImpact)
-                                .font(.system(size: 9, weight: .medium))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(Theme.accent)
                         }
                     }
@@ -97,7 +97,7 @@ struct QuestOfTheDayCard: View {
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.textMuted)
             }
             .padding(14)
@@ -140,28 +140,28 @@ struct QuestOfTheDayCard: View {
                         .fill(Theme.accent.opacity(0.15))
                         .frame(width: 48, height: 48)
                     Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 22, weight: .bold))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(Theme.accent)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("All Quests Complete")
-                        .font(.system(size: 15, weight: .bold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
 
                     HStack(spacing: 6) {
                         if questStreak > 0 {
                             HStack(spacing: 3) {
                                 Image(systemName: "flame.fill")
-                                    .font(.system(size: 10))
+                                    .font(Typography.labelSmall)
                                 Text("\(questStreak) day streak")
-                                    .font(.system(size: 11, weight: .semibold))
+                                    .font(Typography.labelSmall)
                             }
                             .foregroundStyle(Color(hex: 0xFB923C))
                         }
 
                         Text("Come back tomorrow")
-                            .font(.system(size: 11))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
@@ -169,11 +169,11 @@ struct QuestOfTheDayCard: View {
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.textMuted)
             }
             .padding(14)
-            .glassCard(cornerRadius: 16)
+            .splurjCard(.hero)
         }
         .buttonStyle(.plain)
     }

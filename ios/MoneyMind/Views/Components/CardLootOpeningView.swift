@@ -148,7 +148,7 @@ struct CardLootOpeningView: View {
             HStack(spacing: 4) {
                 ForEach(0..<starCount, id: \.self) { i in
                     Image(systemName: "star.fill")
-                        .font(.system(size: 16))
+                        .font(Typography.labelLarge)
                         .foregroundStyle(card.rarity.color)
                         .opacity(i < starsRevealed ? 1 : 0)
                         .scaleEffect(i < starsRevealed ? 1.0 : 0.3)
@@ -158,13 +158,13 @@ struct CardLootOpeningView: View {
             .padding(.top, 16)
 
             Text(card.name)
-                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .font(Typography.displaySmall)
                 .foregroundStyle(card.rarity.color)
                 .opacity(nameOpacity)
                 .padding(.top, 12)
 
             Text(card.tip)
-                .font(.system(size: 14, weight: .medium))
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -172,7 +172,7 @@ struct CardLootOpeningView: View {
                 .padding(.top, 8)
 
             Text(card.set.rawValue)
-                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(card.set.accentColor.opacity(0.6))
                 .opacity(tipOpacity)
                 .padding(.top, 4)
@@ -181,7 +181,7 @@ struct CardLootOpeningView: View {
                 onDismiss()
             } label: {
                 Text("Add to Collection")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)

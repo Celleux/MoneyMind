@@ -18,11 +18,11 @@ struct VibeCheckOverlay: View {
             VStack(spacing: 20) {
                 VStack(spacing: 8) {
                     Text("Vibe Check")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.textPrimary)
 
                     Text("How did this purchase make you feel?")
-                        .font(.system(size: 14))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                 }
 
@@ -41,7 +41,7 @@ struct VibeCheckOverlay: View {
                     }
                 } label: {
                     Text("Not now")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textMuted)
                 }
                 .buttonStyle(.plain)
@@ -96,12 +96,12 @@ struct VibeCheckOverlay: View {
         } label: {
             VStack(spacing: 6) {
                 Text(vibe.emoji)
-                    .font(.system(size: 32))
+                    .font(Typography.displayMedium)
                     .scaleEffect(isBouncing ? 1.35 : 1.0)
                     .shadow(color: isSelected ? Theme.accent.opacity(0.6) : .clear, radius: 8)
 
                 Text(vibe.label)
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(isSelected ? Theme.textPrimary : Theme.textMuted)
             }
             .frame(maxWidth: .infinity)

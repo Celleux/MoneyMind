@@ -26,11 +26,11 @@ struct CurriculumSectionView: View {
                     Image(systemName: "book.fill")
                         .foregroundStyle(Theme.teal)
                     Text("Your Splurj Program")
-                        .font(Theme.headingFont(.headline))
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()
                     Text("\(completedCount) of 8")
-                        .font(.caption.weight(.medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.teal)
                 }
 
@@ -51,13 +51,13 @@ struct CurriculumSectionView: View {
                             )
                         }
                         .disabled(!unlocked)
-                        .buttonStyle(PressableButtonStyle())
+                        .buttonStyle(.plain)
                         .accessibilityLabel("\(content.title), \(completed ? "completed" : unlocked ? "available" : "locked")")
                     }
                 }
             }
             .padding(20)
-            .glassCard(cornerRadius: 20)
+            .splurjCard(.elevated)
         }
     }
 }
@@ -90,25 +90,25 @@ private struct CurriculumSessionRow: View {
 
                 if isCompleted {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.title3)
+                        .font(Typography.headingLarge)
                         .foregroundStyle(accentColor)
                 } else if isUnlocked {
                     Image(systemName: content.iconName)
-                        .font(.body)
+                        .font(Typography.bodyLarge)
                         .foregroundStyle(accentColor)
                 } else {
                     Image(systemName: "lock.fill")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary.opacity(0.4))
                 }
             }
 
             VStack(alignment: .leading, spacing: 3) {
                 Text("Session \(content.number)")
-                    .font(.caption2.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(isUnlocked ? accentColor : Theme.textSecondary.opacity(0.4))
                 Text(content.title)
-                    .font(.subheadline.weight(.medium))
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(isUnlocked ? Theme.textPrimary : Theme.textSecondary.opacity(0.4))
                     .lineLimit(1)
             }
@@ -116,11 +116,11 @@ private struct CurriculumSessionRow: View {
             Spacer()
 
             Text(content.duration)
-                .font(.caption2.weight(.medium))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary.opacity(isUnlocked ? 0.7 : 0.3))
 
             Image(systemName: "chevron.right")
-                .font(.caption.weight(.semibold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary.opacity(isUnlocked ? 0.3 : 0.1))
         }
         .padding(12)

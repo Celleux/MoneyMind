@@ -49,14 +49,14 @@ struct ChallengesCelebrationOverlay: View {
                         .fill(Theme.gold.opacity(0.2))
                         .frame(width: 72, height: 72)
                     Image(systemName: "trophy.fill")
-                        .font(.system(size: 36))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.gold)
                 }
                 .scaleEffect(showContent ? 1 : 0.3)
                 .opacity(showContent ? 1 : 0)
 
                 Text(message)
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
                     .opacity(showContent ? 1 : 0)
@@ -66,13 +66,13 @@ struct ChallengesCelebrationOverlay: View {
                     onDismiss()
                 } label: {
                     Text("Continue")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.background)
                         .padding(.horizontal, 40)
                         .padding(.vertical, 14)
                         .background(Theme.gold, in: .capsule)
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .opacity(showContent ? 1 : 0)
                 .offset(y: showContent ? 0 : 30)
             }

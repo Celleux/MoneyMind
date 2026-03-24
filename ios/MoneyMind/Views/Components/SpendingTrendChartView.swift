@@ -20,12 +20,12 @@ struct SpendingTrendChartView: View {
                 Image(systemName: "chart.xyaxis.line")
                     .foregroundStyle(Theme.accent)
                 Text("Spending Trend")
-                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 if let last = data.last, last.total > 0 {
                     Text("$\(Int(last.total)) this month")
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
@@ -33,13 +33,13 @@ struct SpendingTrendChartView: View {
             if data.allSatisfy({ $0.total == 0 }) {
                 VStack(spacing: 12) {
                     Image(systemName: "chart.line.flattrend.xyaxis")
-                        .font(.system(size: 36))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.textMuted)
                     Text("Not enough data yet")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                     Text("Keep tracking to see your trend")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                 }
                 .frame(maxWidth: .infinity)
@@ -132,7 +132,7 @@ struct SpendingTrendChartView: View {
 
                             if hoveredIndex == i {
                                 Text("$\(Int(data[i].total))")
-                                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                                    .font(Typography.labelSmall)
                                     .foregroundStyle(Theme.textPrimary)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
@@ -147,7 +147,7 @@ struct SpendingTrendChartView: View {
                     HStack(spacing: 0) {
                         ForEach(data.indices, id: \.self) { i in
                             Text(data[i].label)
-                                .font(.system(size: 10, weight: .medium))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(i == data.count - 1 ? Theme.textPrimary : Theme.textMuted)
                                 .frame(maxWidth: .infinity)
                         }
@@ -158,7 +158,7 @@ struct SpendingTrendChartView: View {
             }
         }
         .padding(20)
-        .glassCard(cornerRadius: 20)
+        .splurjCard(.elevated)
         .onAppear {
             withAnimation(.easeInOut(duration: 1.0)) {
                 animatedProgress = 1

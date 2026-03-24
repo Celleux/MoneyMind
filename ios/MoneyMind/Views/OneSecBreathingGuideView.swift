@@ -47,7 +47,7 @@ struct OneSecBreathingGuideView: View {
             Spacer()
 
             Text("Breathing Pause")
-                .font(Theme.headingFont(.headline))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             Spacer()
@@ -67,17 +67,17 @@ struct OneSecBreathingGuideView: View {
                     .frame(width: 100, height: 100)
 
                 Image(systemName: "lungs.fill")
-                    .font(.system(size: 48))
+                    .font(Typography.displayLarge)
                     .foregroundStyle(breathGreen)
             }
 
             VStack(spacing: 8) {
                 Text("Add a Breathing Pause")
-                    .font(Theme.headingFont(.title2))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.textPrimary)
 
                 Text("Add a moment of reflection before opening tempting apps. Based on the One Sec method.")
-                    .font(.subheadline)
+                    .font(Typography.bodyMedium)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -89,15 +89,15 @@ struct OneSecBreathingGuideView: View {
     private var researchBadge: some View {
         HStack(spacing: 12) {
             Image(systemName: "chart.bar.doc.horizontal.fill")
-                .font(.title3)
+                .font(Typography.headingLarge)
                 .foregroundStyle(breathGreen)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("57% impulse reduction")
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
                 Text("Max-Planck Institute for Human Development")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
         }
@@ -113,7 +113,7 @@ struct OneSecBreathingGuideView: View {
     private var stepsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Setup Guide")
-                .font(Theme.headingFont(.headline))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
 
             SetupStepCard(
@@ -184,10 +184,10 @@ struct OneSecBreathingGuideView: View {
             ForEach(triggerApps, id: \.0) { app in
                 HStack(spacing: 6) {
                     Image(systemName: app.1)
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(breathGreen)
                     Text(app.0)
-                        .font(.caption.weight(.medium))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textPrimary)
                 }
                 .padding(.horizontal, 10)
@@ -207,7 +207,7 @@ struct OneSecBreathingGuideView: View {
                 Image(systemName: "lightbulb.fill")
                     .foregroundStyle(Theme.gold)
                 Text("Tips")
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
             }
 
@@ -218,7 +218,7 @@ struct OneSecBreathingGuideView: View {
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private func toggleStep(_ index: Int) {
@@ -259,27 +259,27 @@ private struct SetupStepCard: View {
                                 .fill(Theme.accentGreen)
                                 .frame(width: 32, height: 32)
                             Image(systemName: "checkmark")
-                                .font(.caption.weight(.bold))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(.white)
                         } else {
                             Circle()
                                 .fill(accentColor.opacity(0.12))
                                 .frame(width: 32, height: 32)
                             Text("\(number)")
-                                .font(.system(.caption, design: .rounded, weight: .bold))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(accentColor)
                         }
                     }
 
                     Text(title)
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(isCompleted ? Theme.textSecondary : Theme.textPrimary)
                         .strikethrough(isCompleted)
 
                     Spacer()
 
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.caption.weight(.semibold))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary.opacity(0.5))
                 }
             }
@@ -290,13 +290,13 @@ private struct SetupStepCard: View {
                 VStack(alignment: .leading, spacing: 14) {
                     HStack(spacing: 12) {
                         Image(systemName: icon)
-                            .font(.title2)
+                            .font(Typography.displaySmall)
                             .foregroundStyle(accentColor)
                             .frame(width: 44, height: 44)
                             .background(accentColor.opacity(0.1), in: .rect(cornerRadius: 10))
 
                         Text(description)
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                             .lineSpacing(4)
                     }
@@ -308,16 +308,16 @@ private struct SetupStepCard: View {
                     Button(action: onComplete) {
                         HStack(spacing: 6) {
                             Image(systemName: "checkmark")
-                                .font(.caption.weight(.bold))
+                                .font(Typography.labelSmall)
                             Text("Done")
-                                .font(.subheadline.weight(.semibold))
+                                .font(Typography.headingSmall)
                         }
                         .foregroundStyle(.white)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
                         .background(accentColor, in: .capsule)
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .medium))
                     .sensoryFeedback(.success, trigger: isCompleted)
                 }
                 .padding(.horizontal, 16)
@@ -325,7 +325,7 @@ private struct SetupStepCard: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .glassCard()
+        .splurjCard(.elevated)
     }
 }
 
@@ -335,11 +335,11 @@ private struct TipRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: "arrow.right.circle.fill")
-                .font(.caption)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.gold.opacity(0.7))
                 .padding(.top, 2)
             Text(text)
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .lineSpacing(3)
         }

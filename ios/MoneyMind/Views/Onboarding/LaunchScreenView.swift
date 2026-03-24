@@ -23,14 +23,14 @@ struct LaunchScreenView: View {
 
                 VStack(spacing: 8) {
                     Text("Welcome,")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.textSecondary)
 
                     ZStack {
                         if name.isEmpty && !nameFocused {
                             HStack(spacing: 0) {
                                 Text("Tap to enter name")
-                                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                                    .font(Typography.displaySmall)
                                     .foregroundStyle(Theme.textMuted.opacity(0.5))
 
                                 Rectangle()
@@ -44,7 +44,7 @@ struct LaunchScreenView: View {
                         }
 
                         TextField("", text: $name)
-                            .font(.system(size: 32, weight: .black, design: .rounded))
+                            .font(Typography.displayMedium)
                             .foregroundStyle(.white)
                             .multilineTextAlignment(.center)
                             .tint(Theme.accent)
@@ -60,7 +60,7 @@ struct LaunchScreenView: View {
 
                     if name.isEmpty {
                         Text("Enter your name to continue")
-                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .font(Typography.bodySmall)
                             .foregroundStyle(Theme.accent.opacity(0.7))
                             .padding(.top, 4)
                     }
@@ -70,30 +70,30 @@ struct LaunchScreenView: View {
 
                 HStack(spacing: 12) {
                     Image(systemName: archetype.icon)
-                        .font(.system(size: 20, weight: .bold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(archetype.color)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(archetype.rawValue)
-                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(.white)
 
                         Text(archetype.tagline)
-                            .font(.system(size: 11, weight: .medium, design: .rounded))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(archetype.color)
                     }
 
                     Spacer()
 
                     HStack(spacing: 8) {
-                        axisDot(value: dna.spendingAxis, color: Color(hex: 0x34D399))
+                        axisDot(value: dna.spendingAxis, color: Theme.accent)
                         axisDot(value: dna.emotionalAxis, color: Color(hex: 0x60A5FA))
                         axisDot(value: dna.riskAxis, color: Color(hex: 0xFB923C))
                         axisDot(value: dna.socialAxis, color: Color(hex: 0xF472B6))
                     }
                 }
                 .padding(16)
-                .glassCard(cornerRadius: 14)
+                .splurjCard(.subtle)
                 .padding(.horizontal, 24)
                 .opacity(appeared ? 1 : 0)
                 .offset(y: appeared ? 0 : 15)
@@ -101,19 +101,19 @@ struct LaunchScreenView: View {
 
                 HStack(spacing: 12) {
                     Image(systemName: "map.fill")
-                        .font(.system(size: 18))
+                        .font(Typography.bodyLarge)
                         .foregroundStyle(Theme.accent)
                         .frame(width: 40, height: 40)
                         .background(Theme.accent.opacity(0.12), in: .rect(cornerRadius: 10))
 
                     Text("Your first quest is waiting.")
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(.white)
 
                     Spacer()
                 }
                 .padding(16)
-                .glassCard(cornerRadius: 14)
+                .splurjCard(.interactive)
                 .padding(.horizontal, 24)
                 .opacity(appeared ? 1 : 0)
                 .offset(y: appeared ? 0 : 15)
@@ -132,9 +132,9 @@ struct LaunchScreenView: View {
                 } label: {
                     HStack(spacing: 8) {
                         Text("Enter Splurj")
-                            .font(.system(size: 18, weight: .black, design: .rounded))
+                            .font(Typography.headingLarge)
                         Image(systemName: "arrow.right")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(Typography.headingMedium)
                     }
                     .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
@@ -147,7 +147,7 @@ struct LaunchScreenView: View {
                     )
                     .shadow(color: !name.isEmpty ? Theme.accent.opacity(0.4) : .clear, radius: 16, y: 6)
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .disabled(name.isEmpty)
                 .padding(.horizontal, 32)
                 .opacity(appeared ? 1 : 0)
@@ -157,7 +157,7 @@ struct LaunchScreenView: View {
                     onComplete()
                 } label: {
                     Text("Skip for now")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(Theme.textMuted)
                 }
                 .padding(.top, 4)
@@ -189,18 +189,18 @@ struct LaunchScreenView: View {
         VStack(spacing: 14) {
             HStack(spacing: 14) {
                 Image(systemName: "bell.badge.fill")
-                    .font(.system(size: 22))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(Theme.accent)
                     .frame(width: 40, height: 40)
                     .background(Theme.accent.opacity(0.12), in: .rect(cornerRadius: 10))
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Remind me to complete quests")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(.white)
 
                     Text("Daily quest reminders & streak alerts")
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
 
@@ -212,19 +212,19 @@ struct LaunchScreenView: View {
                     requestNotifications()
                 } label: {
                     Text("Enable Reminders")
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(Theme.accent, in: .rect(cornerRadius: 10))
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
             } else {
                 HStack(spacing: 8) {
                     Image(systemName: notificationsEnabled ? "checkmark.circle.fill" : "xmark.circle.fill")
                         .foregroundStyle(notificationsEnabled ? Theme.accent : Theme.textSecondary)
                     Text(notificationsEnabled ? "Reminders enabled" : "Not now — you can enable later")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(Typography.bodySmall)
                         .foregroundStyle(notificationsEnabled ? Theme.accent : Theme.textSecondary)
                 }
                 .frame(maxWidth: .infinity)
@@ -232,7 +232,7 @@ struct LaunchScreenView: View {
             }
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.elevated)
     }
 
     private func requestNotifications() {

@@ -11,14 +11,14 @@ struct JITAIRecommendationCard: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 8) {
                     Image(systemName: "brain.head.profile.fill")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.teal)
                     Text("Smart Insights")
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
                     Spacer()
                     Text("JITAI")
-                        .font(.system(size: 9, weight: .bold, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.teal.opacity(0.7))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
@@ -35,16 +35,16 @@ struct JITAIRecommendationCard: View {
                                     .fill(suggestion.color.opacity(0.15))
                                     .frame(width: 40, height: 40)
                                 Image(systemName: suggestion.icon)
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .font(Typography.headingMedium)
                                     .foregroundStyle(suggestion.color)
                             }
 
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(suggestion.title)
-                                    .font(.subheadline.weight(.semibold))
+                                    .font(Typography.headingSmall)
                                     .foregroundStyle(Theme.textPrimary)
                                 Text(suggestion.message)
-                                    .font(.caption)
+                                    .font(Typography.labelSmall)
                                     .foregroundStyle(Theme.textSecondary)
                                     .lineLimit(2)
                                     .multilineTextAlignment(.leading)
@@ -53,7 +53,7 @@ struct JITAIRecommendationCard: View {
                             Spacer(minLength: 4)
 
                             Image(systemName: "chevron.right")
-                                .font(.caption.weight(.semibold))
+                                .font(Typography.labelSmall)
                                 .foregroundStyle(suggestion.color.opacity(0.5))
                         }
                         .padding(12)
@@ -70,7 +70,7 @@ struct JITAIRecommendationCard: View {
                                 .strokeBorder(suggestion.color.opacity(0.1), lineWidth: 1)
                         )
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(.plain)
                     .accessibilityLabel("\(suggestion.title): \(suggestion.message)")
                     .opacity(appeared ? 1 : 0)
                     .offset(y: appeared ? 0 : 10)
@@ -81,7 +81,7 @@ struct JITAIRecommendationCard: View {
                 }
             }
             .padding(16)
-            .glassCard(cornerRadius: 20)
+            .splurjCard(.hero)
             .onAppear {
                 withAnimation {
                     appeared = true

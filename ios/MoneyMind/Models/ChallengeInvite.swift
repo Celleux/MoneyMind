@@ -57,7 +57,7 @@ class ChallengeInvite {
 
     var statusColor: String {
         switch status {
-        case "active": return "neonEmerald"
+        case "active": return "neonGold"
         case "completed": return "gold"
         case "pending": return "textSecondary"
         default: return "textMuted"
@@ -105,7 +105,7 @@ nonisolated enum FriendChallengeType: String, CaseIterable, Sendable {
     var color: String {
         switch self {
         case .noSpend7Day: return "neonRed"
-        case .save100: return "neonEmerald"
+        case .save100: return "neonGold"
         case .complete5Quests: return "neonPurple"
         }
     }

@@ -11,16 +11,16 @@ struct SOSEmergencySheet: View {
                 VStack(spacing: 24) {
                     VStack(spacing: 8) {
                         Image(systemName: "heart.fill")
-                            .font(.system(size: 40))
+                            .font(Typography.displayMedium)
                             .foregroundStyle(Theme.accent)
                             .symbolEffect(.pulse, options: .repeating)
 
                         Text("You're Not Alone")
-                            .font(Theme.headingFont(.title2))
+                            .font(Typography.displaySmall)
                             .foregroundStyle(Theme.textPrimary)
 
                         Text("This moment will pass. Let's get through it together.")
-                            .font(.subheadline)
+                            .font(Typography.bodyMedium)
                             .foregroundStyle(Theme.textSecondary)
                             .multilineTextAlignment(.center)
                     }
@@ -48,7 +48,7 @@ struct SOSEmergencySheet: View {
 
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Quick Access")
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.textPrimary)
 
                         VStack(spacing: 8) {
@@ -70,10 +70,10 @@ struct SOSEmergencySheet: View {
                         }
                     }
                     .padding(16)
-                    .glassCard()
+                    .splurjCard(.elevated)
 
                     Text("Remember: You've resisted before and you can do it again.")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                         .padding(.bottom, 16)
@@ -109,30 +109,30 @@ private struct SOSActionCard: View {
         Button(action: action) {
             HStack(spacing: 16) {
                 Image(systemName: icon)
-                    .font(.title2)
+                    .font(Typography.displaySmall)
                     .foregroundStyle(color)
                     .frame(width: 44, height: 44)
                     .background(color.opacity(0.12), in: .rect(cornerRadius: 12))
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Text(subtitle)
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary.opacity(0.5))
             }
             .padding(16)
-            .glassCard()
+            .splurjCard(.interactive)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(.plain)
         .accessibilityLabel(title)
         .accessibilityHint(subtitle)
     }
@@ -152,15 +152,15 @@ private struct CrisisRow: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(name)
-                        .font(.subheadline.weight(.medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textPrimary)
                     Text(available)
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
                 Spacer()
                 Text(number)
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.accentGreen)
             }
             .padding(.vertical, 4)

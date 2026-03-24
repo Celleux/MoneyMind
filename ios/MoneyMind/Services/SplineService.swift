@@ -26,11 +26,11 @@ struct Spline3DView: View {
             Theme.surface.clipShape(.rect(cornerRadius: 16))
             VStack(spacing: 12) {
                 Image(systemName: "cube.transparent")
-                    .font(.system(size: 32, weight: .bold))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.accent)
                     .symbolEffect(.pulse, isActive: !reduceMotion)
                 Text("3D Scene")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.textSecondary)
             }
         }

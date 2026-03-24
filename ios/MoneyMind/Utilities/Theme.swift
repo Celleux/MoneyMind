@@ -1,53 +1,66 @@
 import SwiftUI
 
+typealias Typography = Theme.Typography
+
 enum Theme {
 
-    // MARK: - Backgrounds (3-tier depth system)
+    // MARK: - Backgrounds (warm charcoal, NOT pure black — prevents halation on OLED)
 
-    static let background = Color(hex: 0x0B0E14)
-    static let surface = Color(hex: 0x12161F)
-    static let elevated = Color(hex: 0x1A1F2E)
+    static let background = Color(hex: 0x141416)
+    static let surface = Color(hex: 0x1E1E22)
+    static let elevated = Color(hex: 0x262630)
+    static let modal = Color(hex: 0x303040)
 
-    // MARK: - Accent (emerald/mint — primary actions, CTAs)
+    // MARK: - Primary Accent (GOLD — prosperity, achievement, money)
 
-    static let accent = Color(hex: 0x34D399)
-    static let accentDim = Color(hex: 0x34D399, opacity: 0.15)
-    static let accentGlow = Color(hex: 0x34D399, opacity: 0.25)
+    static let accent = Color(hex: 0xE8B94E)
+    static let accentDim = Color(hex: 0xC49A3A)
+    static let accentGlow = Color(hex: 0xE8B94E, opacity: 0.15)
 
-    // MARK: - Gold (badges, streaks, premium ONLY)
+    // MARK: - Secondary Accent (TEAL — health, growth, breathing exercises)
 
-    static let gold = Color(hex: 0xF5C542)
-    static let goldDim = Color(hex: 0xF5C542, opacity: 0.12)
+    static let accentSecondary = Color(hex: 0x4ECDC4)
+    static let accentSecondaryDim = Color(hex: 0x3BADA5)
 
-    // MARK: - Semantic
+    // MARK: - Tertiary Accent (INDIGO — AI coach, premium features)
 
-    static let success = Color(hex: 0x34D399)
-    static let warning = Color(hex: 0xFBBF24)
-    static let danger = Color(hex: 0xEF4444)
+    static let accentTertiary = Color(hex: 0x6366F1)
 
-    // MARK: - Text (4-level hierarchy)
+    // MARK: - Gold (badges, streaks, premium)
 
-    static let textPrimary = Color.white
-    static let textSecondary = Color(hex: 0x94A3B8)
-    static let textMuted = Color(hex: 0x4B5563)
-    static let textDisabled = Color(hex: 0x374151)
+    static let gold = Color(hex: 0xE8B94E)
+    static let goldDim = Color(hex: 0xE8B94E, opacity: 0.12)
+
+    // MARK: - Semantic (desaturated, NOT gambling-associated)
+
+    static let success = Color(hex: 0x4ECDC4)
+    static let warning = Color(hex: 0xF0A030)
+    static let danger = Color(hex: 0xF08389)
+
+    // MARK: - Text (off-white, not pure white — reduces eye strain)
+
+    static let textPrimary = Color(hex: 0xE5E5E7)
+    static let textSecondary = Color(hex: 0x8E8E93)
+    static let textMuted = Color(hex: 0x555560)
+    static let textDisabled = Color(hex: 0x3A3A45)
 
     // MARK: - Borders & Dividers
 
-    static let border = Color(hex: 0x1F2937)
-    static let divider = Color(hex: 0x1F2937, opacity: 0.5)
+    static let border = Color(hex: 0x2A2A35)
+    static let borderAccent = Color(hex: 0xE8B94E, opacity: 0.2)
+    static let divider = Color(hex: 0x2A2A35, opacity: 0.5)
 
     // MARK: - Games Neon Accents
 
-    static let neonEmerald = Color(hex: 0x00FF88)
-    static let neonGold = Color(hex: 0xFFD700)
-    static let neonPurple = Color(hex: 0xBB86FC)
+    static let neonGold = Color(hex: 0xE8B94E)
     static let neonBlue = Color(hex: 0x00B4FF)
+    static let neonPurple = Color(hex: 0x6366F1)
     static let neonRed = Color(hex: 0xFF4466)
     static let neonPink = Color(hex: 0xFF6EB4)
+    static let neonEmerald = Color(hex: 0xE8B94E)
 
     static let legendaryGradient = AngularGradient(
-        colors: [Color(hex: 0xFFD700), Color(hex: 0xFFA500), Color(hex: 0xFFD700), Color(hex: 0xFFEE58), Color(hex: 0xFFD700)],
+        colors: [Color(hex: 0xE8B94E), Color(hex: 0xC49A3A), Color(hex: 0xE8B94E), Color(hex: 0xF0D078), Color(hex: 0xE8B94E)],
         center: .center
     )
 
@@ -57,9 +70,9 @@ enum Theme {
 
     // MARK: - Glass Material
 
-    static let glass = Color.white.opacity(0.05)
-    static let glassBorder = Color.white.opacity(0.08)
-    static let glassHighlight = Color.white.opacity(0.12)
+    static let glass = Color(hex: 0xE5E5E7, opacity: 0.05)
+    static let glassBorder = Color(hex: 0xE5E5E7, opacity: 0.08)
+    static let glassHighlight = Color(hex: 0xE5E5E7, opacity: 0.12)
 
     // MARK: - Legacy Aliases (backward-compatible)
 
@@ -67,28 +80,54 @@ enum Theme {
     static let cardSurface = elevated
     static let secondary = accent
     static let accentGreen = accent
-    static let teal = accent
+    static let teal = accentSecondary
     static let emergency = danger
-    static let tabBarBg = Color(hex: 0x0B0E14)
+    static let tabBarBg = background
     static let unselectedTab = textMuted
 
     // MARK: - Gradients
 
     static let accentGradient = LinearGradient(
-        colors: [Color(hex: 0x34D399), Color(hex: 0x059669)],
+        colors: [Color(hex: 0xE8B94E), Color(hex: 0xC49A3A)],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
 
     static let premiumGradient = LinearGradient(
-        colors: [Color(hex: 0xF5C542), Color(hex: 0xD97706)],
+        colors: [Color(hex: 0xE8B94E), Color(hex: 0xC49A3A)],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
 
-    static let goldGradient = premiumGradient
+    static let goldGradient = LinearGradient(
+        colors: [Color(hex: 0xE8B94E), Color(hex: 0xC49A3A)],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
 
-    static let successGradient = accentGradient
+    static let heroGradient = LinearGradient(
+        colors: [Color(hex: 0x262630), Color(hex: 0x141416)],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+
+    static let tealGradient = LinearGradient(
+        colors: [Color(hex: 0x4ECDC4), Color(hex: 0x3BADA5)],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+
+    static let indigoGradient = LinearGradient(
+        colors: [Color(hex: 0x6366F1), Color(hex: 0x4F46E5)],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+
+    static let successGradient = LinearGradient(
+        colors: [Color(hex: 0x4ECDC4), Color(hex: 0x3BADA5)],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
 
     static let meshBackground = MeshGradient(
         width: 3, height: 3,
@@ -98,13 +137,36 @@ enum Theme {
             [0.0, 1.0], [0.5, 1.0], [1.0, 1.0]
         ],
         colors: [
-            .black, Color(hex: 0x0B0E14), .black,
-            Color(hex: 0x34D399).opacity(0.04), Color(hex: 0x0B0E14), Color(hex: 0x059669).opacity(0.03),
-            .black, Color(hex: 0x34D399).opacity(0.03), .black
+            .black, Color(hex: 0x141416), .black,
+            Color(hex: 0xE8B94E).opacity(0.04), Color(hex: 0x141416), Color(hex: 0x4ECDC4).opacity(0.03),
+            .black, Color(hex: 0xE8B94E).opacity(0.03), .black
         ]
     )
 
     // MARK: - Typography
+
+    enum Typography {
+        static let displayLarge: Font = .system(size: 34, weight: .bold, design: .rounded)
+        static let displayMedium: Font = .system(size: 28, weight: .bold, design: .rounded)
+        static let displaySmall: Font = .system(size: 22, weight: .bold, design: .rounded)
+
+        static let headingLarge: Font = .system(size: 20, weight: .semibold, design: .rounded)
+        static let headingMedium: Font = .system(size: 17, weight: .semibold, design: .rounded)
+        static let headingSmall: Font = .system(size: 15, weight: .semibold, design: .rounded)
+
+        static let bodyLarge: Font = .system(size: 17, design: .default)
+        static let bodyMedium: Font = .system(size: 15, design: .default)
+        static let bodySmall: Font = .system(size: 13, design: .default)
+
+        static let labelLarge: Font = .system(size: 15, weight: .semibold)
+        static let labelMedium: Font = .system(size: 13, weight: .semibold)
+        static let labelSmall: Font = .system(size: 11, weight: .semibold)
+
+        static let moneyHero: Font = .system(size: 48, weight: .bold, design: .monospaced)
+        static let moneyLarge: Font = .system(size: 34, weight: .bold, design: .monospaced)
+        static let moneyMedium: Font = .system(size: 20, weight: .bold, design: .monospaced)
+        static let moneySmall: Font = .system(size: 15, weight: .bold, design: .monospaced)
+    }
 
     static func headingFont(_ style: Font.TextStyle, weight: Font.Weight = .bold) -> Font {
         .system(style, design: .rounded, weight: weight)
@@ -112,8 +174,8 @@ enum Theme {
 
     static let numericSpring = Animation.spring(response: 0.4, dampingFraction: 0.8)
 
-    static let amountXL: Font = .system(size: 48, weight: .bold, design: .rounded)
-    static let amountLG: Font = .system(size: 34, weight: .bold, design: .rounded)
+    static let amountXL: Font = Typography.moneyHero
+    static let amountLG: Font = Typography.moneyLarge
 
     // MARK: - Spacing
 
@@ -164,85 +226,158 @@ extension Color {
     }
 }
 
-// MARK: - Glass Card Modifier
+// MARK: - 5-Tier Card System
 
-struct GlassCard: ViewModifier {
-    var cornerRadius: CGFloat = Theme.Radius.card
+enum CardStyle {
+    case hero
+    case elevated
+    case outlined
+    case subtle
+    case interactive
+}
+
+struct SplurjCard: ViewModifier {
+    let style: CardStyle
+    let accent: Color
+
+    init(style: CardStyle, accent: Color = Theme.accent) {
+        self.style = style
+        self.accent = accent
+    }
+
+    private var cornerRadius: CGFloat {
+        switch style {
+        case .hero: 20
+        case .elevated, .interactive: 16
+        case .outlined: 14
+        case .subtle: 12
+        }
+    }
+
+    @ViewBuilder
+    private var backgroundView: some View {
+        switch style {
+        case .hero:
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .fill(
+                    LinearGradient(
+                        colors: [Theme.elevated, Theme.surface],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.06), Color.clear],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                )
+        case .elevated, .interactive:
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .fill(Theme.elevated)
+                .overlay(
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.04), Color.clear],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                )
+        case .outlined:
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .fill(Color.clear)
+        case .subtle:
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .fill(Theme.surface.opacity(0.5))
+        }
+    }
+
+    @ViewBuilder
+    private var borderView: some View {
+        switch style {
+        case .hero:
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [accent.opacity(0.3), Color.white.opacity(0.08), Color.clear],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+        case .elevated, .interactive:
+            EmptyView()
+        case .outlined:
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .strokeBorder(Theme.border, lineWidth: 1)
+        case .subtle:
+            EmptyView()
+        }
+    }
+
+    private var shadowColor: Color {
+        switch style {
+        case .hero: accent.opacity(0.08)
+        case .elevated, .interactive: Color.black.opacity(0.2)
+        case .outlined, .subtle: Color.clear
+        }
+    }
+
+    private var shadowRadius: CGFloat {
+        switch style {
+        case .hero: 20
+        case .elevated, .interactive: 8
+        case .outlined, .subtle: 0
+        }
+    }
+
+    private var shadowY: CGFloat {
+        switch style {
+        case .hero: 8
+        case .elevated, .interactive: 4
+        case .outlined, .subtle: 0
+        }
+    }
 
     func body(content: Content) -> some View {
         content
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(.ultraThinMaterial.opacity(0.3))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.white.opacity(0.08), Color.clear],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .strokeBorder(
-                                LinearGradient(
-                                    colors: [Color.white.opacity(0.12), Color.white.opacity(0.03)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 0.5
-                            )
-                    )
-                    .shadow(color: .black.opacity(0.25), radius: 12, y: 4)
-            )
+            .padding(16)
+            .background(backgroundView)
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .overlay(borderView)
+            .shadow(color: shadowColor, radius: shadowRadius, y: shadowY)
+            .modifier(HeroExtraShadow(isHero: style == .hero))
     }
 }
 
-struct GlassCardAccent: ViewModifier {
-    var cornerRadius: CGFloat = Theme.Radius.card
-    var accentGlow: Color?
-
+private struct HeroExtraShadow: ViewModifier {
+    let isHero: Bool
     func body(content: Content) -> some View {
-        content
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(.ultraThinMaterial.opacity(0.3))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.white.opacity(0.08), Color.clear],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .strokeBorder(
-                                LinearGradient(
-                                    colors: [Color.white.opacity(0.12), Color.white.opacity(0.03)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 0.5
-                            )
-                    )
-                    .shadow(color: .black.opacity(0.25), radius: 12, y: 4)
-            )
-            .shadow(color: accentGlow?.opacity(0.15) ?? .clear, radius: 12, y: 2)
+        if isHero {
+            content.shadow(color: .black.opacity(0.3), radius: 16, y: 6)
+        } else {
+            content
+        }
     }
 }
 
 extension View {
+    func splurjCard(_ style: CardStyle = .elevated, accent: Color = Theme.accent) -> some View {
+        modifier(SplurjCard(style: style, accent: accent))
+    }
+
     func glassCard(cornerRadius: CGFloat = Theme.Radius.card) -> some View {
-        modifier(GlassCardAccent(cornerRadius: cornerRadius, accentGlow: nil))
+        modifier(SplurjCard(style: .elevated))
     }
 
     func glassCard(cornerRadius: CGFloat = Theme.Radius.card, accentGlow: Color?) -> some View {
-        modifier(GlassCardAccent(cornerRadius: cornerRadius, accentGlow: accentGlow))
+        modifier(SplurjCard(style: accentGlow != nil ? .hero : .elevated, accent: accentGlow ?? Theme.accent))
     }
 }
 
@@ -283,11 +418,11 @@ struct HolographicSheenModifier: ViewModifier {
                         .fill(
                             AngularGradient(
                                 colors: [
-                                    Theme.neonEmerald.opacity(0.1),
                                     Theme.neonGold.opacity(0.1),
+                                    Theme.accentSecondary.opacity(0.1),
                                     Theme.neonPurple.opacity(0.1),
                                     Theme.neonBlue.opacity(0.1),
-                                    Theme.neonEmerald.opacity(0.1)
+                                    Theme.neonGold.opacity(0.1)
                                 ],
                                 center: .center,
                                 startAngle: angle,
@@ -315,7 +450,131 @@ extension View {
     }
 }
 
-// MARK: - Button Styles
+// MARK: - 5-Tier Button System
+
+enum ButtonVariant {
+    case primary
+    case secondary
+    case tertiary
+    case ghost
+    case destructive
+}
+
+enum ButtonSize {
+    case large
+    case medium
+    case small
+
+    var height: CGFloat {
+        switch self {
+        case .large: 56
+        case .medium: 48
+        case .small: 36
+        }
+    }
+
+    var cornerRadius: CGFloat {
+        switch self {
+        case .large: 16
+        case .medium: 14
+        case .small: 10
+        }
+    }
+
+    var hPadding: CGFloat {
+        switch self {
+        case .large: 24
+        case .medium: 20
+        case .small: 14
+        }
+    }
+
+    var font: Font {
+        switch self {
+        case .large: Typography.labelLarge
+        case .medium, .small: Typography.labelMedium
+        }
+    }
+}
+
+struct SplurjButtonStyle: ButtonStyle {
+    let variant: ButtonVariant
+    let size: ButtonSize
+
+    init(variant: ButtonVariant = .primary, size: ButtonSize = .large) {
+        self.variant = variant
+        self.size = size
+    }
+
+    private func textColor(pressed: Bool) -> Color {
+        switch variant {
+        case .primary, .destructive: .white
+        case .secondary: Theme.accent
+        case .tertiary: Theme.accent
+        case .ghost: Theme.textPrimary
+        }
+    }
+
+    @ViewBuilder
+    private func bgView(pressed: Bool) -> some View {
+        switch variant {
+        case .primary:
+            LinearGradient(
+                colors: pressed ? [Theme.accentDim, Theme.accentDim] : [Theme.accent, Theme.accentDim],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        case .secondary:
+            Color.clear
+        case .tertiary:
+            pressed ? Theme.accent.opacity(0.08) : Color.clear
+        case .ghost:
+            pressed ? Color.white.opacity(0.05) : Color.clear
+        case .destructive:
+            LinearGradient(
+                colors: pressed ? [Theme.danger.opacity(0.85), Theme.danger.opacity(0.7)] : [Theme.danger, Theme.danger.opacity(0.85)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func borderView(pressed: Bool) -> some View {
+        switch variant {
+        case .secondary:
+            RoundedRectangle(cornerRadius: size.cornerRadius)
+                .strokeBorder(pressed ? Theme.accentDim : Theme.accent, lineWidth: 1.5)
+        default:
+            EmptyView()
+        }
+    }
+
+    private func shadowColor(pressed: Bool) -> Color {
+        guard !pressed else { return .clear }
+        switch variant {
+        case .primary: Theme.accent.opacity(0.25)
+        case .destructive: Theme.danger.opacity(0.2)
+        default: Color.clear
+        }
+    }
+
+    func makeBody(configuration: Configuration) -> some View {
+        let pressed = configuration.isPressed
+        configuration.label
+            .font(size.font)
+            .foregroundStyle(textColor(pressed: pressed))
+            .frame(height: size.height)
+            .padding(.horizontal, size.hPadding)
+            .background(bgView(pressed: pressed))
+            .clipShape(RoundedRectangle(cornerRadius: size.cornerRadius))
+            .overlay(borderView(pressed: pressed))
+            .shadow(color: shadowColor(pressed: pressed), radius: pressed ? 2 : 6, y: pressed ? 1 : 3)
+            .scaleEffect(pressed ? 0.97 : 1.0)
+            .brightness(pressed ? -0.03 : 0)
+            .animation(.spring(response: 0.2, dampingFraction: 0.7), value: pressed)
+    }
+}
 
 struct PressableButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {

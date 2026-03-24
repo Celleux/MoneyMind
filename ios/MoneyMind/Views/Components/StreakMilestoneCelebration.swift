@@ -55,7 +55,7 @@ struct StreakMilestoneCelebration: View {
                             .neonGlow(color: days >= 365 ? Theme.neonGold : .orange, radius: isEpicMilestone ? 30 : 20, pulses: true)
 
                         Text("\(days)")
-                            .font(.system(size: 80, weight: .black, design: .rounded))
+                            .font(Typography.displayLarge)
                             .foregroundStyle(
                                 LinearGradient(
                                     colors: [Color(hex: 0xFB923C), Color(hex: 0xF87171), Theme.neonGold],
@@ -73,11 +73,11 @@ struct StreakMilestoneCelebration: View {
                 if showTitle {
                     VStack(spacing: 6) {
                         Text("\(days)-DAY STREAK!")
-                            .font(.system(size: 20, weight: .black, design: .rounded))
+                            .font(Typography.headingLarge)
                             .foregroundStyle(.white)
 
                         Text(milestone.title)
-                            .font(.system(size: 14, weight: .bold))
+                            .font(Typography.headingSmall)
                             .foregroundStyle(Theme.textSecondary)
                     }
                     .transition(.opacity)
@@ -86,17 +86,17 @@ struct StreakMilestoneCelebration: View {
                 if showReward {
                     VStack(spacing: 10) {
                         Text("REWARD")
-                            .font(.system(size: 10, weight: .black))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.neonGold)
                             .tracking(3)
 
                         HStack(spacing: 12) {
                             Image(systemName: milestone.rewardIcon)
-                                .font(.system(size: 20, weight: .bold))
+                                .font(Typography.headingLarge)
                                 .foregroundStyle(Theme.neonGold)
 
                             Text(milestone.rewardText)
-                                .font(.system(size: 15, weight: .bold))
+                                .font(Typography.headingSmall)
                                 .foregroundStyle(.white)
                         }
                         .padding(.horizontal, 20)
@@ -131,7 +131,7 @@ struct StreakMilestoneCelebration: View {
                         dismiss()
                     } label: {
                         Text("Continue")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(Typography.headingMedium)
                             .foregroundStyle(.black)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)

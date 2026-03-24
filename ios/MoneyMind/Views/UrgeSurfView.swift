@@ -49,10 +49,10 @@ struct UrgeSurfView: View {
                 if siriTriggered {
                     HStack(spacing: 8) {
                         Image(systemName: "mic.fill")
-                            .font(.caption)
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.teal)
                         Text("Siri detected an urge — let's ride it out")
-                            .font(.caption.weight(.medium))
+                            .font(Typography.labelSmall)
                             .foregroundStyle(Theme.teal)
                     }
                     .padding(.vertical, 8)
@@ -83,12 +83,12 @@ struct UrgeSurfView: View {
 
             VStack(spacing: 2) {
                 Text(formatTime(timerSeconds))
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(Theme.textPrimary)
                     .contentTransition(.numericText())
                     .animation(.default, value: timerSeconds)
                 Text("Urge Surf")
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
@@ -117,13 +117,13 @@ struct UrgeSurfView: View {
 
             VStack(spacing: 8) {
                 Text(breathPhase)
-                    .font(.headline)
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.teal)
                     .animation(.easeInOut(duration: 0.3), value: breathPhase)
 
                 if isRunning {
                     Text(guidanceMessage)
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                         .animation(.easeInOut(duration: 0.5), value: guidanceMessage)
@@ -153,7 +153,7 @@ struct UrgeSurfView: View {
 
     private var phaseGuidance: some View {
         Text(guidanceMessage)
-            .font(Theme.headingFont(.title3, weight: .semibold))
+            .font(Typography.headingLarge)
             .foregroundStyle(Theme.textPrimary)
             .multilineTextAlignment(.center)
             .animation(.easeInOut(duration: 0.5), value: guidanceMessage)
@@ -165,28 +165,28 @@ struct UrgeSurfView: View {
             if isCompleted {
                 VStack(spacing: 16) {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 48))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(Theme.accentGreen)
 
                     Text("Session Complete")
-                        .font(Theme.headingFont(.title3))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.textPrimary)
 
                     Text("+75 XP")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(Theme.gold)
 
                     Button {
                         dismiss()
                     } label: {
                         Text("Done")
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.background)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(Theme.accentGradient, in: .rect(cornerRadius: 12))
                     }
-                    .buttonStyle(PressableButtonStyle())
+                    .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 }
                 .transition(.opacity.combined(with: .scale(scale: 0.9)))
             } else {
@@ -194,7 +194,7 @@ struct UrgeSurfView: View {
                     if !isRunning { startSession() }
                 } label: {
                     Text(isRunning ? "Breathe with the circles..." : "Start Urge Surf")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(isRunning ? Theme.textSecondary : Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
@@ -203,7 +203,7 @@ struct UrgeSurfView: View {
                             in: .rect(cornerRadius: 12)
                         )
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .disabled(isRunning)
             }
         }

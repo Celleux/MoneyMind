@@ -10,7 +10,7 @@ struct SpeechBubble: View {
     var body: some View {
         VStack(spacing: 0) {
             Text(displayedText)
-                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .font(Typography.bodySmall)
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 14)

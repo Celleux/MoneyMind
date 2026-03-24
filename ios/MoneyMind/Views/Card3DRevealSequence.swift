@@ -204,12 +204,12 @@ struct Card3DRevealSequence: View {
 
                 VStack(spacing: 16) {
                     Image(systemName: cardIcon)
-                        .font(.system(size: 48))
+                        .font(Typography.displayLarge)
                         .foregroundStyle(rarity.color)
                         .shadow(color: rarity.color.opacity(0.5), radius: 12)
 
                     Text(cardSetName.uppercased())
-                        .font(.system(size: 10, weight: .heavy))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textMuted)
                         .tracking(2)
                 }
@@ -229,7 +229,7 @@ struct Card3DRevealSequence: View {
                     HStack(spacing: 4) {
                         ForEach(0..<rarityStarCount, id: \.self) { i in
                             Image(systemName: "star.fill")
-                                .font(.system(size: 18))
+                                .font(Typography.bodyLarge)
                                 .foregroundStyle(rarity.color)
                                 .opacity(i < starsRevealed ? 1 : 0)
                                 .scaleEffect(i < starsRevealed ? 1 : 0.3)
@@ -241,14 +241,14 @@ struct Card3DRevealSequence: View {
 
                 if showName {
                     Text(cardName)
-                        .font(.system(size: 22, weight: .black, design: .rounded))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(rarity.color)
                         .transition(.scale.combined(with: .opacity))
                 }
 
                 if showTip {
                     Text(cardTip)
-                        .font(.system(size: 14, weight: .medium))
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
@@ -257,7 +257,7 @@ struct Card3DRevealSequence: View {
 
                 if isLegendary && floatingStarText {
                     Text("★ LEGENDARY ★")
-                        .font(.system(size: 14, weight: .black, design: .rounded))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.neonGold)
                         .neonGlow(color: Theme.neonGold, radius: 20)
                         .floatingAnimation(amplitude: 3, duration: 1.5)
@@ -268,7 +268,7 @@ struct Card3DRevealSequence: View {
                         dismissCard()
                     } label: {
                         Text("Add to Collection")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.background)
                             .frame(width: 220)
                             .padding(.vertical, 14)
@@ -289,22 +289,22 @@ struct Card3DRevealSequence: View {
     private var setCompleteOverlay: some View {
         VStack(spacing: 12) {
             Text("SET COMPLETE!")
-                .font(.system(size: 28, weight: .black, design: .rounded))
+                .font(Typography.displayMedium)
                 .foregroundStyle(Theme.neonGold)
                 .neonGlow(color: Theme.neonGold, radius: 20)
                 .depthPop(intensity: 2.0)
 
             Text(cardSetName)
-                .font(.system(size: 16, weight: .bold))
+                .font(Typography.headingMedium)
                 .foregroundStyle(.white)
 
             HStack(spacing: 16) {
                 Label("+200 Essence", systemImage: "diamond.fill")
-                    .font(.system(size: 13, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.neonPurple)
 
                 Label("Badge Earned", systemImage: "shield.checkered")
-                    .font(.system(size: 13, weight: .bold))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(Theme.neonGold)
             }
         }

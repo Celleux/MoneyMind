@@ -11,7 +11,7 @@ struct FinancialDNACardView: View {
             HStack {
                 Spacer()
                 Text("FINANCIAL DNA")
-                    .font(.system(size: 9, weight: .bold, design: .rounded))
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textMuted)
                     .tracking(3)
                 Spacer()
@@ -22,35 +22,35 @@ struct FinancialDNACardView: View {
 
             VStack(spacing: 6) {
                 Image(systemName: archetype.icon)
-                    .font(.system(size: 24, weight: .bold))
+                    .font(Typography.displaySmall)
                     .foregroundStyle(archetype.color)
 
                 Text(archetype.rawValue.uppercased())
-                    .font(.system(size: 20, weight: .black, design: .rounded))
+                    .font(Typography.headingLarge)
                     .foregroundStyle(.white)
                     .tracking(3)
 
                 if secondary != archetype {
                     Text("with \(secondary.rawValue) tendencies")
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
 
                 Text(archetype.tagline)
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .font(Typography.labelMedium)
                     .foregroundStyle(archetype.color)
                     .padding(.top, 2)
             }
 
             HStack(spacing: 16) {
-                axisMini("SPD", value: dna.spendingAxis, color: Color(hex: 0x34D399))
+                axisMini("SPD", value: dna.spendingAxis, color: Theme.accent)
                 axisMini("EMO", value: dna.emotionalAxis, color: Color(hex: 0x60A5FA))
                 axisMini("RSK", value: dna.riskAxis, color: Color(hex: 0xFB923C))
                 axisMini("SOC", value: dna.socialAxis, color: Color(hex: 0xF472B6))
             }
 
             Text("Discover yours at splurj.app")
-                .font(.system(size: 9, weight: .medium, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
         }
         .padding(24)
@@ -74,7 +74,7 @@ struct FinancialDNACardView: View {
     private func axisMini(_ label: String, value: Double, color: Color) -> some View {
         VStack(spacing: 4) {
             Text(label)
-                .font(.system(size: 8, weight: .bold, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textMuted)
                 .tracking(1)
 
@@ -89,7 +89,7 @@ struct FinancialDNACardView: View {
             }
 
             Text("\(Int(value * 100))")
-                .font(.system(size: 9, weight: .bold, design: .rounded))
+                .font(Typography.labelSmall)
                 .foregroundStyle(color)
         }
     }

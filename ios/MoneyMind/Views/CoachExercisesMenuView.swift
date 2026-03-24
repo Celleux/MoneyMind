@@ -11,7 +11,7 @@ struct CoachExercisesMenuView: View {
         NavigationStack {
             VStack(spacing: 16) {
                 Text("Guided Exercises")
-                    .font(Theme.headingFont(.headline))
+                    .font(Typography.headingMedium)
                     .foregroundStyle(Theme.textPrimary)
                     .padding(.top, 8)
 
@@ -28,7 +28,7 @@ struct CoachExercisesMenuView: View {
                         color: Theme.teal
                     )
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(.plain)
                 .accessibilityLabel("ACT Exercises")
 
                 Button {
@@ -44,7 +44,7 @@ struct CoachExercisesMenuView: View {
                         color: purple
                     )
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(.plain)
                 .accessibilityLabel("Seeking Safety")
 
                 Spacer()
@@ -70,27 +70,27 @@ private struct ExerciseMenuRow: View {
     var body: some View {
         HStack(spacing: 14) {
             Image(systemName: icon)
-                .font(.title2)
+                .font(Typography.displaySmall)
                 .foregroundStyle(color)
                 .frame(width: 48, height: 48)
                 .background(color.opacity(0.12), in: .rect(cornerRadius: 12))
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
                 Text(subtitle)
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
             }
 
             Spacer()
 
             Image(systemName: "chevron.right")
-                .font(.caption.weight(.semibold))
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary.opacity(0.4))
         }
         .padding(16)
-        .glassCard()
+        .splurjCard(.interactive)
     }
 }

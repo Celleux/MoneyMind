@@ -21,11 +21,11 @@ struct UrgeSurfSheet: View {
 
                 VStack(spacing: 16) {
                     Text("Urge Surfing")
-                        .font(Theme.headingFont(.title2))
+                        .font(Typography.displaySmall)
                         .foregroundStyle(Theme.textPrimary)
 
                     Text("The urge is a wave. It will pass.\nBreathe through it.")
-                        .font(.subheadline)
+                        .font(Typography.bodyMedium)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                 }
@@ -43,12 +43,12 @@ struct UrgeSurfSheet: View {
 
                     VStack(spacing: 8) {
                         Text(breathPhase.rawValue)
-                            .font(.headline)
+                            .font(Typography.headingMedium)
                             .foregroundStyle(Theme.teal)
 
                         if isRunning {
                             Text("\(timerSeconds)s")
-                                .font(.system(size: 32, weight: .bold, design: .rounded))
+                                .font(Typography.displayMedium)
                                 .foregroundStyle(Theme.textPrimary)
                                 .contentTransition(.numericText())
                         }
@@ -59,7 +59,7 @@ struct UrgeSurfSheet: View {
                     if !isRunning { startBreathing() }
                 } label: {
                     Text(isRunning ? "Keep going..." : "Start Breathing")
-                        .font(.headline)
+                        .font(Typography.headingMedium)
                         .foregroundStyle(isRunning ? Theme.textSecondary : Theme.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
@@ -68,7 +68,7 @@ struct UrgeSurfSheet: View {
                             in: .rect(cornerRadius: 12)
                         )
                 }
-                .buttonStyle(PressableButtonStyle())
+                .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
                 .disabled(isRunning)
                 .padding(.horizontal, 24)
 

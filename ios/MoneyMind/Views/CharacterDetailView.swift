@@ -38,11 +38,11 @@ struct CharacterDetailView: View {
 
                 VStack(spacing: 8) {
                     Text(characterStage.name)
-                        .font(.system(.title, design: .rounded, weight: .bold))
+                        .font(Typography.displayMedium)
                         .foregroundStyle(Theme.textPrimary)
 
                     Text("Level \(characterLevel)")
-                        .font(.system(.title3, design: .rounded, weight: .semibold))
+                        .font(Typography.headingLarge)
                         .foregroundStyle(Theme.accent)
                 }
 
@@ -55,7 +55,7 @@ struct CharacterDetailView: View {
                     )
 
                     Text("\(profile?.xpPoints ?? 0) XP")
-                        .font(.caption)
+                        .font(Typography.labelSmall)
                         .foregroundStyle(Theme.textSecondary)
                 }
                 .padding(.horizontal)
@@ -81,22 +81,22 @@ struct CharacterDetailView: View {
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Evolution Path")
-                        .font(.subheadline.weight(.semibold))
+                        .font(Typography.headingSmall)
                         .foregroundStyle(Theme.textPrimary)
 
                     ForEach(CharacterStage.allCases, id: \.rawValue) { stage in
                         HStack(spacing: 12) {
                             Image(systemName: stage.bodyIcon)
-                                .font(.title3)
+                                .font(Typography.headingLarge)
                                 .foregroundStyle(stage == characterStage ? Theme.accent : Theme.textMuted)
                                 .frame(width: 32)
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(stage.name)
-                                    .font(.subheadline.weight(.medium))
+                                    .font(Typography.bodyMedium)
                                     .foregroundStyle(stage == characterStage ? Theme.textPrimary : Theme.textSecondary)
                                 Text("Level \(stage.levelRange.lowerBound)–\(stage.levelRange.upperBound)")
-                                    .font(.caption)
+                                    .font(Typography.labelSmall)
                                     .foregroundStyle(Theme.textMuted)
                             }
 
@@ -107,7 +107,7 @@ struct CharacterDetailView: View {
                                     .foregroundStyle(Theme.accent)
                             } else if stage == characterStage {
                                 Text("CURRENT")
-                                    .font(.system(size: 9, weight: .heavy, design: .rounded))
+                                    .font(Typography.labelSmall)
                                     .foregroundStyle(Theme.accent)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
@@ -118,7 +118,7 @@ struct CharacterDetailView: View {
                     }
                 }
                 .padding(16)
-                .glassCard()
+                .splurjCard(.elevated)
                 .padding(.horizontal)
             }
             .padding(.bottom, 40)
@@ -132,19 +132,19 @@ struct CharacterDetailView: View {
     private func characterStat(value: String, label: String, icon: String) -> some View {
         VStack(spacing: 8) {
             Image(systemName: icon)
-                .font(.title3)
+                .font(Typography.headingLarge)
                 .foregroundStyle(Theme.accent)
             Text(value)
-                .font(.system(.headline, design: .rounded))
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.textPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
             Text(label)
-                .font(.caption2)
+                .font(Typography.labelSmall)
                 .foregroundStyle(Theme.textSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
-        .glassCard(cornerRadius: 14)
+        .splurjCard(.outlined)
     }
 }

@@ -48,16 +48,16 @@ struct CommunityGuidelinesOverlay: View {
                     .fill(Theme.accentGreen.opacity(0.12))
                     .frame(width: 64, height: 64)
                 Image(systemName: "shield.checkered")
-                    .font(.system(size: 28))
+                    .font(Typography.displayMedium)
                     .foregroundStyle(Theme.accentGreen)
             }
 
             Text("Community Guidelines")
-                .font(Theme.headingFont(.title2))
+                .font(Typography.displaySmall)
                 .foregroundStyle(Theme.textPrimary)
 
             Text("A safe space for everyone on their financial wellness journey")
-                .font(.subheadline)
+                .font(Typography.bodyMedium)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
         }
@@ -70,16 +70,16 @@ struct CommunityGuidelinesOverlay: View {
                     .fill(Theme.accentGreen.opacity(0.1))
                     .frame(width: 40, height: 40)
                 Image(systemName: guideline.icon)
-                    .font(.system(size: 16))
+                    .font(Typography.labelLarge)
                     .foregroundStyle(Theme.accentGreen)
             }
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(guideline.title)
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.headingSmall)
                     .foregroundStyle(Theme.textPrimary)
                 Text(guideline.description)
-                    .font(.caption)
+                    .font(Typography.labelSmall)
                     .foregroundStyle(Theme.textSecondary)
                     .lineSpacing(2)
             }
@@ -90,7 +90,7 @@ struct CommunityGuidelinesOverlay: View {
 
     private var disclaimerSection: some View {
         Text("Splurj is a peer support community, not a substitute for professional help. If you're in crisis, tap the SOS button anytime.")
-            .font(.caption)
+            .font(Typography.labelSmall)
             .foregroundStyle(Theme.textSecondary.opacity(0.7))
             .multilineTextAlignment(.center)
             .padding(.horizontal, 8)
@@ -103,13 +103,13 @@ struct CommunityGuidelinesOverlay: View {
             }
         } label: {
             Text("I Agree — Let's Go")
-                .font(.headline)
+                .font(Typography.headingMedium)
                 .foregroundStyle(Theme.background)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(Theme.accentGradient, in: .rect(cornerRadius: 14))
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(SplurjButtonStyle(variant: .primary, size: .large))
         .sensoryFeedback(.impact(weight: .medium), trigger: appeared)
         .accessibilityLabel("Agree to community guidelines")
         .padding(20)

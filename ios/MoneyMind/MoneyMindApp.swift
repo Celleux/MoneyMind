@@ -21,6 +21,7 @@ struct SplurjApp: App {
             }
             .environment(premiumManager)
             .preferredColorScheme(.dark)
+            .onAppear { SoundManager.shared.preload() }
         }
         .modelContainer(for: [
             UserProfile.self,

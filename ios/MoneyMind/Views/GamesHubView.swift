@@ -227,6 +227,10 @@ struct GamesHubView: View {
             RoundedRectangle(cornerRadius: 16)
                 .strokeBorder(Theme.glassBorder, lineWidth: 0.5)
         )
+        .background(
+            AmbientLightView(goldOpacity: 0.05, tealOpacity: 0.03) { Color.clear }
+                .allowsHitTesting(false)
+        )
         .padding(.horizontal, 16)
         .padding(.top, 4)
         .accessibilityElement(children: .combine)

@@ -127,6 +127,10 @@ struct PaywallView: View {
         .padding(16)
         .frame(maxWidth: .infinity)
         .splurjCard(.hero)
+        .background(
+            AmbientLightView(goldOpacity: 0.08, tealOpacity: 0.05) { Color.clear }
+                .allowsHitTesting(false)
+        )
     }
 
     // MARK: - Features

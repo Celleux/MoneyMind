@@ -276,9 +276,13 @@ struct SplurjCard: ViewModifier {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: cornerRadius)
+                        .fill(.ultraThinMaterial.opacity(0.3))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: cornerRadius)
                         .fill(
                             LinearGradient(
-                                colors: [Color.white.opacity(0.06), Color.clear],
+                                colors: [Color.white.opacity(0.08), Color.clear],
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
@@ -313,7 +317,7 @@ struct SplurjCard: ViewModifier {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .strokeBorder(
                     LinearGradient(
-                        colors: [accent.opacity(0.3), Color.white.opacity(0.08), Color.clear],
+                        colors: [Color.white.opacity(0.12), accent.opacity(0.3), Color.white.opacity(0.03)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
@@ -361,6 +365,7 @@ struct SplurjCard: ViewModifier {
             .overlay(borderView)
             .shadow(color: shadowColor, radius: shadowRadius, y: shadowY)
             .modifier(HeroExtraShadow(isHero: style == .hero))
+            .shadow(color: .black.opacity(style == .hero ? 0.25 : 0), radius: 12, y: 4)
     }
 }
 
@@ -581,6 +586,11 @@ struct SplurjButtonStyle: ButtonStyle {
             .scaleEffect(pressed ? 0.97 : 1.0)
             .brightness(pressed ? -0.03 : 0)
             .animation(.spring(response: 0.2, dampingFraction: 0.7), value: pressed)
+            .onChange(of: pressed) { _, isPressed in
+                if isPressed {
+                    HapticManager.buttonTap()
+                }
+            }
     }
 }
 

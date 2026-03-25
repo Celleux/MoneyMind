@@ -64,6 +64,7 @@ struct ContentView: View {
                 }
             }
         }
+        .overlay { NoiseOverlay() }
         .overlay {
             if showVibeCheck, let tx = vibeCheckTransaction {
                 VibeCheckOverlay(

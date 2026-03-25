@@ -50,6 +50,13 @@ enum Theme {
     static let textMuted = Color(hex: 0x555560)
     static let textDisabled = Color(hex: 0x3A3A45)
 
+    // MARK: - Elevation System
+
+    static let elevation0 = Color(hex: 0x0F0F12)
+    static let elevation1 = Color(hex: 0x1A1A1F)
+    static let elevation2 = Color(hex: 0x242428)
+    static let elevation3 = Color(hex: 0x2C2C33)
+
     // MARK: - Borders & Dividers
 
     static let border = Color(hex: 0x2A2A35)
@@ -592,10 +599,23 @@ struct SplurjButtonStyle: ButtonStyle {
             .background(bgView(pressed: pressed))
             .clipShape(RoundedRectangle(cornerRadius: size.cornerRadius))
             .overlay(borderView(pressed: pressed))
+            .overlay(alignment: .top) {
+                if variant == .primary || variant == .destructive {
+                    LinearGradient(
+                        colors: [Color.white.opacity(pressed ? 0.08 : 0.15), .clear],
+                        startPoint: .top,
+                        endPoint: .center
+                    )
+                    .frame(height: 28)
+                    .clipShape(RoundedRectangle(cornerRadius: size.cornerRadius))
+                    .allowsHitTesting(false)
+                }
+            }
             .shadow(color: shadowColor(pressed: pressed), radius: pressed ? 2 : 6, y: pressed ? 1 : 3)
+            .shadow(color: variant == .primary ? Theme.accent.opacity(pressed ? 0.1 : 0.4) : .clear, radius: pressed ? 4 : 12, y: pressed ? 2 : 6)
             .scaleEffect(pressed ? 0.97 : 1.0)
             .brightness(pressed ? -0.03 : 0)
-            .animation(.spring(response: 0.2, dampingFraction: 0.7), value: pressed)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: pressed)
             .onChange(of: pressed) { _, isPressed in
                 if isPressed {
                     HapticManager.buttonTap()
@@ -611,5 +631,143 @@ struct PressableButtonStyle: ButtonStyle {
             .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
             .brightness(configuration.isPressed ? -0.05 : 0)
             .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
+    }
+}
+
+// MARK: - Elevation Card System
+
+enum ElevationLevel: Int {
+    case level1 = 1
+    case level2 = 2
+    case level3 = 3
+}
+
+struct MMElevatedCard: ViewModifier {
+    let level: ElevationLevel
+    let cornerRadius: CGFloat
+
+    init(level: ElevationLevel = .level1, cornerRadius: CGFloat = 16) {
+        self.level = level
+        self.cornerRadius = cornerRadius
+    }
+
+    func body(content: Content) -> some View {
+        switch level {
+        case .level1:
+            content
+                .background(Theme.elevation1, in: RoundedRectangle(cornerRadius: cornerRadius))
+        case .level2:
+            content
+                .background(Theme.elevation2, in: RoundedRectangle(cornerRadius: cornerRadius))
+                .overlay(
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.08), Color.white.opacity(0.02)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ),
+                            lineWidth: 0.5
+                        )
+                )
+                .shadow(color: Color.black.opacity(0.3), radius: 8, y: 4)
+        case .level3:
+            content
+                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius))
+                .background(Theme.elevation3, in: RoundedRectangle(cornerRadius: cornerRadius))
+                .overlay(
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.08), Color.white.opacity(0.02)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ),
+                            lineWidth: 0.5
+                        )
+                )
+                .shadow(color: Color.black.opacity(0.4), radius: 16, y: 8)
+        }
+    }
+}
+
+extension View {
+    func mmElevated(_ level: ElevationLevel = .level1, cornerRadius: CGFloat = 16) -> some View {
+        modifier(MMElevatedCard(level: level, cornerRadius: cornerRadius))
+    }
+}
+
+// MARK: - Card Press Animation
+
+struct CardPressModifier: ViewModifier {
+    @State private var isPressed: Bool = false
+
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(isPressed ? 0.98 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { _ in isPressed = true }
+                    .onEnded { _ in isPressed = false }
+            )
+    }
+}
+
+// MARK: - Parallax Tilt for Collectible Cards
+
+struct ParallaxTiltModifier: ViewModifier {
+    @State private var dragOffset: CGSize = .zero
+
+    func body(content: Content) -> some View {
+        content
+            .rotation3DEffect(
+                .degrees(Double(dragOffset.width) / 8),
+                axis: (x: 0, y: 1, z: 0)
+            )
+            .rotation3DEffect(
+                .degrees(Double(-dragOffset.height) / 8),
+                axis: (x: 1, y: 0, z: 0)
+            )
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        dragOffset = value.translation
+                    }
+                    .onEnded { _ in
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                            dragOffset = .zero
+                        }
+                    }
+            )
+    }
+}
+
+// MARK: - Gold Glow for Premium Cards
+
+struct PremiumGoldGlow: ViewModifier {
+    let isActive: Bool
+
+    func body(content: Content) -> some View {
+        if isActive {
+            content
+                .shadow(color: Theme.accent.opacity(0.15), radius: 20)
+        } else {
+            content
+        }
+    }
+}
+
+extension View {
+    func cardPress() -> some View {
+        modifier(CardPressModifier())
+    }
+
+    func parallaxTilt() -> some View {
+        modifier(ParallaxTiltModifier())
+    }
+
+    func premiumGlow(_ isActive: Bool = true) -> some View {
+        modifier(PremiumGoldGlow(isActive: isActive))
     }
 }

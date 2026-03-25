@@ -3,6 +3,7 @@ import SwiftData
 
 nonisolated enum OnboardingScreenV2: Int, CaseIterable, Sendable {
     case splash
+    case intro
     case dnaIntro
     case spendingCards
     case emotionalTriggers
@@ -39,6 +40,9 @@ struct OnboardingView: View {
             switch currentScreen {
             case .splash:
                 CinematicSplashView { advance() }
+
+            case .intro:
+                IntroOnboardingView { advance() }
 
             case .dnaIntro:
                 FinancialDNAIntroView { advance() }
@@ -81,7 +85,7 @@ struct OnboardingView: View {
             }
         }
         .overlay(alignment: .topTrailing) {
-            if currentScreen != .splash {
+            if currentScreen != .splash && currentScreen != .intro {
                 Button {
                     showSOSSheet = true
                 } label: {

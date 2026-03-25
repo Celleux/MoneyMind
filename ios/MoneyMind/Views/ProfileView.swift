@@ -641,7 +641,7 @@ struct ProfileView: View {
                 if premiumManager.isPremium {
                     Text("PRO")
                         .font(Typography.labelSmall)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Theme.buttonTextOnAccent)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(Theme.goldGradient, in: .capsule)

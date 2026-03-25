@@ -390,7 +390,7 @@ struct BossBattleView: View {
                 Text("DELIVER FINAL BLOW")
                     .font(Typography.headingMedium)
             }
-            .foregroundStyle(.black)
+            .foregroundStyle(Theme.buttonTextOnAccent)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
             .background(
@@ -544,7 +544,7 @@ struct BossBattleView: View {
     private var hpBarColors: [Color] {
         if hpFraction > 0.5 { return [Color(hex: 0xF87171), Color(hex: 0xDC2626)] }
         if hpFraction > 0.25 { return [Color(hex: 0xFB923C), Color(hex: 0xF59E0B)] }
-        return [Theme.accentSecondary, Theme.accentSecondaryDim]
+        return [Theme.accent, Theme.accentDim]
     }
 }
 

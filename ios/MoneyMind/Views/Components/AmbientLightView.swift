@@ -24,7 +24,7 @@ struct AmbientLightView<Content: View>: View {
                 .offset(x: -40, y: -20)
 
             Ellipse()
-                .fill(Theme.accentSecondary.opacity(tealOpacity))
+                .fill(Theme.accent.opacity(tealOpacity))
                 .frame(width: 150, height: 80)
                 .blur(radius: 50)
                 .offset(x: 60, y: 30)

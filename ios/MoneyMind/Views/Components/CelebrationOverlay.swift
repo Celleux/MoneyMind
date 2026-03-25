@@ -75,7 +75,7 @@ struct GenericCelebrationOverlay: View {
                 } label: {
                     Text("Continue")
                         .font(Typography.headingMedium)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Theme.buttonTextOnAccent)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                         .background(
@@ -96,7 +96,7 @@ struct GenericCelebrationOverlay: View {
 
             ParticleBurstView(
                 particleCount: 40,
-                colors: [accentColor, accentColor.opacity(0.6), Color(hex: 0x4ECDC4), .white],
+                colors: [accentColor, accentColor.opacity(0.6), Theme.accent, .white],
                 duration: 2.0,
                 style: .confetti,
                 trigger: confettiTrigger > 0
@@ -201,10 +201,10 @@ struct BadgeUnlockOverlay: View {
                 Button { dismiss() } label: {
                     Text("Awesome!")
                         .font(Typography.headingMedium)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Theme.buttonTextOnAccent)
                         .padding(.horizontal, 40)
                         .padding(.vertical, 14)
-                        .background(Color(hex: 0xE8B94E), in: .capsule)
+                        .background(Theme.accent, in: .capsule)
                 }
                 .opacity(show ? 1 : 0)
                 .offset(y: show ? 0 : 20)
@@ -311,12 +311,12 @@ struct QuestCompleteCelebrationOverlay: View {
                     Button { dismiss() } label: {
                         Text("Continue")
                             .font(Typography.headingMedium)
-                            .foregroundStyle(.black)
+                            .foregroundStyle(Theme.buttonTextOnAccent)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
                             .background(
                                 LinearGradient(
-                                    colors: [Color(hex: 0xE8B94E), Color(hex: 0xC49A3A)],
+                                    colors: [Theme.accent, Theme.accentDim],
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 ),

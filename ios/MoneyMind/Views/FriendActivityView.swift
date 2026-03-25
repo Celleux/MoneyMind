@@ -20,7 +20,7 @@ nonisolated struct FriendActivity: Identifiable, Sendable {
         FriendActivity(id: "7", username: "Ava", avatarIcon: "shield.fill", avatarColor: Color(hex: 0x06B6D4), activityText: "resisted a $120 impulse buy", timeAgo: "10h ago"),
         FriendActivity(id: "8", username: "Liam", avatarIcon: "bolt.fill", avatarColor: Color(hex: 0xA855F7), activityText: "earned 2x XP on a quest", timeAgo: "11h ago"),
         FriendActivity(id: "9", username: "Sophia", avatarIcon: "heart.fill", avatarColor: Color(hex: 0xEF4444), activityText: "saved $200 this week", timeAgo: "12h ago"),
-        FriendActivity(id: "10", username: "Ethan", avatarIcon: "chart.line.uptrend.xyaxis", avatarColor: Theme.accentSecondary, activityText: "hit a 30-day savings milestone", timeAgo: "1d ago"),
+        FriendActivity(id: "10", username: "Ethan", avatarIcon: "chart.line.uptrend.xyaxis", avatarColor: Theme.accent, activityText: "hit a 30-day savings milestone", timeAgo: "1d ago"),
     ]
 }
 

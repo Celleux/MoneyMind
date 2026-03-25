@@ -213,11 +213,11 @@ struct ToolkitView: View {
                 HStack(spacing: 14) {
                     ZStack {
                         Circle()
-                            .fill(Theme.accentDim)
+                            .fill(Theme.accent)
                             .frame(width: 44, height: 44)
                         PhIcon.shieldFill
                             .frame(width: 20, height: 20)
-                            .foregroundStyle(Theme.accent)
+                            .foregroundStyle(Theme.iconOnAccent)
                     }
 
                     VStack(alignment: .leading, spacing: 3) {
@@ -369,9 +369,9 @@ private struct ToolGridCard: View {
             VStack(alignment: .leading, spacing: 10) {
                 Image(systemName: icon)
                     .font(Typography.headingLarge)
-                    .foregroundStyle(Theme.accent)
+                    .foregroundStyle(Theme.iconOnAccent)
                     .frame(width: 40, height: 40)
-                    .background(Theme.accentDim, in: .rect(cornerRadius: 10))
+                    .background(Theme.accent, in: .rect(cornerRadius: 10))
 
                 Text(title)
                     .font(Typography.headingSmall)

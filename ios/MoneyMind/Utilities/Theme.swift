@@ -13,9 +13,15 @@ enum Theme {
 
     // MARK: - Primary Accent (GOLD — prosperity, achievement, money)
 
-    static let accent = Color(hex: 0xE8B94E)
-    static let accentDim = Color(hex: 0xC49A3A)
-    static let accentGlow = Color(hex: 0xE8B94E, opacity: 0.15)
+    static let accent = Color(hex: 0xD4A843)
+    static let accentDim = Color(hex: 0xB8922F)
+    static let accentGlow = Color(hex: 0xD4A843, opacity: 0.15)
+    static let accentBright = Color(hex: 0xE8C872)
+
+    // MARK: - Button Contrast Colors
+
+    static let buttonTextOnAccent = Color(hex: 0x0F0F12)
+    static let iconOnAccent = Color(hex: 0x0F0F12)
 
     // MARK: - Secondary Accent (TEAL — health, growth, breathing exercises)
 
@@ -88,19 +94,19 @@ enum Theme {
     // MARK: - Gradients
 
     static let accentGradient = LinearGradient(
-        colors: [Color(hex: 0xE8B94E), Color(hex: 0xC49A3A)],
+        colors: [Color(hex: 0xD4A843), Color(hex: 0xB8922F)],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
 
     static let premiumGradient = LinearGradient(
-        colors: [Color(hex: 0xE8B94E), Color(hex: 0xC49A3A)],
+        colors: [Color(hex: 0xD4A843), Color(hex: 0xB8922F)],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
 
     static let goldGradient = LinearGradient(
-        colors: [Color(hex: 0xE8B94E), Color(hex: 0xC49A3A)],
+        colors: [Color(hex: 0xD4A843), Color(hex: 0xB8922F)],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
@@ -138,7 +144,7 @@ enum Theme {
         ],
         colors: [
             .black, Color(hex: 0x141416), .black,
-            Color(hex: 0xE8B94E).opacity(0.04), Color(hex: 0x141416), Color(hex: 0x4ECDC4).opacity(0.03),
+            Color(hex: 0xD4A843).opacity(0.04), Color(hex: 0x141416), Color(hex: 0xD4A843).opacity(0.02),
             .black, Color(hex: 0xE8B94E).opacity(0.03), .black
         ]
     )
@@ -432,7 +438,7 @@ struct HolographicSheenModifier: ViewModifier {
                             AngularGradient(
                                 colors: [
                                     Theme.neonGold.opacity(0.1),
-                                    Theme.accentSecondary.opacity(0.1),
+                                    Theme.accentTertiary.opacity(0.1),
                                     Theme.neonPurple.opacity(0.1),
                                     Theme.neonBlue.opacity(0.1),
                                     Theme.neonGold.opacity(0.1)
@@ -521,9 +527,10 @@ struct SplurjButtonStyle: ButtonStyle {
 
     private func textColor(pressed: Bool) -> Color {
         switch variant {
-        case .primary, .destructive: .white
-        case .secondary: Theme.accent
-        case .tertiary: Theme.accent
+        case .primary: Theme.buttonTextOnAccent
+        case .destructive: .white
+        case .secondary: Theme.accentBright
+        case .tertiary: Theme.accentBright
         case .ghost: Theme.textPrimary
         }
     }
@@ -538,7 +545,7 @@ struct SplurjButtonStyle: ButtonStyle {
                 endPoint: .bottomTrailing
             )
         case .secondary:
-            Color.clear
+            Color(hex: 0x1A1A1F)
         case .tertiary:
             pressed ? Theme.accent.opacity(0.08) : Color.clear
         case .ghost:
@@ -557,7 +564,10 @@ struct SplurjButtonStyle: ButtonStyle {
         switch variant {
         case .secondary:
             RoundedRectangle(cornerRadius: size.cornerRadius)
-                .strokeBorder(pressed ? Theme.accentDim : Theme.accent, lineWidth: 1.5)
+                .strokeBorder((pressed ? Theme.accentDim : Theme.accentBright).opacity(0.3), lineWidth: 1.5)
+        case .tertiary:
+            RoundedRectangle(cornerRadius: size.cornerRadius)
+                .strokeBorder(Theme.accentBright.opacity(0.3), lineWidth: 1)
         default:
             EmptyView()
         }

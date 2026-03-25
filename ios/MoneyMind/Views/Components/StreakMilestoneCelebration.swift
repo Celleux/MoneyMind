@@ -132,7 +132,7 @@ struct StreakMilestoneCelebration: View {
                     } label: {
                         Text("Continue")
                             .font(Typography.headingMedium)
-                            .foregroundStyle(.black)
+                            .foregroundStyle(Theme.buttonTextOnAccent)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
                             .background(

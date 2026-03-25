@@ -25,7 +25,7 @@ struct IntroOnboardingView: View {
                 ],
                 colors: [
                     Theme.background, Theme.background, Theme.background,
-                    Color(hex: 0xE8B94E).opacity(0.02), Theme.background, Color(hex: 0x4ECDC4).opacity(0.02),
+                    Color(hex: 0xD4A843).opacity(0.02), Theme.background, Color(hex: 0xD4A843).opacity(0.015),
                     Theme.background, Color(hex: 0xE8B94E).opacity(0.015), Theme.background
                 ]
             )
@@ -145,7 +145,7 @@ struct IntroOnboardingView: View {
                         Image(systemName: "arrow.right")
                             .font(.system(size: 14, weight: .bold))
                     }
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Theme.buttonTextOnAccent)
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
                     .background(Theme.goldGradient, in: .rect(cornerRadius: 16))
@@ -164,7 +164,7 @@ struct IntroOnboardingView: View {
                 } label: {
                     Text("Continue")
                         .font(Typography.headingMedium)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Theme.buttonTextOnAccent)
                         .frame(maxWidth: .infinity)
                         .frame(height: 56)
                         .background(Theme.goldGradient, in: .rect(cornerRadius: 16))
@@ -247,7 +247,7 @@ private struct IntroPage: Identifiable {
             title: "Complete Quests",
             subtitle: "Turn financial goals into fun daily challenges with real rewards.",
             icon: PhIcon.compass,
-            accentColor: Theme.accentSecondary
+            accentColor: Theme.accent
         ),
         IntroPage(
             id: 2,
@@ -261,7 +261,7 @@ private struct IntroPage: Identifiable {
             title: "Join the Community",
             subtitle: "Compete with friends and stay accountable together.",
             icon: PhIcon.usersFill,
-            accentColor: Theme.accentSecondary
+            accentColor: Theme.accent
         ),
         IntroPage(
             id: 4,

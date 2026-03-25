@@ -87,7 +87,7 @@ struct PaywallView: View {
                 ],
                 colors: [
                     Theme.background, Theme.background, Theme.background,
-                    Color(hex: 0xE8B94E).opacity(0.06), Theme.background, Color(hex: 0x4ECDC4).opacity(0.03),
+                    Color(hex: 0xD4A843).opacity(0.06), Theme.background, Color(hex: 0xD4A843).opacity(0.03),
                     Theme.background, Color(hex: 0xE8B94E).opacity(0.04), Theme.background
                 ]
             )
@@ -278,7 +278,7 @@ struct PaywallView: View {
 
                 Text("BEST VALUE")
                     .font(.system(size: 10, weight: .heavy))
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Theme.buttonTextOnAccent)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
                     .background(Theme.goldGradient, in: .capsule)
@@ -425,7 +425,7 @@ struct PaywallView: View {
             } label: {
                 Text("Start Free Trial")
                     .font(Typography.headingMedium)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Theme.buttonTextOnAccent)
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
                     .background(Theme.goldGradient, in: .rect(cornerRadius: 16))
@@ -486,8 +486,8 @@ struct PaywallView: View {
         PremiumFeature(icon: "sparkles", name: "Full Splurj Wrapped", subtitle: "Monthly & annual story recaps", tint: Theme.accent),
         PremiumFeature(icon: "eye.slash.fill", name: "Ghost Budget", subtitle: "Hidden budgets only you can see", tint: Theme.accentTertiary),
         PremiumFeature(icon: "trophy.fill", name: "Unlimited Challenges", subtitle: "Access every savings challenge", tint: Theme.accent),
-        PremiumFeature(icon: "chart.bar.xaxis.ascending", name: "Premium Analytics", subtitle: "Deep spending insights & trends", tint: Theme.accentSecondary),
-        PremiumFeature(icon: "person.2.fill", name: "Couple Mode", subtitle: "Shared budgets & goals with a partner", tint: Theme.accentSecondary),
+        PremiumFeature(icon: "chart.bar.xaxis.ascending", name: "Premium Analytics", subtitle: "Deep spending insights & trends", tint: Theme.accent),
+        PremiumFeature(icon: "person.2.fill", name: "Couple Mode", subtitle: "Shared budgets & goals with a partner", tint: Theme.accentTertiary),
         PremiumFeature(icon: "bolt.shield.fill", name: "Ad-Free Experience", subtitle: "Zero interruptions, full focus", tint: Theme.accent)
     ]
 }

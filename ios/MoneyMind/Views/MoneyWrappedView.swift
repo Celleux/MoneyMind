@@ -219,7 +219,7 @@ private struct WrappedSlideSpent: View {
 
     var body: some View {
         ZStack {
-            wrappedMeshBg(accent: data.personality.color, secondary: Theme.accentSecondary.opacity(0.6))
+            wrappedMeshBg(accent: data.personality.color, secondary: Theme.accent.opacity(0.6))
 
             VStack(spacing: 0) {
                 Spacer()
